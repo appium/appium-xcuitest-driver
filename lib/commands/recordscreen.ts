@@ -185,7 +185,14 @@ export class ScreenRecorder {
     const useAutomaticCanvas = !videoFilters && !videoScale && !hardwareAcceleration;
     if (useAutomaticCanvas) {
       // Preserve the first frame's filter geometry across input size changes.
-      // ffmpeg performs the scaling itself, including for raw MJPEG streams.
+      // Keep canvas discovery and scaling in ffmpeg, including for raw MJPEG.
+      // A separate MJPEG/sharp probe required a second connection and added startup
+      // latency (~104 ms for responsive multipart input; a 10 s frame timeout for
+      // raw input in our tests), plus an optional sharp dependency. Avoid bringing
+      // that probe back: ffmpeg can establish the canvas from its first decoded frame.
+      // On a synthetic Duo-size stream, ffmpeg-only CPU time was within -2% to +3%
+      // of the previous default (ffmpeg 9.0.2, three runs per codec); this is not a
+      // general performance guarantee. Measurements: appium/appium-xcuitest-driver#3010.
       args.push('-reinit_filter', '0');
     }
     const parsed = new URL(remoteUrl);
