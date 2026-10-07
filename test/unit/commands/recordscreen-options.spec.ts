@@ -7,7 +7,6 @@ import sinon from 'sinon';
 import * as teenProcess from 'teen_process';
 
 import {MJpegStream} from '../../../lib/commands/helpers/mjpeg.js';
-import * as utils from '../../../lib/utils/index.js';
 
 let commandArgs: string[];
 class FakeProcess extends EventEmitter {
@@ -24,26 +23,17 @@ class FakeProcess extends EventEmitter {
     this.isRunning = false;
   }
 }
-const requireSharp = sinon.stub();
 mock.module('teen_process', {namedExports: {...teenProcess, SubProcess: FakeProcess}});
-mock.module('../../../lib/utils/index.js', {namedExports: {...utils, requireSharp}});
 const {ScreenRecorder} = await import('../../../lib/commands/recordscreen.js');
 
 describe('recording option compatibility', () => {
   let probe: sinon.SinonStub;
-  let stopProbe: sinon.SinonStub;
   let recorder: InstanceType<typeof ScreenRecorder>;
   let warn: sinon.SinonStub;
-  let frame: string | null;
 
   beforeEach(() => {
     sinon.stub(fs, 'which').resolves('/test/ffmpeg');
     probe = sinon.stub(MJpegStream.prototype, 'start').resolves();
-    stopProbe = sinon.stub(MJpegStream.prototype, 'stop');
-    frame = 'ZmFrZQ==';
-    sinon.stub(MJpegStream.prototype, 'lastChunkBase64').get(() => frame);
-    requireSharp.reset();
-    requireSharp.resolves(() => ({metadata: async () => ({autoOrient: {width: 200, height: 300}})}));
     warn = sinon.stub();
   });
   afterEach(async () => {
@@ -72,7 +62,7 @@ describe('recording option compatibility', () => {
       assert.equal(commandArgs.filter((arg) => arg === '-vf').length, 1);
       assert.equal(commandArgs[commandArgs.indexOf('-vf') + 1], expected);
       sinon.assert.notCalled(probe);
-      sinon.assert.notCalled(requireSharp);
+      assert.ok(!commandArgs.includes('-reinit_filter'));
     });
   }
 
@@ -80,32 +70,16 @@ describe('recording option compatibility', () => {
     await start({hardwareAcceleration: 'videoToolbox'});
     assert.ok(!commandArgs.includes('-vf'));
     sinon.assert.notCalled(probe);
-    sinon.assert.notCalled(requireSharp);
+    assert.ok(!commandArgs.includes('-reinit_filter'));
   });
 
-  for (const failure of ['connection', 'missing frame', 'missing sharp', 'invalid image', 'invalid dimensions']) {
-    it(`starts ffmpeg without an automatic filter after ${failure}`, async () => {
-      if (failure === 'connection') {
-        probe.rejects(new Error('Probe connection failed'));
-      } else if (failure === 'missing frame') {
-        frame = null;
-      } else if (failure === 'missing sharp') {
-        requireSharp.rejects(new Error('sharp is unavailable'));
-      } else if (failure === 'invalid image') {
-        requireSharp.resolves(() => ({
-          metadata: async () => {
-            throw new Error('Invalid JPEG');
-          },
-        }));
-      } else {
-        requireSharp.resolves(() => ({metadata: async () => ({autoOrient: {width: 0, height: 300}})}));
-      }
-      await start();
-      assert.ok(!commandArgs.includes('-vf'));
-      assert.equal(commandArgs[commandArgs.indexOf('-r') + 1], '10');
-      assert.ok(commandArgs.includes('http://127.0.0.1:9100'));
-      sinon.assert.calledOnce(stopProbe);
-      sinon.assert.calledOnce(warn);
-    });
-  }
+  it('lets ffmpeg establish the canvas without opening a separate stream', async () => {
+    await start();
+    sinon.assert.notCalled(probe);
+    sinon.assert.notCalled(warn);
+    assert.equal(commandArgs[commandArgs.indexOf('-reinit_filter') + 1], '0');
+    assert.ok(commandArgs.indexOf('-reinit_filter') < commandArgs.indexOf('-i'));
+    assert.equal(commandArgs.filter((arg) => arg === '-vf').length, 1);
+    assert.equal(commandArgs[commandArgs.indexOf('-r') + 1], '10');
+  });
 });

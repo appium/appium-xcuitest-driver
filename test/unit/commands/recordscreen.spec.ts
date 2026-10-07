@@ -16,14 +16,17 @@ import {ScreenRecorder} from '../../../lib/commands/recordscreen.js';
 const run = promisify(execFile);
 
 describe('screen recording with changing frame geometry', () => {
-  for (const [videoType, changeGeometry, rawStream] of [
+  for (const [videoType, changeGeometry, rawStream, reverse, odd] of [
     ['mjpeg', true],
     ['libx264', true],
     ['mjpeg', false],
     ['mjpeg', false, true],
+    ['mjpeg', true, true],
+    ['libx264', true, true, true],
+    ['libx264', true, false, false, true],
   ] as const) {
     it(
-      `should preserve circle proportions and 10 fps with ${videoType} (resize: ${changeGeometry}, raw: ${!!rawStream})`,
+      `should preserve circle proportions and 10 fps with ${videoType} (resize: ${changeGeometry}, raw: ${!!rawStream}, reverse: ${!!reverse}, odd: ${!!odd})`,
       {timeout: 45000},
       async (t) => {
         try {
@@ -42,7 +45,12 @@ describe('screen recording with changing frame geometry', () => {
           )
             .jpeg()
             .toBuffer();
-        const frames = [await frame(200, 300), await frame(400, 200)];
+        const initialWidth = odd ? 201 : reverse ? 400 : 200;
+        const initialHeight = odd ? 301 : reverse ? 200 : 300;
+        const frames = [
+          await frame(initialWidth, initialHeight),
+          await frame(reverse ? 200 : 400, reverse ? 300 : 200),
+        ];
         let index = 0;
         const server = http.createServer((_req, res) => {
           res.writeHead(200, {
@@ -89,8 +97,8 @@ describe('screen recording with changing frame geometry', () => {
             videoPath,
           ]);
           const stream = JSON.parse(stdout).streams[0];
-          assert.equal(stream.width, 200);
-          assert.equal(stream.height, 300);
+          assert.equal(stream.width, Math.ceil(initialWidth / 2) * 2);
+          assert.equal(stream.height, Math.ceil(initialHeight / 2) * 2);
           assert.equal(stream.avg_frame_rate, '10/1');
           assert.ok(Number(stream.nb_frames) > 10);
           assert.ok(Math.abs(Number(stream.duration) - Number(stream.nb_frames) / 10) < 0.01);
