@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
 
+import {errors} from '@appium/base-driver';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -65,12 +66,19 @@ describe('simulated hinge angle', () => {
     }
   });
 
-  it('rejects invalid and missing angles without dispatching', async () => {
+  it('delegates angle validation to WDA and propagates its error unchanged', async () => {
+    const driver = new XCUITestDriver({} as any);
+    const wdaError = new errors.InvalidArgumentError('angle must be a finite number between 0 and 180 degrees');
+    const proxy = sinon.stub(driver, 'proxyCommand').rejects(wdaError);
+    for (const angle of [-1, 181, NaN, Infinity, -Infinity, '90', true, null, undefined]) {
+      await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), (err) => err === wdaError);
+      assert.deepEqual(proxy.lastCall.args, ['/wda/device/hingeAngle', 'POST', {angle}]);
+    }
+  });
+
+  it('requires the angle through the standard execute-method argument mapping', async () => {
     const driver = new XCUITestDriver({} as any);
     const proxy = sinon.stub(driver, 'proxyCommand');
-    for (const angle of [-1, 181, NaN, Infinity, '90', true, null, undefined]) {
-      await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), /finite number/);
-    }
     await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
     sinon.assert.notCalled(proxy);
   });

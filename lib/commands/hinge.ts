@@ -1,5 +1,3 @@
-import {errors} from '@appium/base-driver';
-
 import type {XCUITestDriver} from '../driver.js';
 
 /**
@@ -14,15 +12,12 @@ export async function mobileGetSimulatedHingeAngle(this: XCUITestDriver): Promis
 
 /**
  * Requests a simulated hinge angle on an iOS device with an available hinge.
- * Requires a WDA build with /wda/device/hingeAngle support; WDA checks availability at runtime.
+ * Requires a WDA build with /wda/device/hingeAngle support; WDA validates the angle and checks availability at runtime.
  * Tested only on the Duo simulator. Physical Duo behavior is unverified.
  * The transition completes asynchronously. Select currentDisplayId separately.
  *
  * @param angle - Degrees from 0 (closed) to 180 (fully open), inclusive.
  */
 export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: number): Promise<void> {
-  if (typeof angle !== 'number' || !Number.isFinite(angle) || angle < 0 || angle > 180) {
-    throw new errors.InvalidArgumentError('angle must be a finite number between 0 and 180 degrees');
-  }
   await this.proxyCommand('/wda/device/hingeAngle', 'POST', {angle});
 }

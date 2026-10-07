@@ -2123,8 +2123,8 @@ The current hinge angle as a number in degrees, for example `90.5`.
 
 Requests a simulated hinge angle change. Requires a WebDriverAgent build with
 simulated hinge angle support and an iOS simulator or device with an available
-hinge. WDA checks platform and device support at runtime; the driver validates
-`angle`, forwards the request, and propagates WDA errors. tvOS, watchOS, and devices
+hinge. WDA validates the angle and checks platform and device support at runtime;
+the driver forwards the request and propagates WDA errors. tvOS, watchOS, and devices
 without simulated hinge angle support are unsupported by the current WDA implementation.
 
 This command has been tested only on the Duo simulator. We have not tested it on a
