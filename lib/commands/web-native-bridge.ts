@@ -448,7 +448,10 @@ async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
     this.remote.execute<Omit<ViewportState, 'orientation'>>(READ_VIEWPORT_STATE_SCRIPT),
   );
   const orientation: ViewportState['orientation'] = state.innerHeight >= state.innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
-  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}`;
+  const {x, y, width, height} = await findWebviewRect.call(this);
+  const {currentDisplayId} = this.settings.getSettings();
+  // Equal CSS viewports can occupy different native windows or displays.
+  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}::${JSON.stringify([currentDisplayId ?? null, x, y, width, height])}`;
 }
 
 /**
@@ -540,20 +543,17 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
  * @param force - Recalibrate unconditionally, ignoring any cached entry
  */
 async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
-  if (!force) {
-    const signature = await computeViewportSignature.call(this);
-    if (this._webviewCalibrationCache?.signature === signature) {
-      this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
-      return this._webviewCalibrationCache.data;
-    }
-  }
-
-  this.log.debug('Fitting a new web-to-native coordinates calibration');
-  // keep track of implicit wait, and set locally to 0
-  // https://github.com/appium/appium/issues/14988
   const implicitWaitMs = this.implicitWaitMs;
   this.setImplicitWait(0);
   try {
+    if (!force) {
+      const signature = await computeViewportSignature.call(this);
+      if (this._webviewCalibrationCache?.signature === signature) {
+        this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
+        return this._webviewCalibrationCache.data;
+      }
+    }
+    this.log.debug('Fitting a new web-to-native coordinates calibration');
     this._webviewCalibrationCache = await performCalibration.call(this);
   } finally {
     this.setImplicitWait(implicitWaitMs);
