@@ -75,3 +75,59 @@ describe('web calibration native geometry', () => {
     });
   }
 });
+
+describe('web calibration iframe selection', () => {
+  for (const outcome of ['attached', 'detached', 'different page', 'different frame']) {
+    it(`should preserve only a still-attached frame on the same page (${outcome})`, async () => {
+      const driver = new XCUITestDriver({} as any);
+      driver.curContext = '123.1';
+      driver.curWebFrames = ['app-frame', 'nested-frame'];
+      const frames = [...driver.curWebFrames];
+      const sandbox = sinon.createSandbox();
+      let taps: {x: number; y: number}[] = [];
+      const resolveFrame = sinon.stub().callsFake(async (_atom, _args, selectedFrames) => {
+        assert.deepEqual(selectedFrames, frames);
+        if (outcome === 'detached') {
+          throw new Error('Frame no longer exists');
+        }
+        return true;
+      });
+      try {
+        sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+        sandbox
+          .stub(driver, 'findNativeElementOrElements')
+          .resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+        sandbox.stub(driver, 'proxyCommand').resolves({x: 0, y: 0, width: 400, height: 600});
+        sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+          taps.push({x, y});
+        });
+        driver._remote = {
+          executeAtom: resolveFrame,
+          execute: async (script: string) => {
+            if (script.includes('createElement')) {
+              taps = [];
+            } else if (script.includes('return window.__appiumCalibrationTaps')) {
+              return taps;
+            } else if (script.includes('delete window.__appiumCalibrationOverlay')) {
+              // WebKit reports the removal of the calibration iframe. The
+              // existing context listener clears all selected frames.
+              driver.curWebFrames = outcome === 'different frame' ? ['other-frame'] : [];
+              if (outcome === 'different page') {
+                driver.curContext = '123.2';
+              }
+            }
+            return {innerWidth: 400, innerHeight: 600};
+          },
+        } as any;
+        await driver.mobileCalibrateWebToRealCoordinatesTranslation();
+        assert.deepEqual(
+          driver.curWebFrames,
+          outcome === 'attached' ? frames : outcome === 'different frame' ? ['other-frame'] : [],
+        );
+        assert.equal(resolveFrame.callCount, ['attached', 'detached'].includes(outcome) ? 1 : 0);
+      } finally {
+        sandbox.restore();
+      }
+    });
+  }
+});

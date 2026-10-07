@@ -467,6 +467,8 @@ async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
  * adds a sub-frame's own offset (via {@linkcode getFrameChainOffset}) on top.
  */
 async function performCalibration(this: XCUITestDriver): Promise<CalibrationCacheEntry> {
+  const context = this.curContext;
+  const frames = [...this.curWebFrames];
   let entry: CalibrationCacheEntry | undefined;
   await retryInterval(CALIBRATION_RETRIES, CALIBRATION_RETRY_INTERVAL_MS, async () => {
     const rect = await findWebviewRect.call(this);
@@ -513,6 +515,21 @@ async function performCalibration(this: XCUITestDriver): Promise<CalibrationCach
         // script tears down and rebuilds from scratch regardless, so a
         // failed removal here doesn't corrupt the next attempt.
         this.log.debug(`Failed to remove the calibration overlay: ${toErrorMessage(err)}`);
+      }
+      // Removing our overlay iframe emits Page.frameDetached. The remote debugger
+      // currently reports this without identifying the detached frame, so the
+      // context listener clears even an unrelated, still-attached app frame.
+      // Resolve the original chain after cleanup before restoring it. Never
+      // resurrect a detached frame or carry frame selection into a different page.
+      if (frames.length && this.curContext === context && isEmpty(this.curWebFrames)) {
+        try {
+          await this.waitForAtom(this.remote.executeAtom('execute_script', ['return true;', []], frames));
+          if (this.curContext === context && isEmpty(this.curWebFrames)) {
+            this.curWebFrames = [...frames];
+          }
+        } catch (err) {
+          this.log.debug(`Could not restore the frame after calibration: ${toErrorMessage(err)}`);
+        }
       }
     }
   });
