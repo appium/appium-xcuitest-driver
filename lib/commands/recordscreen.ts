@@ -202,6 +202,9 @@ export class ScreenRecorder {
         }
         const sharp = await requireSharp();
         const {width, height} = (await sharp(Buffer.from(frame, 'base64')).metadata()).autoOrient;
+        if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+          throw new Error('The initial MJPEG frame has invalid dimensions');
+        }
         // Even canvas dimensions also work with yuv420p encoders.
         const canvasWidth = Math.ceil(width / 2) * 2;
         const canvasHeight = Math.ceil(height / 2) * 2;
@@ -209,6 +212,11 @@ export class ScreenRecorder {
           '-vf',
           `scale=${canvasWidth}:${canvasHeight}:force_original_aspect_ratio=decrease:force_divisible_by=2,` +
             `pad=${canvasWidth}:${canvasHeight}:(ow-iw)/2:(oh-ih)/2,setsar=1`,
+        );
+      } catch (err) {
+        this.log.warn(
+          `Cannot determine the recording canvas; continuing without automatic scaling or padding. ` +
+            `Original error: ${err instanceof Error ? err.message : String(err)}`,
         );
       } finally {
         stream.stop();

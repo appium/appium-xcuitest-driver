@@ -16,13 +16,14 @@ import {ScreenRecorder} from '../../../lib/commands/recordscreen.js';
 const run = promisify(execFile);
 
 describe('screen recording with changing frame geometry', () => {
-  for (const [videoType, changeGeometry] of [
+  for (const [videoType, changeGeometry, rawStream] of [
     ['mjpeg', true],
     ['libx264', true],
     ['mjpeg', false],
+    ['mjpeg', false, true],
   ] as const) {
     it(
-      `should preserve circle proportions and 10 fps with ${videoType} (resize: ${changeGeometry})`,
+      `should preserve circle proportions and 10 fps with ${videoType} (resize: ${changeGeometry}, raw: ${!!rawStream})`,
       {timeout: 45000},
       async (t) => {
         try {
@@ -44,12 +45,18 @@ describe('screen recording with changing frame geometry', () => {
         const frames = [await frame(200, 300), await frame(400, 200)];
         let index = 0;
         const server = http.createServer((_req, res) => {
-          res.writeHead(200, {'Content-Type': 'multipart/x-mixed-replace; boundary=frame'});
+          res.writeHead(200, {
+            'Content-Type': rawStream ? 'video/x-motion-jpeg' : 'multipart/x-mixed-replace; boundary=frame',
+          });
           const timer = setInterval(() => {
             const jpeg = frames[index];
-            res.write(`--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.length}\r\n\r\n`);
+            if (!rawStream) {
+              res.write(`--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.length}\r\n\r\n`);
+            }
             res.write(jpeg);
-            res.write('\r\n');
+            if (!rawStream) {
+              res.write('\r\n');
+            }
           }, 100);
           res.on('close', () => clearInterval(timer));
         });

@@ -124,6 +124,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    * See [the FFMPEG wiki](https://trac.ffmpeg.org/wiki/Scaling) for possible values.
    *
    * By default, software recording fits frames into the first frame’s dimensions with aspect-preserving scaling and black padding.
+   * If the initial frame cannot be inspected, recording continues without automatic scaling or padding.
    * Explicit filters/scaling and hardware acceleration retain their configured behavior.
    * If both `videoFilters` and `videoScale` are set, then only `videoFilters` value will be respected.
    * @see https://trac.ffmpeg.org/wiki/Scaling

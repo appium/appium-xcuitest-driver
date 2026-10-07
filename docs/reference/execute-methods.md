@@ -2342,9 +2342,13 @@ Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the We
 With software recording and no explicit `videoFilters` or `videoScale`, the first MJPEG frame
 sets the output canvas (rounded up to even dimensions). Later frames fit this canvas with their
 aspect ratio preserved and black padding, including when folding a device or switching displays.
-This requires an initial MJPEG frame and the driver’s optional `sharp` image module before ffmpeg
-starts. Explicit filters/scaling and hardware
-acceleration retain their configured behavior; configure a fixed canvas in your filters if needed.
+The driver attempts to read an initial MJPEG frame using its optional `sharp` image module
+before ffmpeg starts. The extra connection can add up to 10 seconds while waiting for a frame;
+image metadata is inspected once, while ffmpeg performs per-frame scaling and padding.
+If this probe fails, it logs a warning and starts ffmpeg without automatic
+scaling or padding; aspect-ratio preservation during display changes is then unavailable.
+Explicit filters/scaling and hardware acceleration skip the probe and retain their configured
+behavior; configure a fixed canvas in your filters if needed.
 
 #### Arguments
 
