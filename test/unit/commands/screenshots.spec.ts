@@ -136,10 +136,19 @@ describe('screenshots commands', function () {
       }
     });
 
-    it('should reject a crop that removes the whole image', async function () {
-      sinon.stub(driver, 'getScreenshot').resolves(await screenshot(10, 10));
-      proxyStub.resolves({scale: 2, statusBarSize: {width: 5, height: 5}});
-      await assert.rejects(driver.getViewportScreenshot(), errors.UnableToCaptureScreen);
+    it('should return the original screenshot when status bar geometry cannot be cropped', async function () {
+      const original = await screenshot(10, 10);
+      sinon.stub(driver, 'getScreenshot').resolves(original);
+      for (const [scale, bar] of [
+        [2, 5],
+        [2, 6],
+        [2, -1],
+        [2, NaN],
+        [Infinity, 1],
+      ]) {
+        proxyStub.resolves({scale, statusBarSize: {width: 5, height: bar}});
+        assert.equal(await driver.getViewportScreenshot(), original);
+      }
     });
 
     it('should return web viewport screenshots without requesting native geometry', async function () {

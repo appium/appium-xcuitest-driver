@@ -126,9 +126,10 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
   // including fractional-scale rounding in the captured image.
   const top = Math.trunc(statusBarSize.height * scale);
   if (!Number.isFinite(top) || top < 0 || top >= height) {
-    throw new errors.UnableToCaptureScreen(
-      `Status bar height ${top} is outside the screenshot bounds (${width}x${height})`,
+    this.log.info(
+      `Status bar height ${top} is outside the screenshot bounds (${width}x${height}); returning the uncropped screenshot`,
     );
+    return screenshot;
   }
   const region = {left: 0, top, width, height: height - top};
   this.log.debug(`Calculated viewport rect: ${JSON.stringify(region)}`);
