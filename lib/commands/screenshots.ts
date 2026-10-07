@@ -44,7 +44,9 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   // if we've specified an mjpeg server, use that
   if (this.mjpegStream) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);
-    const data = await this.mjpegStream.lastChunkPNGBase64();
+    // Preserve legacy conversion unless orientation correction was explicitly enabled.
+    const fixOrientation = this.settings.getSettings().mjpegFixOrientation === true;
+    const data = await this.mjpegStream.lastChunkPNGBase64(fixOrientation);
     if (data) {
       return data;
     }
