@@ -9,7 +9,7 @@ commands.
 ## Requirements
 
 * A macOS host with Xcode and an installed iOS Simulator runtime that includes iPhone Duo
-* XCUITest driver 12.17.0 or later
+* XCUITest driver 12.16.0 or later
 
 Follow the [installation guide](../getting-started/installation.md) to install the driver. If you
 provide your own prebuilt or preinstalled WebDriverAgent (WDA), it must also include support for
