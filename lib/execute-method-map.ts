@@ -21,7 +21,7 @@ export const executeMethodMap = {
     command: 'mobileSelectPickerWheelValue',
     params: {
       required: ['elementId', 'order'],
-      optional: ['offset'],
+      optional: ['offset', 'value', 'maxAttempts'],
     },
   },
   'mobile: sendMemoryWarning': {
