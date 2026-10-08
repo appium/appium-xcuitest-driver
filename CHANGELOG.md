@@ -1,3 +1,19 @@
+## [12.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.2...v12.16.0) (2026-10-08)
+
+### Features
+
+* add simulated Duo hinge angle command ([#3001](https://github.com/appium/appium-xcuitest-driver/issues/3001)) ([3f4d513](https://github.com/appium/appium-xcuitest-driver/commit/3f4d513737d2583e333b27127a67c98c586b17fe))
+
+### Bug Fixes
+
+* refresh display geometry for viewport screenshots ([#3007](https://github.com/appium/appium-xcuitest-driver/issues/3007)) ([68d3103](https://github.com/appium/appium-xcuitest-driver/commit/68d3103bdfd892123922a506a4e6d6d125125b3a))
+
+## [12.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.1...v12.15.2) (2026-10-07)
+
+### Bug Fixes
+
+* preserve app iframe selection after native tap calibration ([#3015](https://github.com/appium/appium-xcuitest-driver/issues/3015)) ([9de5422](https://github.com/appium/appium-xcuitest-driver/commit/9de5422ec99291e04566eba39b28a4f968721f8b))
+
 ## [12.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.0...v12.15.1) (2026-10-07)
 
 ### Bug Fixes

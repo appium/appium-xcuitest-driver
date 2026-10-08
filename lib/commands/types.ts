@@ -428,6 +428,10 @@ export type ContentSizeResult =
   | 'unsupported';
 
 export interface ScreenInfo {
+  /** Display dimensions in logical pixels, when provided by WDA. */
+  screenSize?: Size;
+  /** The display identifier, when provided by WDA. */
+  displayId?: number;
   /**
    * Status bar dimensions
    *
