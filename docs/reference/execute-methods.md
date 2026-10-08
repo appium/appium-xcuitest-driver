@@ -1198,7 +1198,17 @@ The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}
 
 ### mobile: viewportScreenshot
 
-Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect))
+Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect)).
+Native screenshots are cropped using fresh screen information from WDA and the actual image
+bounds, preserving the full width and bottom edge. If WDA reports no top status bar, the
+screenshot is returned unchanged. If the reported status-bar geometry cannot produce a valid
+crop, the original screenshot is returned as a best-effort result. Side-mounted status UI
+cannot be removed by a top-edge crop.
+
+For multiple displays, WDA must provide screen information for the selected display as well
+as capture that display. Wait for folding, rotation, and display-selection transitions to finish
+before requesting a viewport screenshot. Screen information and image capture are separate
+requests, so this command cannot provide an atomic snapshot during a transition.
 
 !!! warning "Unreliable"
 
@@ -1210,7 +1220,7 @@ Base64-encoded string, which represents the viewport screenshot.
 
 ### mobile: deviceScreenInfo
 
-Get information about screen.
+Get current information about the screen from WDA. The driver does not cache this response.
 
 #### Returned Result
 

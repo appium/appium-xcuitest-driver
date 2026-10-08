@@ -241,8 +241,6 @@ const NO_PROXY_WEB_LIST: RouteMatcher[] = [
 ] as RouteMatcher[];
 /* eslint-enable no-useless-escape */
 
-const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
-
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
 export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
@@ -845,11 +843,6 @@ export class XCUITestDriver
     this._networkMonitorSession = null;
     this._systemMonitorSession = null;
     this._remoteXPCFacade = null;
-    // memoize functions here, so that they are done on a per-instance basis
-    for (const fn of MEMOIZED_FUNCTIONS) {
-      // @ts-expect-error no types
-      this[fn] = memoize(this[fn]);
-    }
     this.lifecycleData = {};
     this._audioRecorder = null;
     this.appInfosCache = new AppInfosCache(this.log);
