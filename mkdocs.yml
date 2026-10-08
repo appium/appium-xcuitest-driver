@@ -81,6 +81,7 @@ nav:
           - guides/biometric-auth.md
           - guides/gestures.md
       - Other:
+          - guides/duo.md
           - guides/tvos.md
           - guides/watchos.md
           - guides/non-macos-hosts.md

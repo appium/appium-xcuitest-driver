@@ -102,7 +102,7 @@ explains the difference.
 
 | Type | Default |
 | -- | -- |
-| `int` | `null` (the main display) |
+| `int` or `null` | `null` (the main display) |
 
 The display targeted by screenshots and W3C actions, for devices with more than one display.
 Use a `displayId` returned by [`mobile: getScreens`](./execute-methods.md#mobile-getscreens).
@@ -121,6 +121,10 @@ hierarchy belongs to the application rather than to a display.
 After changing this setting, screenshots bypass the MJPEG screenshot cache for the rest of the
 session, including after resetting the setting to `null`. MJPEG frames do not identify their
 source display, so buffered frames cannot safely be reused after a display change.
+
+Folding or unfolding does not change this setting. See
+[iPhone Duo Automation](../guides/duo.md#select-a-display) for display discovery, selection, and
+reset examples using the XCUITest driver.
 
 ## defaultActiveApplication
 
