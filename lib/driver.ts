@@ -58,6 +58,7 @@ import {
   shouldSetInitialSafariUrl,
   type MJpegStream,
 } from './commands/helpers/index.js';
+import * as hingeCommands from './commands/hinge.js';
 import * as increaseContrastCommands from './commands/increase-contrast.js';
 import * as iohidCommands from './commands/iohid.js';
 import * as keyboardCommands from './commands/keyboard.js';
@@ -239,8 +240,6 @@ const NO_PROXY_WEB_LIST: RouteMatcher[] = [
   ...NO_PROXY_NATIVE_LIST,
 ] as RouteMatcher[];
 /* eslint-enable no-useless-escape */
-
-const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
 
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
@@ -570,6 +569,8 @@ export class XCUITestDriver
   /*-------+
    | IOHID |
    +-------+*/
+  mobileSetSimulatedHingeAngle = hingeCommands.mobileSetSimulatedHingeAngle;
+  mobileGetSimulatedHingeAngle = hingeCommands.mobileGetSimulatedHingeAngle;
   mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
   mobilePerformIndigoHidEvent = iohidCommands.mobilePerformIndigoHidEvent;
 
@@ -840,11 +841,6 @@ export class XCUITestDriver
     this._networkMonitorSession = null;
     this._systemMonitorSession = null;
     this._remoteXPCFacade = null;
-    // memoize functions here, so that they are done on a per-instance basis
-    for (const fn of MEMOIZED_FUNCTIONS) {
-      // @ts-expect-error no types
-      this[fn] = memoize(this[fn]);
-    }
     this.lifecycleData = {};
     this._audioRecorder = null;
     this.appInfosCache = new AppInfosCache(this.log);

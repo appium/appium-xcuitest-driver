@@ -157,25 +157,25 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
  * @returns The viewport rectangle
  */
 export async function getViewportRect(this: XCUITestDriver): Promise<Viewport> {
-  const scale = await this.getDevicePixelRatio();
-  // status bar height comes in unscaled, so scale it
-  const statusBarHeight = Math.trunc((await this.getStatusBarHeight()) * scale);
-  const windowSize = await this.getWindowRect();
+  // Read both values together: display selection, orientation and status bar
+  // visibility can change during a session.
+  const {scale, statusBarSize, screenSize} = await this.getScreenInfo();
+  const statusBarHeight = Math.trunc(statusBarSize.height * scale);
+  const size = screenSize ?? (await this.getWindowRect());
 
   // ios returns coordinates/dimensions in logical pixels, not device pixels,
   // so scale up to device pixels. status bar height is already scaled.
   return {
     left: 0,
     top: statusBarHeight,
-    width: Math.trunc(windowSize.width * scale),
-    height: Math.trunc(windowSize.height * scale) - statusBarHeight,
+    width: Math.trunc(size.width * scale),
+    height: Math.trunc(size.height * scale) - statusBarHeight,
   };
 }
 
 /**
- * Get information about the screen.
+ * Get fresh information about the screen from WDA.
  *
- * @privateRemarks memoized in constructor
  * @returns Screen information including dimensions, scale, and status bar size
  */
 export async function getScreenInfo(this: XCUITestDriver): Promise<ScreenInfo> {
@@ -195,7 +195,6 @@ export async function getStatusBarHeight(this: XCUITestDriver): Promise<number> 
 /**
  * Gets the device pixel ratio.
  *
- * @privateRemarks memoized in constructor
  * @returns The device pixel ratio (scale factor)
  */
 export async function getDevicePixelRatio(this: XCUITestDriver): Promise<number> {

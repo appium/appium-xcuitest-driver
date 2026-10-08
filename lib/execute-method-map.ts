@@ -543,6 +543,13 @@ export const executeMethodMap = {
       optional: ['bundleId'],
     },
   },
+  'mobile: setSimulatedHingeAngle': {
+    command: 'mobileSetSimulatedHingeAngle',
+    params: {required: ['angle']},
+  },
+  'mobile: getSimulatedHingeAngle': {
+    command: 'mobileGetSimulatedHingeAngle',
+  },
   'mobile: setSimulatedLocation': {
     command: 'mobileSetSimulatedLocation',
     params: {

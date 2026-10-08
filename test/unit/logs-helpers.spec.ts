@@ -35,5 +35,10 @@ describe('log-helpers', function () {
       await fs.writeFile(filePath, `123\n45\nAB`, 'utf8');
       assert.strictEqual(await grepFile(filePath, 'cd', {caseInsensitive: true}), false);
     });
+
+    it('should reject if the file no longer exists', async function () {
+      const filePath = path.join(tmpRoot, 'missing.ips');
+      await assert.rejects(grepFile(filePath, 'anything'), {code: 'ENOENT'});
+    });
   });
 });

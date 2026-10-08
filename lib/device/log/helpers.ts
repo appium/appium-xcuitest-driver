@@ -27,6 +27,7 @@ export async function grepFile(fullPath: string, str: string, opts: GrepOptions 
   const rl = createInterface({input});
   return await new Promise((resolve, reject) => {
     input.once('error', reject);
+    rl.once('error', reject);
     rl.on('line', (line) => {
       if (
         (opts.caseInsensitive && line.toLowerCase().includes(String(str).toLowerCase())) ||
