@@ -455,7 +455,7 @@ export interface DisplayInfo {
     density: number;
     xStart: number;
     yStart: number;
-    trains: number;
+    traits: number;
   };
   isDefault: boolean;
 }

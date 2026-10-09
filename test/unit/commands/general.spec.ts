@@ -40,7 +40,7 @@ describe('general commands', function () {
     it('should return the displays reported by WDA in the UiAutomator2 format', async function () {
       const screens = [
         {displayId: 1, isMain: true, scale: 3, bounds: {x: 0, y: 0, width: 1206, height: 2622}, traits: 0},
-        {displayId: 3, isMain: false, scale: 3, bounds: {x: 0, y: 0, width: 2007, height: 2853}, traits: 0},
+        {displayId: 3, isMain: false, scale: 2, bounds: {x: 12, y: 34, width: 2007, height: 2853}, traits: 4},
       ];
       mockDriver.expects('proxyCommand').once().withExactArgs('/wda/screens', 'GET').resolves(screens);
       assert.deepEqual(await driver.execute('mobile: listDisplays'), [
@@ -49,7 +49,10 @@ describe('general commands', function () {
           metrics: {
             widthPixels: 1206,
             heightPixels: 2622,
+            xStart: 0,
+            yStart: 0,
             density: 3,
+            traits: 0,
           },
           isDefault: true,
         },
@@ -58,7 +61,10 @@ describe('general commands', function () {
           metrics: {
             widthPixels: 2007,
             heightPixels: 2853,
-            density: 3,
+            xStart: 12,
+            yStart: 34,
+            density: 2,
+            traits: 4,
           },
           isDefault: false,
         },
