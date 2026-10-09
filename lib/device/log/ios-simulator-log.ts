@@ -111,15 +111,15 @@ export class IOSSimulatorLog extends LineConsumingLog {
         resolve();
       }, START_GRACE_MS);
     });
-    const exited = once(proc, 'exit').then((args: unknown[]) => {
+    const exited = (async () => {
+      const [code, signal] = (await once(proc, 'exit')) as [number | null, NodeJS.Signals | null];
       if (pastGrace) {
         return;
       }
-      const [code, signal] = args as [number | null, NodeJS.Signals | null];
       if (code !== 0 || signal !== null) {
         throw new Error(`'${LOG_BINARY_PATH}' exited immediately with ${signal ? `signal ${signal}` : `code ${code}`}`);
       }
-    });
+    })();
     try {
       await Promise.race([settled, exited]);
     } finally {
