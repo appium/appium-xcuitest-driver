@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@appium/css-locator-to-native": "^1.0.1",
-    "@appium/strongbox": "^3.0.0-beta.0",
+    "@appium/strongbox": "^3.0.0-beta.1",
     "appium-ios-device": "^3.1.22",
     "appium-ios-simulator": "^10.7.0",
     "appium-remote-debugger": "^17.4.2",
@@ -92,11 +92,11 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@appium/docutils": "^4.0.0-beta.2",
-    "@appium/oxc-config": "^2.0.0-beta.0",
-    "@appium/semantic-release-config": "^2.0.0-beta.0",
-    "@appium/tsconfig": "^2.0.0-beta.0",
-    "@appium/types": "^2.0.0-beta.2",
+    "@appium/docutils": "^4.0.0-beta.3",
+    "@appium/oxc-config": "^2.0.0-beta.2",
+    "@appium/semantic-release-config": "^2.0.0-beta.1",
+    "@appium/tsconfig": "^2.0.0-beta.1",
+    "@appium/types": "^2.0.0-beta.3",
     "@types/async-lock": "^1.4.2",
     "@types/node": "^26.0.0",
     "@types/portscanner": "^2.1.1",
@@ -107,7 +107,7 @@
     "webdriverio": "^9.4.1"
   },
   "peerDependencies": {
-    "appium": "^4.0.0-beta.3"
+    "appium": "^4.0.0-beta.4"
   },
   "optionalDependencies": {
     "appium-ios-remotexpc": "^5.20.1",
