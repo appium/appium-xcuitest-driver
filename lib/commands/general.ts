@@ -189,12 +189,15 @@ export async function getScreenInfo(this: XCUITestDriver): Promise<ScreenInfo> {
  */
 export async function mobileListDisplays(this: XCUITestDriver): Promise<DisplayInfo[]> {
   const displayInfo = (await this.proxyCommand('/wda/screens', 'GET')) as WDADisplayInfo[];
-  return displayInfo.map(({displayId, isMain, scale, bounds}) => ({
+  return displayInfo.map(({displayId, isMain, scale, bounds, traits}) => ({
     id: displayId,
     metrics: {
       widthPixels: bounds.width,
       heightPixels: bounds.height,
+      xStart: bounds.x,
+      yStart: bounds.y,
       density: scale,
+      traits,
     },
     isDefault: isMain,
   }));

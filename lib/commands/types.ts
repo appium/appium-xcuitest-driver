@@ -453,6 +453,9 @@ export interface DisplayInfo {
     widthPixels: number;
     heightPixels: number;
     density: number;
+    xStart: number;
+    yStart: number;
+    trains: number;
   };
   isDefault: boolean;
 }

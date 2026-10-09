@@ -1254,6 +1254,9 @@ Name | Type | Description
 widthPixels | number | The display width in native pixels
 heightPixels | number | The display height in native pixels
 density | number | The display scale factor
+xStart | number | Horizontal coordinate offset
+yStart | number | Vertical coordinate offset
+trains | number | The display trains
 
 ### mobile: swipe
 
