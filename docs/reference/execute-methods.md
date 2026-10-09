@@ -2339,14 +2339,10 @@ utterance | string or null | The current spoken utterance, or `null` | Button
 
 Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the WebDriverAgent **MJPEG** stream. Equivalent to [`startRecordingScreen`](./commands.md#startrecordingscreen) over HTTP. Requires `ffmpeg` on `PATH`. Audio is not recorded.
 
-With software recording and no explicit `videoFilters` or `videoScale`, the first MJPEG frame
-sets the output canvas (rounded up to even dimensions). Later frames fit this canvas with their
-aspect ratio preserved and black padding, including when folding a device or switching displays.
-ffmpeg establishes this canvas directly from its first decoded frame and preserves the filter
-geometry across resolution changes. No additional stream connection or image-module dependency
-is needed. This works with multipart and raw MJPEG streams. Explicit filters/scaling and
-hardware acceleration retain their existing filter reinitialization behavior; configure a fixed
-canvas in your filters if needed.
+With software recording and no explicit `videoFilters` or `videoScale`, the first frame sets
+the video dimensions (rounded up to even numbers). If the display size changes, later frames
+are scaled to fit with their aspect ratio preserved and black padding. With custom filters,
+scaling, or hardware acceleration, configure fixed output dimensions if needed.
 
 #### Arguments
 
@@ -2408,14 +2404,11 @@ If the screen recording is already running this API is a noop.
 The feature is only available since Xcode 15/iOS 17.
 
 On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
-XCTest recording of the closed device's outer display produced a one-frame black
-video, even though WDA supplied the selected display ID to XCTest and ordinary
-screenshots were correct. The inner-display recording contained visible content.
-This also reproduced with a freshly started WDA runner; successful start/stop
-responses alone do not confirm useful video. Other runtimes and physical Duo
-recording remain unverified. Use [`startRecordingScreen`](./commands.md#startrecordingscreen)
-(the MJPEG/ffmpeg path) when affected. To encode upright MJPEG pixels, opt in to
-[`mjpegFixOrientation`](./settings.md); its default behavior is unchanged.
+XCTest recording of the closed device's outer display produced a one-frame black video
+despite successful start/stop responses. Inner-display recording worked; other runtimes
+and physical Duo devices remain unverified. If affected, use
+[`startRecordingScreen`](./commands.md#startrecordingscreen) and enable
+[`mjpegFixOrientation`](./settings.md) for upright video.
 
 #### Arguments
 
