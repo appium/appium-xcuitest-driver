@@ -85,12 +85,13 @@ While the session is running, list the available displays with
     print(screens)
     ```
 
-The returned array contains each screen's `displayId`, `isMain`, `bounds`, `scale`, and `traits`.
+The returned array contains each screen's `id`, `isDefault`, and `metrics`.
+The `metrics` object contains `widthPixels`, `heightPixels`, and the display scale factor, `density`.
 Choose the display you intend to test using this information and a screenshot;
 do not assume fixed IDs for the inner and outer displays or select by array position.
 
 Set the chosen ID through Appium's Settings API. In these examples, replace `3` with the
-integer `displayId` returned for your target display:
+integer `id` returned for your target display:
 
 === "JS (WebdriverIO)"
 

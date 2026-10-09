@@ -1231,7 +1231,7 @@ The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"sc
 
 ### mobile: listDisplays
 
-Lists the displays of the device under test. Use a returned `displayId` as the
+Lists the displays of the device under test. Use a returned `id` as the
 [`currentDisplayId`](./settings.md#currentdisplayid) setting value to target that display.
 The command retrieves a fresh list without changing the selected display. After folding or
 unfolding, query the displays again rather than assuming the main display is the visible one.
@@ -1243,11 +1243,17 @@ An array of display entries, where each entry contains:
 
 Name | Type | Description
 --- | --- | ---
-displayId | number | The display identifier
-isMain | boolean | Whether this is the device's main display
-scale | number | The display scale
-bounds | object | `x`, `y`, `width` and `height` of the display in native pixels
-traits | number | Display traits as reported by XCTest
+id | number | The display identifier, usable as the `currentDisplayId` setting value
+isDefault | boolean | Whether this is the device's main display
+metrics | object | Display dimensions and scale, as described below
+
+The `metrics` object contains:
+
+Name | Type | Description
+--- | --- | ---
+widthPixels | number | The display width in native pixels
+heightPixels | number | The display height in native pixels
+density | number | The display scale factor
 
 ### mobile: swipe
 
