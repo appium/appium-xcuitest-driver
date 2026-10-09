@@ -7,7 +7,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import type {Viewport, ScreenInfo, ButtonName, DisplayInfo} from './types.js';
+import type {Viewport, ScreenInfo, ButtonName, DisplayInfo, WDADisplayInfo} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
@@ -187,8 +187,17 @@ export async function getScreenInfo(this: XCUITestDriver): Promise<ScreenInfo> {
  *
  * @returns Information about each display, including its identifier
  */
-export async function mobileGetScreens(this: XCUITestDriver): Promise<DisplayInfo[]> {
-  return (await this.proxyCommand('/wda/screens', 'GET')) as DisplayInfo[];
+export async function mobileListDisplays(this: XCUITestDriver): Promise<DisplayInfo[]> {
+  const displayInfo = (await this.proxyCommand('/wda/screens', 'GET')) as WDADisplayInfo[];
+  return displayInfo.map(({displayId, isMain, scale, bounds}) => ({
+    id: displayId,
+    metrics: {
+      widthPixels: bounds.width,
+      heightPixels: bounds.height,
+      density: scale,
+    },
+    isDefault: isMain,
+  }));
 }
 
 /**

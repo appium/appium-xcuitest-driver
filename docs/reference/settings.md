@@ -105,7 +105,7 @@ explains the difference.
 | `int` or `null` | `null` (the main display) |
 
 The display targeted by screenshots and W3C actions, for devices with more than one display.
-Use a `displayId` returned by [`mobile: getScreens`](./execute-methods.md#mobile-getscreens).
+Use a `displayId` returned by [`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays).
 Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
 that no display has is an error. Setting it to `null` goes back to the main display. The value
 is reset for each new session.

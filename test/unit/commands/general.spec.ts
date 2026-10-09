@@ -36,14 +36,33 @@ describe('general commands', function () {
     });
   });
 
-  describe('getScreens', function () {
-    it('should return the displays reported by WDA', async function () {
+  describe('listDisplays', function () {
+    it('should return the displays reported by WDA in the UiAutomator2 format', async function () {
       const screens = [
         {displayId: 1, isMain: true, scale: 3, bounds: {x: 0, y: 0, width: 1206, height: 2622}, traits: 0},
         {displayId: 3, isMain: false, scale: 3, bounds: {x: 0, y: 0, width: 2007, height: 2853}, traits: 0},
       ];
       mockDriver.expects('proxyCommand').once().withExactArgs('/wda/screens', 'GET').resolves(screens);
-      assert.deepEqual(await driver.execute('mobile: getScreens'), screens);
+      assert.deepEqual(await driver.execute('mobile: listDisplays'), [
+        {
+          id: 1,
+          metrics: {
+            widthPixels: 1206,
+            heightPixels: 2622,
+            density: 3,
+          },
+          isDefault: true,
+        },
+        {
+          id: 3,
+          metrics: {
+            widthPixels: 2007,
+            heightPixels: 2853,
+            density: 3,
+          },
+          isDefault: false,
+        },
+      ]);
     });
 
     it('should target the main display by default', async function () {

@@ -69,19 +69,19 @@ for screenshots and W3C touch actions. Folding or unfolding does not update this
 the main display is not necessarily the one visible in the current fold state.
 
 While the session is running, list the available displays with
-[`mobile: getScreens`](../reference/execute-methods.md#mobile-getscreens):
+[`mobile: listDisplays`](../reference/execute-methods.md#mobile-listdisplays):
 
 === "JS (WebdriverIO)"
 
     ```javascript
-    const screens = await driver.execute('mobile: getScreens');
+    const screens = await driver.execute('mobile: listDisplays');
     console.log(screens);
     ```
 
 === "Python"
 
     ```python
-    screens = driver.execute_script('mobile: getScreens')
+    screens = driver.execute_script('mobile: listDisplays')
     print(screens)
     ```
 
@@ -108,7 +108,7 @@ integer `displayId` returned for your target display:
     driver.save_screenshot('./duo-selected-display.png')
     ```
 
-After changing the fold state, call `mobile: getScreens` again and update the selection as needed before
+After changing the fold state, call `mobile: listDisplays` again and update the selection as needed before
 interacting with the app or capturing it. Wait for the expected layout and keep the fold state
 and display selection stable while a gesture runs. For W3C actions with an element origin, the
 selected display must match the element's display.

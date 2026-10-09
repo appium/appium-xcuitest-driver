@@ -521,7 +521,7 @@ export class XCUITestDriver
   setUrl = generalCommands.setUrl;
   getViewportRect = generalCommands.getViewportRect;
   getScreenInfo = generalCommands.getScreenInfo;
-  mobileGetScreens = generalCommands.mobileGetScreens;
+  mobileListDisplays = generalCommands.mobileListDisplays;
   getStatusBarHeight = generalCommands.getStatusBarHeight;
   getDevicePixelRatio = generalCommands.getDevicePixelRatio;
   mobilePressButton = generalCommands.mobilePressButton;

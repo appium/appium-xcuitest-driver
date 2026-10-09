@@ -448,6 +448,17 @@ export interface ScreenInfo {
 
 export interface DisplayInfo {
   /** Display identifier, usable as the `currentDisplayId` setting value */
+  id: number;
+  metrics: {
+    widthPixels: number;
+    heightPixels: number;
+    density: number;
+  };
+  isDefault: boolean;
+}
+
+export interface WDADisplayInfo {
+  /** Display identifier, usable as the `currentDisplayId` setting value */
   displayId: number;
   /** Whether this is the device's main display */
   isMain: boolean;
