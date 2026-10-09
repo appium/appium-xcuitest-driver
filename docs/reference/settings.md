@@ -105,7 +105,7 @@ explains the difference.
 | `int` or `null` | `null` (the main display) |
 
 The display targeted by screenshots and W3C actions, for devices with more than one display.
-Use a `displayId` returned by [`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays).
+Use an `id` returned by [`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays).
 Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
 that no display has is an error. Setting it to `null` goes back to the main display. The value
 is reset for each new session.
@@ -123,8 +123,7 @@ session, including after resetting the setting to `null`. MJPEG frames do not id
 source display, so buffered frames cannot safely be reused after a display change.
 
 Folding or unfolding does not change this setting. See
-[iPhone Duo Automation](../guides/duo.md#select-a-display) for display discovery, selection, and
-reset examples using the XCUITest driver.
+[iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
 
 ## defaultActiveApplication
 

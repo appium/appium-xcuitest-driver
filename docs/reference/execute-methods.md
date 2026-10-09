@@ -1235,7 +1235,7 @@ Lists the displays of the device under test. Use a returned `id` as the
 [`currentDisplayId`](./settings.md#currentdisplayid) setting value to target that display.
 The command retrieves a fresh list without changing the selected display. After folding or
 unfolding, query the displays again rather than assuming the main display is the visible one.
-See [iPhone Duo Automation](../guides/duo.md#select-a-display) for client examples.
+See [iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
 
 #### Returned Result
 
