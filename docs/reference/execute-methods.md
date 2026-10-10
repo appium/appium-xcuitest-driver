@@ -1229,6 +1229,35 @@ The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"sc
 `statusBarSize` contains status bar dimensions. It is the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars).
 `scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
 
+### mobile: listDisplays
+
+Lists the displays of the device under test. Use a returned `id` as the
+[`currentDisplayId`](./settings.md#currentdisplayid) setting value to target that display.
+The command retrieves a fresh list without changing the selected display. After folding or
+unfolding, query the displays again rather than assuming the main display is the visible one.
+See [iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
+
+#### Returned Result
+
+An array of display entries, where each entry contains:
+
+Name | Type | Description
+--- | --- | ---
+id | number | The display identifier, usable as the `currentDisplayId` setting value
+isDefault | boolean | Whether this is the device's main display
+metrics | object | Display dimensions and scale, as described below
+
+The `metrics` object contains:
+
+Name | Type | Description
+--- | --- | ---
+widthPixels | number | The display width in native pixels
+heightPixels | number | The display height in native pixels
+density | number | The display scale factor
+xStart | number | Horizontal coordinate offset
+yStart | number | Vertical coordinate offset
+traits | number | The display traits
+
 ### mobile: swipe
 
 This gesture performs a simple "swipe" gesture on the particular screen element or
