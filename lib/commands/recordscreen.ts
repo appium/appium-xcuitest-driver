@@ -246,11 +246,14 @@ export class ScreenRecorder {
       this.timeoutHandler = null;
     }
 
-    if (this.mainProcess?.isRunning) {
-      const interruptPromise = this.mainProcess.stop(force ? 'SIGTERM' : 'SIGINT');
-      this.mainProcess = null;
+    const mainProcess = this.mainProcess;
+    if (mainProcess?.isRunning) {
       try {
-        await interruptPromise;
+        await mainProcess.stop(force ? 'SIGTERM' : 'SIGINT');
+        // Keep the reference until the process is gone, so a failed stop can be retried
+        if (this.mainProcess === mainProcess) {
+          this.mainProcess = null;
+        }
       } catch (e: any) {
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
@@ -328,10 +331,10 @@ export async function startRecordingScreen(
     pixelFormat,
     hardwareAcceleration,
   });
-  if (!(await screenRecorder.interrupt(true))) {
-    throw this.log.errorWithException('Unable to stop screen recording process');
-  }
   if (this._recentScreenRecorder) {
+    if (!(await this._recentScreenRecorder.interrupt(true))) {
+      throw this.log.errorWithException('Unable to stop screen recording process');
+    }
     await this._recentScreenRecorder.cleanup();
     this._recentScreenRecorder = null;
   }
