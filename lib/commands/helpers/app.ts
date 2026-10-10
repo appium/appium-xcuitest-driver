@@ -31,6 +31,13 @@ const ZIP_EXT = '.zip';
 const SANITIZE_REPLACEMENT = '-';
 const INTEL_ARCH = 'x86_64';
 const MAX_ARCHIVE_SCAN_DEPTH = 1;
+// RFC 5987: filename*=UTF-8''percent-encoded-name (the language tag is optional)
+const FILENAME_STAR_PATTERN = /(?:^|;)\s*filename\*\s*=\s*[^';\s]+'[^']*'([^;]+)/i;
+const QUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*"((?:\\.|[^"\\])*)"/i;
+// stops at ';' so that later parameters are not swallowed
+const UNQUOTED_FILENAME_PATTERN = /(?:^|;)\s*filename\s*=\s*([^;\s]+)/i;
+const SURROUNDING_QUOTES_PATTERN = /^["']|["']$/g;
+const ESCAPED_CHAR_PATTERN = /\\(.)/g;
 
 type SafariPreferencesOpts = Pick<DriverOpts<XCUITestDriverConstraints>, 'safariGlobalPreferences'>;
 
@@ -514,21 +521,34 @@ async function isIpaBundle(appPath: string): Promise<boolean> {
 }
 
 /**
- * Used to parse the file name value from response headers
+ * Used to parse the file name value from response headers.
+ * RFC 5987 `filename*` is preferred over `filename`, which may be quoted or not.
+ *
+ * @internal Exposed for unit tests.
  */
-function parseFileName(headers: HTTPHeaders): string | null {
+export function parseFileName(headers: HTTPHeaders): string | null {
   const contentDisposition = headers['content-disposition'];
-  if (typeof contentDisposition !== 'string') {
+  if (typeof contentDisposition !== 'string' || !/^attachment/i.test(contentDisposition)) {
     return null;
   }
 
-  if (/^attachment/i.test(contentDisposition)) {
-    const match = /filename="([^"]+)/i.exec(contentDisposition);
-    if (match) {
-      return fs.sanitizeName(match[1], {replacement: SANITIZE_REPLACEMENT});
+  let fileName: string | undefined;
+  const encodedMatch = FILENAME_STAR_PATTERN.exec(contentDisposition);
+  if (encodedMatch) {
+    try {
+      fileName = decodeURIComponent(encodedMatch[1].trim().replace(SURROUNDING_QUOTES_PATTERN, ''));
+    } catch {
+      // invalid percent-encoding, fall back to the filename parameter
     }
   }
-  return null;
+  if (!fileName) {
+    // an empty quoted value must not fall through to the unquoted pattern, which would capture the quotes
+    const quotedMatch = QUOTED_FILENAME_PATTERN.exec(contentDisposition);
+    fileName = quotedMatch
+      ? quotedMatch[1].replace(ESCAPED_CHAR_PATTERN, '$1')
+      : UNQUOTED_FILENAME_PATTERN.exec(contentDisposition)?.[1];
+  }
+  return fileName ? fs.sanitizeName(fileName, {replacement: SANITIZE_REPLACEMENT}) : null;
 }
 
 /**

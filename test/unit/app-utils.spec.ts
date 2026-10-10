@@ -5,7 +5,7 @@ import {describe, it, before} from 'node:test';
 import {fs, tempDir, zip} from 'appium/support.js';
 import {createSandbox} from 'sinon';
 
-import {onDownloadApp, unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
+import {onDownloadApp, parseFileName, unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
 import {XCUITestDriver} from '../../lib/driver.js';
 import {getUIKitCatalogPath} from '../setup.js';
 
@@ -92,6 +92,46 @@ describe('app-utils', function () {
       } finally {
         await fs.rimraf(tmpDir);
       }
+    });
+  });
+
+  describe('parseFileName', function () {
+    it('should parse a quoted filename', function () {
+      assert.strictEqual(parseFileName({'content-disposition': 'attachment; filename="build.zip"'}), 'build.zip');
+    });
+
+    it('should parse an unquoted filename', function () {
+      assert.strictEqual(parseFileName({'content-disposition': 'attachment; filename=build.zip'}), 'build.zip');
+    });
+
+    it('should not let an unquoted filename swallow later parameters', function () {
+      assert.strictEqual(
+        parseFileName({'content-disposition': 'attachment; filename=build.zip; size=42'}),
+        'build.zip',
+      );
+    });
+
+    it('should prefer a percent-encoded RFC 5987 filename*', function () {
+      assert.strictEqual(
+        parseFileName({'content-disposition': `attachment; filename="fallback.ipa"; filename*=UTF-8''My%20App.zip`}),
+        'My App.zip',
+      );
+    });
+
+    it('should fall back to filename if filename* cannot be decoded', function () {
+      assert.strictEqual(
+        parseFileName({'content-disposition': `attachment; filename*=UTF-8''%E0%A4%A; filename="build.zip"`}),
+        'build.zip',
+      );
+    });
+
+    it('should return null if there is no filename', function () {
+      assert.strictEqual(parseFileName({'content-disposition': 'attachment'}), null);
+      assert.strictEqual(parseFileName({}), null);
+    });
+
+    it('should return null for inline dispositions', function () {
+      assert.strictEqual(parseFileName({'content-disposition': 'inline; filename=build.zip'}), null);
     });
   });
 
