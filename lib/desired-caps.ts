@@ -15,6 +15,12 @@ export const desiredCapConstraints = {
   app: {
     isString: true,
   },
+  language: {
+    isString: true,
+  },
+  locale: {
+    isString: true,
+  },
   calendarFormat: {
     isString: true,
   },
@@ -23,6 +29,12 @@ export const desiredCapConstraints = {
   },
   udid: {
     isString: true,
+  },
+  orientation: {
+    inclusion: ['LANDSCAPE', 'PORTRAIT'],
+  },
+  autoWebview: {
+    isBoolean: true,
   },
   autoAcceptAlerts: {
     isBoolean: true,
