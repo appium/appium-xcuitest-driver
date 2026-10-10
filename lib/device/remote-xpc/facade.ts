@@ -7,7 +7,9 @@ import {isDeviceListedInUsbmux} from './usbmux-utils.js';
 import {
   formatRemoteXPCFallbackLog,
   isTunnelAvailabilityError,
+  REMOTE_XPC_TUNNEL_SETUP_DOC_LINK,
   RemoteXPCUnavailableError,
+  TUNNEL_CREATION_COMMAND,
   wrapRemoteXPCConnectionError,
   type RemoteXPCEsmModule,
   type RemoteXPCServices,
@@ -55,6 +57,35 @@ export class RemoteXPCFacade {
       return null;
     }
     return mod.Services;
+  }
+
+  /**
+   * Explains why RemoteXPC cannot be used, and what to do about it.
+   *
+   * {@link determineAvailability} is false both when the optional package is missing and when no
+   * tunnel is reachable, which need different fixes - so they are reported separately, each
+   * leading with the command that resolves it. Module loading is cached process-wide, making the
+   * extra probe free after the first call.
+   *
+   * @param featureNote - One sentence naming what could not be done, for features that have no
+   *                      legacy fallback and therefore fail outright.
+   */
+  async describeUnavailability(featureNote: string): Promise<string> {
+    const isPackageInstalled = Boolean(await RemoteXPCFacade.tryGetServicesStatic(undefined));
+    const startTunnel = `  ${TUNNEL_CREATION_COMMAND}   (requires root)`;
+
+    if (!isPackageInstalled) {
+      return (
+        `The optional appium-ios-remotexpc package could not be loaded. ${featureNote}\n` +
+        `Install it, then start a tunnel with:\n${startTunnel}\n` +
+        `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
+      );
+    }
+    return (
+      `No RemoteXPC tunnel is available for '${this.udid}'. Start one with:\n${startTunnel}\n` +
+      `${featureNote}\n` +
+      `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
+    );
   }
 
   /**
