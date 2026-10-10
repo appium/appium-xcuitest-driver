@@ -18,6 +18,19 @@ export const desiredCapConstraints = {
   calendarFormat: {
     isString: true,
   },
+  locale: {
+    isString: true,
+  },
+  language: {
+    isString: true,
+  },
+  autoWebview: {
+    isBoolean: true,
+  },
+  orientation: {
+    isString: true,
+    inclusionCaseInsensitive: ['LANDSCAPE', 'PORTRAIT'],
+  },
   bundleId: {
     isString: true,
   },

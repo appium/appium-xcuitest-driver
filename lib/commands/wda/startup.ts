@@ -383,7 +383,7 @@ async function createWdaSession(driver: XCUITestDriver, bundleId?: string, proce
   }
 
   const wdaCaps: StringRecord = {
-    bundleId: driver.opts.autoLaunch === false ? undefined : bundleId,
+    bundleId,
     arguments: args,
     environment: env,
     eventloopIdleDelaySec: driver.opts.wdaEventloopIdleDelay ?? 0,
