@@ -156,14 +156,9 @@ describe('XCUITestDriver - elements -', function () {
       const secureText = new Array(text1.length).fill('•').join('');
       const phText = 'Placeholder text';
 
-      async function hideKeyboardAndFocus(el: ChainablePromiseElement) {
-        // Finish dismissing the previous keyboard before focusing the next field. Typing
-        // during this transition can succeed at the protocol level without entering text.
-        await driver.hideKeyboard();
-        await driver.waitUntil(async () => !(await driver.isKeyboardShown()), {
-          timeout: 10000,
-          timeoutMsg: 'Keyboard did not disappear before switching text fields',
-        });
+      async function focusTextField(el: ChainablePromiseElement) {
+        // Switch focus directly. UIKitCatalog can keep the keyboard visible after clearing
+        // a field, so successful input must not depend on hideKeyboard dismissing it.
         await el.waitForDisplayed({timeout: 10000});
         await el.click();
         await driver.waitUntil(() => driver.isKeyboardShown(), {
@@ -214,7 +209,7 @@ describe('XCUITestDriver - elements -', function () {
           const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
-          await hideKeyboardAndFocus(els[1]);
+          await focusTextField(els[1]);
           await els[1].setValue(text2);
 
           let text = await els[0].getText();
@@ -279,18 +274,19 @@ describe('XCUITestDriver - elements -', function () {
           let text = await els[0].getText();
           assert.strictEqual(text, text1);
 
-          await hideKeyboardAndFocus(els[1]);
+          await focusTextField(els[1]);
           await els[1].setValue(text2);
 
           text = await els[1].getText();
           assert.strictEqual(text, text2);
 
+          await focusTextField(els[0]);
           await els[0].clearValue();
 
           text = await els[0].getText();
           assert.strictEqual(text, phText);
 
-          await hideKeyboardAndFocus(els[1]);
+          await focusTextField(els[1]);
           await els[1].clearValue();
 
           text = await els[1].getText();
