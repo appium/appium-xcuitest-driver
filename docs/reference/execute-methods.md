@@ -2424,6 +2424,11 @@ utterance | string or null | The current spoken utterance, or `null` | Button
 
 Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the WebDriverAgent **MJPEG** stream. Equivalent to [`startRecordingScreen`](./commands.md#startrecordingscreen) over HTTP. Requires `ffmpeg` on `PATH`. Audio is not recorded.
 
+With software recording and no explicit `videoFilters` or `videoScale`, the first frame sets
+the video dimensions (rounded up to even numbers). If the display size changes, later frames
+are scaled to fit with their aspect ratio preserved and black padding. With custom filters,
+scaling, or hardware acceleration, configure fixed output dimensions if needed.
+
 #### Arguments
 
 Pass the same fields as for HTTP [`startRecordingScreen`](./commands.md#startrecordingscreen) `options`, as **top-level** keys on the execute argument object (they are forwarded into one options object server-side). Example:
@@ -2482,6 +2487,13 @@ to guard against internal storage overload. Simulators are not affected.
 If the screen recording is already running this API is a noop.
 
 The feature is only available since Xcode 15/iOS 17.
+
+On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
+XCTest recording of the closed device's outer display produced a one-frame black video
+despite successful start/stop responses. Inner-display recording worked; other runtimes
+and physical Duo devices remain unverified. If affected, use
+[`startRecordingScreen`](./commands.md#startrecordingscreen) and enable
+[`mjpegFixOrientation`](./settings.md) for upright video.
 
 #### Arguments
 
