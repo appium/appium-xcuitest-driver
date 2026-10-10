@@ -1,6 +1,7 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import type {AppiumLogger, IAppiumIpc, IIpcSubscription, IpcMessage} from '@appium/types';
+import {errors} from 'appium/driver.js';
 import {node, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 
@@ -76,26 +77,30 @@ export class SessionClaimHandler {
 
     const contendingSessionIds = new Set<string>();
     const releasedSessionIds = new Set<string>();
-    const contendedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
-      SessionClaimHandler.CONTENDED_TOPIC,
-      this.getPublisherId(driver),
-    );
-    const releasedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
-      SessionClaimHandler.RELEASED_TOPIC,
-      this.getPublisherId(driver),
-    );
-    contendedSubscription.on('message', (message) => {
-      if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
-        contendingSessionIds.add(message.data.sessionId);
-      }
-    });
-    releasedSubscription.on('message', (message) => {
-      if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
-        releasedSessionIds.add(message.data.sessionId);
-      }
-    });
+    const subscriptions: IIpcSubscription<SessionUdidIpcMessage>[] = [];
 
     try {
+      const contendedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
+        SessionClaimHandler.CONTENDED_TOPIC,
+        this.getPublisherId(driver),
+      );
+      subscriptions.push(contendedSubscription);
+      const releasedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
+        SessionClaimHandler.RELEASED_TOPIC,
+        this.getPublisherId(driver),
+      );
+      subscriptions.push(releasedSubscription);
+      contendedSubscription.on('message', (message) => {
+        if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
+          contendingSessionIds.add(message.data.sessionId);
+        }
+      });
+      releasedSubscription.on('message', (message) => {
+        if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
+          releasedSessionIds.add(message.data.sessionId);
+        }
+      });
+
       await ipc.publish<SessionUdidIpcMessage>(SessionClaimHandler.CLAIMED_TOPIC, this.getPublisherId(driver), {
         udid,
         sessionId,
@@ -125,8 +130,7 @@ export class SessionClaimHandler {
         );
       }
     } finally {
-      contendedSubscription.unsubscribe();
-      releasedSubscription.unsubscribe();
+      subscriptions.forEach((sub) => sub.unsubscribe());
     }
   }
 
@@ -197,7 +201,12 @@ export class SessionClaimHandler {
     const {log} = driver;
 
     try {
-      await driver.deleteSession();
+      // Unlike deleteSession(), this also makes the server drop the session from its list
+      await driver.startUnexpectedShutdown(
+        new errors.NoSuchDriverError(
+          `This session has been replaced by a newer one on the same device (udid '${udid}')`,
+        ),
+      );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       log.warn(`Could not terminate session '${sessionId}' on IPC request: ${msg}`);
