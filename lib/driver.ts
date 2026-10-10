@@ -36,6 +36,7 @@ import * as contentSizeCommands from './commands/content-size.js';
 import * as contextCommands from './commands/context.js';
 import {notifyBiDiContextChange} from './commands/context.js';
 import * as deviceInfoCommands from './commands/device-info.js';
+import * as displayCommands from './commands/display.js';
 import * as elementCommands from './commands/element.js';
 import * as executeCommands from './commands/execute.js';
 import * as fileMovementCommands from './commands/file-movement.js';
@@ -519,11 +520,11 @@ export class XCUITestDriver
   launchApp = generalCommands.launchApp;
   closeApp = generalCommands.closeApp;
   setUrl = generalCommands.setUrl;
-  getViewportRect = generalCommands.getViewportRect;
-  getScreenInfo = generalCommands.getScreenInfo;
-  mobileListDisplays = generalCommands.mobileListDisplays;
-  getStatusBarHeight = generalCommands.getStatusBarHeight;
-  getDevicePixelRatio = generalCommands.getDevicePixelRatio;
+  getViewportRect = displayCommands.getViewportRect;
+  getScreenInfo = displayCommands.getScreenInfo;
+  mobileListDisplays = displayCommands.mobileListDisplays;
+  getStatusBarHeight = displayCommands.getStatusBarHeight;
+  getDevicePixelRatio = displayCommands.getDevicePixelRatio;
   mobilePressButton = generalCommands.mobilePressButton;
   mobileSiriCommand = generalCommands.mobileSiriCommand;
 
