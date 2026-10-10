@@ -179,20 +179,12 @@ export class ScreenRecorder {
       args.push('-hwaccel_output_format', hwaccelOutputFormat);
     }
 
-    // Raw MJPEG has no timestamps. Use the broadcaster's configured frame rate
-    // for every codec; ffmpeg otherwise assumes 25 fps.
+    // Raw MJPEG has no timestamps; override ffmpeg's 25 fps default for every codec.
     args.push('-r', String(videoFps || DEFAULT_FPS));
     const useAutomaticCanvas = !videoFilters && !videoScale && !hardwareAcceleration;
     if (useAutomaticCanvas) {
       // Preserve the first frame's filter geometry across input size changes.
-      // Keep canvas discovery and scaling in ffmpeg, including for raw MJPEG.
-      // A separate MJPEG/sharp probe required a second connection and added startup
-      // latency (~104 ms for responsive multipart input; a 10 s frame timeout for
-      // raw input in our tests), plus an optional sharp dependency. Avoid bringing
-      // that probe back: ffmpeg can establish the canvas from its first decoded frame.
-      // On a synthetic Duo-size stream, ffmpeg-only CPU time was within -2% to +3%
-      // of the previous default (ffmpeg 9.0.2, three runs per codec); this is not a
-      // general performance guarantee. Measurements: appium/appium-xcuitest-driver#3010.
+      // Let ffmpeg establish the canvas without a separate stream probe.
       args.push('-reinit_filter', '0');
     }
     const parsed = new URL(remoteUrl);
