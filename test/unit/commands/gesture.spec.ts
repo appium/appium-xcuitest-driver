@@ -251,6 +251,15 @@ describe('gesture commands', function () {
         );
       });
 
+      it('should pass value and maxAttempts through to WDA', async function () {
+        const opts = {elementId: 4, order: 'next', value: 'myvalue', maxAttempts: 50};
+        mockDriver
+          .expects('proxyCommand')
+          .once()
+          .withExactArgs('/wda/pickerwheel/4/select', 'POST', {order: 'next', value: 'myvalue', maxAttempts: 50});
+        await driver.execute(`mobile: ${commandName}`, opts);
+      });
+
       it('should proxy a selectPickerWheel request for an element through to WDA', async function () {
         const opts = {elementId: 4, order: 'next', offset: 0.3};
         mockDriver
