@@ -41,8 +41,17 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return data;
   };
 
-  // if we've specified an mjpeg server, use that
-  if (this.mjpegStream) {
+  // The current MJPEG stream and simulator fallback do not select a display.
+  // CoreSim supports display selection, but requires a display port UUID rather
+  // than WDA's numeric display ID. Use WDA until that mapping is implemented.
+  const {currentDisplayId} = await this.settings.getSettings();
+  if (currentDisplayId !== undefined && currentDisplayId !== null) {
+    return await getScreenshotFromWDA();
+  }
+
+  // Frames carry no display identity. Once selection changes, even resetting to
+  // the main display cannot safely reuse this stream (old frames may be queued).
+  if (this.mjpegStream && !this._hasUpdatedDisplaySelection) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);
     // Preserve legacy conversion unless orientation correction was explicitly enabled.
     const fixOrientation = this.settings.getSettings().mjpegFixOrientation === true;
