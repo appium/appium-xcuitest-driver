@@ -183,7 +183,7 @@ export const executeMethodMap = {
     command: 'mobileLaunchApp',
     params: {
       required: ['bundleId'],
-      optional: ['arguments', 'environment'],
+      optional: ['arguments', 'environment', 'asAppUnderTest'],
     },
   },
   'mobile: terminateApp': {
