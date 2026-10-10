@@ -107,7 +107,7 @@
     "pem": "^1.14.8",
     "sharp": "^0.x",
     "sinon": "^22.0.0",
-    "webdriverio": "^9.4.1"
+    "webdriverio": "^10.0.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-rc.2"
