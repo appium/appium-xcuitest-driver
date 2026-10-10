@@ -15168,6 +15168,10 @@ later.</p>
 </table>
 <h3 id="mobile-startscreenrecording">mobile: startScreenRecording<a class="headerlink" href="#mobile-startscreenrecording" title="Permanent link">&para;</a></h3>
 <p>Starts recording the device screen to an MPEG-4 file using <strong>ffmpeg</strong> and the WebDriverAgent <strong>MJPEG</strong> stream. Equivalent to <a href="../commands/#startrecordingscreen"><code>startRecordingScreen</code></a> over HTTP. Requires <code>ffmpeg</code> on <code>PATH</code>. Audio is not recorded.</p>
+<p>With software recording and no explicit <code>videoFilters</code> or <code>videoScale</code>, the first frame sets
+the video dimensions (rounded up to even numbers). If the display size changes, later frames
+are scaled to fit with their aspect ratio preserved and black padding. With custom filters,
+scaling, or hardware acceleration, configure fixed output dimensions if needed.</p>
 <h4 id="arguments_75">Arguments<a class="headerlink" href="#arguments_75" title="Permanent link">&para;</a></h4>
 <p>Pass the same fields as for HTTP <a href="../commands/#startrecordingscreen"><code>startRecordingScreen</code></a> <code>options</code>, as <strong>top-level</strong> keys on the execute argument object (they are forwarded into one options object server-side). Example:</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="s1">&#39;mobile: startScreenRecording&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
@@ -15205,6 +15209,12 @@ deleted from the device itself:</p>
 to guard against internal storage overload. Simulators are not affected.</p>
 <p>If the screen recording is already running this API is a noop.</p>
 <p>The feature is only available since Xcode 15/iOS 17.</p>
+<p>On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
+XCTest recording of the closed device's outer display produced a one-frame black video
+despite successful start/stop responses. Inner-display recording worked; other runtimes
+and physical Duo devices remain unverified. If affected, use
+<a href="../commands/#startrecordingscreen"><code>startRecordingScreen</code></a> and enable
+<a href="../settings/"><code>mjpegFixOrientation</code></a> for upright video.</p>
 <h4 id="arguments_77">Arguments<a class="headerlink" href="#arguments_77" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -15451,7 +15461,7 @@ Does not work for real devices.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 10, 2026 17:41:12 UTC"><span class="timeago" datetime="2026-10-10T17:41:12+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 10, 2026 17:41:12 UTC">2026-10-10</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 10, 2026 20:44:03 UTC"><span class="timeago" datetime="2026-10-10T20:44:03+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 10, 2026 20:44:03 UTC">2026-10-10</span>
   </span>
 
     
