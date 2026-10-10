@@ -1,3 +1,9 @@
+## [12.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.16.0...v12.16.1) (2026-10-10)
+
+### Bug Fixes
+
+* pass value and maxAttempts of mobile selectPickerWheelValue to WDA ([#3017](https://github.com/appium/appium-xcuitest-driver/issues/3017)) ([ba9e634](https://github.com/appium/appium-xcuitest-driver/commit/ba9e6340b7a29b6430a9a2efc5260494cce20d62))
+
 ## [12.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.2...v12.16.0) (2026-10-08)
 
 ### Features
