@@ -35,6 +35,7 @@ import * as contentSizeCommands from './commands/content-size.js';
 import * as contextCommands from './commands/context.js';
 import {notifyBiDiContextChange} from './commands/context.js';
 import * as deviceInfoCommands from './commands/device-info.js';
+import * as displayCommands from './commands/display.js';
 import * as elementCommands from './commands/element.js';
 import * as executeCommands from './commands/execute.js';
 import * as fileMovementCommands from './commands/file-movement.js';
@@ -58,7 +59,6 @@ import {
   shouldSetInitialSafariUrl,
   type MJpegStream,
 } from './commands/helpers/index.js';
-import * as hingeCommands from './commands/hinge.js';
 import * as increaseContrastCommands from './commands/increase-contrast.js';
 import * as iohidCommands from './commands/iohid.js';
 import * as keyboardCommands from './commands/keyboard.js';
@@ -172,6 +172,8 @@ const DEFAULT_SETTINGS = {
   // set `reduceMotion` to `null` so that it will be verified but still set either true/false
   reduceMotion: null,
   pageSourceExcludedAttributes: '',
+  // `null` targets the main display
+  currentDisplayId: null,
 };
 // This lock assures, that each driver session does not
 // affect shared resources of the other parallel sessions
@@ -295,6 +297,8 @@ export class XCUITestDriver
   pageLoadMs!: number;
   landscapeWebCoordsOffset!: number;
   mjpegStream?: MJpegStream;
+  // MJPEG frames do not identify their display, including frames queued before a reset.
+  _hasUpdatedDisplaySelection = false;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
@@ -514,10 +518,13 @@ export class XCUITestDriver
   launchApp = generalCommands.launchApp;
   closeApp = generalCommands.closeApp;
   setUrl = generalCommands.setUrl;
-  getViewportRect = generalCommands.getViewportRect;
-  getScreenInfo = generalCommands.getScreenInfo;
-  getStatusBarHeight = generalCommands.getStatusBarHeight;
-  getDevicePixelRatio = generalCommands.getDevicePixelRatio;
+  getViewportRect = displayCommands.getViewportRect;
+  getScreenInfo = displayCommands.getScreenInfo;
+  mobileListDisplays = displayCommands.mobileListDisplays;
+  getStatusBarHeight = displayCommands.getStatusBarHeight;
+  getDevicePixelRatio = displayCommands.getDevicePixelRatio;
+  mobileSetSimulatedHingeAngle = displayCommands.mobileSetSimulatedHingeAngle;
+  mobileGetSimulatedHingeAngle = displayCommands.mobileGetSimulatedHingeAngle;
   mobilePressButton = generalCommands.mobilePressButton;
   mobileSiriCommand = generalCommands.mobileSiriCommand;
 
@@ -569,8 +576,6 @@ export class XCUITestDriver
   /*-------+
    | IOHID |
    +-------+*/
-  mobileSetSimulatedHingeAngle = hingeCommands.mobileSetSimulatedHingeAngle;
-  mobileGetSimulatedHingeAngle = hingeCommands.mobileGetSimulatedHingeAngle;
   mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
   mobilePerformIndigoHidEvent = iohidCommands.mobilePerformIndigoHidEvent;
 
@@ -1235,9 +1240,13 @@ export class XCUITestDriver
     }
 
     if (key !== 'nativeWebTap' && key !== 'nativeWebTapStrict') {
-      return await this.proxyCommand('/appium/settings', 'POST', {
+      const result = await this.proxyCommand('/appium/settings', 'POST', {
         settings: {[key]: value},
       });
+      if (key === 'currentDisplayId') {
+        this._hasUpdatedDisplaySelection = true;
+      }
+      return result;
     }
     this.opts[key] = !!value;
   }
@@ -1604,6 +1613,7 @@ export class XCUITestDriver
   }
 
   private resetProperties(): void {
+    this._hasUpdatedDisplaySelection = false;
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;

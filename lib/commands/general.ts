@@ -7,7 +7,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import type {Viewport, ScreenInfo, ButtonName} from './types.js';
+import type {ButtonName} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
@@ -147,59 +147,6 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
   } else {
     await (this.device as Simulator).openUrl(url);
   }
-}
-
-/**
- * Retrieves the viewport dimensions.
- *
- * The viewport is the device's screen size with status bar size subtracted if the latter is present/visible.
- *
- * @returns The viewport rectangle
- */
-export async function getViewportRect(this: XCUITestDriver): Promise<Viewport> {
-  // Read both values together: display selection, orientation and status bar
-  // visibility can change during a session.
-  const {scale, statusBarSize, screenSize} = await this.getScreenInfo();
-  const statusBarHeight = Math.trunc(statusBarSize.height * scale);
-  const size = screenSize ?? (await this.getWindowRect());
-
-  // ios returns coordinates/dimensions in logical pixels, not device pixels,
-  // so scale up to device pixels. status bar height is already scaled.
-  return {
-    left: 0,
-    top: statusBarHeight,
-    width: Math.trunc(size.width * scale),
-    height: Math.trunc(size.height * scale) - statusBarHeight,
-  };
-}
-
-/**
- * Get fresh information about the screen from WDA.
- *
- * @returns Screen information including dimensions, scale, and status bar size
- */
-export async function getScreenInfo(this: XCUITestDriver): Promise<ScreenInfo> {
-  return (await this.proxyCommand('/wda/screen', 'GET')) as ScreenInfo;
-}
-
-/**
- * Gets the status bar height.
- *
- * @returns The height of the status bar in logical pixels
- */
-export async function getStatusBarHeight(this: XCUITestDriver): Promise<number> {
-  const {statusBarSize} = await this.getScreenInfo();
-  return statusBarSize.height;
-}
-
-/**
- * Gets the device pixel ratio.
- *
- * @returns The device pixel ratio (scale factor)
- */
-export async function getDevicePixelRatio(this: XCUITestDriver): Promise<number> {
-  const {scale} = await this.getScreenInfo();
-  return scale;
 }
 
 /**
