@@ -47,4 +47,35 @@ describe('startRecordingScreen with forceRestart', function () {
     assert.strictEqual((ScreenRecorder.prototype.start as SinonStub).called, false);
     assert.strictEqual(driver._recentScreenRecorder, previous);
   });
+
+  it('should stop the running recording on a retry after a failed stop', async function () {
+    interruptStub.onFirstCall().resolves(false);
+    interruptStub.onSecondCall().resolves(true);
+    await assert.rejects(driver.startRecordingScreen({forceRestart: true}), /Unable to stop screen recording process/);
+    await driver.startRecordingScreen({forceRestart: true});
+    assert.strictEqual(interruptStub.callCount, 2);
+    assert.strictEqual(cleanupStub.calledOnce, true);
+    assert.notStrictEqual(driver._recentScreenRecorder, previous);
+  });
+});
+
+describe('ScreenRecorder.interrupt', function () {
+  it('should keep the process after a failed stop so it can be stopped later', async function () {
+    const recorder = new ScreenRecorder('00008120-0000000000000000', new XCUITestDriver({} as any).log, '/tmp/x.mp4', {
+      remotePort: 9100,
+      remoteUrl: 'http://127.0.0.1:8100',
+    });
+    const stop = createSandbox().stub();
+    stop.onFirstCall().rejects(new Error('kill failed'));
+    stop.onSecondCall().resolves();
+    const mainProcess = {isRunning: true, stop};
+    (recorder as any).mainProcess = mainProcess;
+
+    assert.strictEqual(await recorder.interrupt(true), false);
+    assert.strictEqual((recorder as any).mainProcess, mainProcess);
+
+    assert.strictEqual(await recorder.interrupt(true), true);
+    assert.strictEqual(stop.callCount, 2);
+    assert.strictEqual((recorder as any).mainProcess, null);
+  });
 });
