@@ -111,7 +111,7 @@ that no display has is an error. Setting it to `null` goes back to the main disp
 is reset for each new session.
 
 While this setting has a value, screenshots are only taken by WebDriverAgent. The MJPEG stream
-and the `simctl` fallback always capture the main display, so they are skipped. If the selected
+and the simulator fallback always capture the main display, so they are skipped. If the selected
 display goes away, screenshots and actions fail rather than falling back to the main display.
 
 W3C action coordinates are in points, relative to the selected display in the application's
