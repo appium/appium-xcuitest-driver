@@ -60,7 +60,6 @@ import {
   shouldSetInitialSafariUrl,
   type MJpegStream,
 } from './commands/helpers/index.js';
-import * as hingeCommands from './commands/hinge.js';
 import * as increaseContrastCommands from './commands/increase-contrast.js';
 import * as iohidCommands from './commands/iohid.js';
 import * as keyboardCommands from './commands/keyboard.js';
@@ -300,7 +299,7 @@ export class XCUITestDriver
   landscapeWebCoordsOffset!: number;
   mjpegStream?: MJpegStream;
   // MJPEG frames do not identify their display, including frames queued before a reset.
-  hasUpdatedDisplaySelection = false;
+  _hasUpdatedDisplaySelection = false;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
@@ -525,6 +524,8 @@ export class XCUITestDriver
   mobileListDisplays = displayCommands.mobileListDisplays;
   getStatusBarHeight = displayCommands.getStatusBarHeight;
   getDevicePixelRatio = displayCommands.getDevicePixelRatio;
+  mobileSetSimulatedHingeAngle = displayCommands.mobileSetSimulatedHingeAngle;
+  mobileGetSimulatedHingeAngle = displayCommands.mobileGetSimulatedHingeAngle;
   mobilePressButton = generalCommands.mobilePressButton;
   mobileSiriCommand = generalCommands.mobileSiriCommand;
 
@@ -576,8 +577,6 @@ export class XCUITestDriver
   /*-------+
    | IOHID |
    +-------+*/
-  mobileSetSimulatedHingeAngle = hingeCommands.mobileSetSimulatedHingeAngle;
-  mobileGetSimulatedHingeAngle = hingeCommands.mobileGetSimulatedHingeAngle;
   mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
   mobilePerformIndigoHidEvent = iohidCommands.mobilePerformIndigoHidEvent;
 
@@ -1264,7 +1263,7 @@ export class XCUITestDriver
         settings: {[key]: value},
       });
       if (key === 'currentDisplayId') {
-        this.hasUpdatedDisplaySelection = true;
+        this._hasUpdatedDisplaySelection = true;
       }
       return result;
     }
@@ -1631,7 +1630,7 @@ export class XCUITestDriver
   }
 
   private resetProperties(): void {
-    this.hasUpdatedDisplaySelection = false;
+    this._hasUpdatedDisplaySelection = false;
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;
