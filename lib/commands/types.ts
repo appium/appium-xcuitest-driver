@@ -280,7 +280,7 @@ export interface DeviceInfo {
   timeZone: string;
   name: string;
   model: string;
-  uuid: 'unknown' | string;
+  uuid: string;
   userInterfaceIdiom: string;
   userInterfaceStyle: string;
   isSimulator: boolean;
