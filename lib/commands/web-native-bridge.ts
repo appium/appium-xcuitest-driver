@@ -318,10 +318,11 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  const [size, coordinates] = (await Promise.all([
-    this.executeAtom('get_size', [atomsElement]),
-    this.executeAtom('get_top_left_coordinates', [atomsElement]),
-  ])) as [Size, Position];
+  // Keep these atom requests sequential. Concurrent requests can leave one
+  // response unresolved through the real-device Safari Web Inspector transport,
+  // timing out before calibration or a native tap can run (also inside iframes).
+  const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
+  const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
   const {width, height} = size;
   const {x, y} = coordinates;
   await this.clickWebCoords(x + width / 2, y + height / 2);
@@ -448,7 +449,10 @@ async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
     this.remote.execute<Omit<ViewportState, 'orientation'>>(READ_VIEWPORT_STATE_SCRIPT),
   );
   const orientation: ViewportState['orientation'] = state.innerHeight >= state.innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
-  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}`;
+  const {x, y, width, height} = await findWebviewRect.call(this);
+  const {currentDisplayId} = this.settings.getSettings();
+  // Equal CSS viewports can occupy different native windows or displays.
+  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}::${JSON.stringify([currentDisplayId ?? null, x, y, width, height])}`;
 }
 
 /**
@@ -464,6 +468,8 @@ async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
  * adds a sub-frame's own offset (via {@linkcode getFrameChainOffset}) on top.
  */
 async function performCalibration(this: XCUITestDriver): Promise<CalibrationCacheEntry> {
+  const context = this.curContext;
+  const frames = [...this.curWebFrames];
   let entry: CalibrationCacheEntry | undefined;
   await retryInterval(CALIBRATION_RETRIES, CALIBRATION_RETRY_INTERVAL_MS, async () => {
     const rect = await findWebviewRect.call(this);
@@ -511,6 +517,21 @@ async function performCalibration(this: XCUITestDriver): Promise<CalibrationCach
         // failed removal here doesn't corrupt the next attempt.
         this.log.debug(`Failed to remove the calibration overlay: ${toErrorMessage(err)}`);
       }
+      // Removing our overlay iframe emits Page.frameDetached. The remote debugger
+      // currently reports this without identifying the detached frame, so the
+      // context listener clears even an unrelated, still-attached app frame.
+      // Resolve the original chain after cleanup before restoring it. Never
+      // resurrect a detached frame or carry frame selection into a different page.
+      if (frames.length && this.curContext === context && isEmpty(this.curWebFrames)) {
+        try {
+          await this.waitForAtom(this.remote.executeAtom('execute_script', ['return true;', []], frames));
+          if (this.curContext === context && isEmpty(this.curWebFrames)) {
+            this.curWebFrames = [...frames];
+          }
+        } catch (err) {
+          this.log.debug(`Could not restore the frame after calibration: ${toErrorMessage(err)}`);
+        }
+      }
     }
   });
   return entry as CalibrationCacheEntry;
@@ -540,20 +561,17 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
  * @param force - Recalibrate unconditionally, ignoring any cached entry
  */
 async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
-  if (!force) {
-    const signature = await computeViewportSignature.call(this);
-    if (this._webviewCalibrationCache?.signature === signature) {
-      this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
-      return this._webviewCalibrationCache.data;
-    }
-  }
-
-  this.log.debug('Fitting a new web-to-native coordinates calibration');
-  // keep track of implicit wait, and set locally to 0
-  // https://github.com/appium/appium/issues/14988
   const implicitWaitMs = this.implicitWaitMs;
   this.setImplicitWait(0);
   try {
+    if (!force) {
+      const signature = await computeViewportSignature.call(this);
+      if (this._webviewCalibrationCache?.signature === signature) {
+        this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
+        return this._webviewCalibrationCache.data;
+      }
+    }
+    this.log.debug('Fitting a new web-to-native coordinates calibration');
     this._webviewCalibrationCache = await performCalibration.call(this);
   } finally {
     this.setImplicitWait(implicitWaitMs);

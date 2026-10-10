@@ -94,9 +94,10 @@ application (which the driver installs on the device under test) is also downgra
 
 | Device OS version | Fully supported driver/WDA versions | Last likely working driver/WDA version |
 | --- | --- | --- |
-| >= 26.4 | >= [10.23.2](https://github.com/appium/appium-xcuitest-driver/pull/2733) (WDA >= 11.1.5) | Latest |
+| >= 27.0 | >= [11.1.2](https://github.com/appium/appium-xcuitest-driver/pull/2872) (WDA >= 14.1.1) | Latest |
+| 26.4 - 26.x | >= [10.23.2](https://github.com/appium/appium-xcuitest-driver/pull/2733) (WDA >= 11.1.5) | Latest |
 | 26.0 - 26.3 | >= 9.5.0 (WDA >= [9.14.1](https://github.com/appium/WebDriverAgent/pull/1032)) | Latest |
-| 18.0 - 18.x | >= 7.24.15 (WDA >= [8.9.1](https://github.com/appium/WebDriverAgent/pull/935)) | Latest |
+| 18.0 - 18.x | 7.24.15 - 12.12.4 (WDA [8.9.1](https://github.com/appium/WebDriverAgent/pull/935) - 16.12.8) | Latest (not tested) |
 | 17.0 - 17.x | [4.32.23](https://github.com/appium/appium-xcuitest-driver/pull/1822) - 10.1.0 (WDA 5.6.0 - 10.1.0) | Latest (not tested) |
 | 16.4 - 16.x | 4.21.7 - 7.26.3 (WDA [4.13.1](https://github.com/appium/WebDriverAgent/pull/681) - 8.9.1) | Latest (not tested) |
 | 16.0 - 16.3 | 4.7.4 - 7.26.3 (WDA [4.8.1](https://github.com/appium/WebDriverAgent/pull/597) - 8.9.1) | Latest (not tested) |
@@ -111,8 +112,8 @@ application (which the driver installs on the device under test) is also downgra
 | --- | --- | --- |
 | >= 27.0 | >= 12.6.0 (WDA >= [16.5.0](https://github.com/appium/WebDriverAgent/pull/1217)) | Latest |
 | 26.0 - 26.x | >= 12.6.0 (WDA >= [16.5.0](https://github.com/appium/WebDriverAgent/pull/1217)) | Latest |
-| 11.0 - 11.x | >= 12.6.0 (WDA >= [16.5.0](https://github.com/appium/WebDriverAgent/pull/1217)) | Latest |
-| 10.0 - 10.x | >= 12.6.0 (WDA >= [16.5.0](https://github.com/appium/WebDriverAgent/pull/1217)) | Latest (not tested) |
+| 11.0 - 11.x | 12.6.0 - 12.12.4 (WDA [16.5.0](https://github.com/appium/WebDriverAgent/pull/1217) - 16.12.8) | Latest (not tested) |
+| 10.0 - 10.x | 12.6.0 - 12.12.4 (WDA [16.5.0](https://github.com/appium/WebDriverAgent/pull/1217) - 16.12.8) | Latest (not tested) |
 
 ## Driver to Xcode
 
@@ -122,7 +123,8 @@ versions, and any major workarounds are unlikely.
 
 | XCUITest driver/WDA version | Full Xcode support | Oldest likely working Xcode version |
 | --- | --- | --- |
-| >= [11.1.2](https://github.com/appium/appium-xcuitest-driver/pull/2872) (>= WDA 14.1.1) | >= Xcode 16.0 | Xcode 14.0 |
+| >= 12.12.5 (>= WDA 16.12.9) | >= Xcode 26.0 | Xcode 14.0 |
+| [11.1.2](https://github.com/appium/appium-xcuitest-driver/pull/2872) - 12.12.4 (WDA 14.1.1 - 16.12.8) | Xcode 16.0 - 27.x | Xcode 14.0 |
 | [10.7.0](https://github.com/appium/appium-xcuitest-driver/pull/2658) - 11.11.1 (WDA 10.2.2 - 14.1.1) | Xcode 16.0 - 26.x | Xcode 14.0 |
 | 10.1.1 - 10.6.0 (WDA 10.1.2 - 10.2.2) | Xcode 16.0 - 26.x | Xcode 13.0 |
 | 9.5.0 - 10.1.0 (WDA [9.14.1](https://github.com/appium/WebDriverAgent/pull/1032) - 10.1.1) | Xcode 15.0 - 26.x | Xcode 13.0 |

@@ -1,6 +1,6 @@
 import type {EventEmitter} from 'node:events';
 
-import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
+import type {AnyCase, Element, HTTPHeaders, Location, Rect, Size, StringRecord} from '@appium/types';
 
 import type {XCUITestDriverOpts} from '../driver.js';
 import type {Page} from '../types.js';
@@ -430,6 +430,10 @@ export type ContentSizeResult =
   | 'unsupported';
 
 export interface ScreenInfo {
+  /** Display dimensions in logical pixels, when provided by WDA. */
+  screenSize?: Size;
+  /** The display identifier, when provided by WDA. */
+  displayId?: number;
   /**
    * Status bar dimensions
    *
@@ -442,6 +446,33 @@ export interface ScreenInfo {
    * @see https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale
    */
   scale: number;
+}
+
+export interface DisplayInfo {
+  /** Display identifier, usable as the `currentDisplayId` setting value */
+  id: number;
+  metrics: {
+    widthPixels: number;
+    heightPixels: number;
+    density: number;
+    xStart: number;
+    yStart: number;
+    traits: number;
+  };
+  isDefault: boolean;
+}
+
+export interface WDADisplayInfo {
+  /** Display identifier, usable as the `currentDisplayId` setting value */
+  displayId: number;
+  /** Whether this is the device's main display */
+  isMain: boolean;
+  /** Scale of the display */
+  scale: number;
+  /** Display bounds in native pixels */
+  bounds: Rect;
+  /** Display traits bitmask as reported by XCTest */
+  traits: number;
 }
 
 export interface WDALocationInfo extends LocationWithAltitude {

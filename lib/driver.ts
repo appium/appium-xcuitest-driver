@@ -36,6 +36,7 @@ import * as contentSizeCommands from './commands/content-size.js';
 import * as contextCommands from './commands/context.js';
 import {notifyBiDiContextChange} from './commands/context.js';
 import * as deviceInfoCommands from './commands/device-info.js';
+import * as displayCommands from './commands/display.js';
 import * as elementCommands from './commands/element.js';
 import * as executeCommands from './commands/execute.js';
 import * as fileMovementCommands from './commands/file-movement.js';
@@ -172,6 +173,8 @@ const DEFAULT_SETTINGS = {
   // set `reduceMotion` to `null` so that it will be verified but still set either true/false
   reduceMotion: null,
   pageSourceExcludedAttributes: '',
+  // `null` targets the main display
+  currentDisplayId: null,
 };
 // This lock assures, that each driver session does not
 // affect shared resources of the other parallel sessions
@@ -241,8 +244,6 @@ const NO_PROXY_WEB_LIST: RouteMatcher[] = [
 ] as RouteMatcher[];
 /* eslint-enable no-useless-escape */
 
-const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
-
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
 export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
@@ -297,6 +298,8 @@ export class XCUITestDriver
   pageLoadMs!: number;
   landscapeWebCoordsOffset!: number;
   mjpegStream?: MJpegStream;
+  // MJPEG frames do not identify their display, including frames queued before a reset.
+  _hasUpdatedDisplaySelection = false;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
@@ -516,10 +519,13 @@ export class XCUITestDriver
   launchApp = generalCommands.launchApp;
   closeApp = generalCommands.closeApp;
   setUrl = generalCommands.setUrl;
-  getViewportRect = generalCommands.getViewportRect;
-  getScreenInfo = generalCommands.getScreenInfo;
-  getStatusBarHeight = generalCommands.getStatusBarHeight;
-  getDevicePixelRatio = generalCommands.getDevicePixelRatio;
+  getViewportRect = displayCommands.getViewportRect;
+  getScreenInfo = displayCommands.getScreenInfo;
+  mobileListDisplays = displayCommands.mobileListDisplays;
+  getStatusBarHeight = displayCommands.getStatusBarHeight;
+  getDevicePixelRatio = displayCommands.getDevicePixelRatio;
+  mobileSetSimulatedHingeAngle = displayCommands.mobileSetSimulatedHingeAngle;
+  mobileGetSimulatedHingeAngle = displayCommands.mobileGetSimulatedHingeAngle;
   mobilePressButton = generalCommands.mobilePressButton;
   mobileSiriCommand = generalCommands.mobileSiriCommand;
 
@@ -845,11 +851,6 @@ export class XCUITestDriver
     this._networkMonitorSession = null;
     this._systemMonitorSession = null;
     this._remoteXPCFacade = null;
-    // memoize functions here, so that they are done on a per-instance basis
-    for (const fn of MEMOIZED_FUNCTIONS) {
-      // @ts-expect-error no types
-      this[fn] = memoize(this[fn]);
-    }
     this.lifecycleData = {};
     this._audioRecorder = null;
     this.appInfosCache = new AppInfosCache(this.log);
@@ -1258,9 +1259,13 @@ export class XCUITestDriver
     }
 
     if (key !== 'nativeWebTap' && key !== 'nativeWebTapStrict') {
-      return await this.proxyCommand('/appium/settings', 'POST', {
+      const result = await this.proxyCommand('/appium/settings', 'POST', {
         settings: {[key]: value},
       });
+      if (key === 'currentDisplayId') {
+        this._hasUpdatedDisplaySelection = true;
+      }
+      return result;
     }
     this.opts[key] = !!value;
   }
@@ -1625,6 +1630,7 @@ export class XCUITestDriver
   }
 
   private resetProperties(): void {
+    this._hasUpdatedDisplaySelection = false;
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;
