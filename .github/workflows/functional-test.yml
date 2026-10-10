@@ -166,7 +166,7 @@ jobs:
             --log-no-colors \
             --log-timestamp \
             --keep-alive-timeout 1200 \
-            2>&1 > "$cwd/appium.log" &
+            > "$cwd/appium.log" 2>&1 &
 
           # Port opens only after the driver is loaded, which is slow on CPU-starved runners
           TIMEOUT_SEC=60
@@ -199,6 +199,19 @@ jobs:
           PREBUILT_WDA_PATH: ${{ github.workspace }}/wda/${{ steps.simTarget.outputs.wdaAppName }}
 
       - run: |
+          # Keep resource samples in the live job output too: a disconnected runner may never
+          # reach artifact upload. Sample infrequently to avoid adding significant simulator load.
+          (
+            while true; do
+              date -u
+              top -l 1 -n 10 -o mem -stats pid,command,cpu,mem
+              df -h "$GITHUB_WORKSPACE"
+              sleep 60
+            done
+          ) > >(tee runner-resources.log) 2>&1 &
+          resource_monitor_pid=$!
+          trap 'kill "$resource_monitor_pid" 2>/dev/null || true' EXIT
+
           export DEVICE_NAME="${{ matrix.deviceName }}"
           export PLATFORM_VERSION="${{ matrix.iosVersion }}"
           export TVOS_DEVICE_NAME="${{ matrix.tvosDeviceName }}"
@@ -206,14 +219,20 @@ jobs:
           export WATCHOS_DEVICE_NAME="${{ matrix.watchosDeviceName }}"
           export WATCHOS_PLATFORM_VERSION="${{ matrix.watchosVersion }}"
           export SIMULATOR_UDID="${{ steps.prepareSimulator.outputs.udid }}"
-          npm run "e2e-test:${{ matrix.e2eRoot }}"
+          npm run "e2e-test:${{ matrix.e2eRoot }}" 2>&1 | tee functional-tests.log
         name: Run functional tests
+        # Leave time for diagnostics and cleanup before the 90-minute job limit.
+        timeout-minutes: 60
+        shell: bash
         env:
           PREBUILT_WDA_PATH: ${{ github.workspace }}/wda/${{ steps.simTarget.outputs.wdaAppName }}
 
-      - name: Save server output
+      - name: Save functional test diagnostics
         if: ${{ always() }}
         uses: actions/upload-artifact@master
         with:
           name: appium_e2eRoot_${{ matrix.e2eRoot }}_xCodev${{ matrix.xcodeVersion }}_v${{ steps.simTarget.outputs.platformVersion }}.log
-          path: appium.log
+          path: |
+            appium.log
+            functional-tests.log
+            runner-resources.log
