@@ -1,3 +1,9 @@
+## [12.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.16.1...v12.17.0) (2026-10-10)
+
+### Features
+
+* add multi-display discovery and safe screenshot routing for Duo support ([#3013](https://github.com/appium/appium-xcuitest-driver/issues/3013)) ([0fac1ec](https://github.com/appium/appium-xcuitest-driver/commit/0fac1ecfcf3f1b11775d2a0785571caf26817eb1))
+
 ## [12.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.16.0...v12.16.1) (2026-10-10)
 
 ### Bug Fixes
