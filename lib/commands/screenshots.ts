@@ -69,23 +69,22 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   }
 
   if (this.isSimulator()) {
-    // Feature-detect the display enumeration API until older simulator packages
-    // are no longer supported. Their default capture cannot target a WDA ID.
+    // The display API was added alongside numeric screenshot IDs. Keep older
+    // simulator packages on the existing WDA-only path for selected displays.
     const simulator = this.device as Simulator & {
-      getDisplays?: () => Promise<{id: string; screenId?: number; isMain: boolean}[]>;
+      getDisplays?: () => unknown;
+      getScreenshot(options?: {displayId?: string | number}): Promise<Buffer>;
     };
-    let displayId: string | undefined;
-    if (simulator.getDisplays) {
-      const displays = await simulator.getDisplays();
+    let displayId: number | undefined;
+    if (typeof simulator.getDisplays === 'function') {
       let wdaDisplays;
       try {
-        // Verify availability and resolve WDA's main display explicitly: Duo
-        // has more than one class-0 CoreSim display.
         wdaDisplays = await this.mobileListDisplays();
       } catch {
         if (hasSelectedDisplay) {
           throw wdaError;
         }
+        // With no explicit selection, CoreSim rejects an ambiguous default.
       }
       if (wdaDisplays) {
         const target = hasSelectedDisplay
@@ -94,28 +93,13 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
         if (!target) {
           throw wdaError;
         }
-        const matches = displays.filter(({screenId}) => screenId === target.id);
-        if (matches.length === 1 && matches[0].id) {
-          displayId = matches[0].id;
-        } else if (hasSelectedDisplay || displays.some(({screenId}) => screenId !== undefined)) {
-          throw wdaError;
-        }
-      }
-      if (!displayId) {
-        // Older CoreSimulator versions may not expose guest IDs. With no
-        // explicit selection, a unique default port is still safe to use.
-        const mainDisplays = displays.filter(({isMain}) => isMain);
-        const candidates = mainDisplays.length ? mainDisplays : displays;
-        if (candidates.length !== 1 || !candidates[0].id) {
-          throw wdaError;
-        }
-        displayId = candidates[0].id;
+        displayId = target.id;
       }
     } else if (hasSelectedDisplay) {
       throw wdaError;
     }
     this.log.info('Falling back to CoreSimulator screenshot capture');
-    const payload = await simulator.getScreenshot(displayId ? {displayId} : undefined);
+    const payload = await simulator.getScreenshot(displayId === undefined ? undefined : {displayId});
     if (!payload || payload.length === 0) {
       throw new errors.UnableToCaptureScreen();
     }

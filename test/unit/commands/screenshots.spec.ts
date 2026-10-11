@@ -135,7 +135,7 @@ describe('screenshots commands', function () {
       });
     });
 
-    describe('CoreSimulator display mapping', function () {
+    describe('CoreSimulator display selection', function () {
       let capture: sinon.SinonStub;
       let enumerate: sinon.SinonStub;
       let wdaDisplays: sinon.SinonStub;
@@ -143,11 +143,7 @@ describe('screenshots commands', function () {
 
       beforeEach(async function () {
         capture = sinon.stub().resolves(Buffer.from(base64PortraitResponse, 'base64'));
-        // Deliberately put the non-main display first, and mark both as class 0.
-        enumerate = sinon.stub().resolves([
-          {id: 'inner-port', screenId: 3, isMain: true},
-          {id: 'outer-port', screenId: 1, isMain: true},
-        ]);
+        enumerate = sinon.stub().throws(new Error('Driver must not enumerate CoreSim ports'));
         driver.isSimulator = () => true;
         driver._device = {getScreenshot: capture, getDisplays: enumerate} as any;
         await driver.updateSettings({currentDisplayId: 3});
@@ -159,41 +155,19 @@ describe('screenshots commands', function () {
         ] as any);
       });
 
-      it('maps the selected WDA ID to a CoreSimulator port UUID', async function () {
+      it('passes the numeric WDA ID directly without enumerating CoreSim ports', async function () {
         assert.equal(await driver.getScreenshot(), base64PortraitResponse);
-        sinon.assert.calledOnceWithExactly(capture, {displayId: 'inner-port'});
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 3});
+        sinon.assert.notCalled(enumerate);
       });
 
-      it('resolves the main display explicitly after resetting selection', async function () {
+      it('resolves the WDA main display after resetting selection', async function () {
         proxyStub.resolves();
         await driver.updateSettings({currentDisplayId: null});
         proxyStub.rejects(wdaError);
         await driver.getScreenshot();
-        sinon.assert.calledOnceWithExactly(capture, {displayId: 'outer-port'});
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 1});
       });
-
-      it('refreshes port UUIDs on every fallback', async function () {
-        await driver.getScreenshot();
-        enumerate.resolves([{id: 'new-inner-port', screenId: 3, isMain: true}]);
-        await driver.getScreenshot();
-        assert.deepEqual(capture.secondCall.args, [{displayId: 'new-inner-port'}]);
-      });
-
-      for (const ports of [
-        [{id: 'outer-port', screenId: 1, isMain: true}],
-        [{id: 'inner-port', isMain: true}],
-        [{id: '', screenId: 3, isMain: true}],
-        [
-          {id: 'a', screenId: 3, isMain: true},
-          {id: 'b', screenId: 3, isMain: true},
-        ],
-      ]) {
-        it(`rejects a missing or ambiguous mapping: ${JSON.stringify(ports)}`, async function () {
-          enumerate.resolves(ports);
-          await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
-          sinon.assert.notCalled(capture);
-        });
-      }
 
       it('does not capture a display that has disappeared from WDA', async function () {
         wdaDisplays.resolves([{id: 1, isDefault: true}]);
@@ -201,45 +175,36 @@ describe('screenshots commands', function () {
         sinon.assert.notCalled(capture);
       });
 
-      it('does not guess between two default ports when WDA enumeration fails', async function () {
-        proxyStub.resolves();
-        await driver.updateSettings({currentDisplayId: null});
-        proxyStub.rejects(wdaError);
+      it('does not capture a selected display when WDA cannot verify it', async function () {
         wdaDisplays.rejects(new Error('WDA unavailable'));
         await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
         sinon.assert.notCalled(capture);
       });
 
-      it('can use a unique default port when WDA is unavailable', async function () {
+      it('lets CoreSim resolve the default when WDA enumeration fails', async function () {
         proxyStub.resolves();
         await driver.updateSettings({currentDisplayId: null});
         proxyStub.rejects(wdaError);
         wdaDisplays.rejects(new Error('WDA unavailable'));
-        enumerate.resolves([{id: 'outer-port', screenId: 1, isMain: true}]);
         await driver.getScreenshot();
-        sinon.assert.calledOnceWithExactly(capture, {displayId: 'outer-port'});
+        sinon.assert.calledOnceWithExactly(capture, undefined);
       });
 
-      for (const isMain of [true, false]) {
-        it(`supports a unique legacy default port (isMain=${isMain})`, async function () {
-          proxyStub.resolves();
-          await driver.updateSettings({currentDisplayId: null});
-          proxyStub.rejects(wdaError);
-          enumerate.resolves([{id: 'legacy-port', isMain}]);
-          await driver.getScreenshot();
-          sinon.assert.calledOnceWithExactly(capture, {displayId: 'legacy-port'});
-        });
-      }
+      it('propagates CoreSim resolution errors without retrying the default display', async function () {
+        const error = new Error('Cannot uniquely resolve guest screen ID 3');
+        capture.rejects(error);
+        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 3});
+      });
 
       it('rejects empty capture data', async function () {
         capture.resolves(Buffer.alloc(0));
         await assert.rejects(driver.getScreenshot(), errors.UnableToCaptureScreen);
       });
 
-      it('does not enumerate simulator ports for a real device', async function () {
+      it('does not use simulator capture for a real device', async function () {
         driver.isSimulator = () => false;
         await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
-        sinon.assert.notCalled(enumerate);
         sinon.assert.notCalled(capture);
       });
     });
