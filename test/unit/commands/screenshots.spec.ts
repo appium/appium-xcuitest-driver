@@ -65,8 +65,8 @@ describe('screenshots commands', function () {
         const result = await driver.getScreenshot();
         assert.strictEqual(result, screenshotBuffer.toString('base64'));
 
-        sinon.assert.calledWithExactly(proxyStub, '/wda/screens', 'GET');
-        sinon.assert.calledOnceWithExactly(getScreenshotStub, undefined);
+        sinon.assert.calledOnceWithExactly(proxyStub, '/screenshot', 'GET');
+        sinon.assert.calledOnceWithExactly(getScreenshotStub, {displayId: undefined});
       });
 
       it('should throw UnableToCaptureScreen if the simulator returns an empty buffer', async function () {
@@ -132,44 +132,34 @@ describe('screenshots commands', function () {
         await driver.updateSettings({currentDisplayId: 3});
         proxyStub.reset();
         proxyStub.rejects(wdaError);
-        wdaDisplays = sinon.stub(driver, 'mobileListDisplays').resolves([
-          {id: 1, isDefault: true},
-          {id: 3, isDefault: false},
-        ] as any);
+        wdaDisplays = sinon.stub(driver, 'mobileListDisplays').rejects(new Error('WDA unavailable'));
       });
 
-      it('passes the numeric WDA ID directly without requiring a display-enumeration API', async function () {
+      it('falls back directly even when WDA is unavailable', async function () {
         assert.equal(await driver.getScreenshot(), base64PortraitResponse);
         sinon.assert.calledOnceWithExactly(capture, {displayId: 3});
+        sinon.assert.calledOnceWithExactly(proxyStub, '/screenshot', 'GET');
+        sinon.assert.notCalled(wdaDisplays);
       });
 
-      it('resolves the WDA main display after resetting selection', async function () {
+      it('lets CoreSim select the default after resetting selection', async function () {
         proxyStub.resolves();
         await driver.updateSettings({currentDisplayId: null});
         proxyStub.rejects(wdaError);
         await driver.getScreenshot();
-        sinon.assert.calledOnceWithExactly(capture, {displayId: 1});
+        sinon.assert.calledOnceWithExactly(capture, {displayId: undefined});
+        sinon.assert.notCalled(wdaDisplays);
       });
 
-      it('does not capture a display that has disappeared from WDA', async function () {
-        wdaDisplays.resolves([{id: 1, isDefault: true}]);
-        await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
-        sinon.assert.notCalled(capture);
-      });
-
-      it('does not capture a selected display when WDA cannot verify it', async function () {
-        wdaDisplays.rejects(new Error('WDA unavailable'));
-        await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
-        sinon.assert.notCalled(capture);
-      });
-
-      it('lets CoreSim resolve the default when WDA enumeration fails', async function () {
+      it('propagates an ambiguous default error from CoreSim', async function () {
         proxyStub.resolves();
         await driver.updateSettings({currentDisplayId: null});
         proxyStub.rejects(wdaError);
-        wdaDisplays.rejects(new Error('WDA unavailable'));
-        await driver.getScreenshot();
-        sinon.assert.calledOnceWithExactly(capture, undefined);
+        const error = new Error('Multiple default display ports are available; specify displayId');
+        capture.rejects(error);
+        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
+        sinon.assert.calledOnceWithExactly(capture, {displayId: undefined});
+        sinon.assert.notCalled(wdaDisplays);
       });
 
       it('propagates CoreSim resolution errors without retrying the default display', async function () {

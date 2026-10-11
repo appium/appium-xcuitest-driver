@@ -69,28 +69,10 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   }
 
   if (this.isSimulator()) {
-    const simulator = this.device as Simulator;
-    let displayId: number | undefined;
-    let wdaDisplays;
-    try {
-      wdaDisplays = await this.mobileListDisplays();
-    } catch {
-      if (hasSelectedDisplay) {
-        throw wdaError;
-      }
-      // With no explicit selection, CoreSim rejects an ambiguous default.
-    }
-    if (wdaDisplays) {
-      const target = hasSelectedDisplay
-        ? wdaDisplays.find(({id}) => id === currentDisplayId)
-        : wdaDisplays.find(({isDefault}) => isDefault);
-      if (!target) {
-        throw wdaError;
-      }
-      displayId = target.id;
-    }
     this.log.info('Falling back to CoreSimulator screenshot capture');
-    const payload = await simulator.getScreenshot(displayId === undefined ? undefined : {displayId});
+    const payload = await (this.device as Simulator).getScreenshot({
+      displayId: currentDisplayId ?? undefined,
+    });
     if (!payload || payload.length === 0) {
       throw new errors.UnableToCaptureScreen();
     }
