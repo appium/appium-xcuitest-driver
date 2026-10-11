@@ -69,34 +69,25 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   }
 
   if (this.isSimulator()) {
-    // The display API was added alongside numeric screenshot IDs. Keep older
-    // simulator packages on the existing WDA-only path for selected displays.
-    const simulator = this.device as Simulator & {
-      getDisplays?: () => unknown;
-      getScreenshot(options?: {displayId?: string | number}): Promise<Buffer>;
-    };
+    const simulator = this.device as Simulator;
     let displayId: number | undefined;
-    if (typeof simulator.getDisplays === 'function') {
-      let wdaDisplays;
-      try {
-        wdaDisplays = await this.mobileListDisplays();
-      } catch {
-        if (hasSelectedDisplay) {
-          throw wdaError;
-        }
-        // With no explicit selection, CoreSim rejects an ambiguous default.
+    let wdaDisplays;
+    try {
+      wdaDisplays = await this.mobileListDisplays();
+    } catch {
+      if (hasSelectedDisplay) {
+        throw wdaError;
       }
-      if (wdaDisplays) {
-        const target = hasSelectedDisplay
-          ? wdaDisplays.find(({id}) => id === currentDisplayId)
-          : wdaDisplays.find(({isDefault}) => isDefault);
-        if (!target) {
-          throw wdaError;
-        }
-        displayId = target.id;
+      // With no explicit selection, CoreSim rejects an ambiguous default.
+    }
+    if (wdaDisplays) {
+      const target = hasSelectedDisplay
+        ? wdaDisplays.find(({id}) => id === currentDisplayId)
+        : wdaDisplays.find(({isDefault}) => isDefault);
+      if (!target) {
+        throw wdaError;
       }
-    } else if (hasSelectedDisplay) {
-      throw wdaError;
+      displayId = target.id;
     }
     this.log.info('Falling back to CoreSimulator screenshot capture');
     const payload = await simulator.getScreenshot(displayId === undefined ? undefined : {displayId});
