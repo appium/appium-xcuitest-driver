@@ -1,6 +1,7 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import type {AppiumLogger, IAppiumIpc, IIpcSubscription, IpcMessage} from '@appium/types';
+import {errors} from 'appium/driver.js';
 import {node, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 
@@ -15,6 +16,9 @@ export type SessionUdidIpcMessage = {
 type AppiumIpcConstructor = new () => IAppiumIpc;
 type IpcProvider = () => Promise<IAppiumIpc | undefined>;
 
+// Name of BaseDriver's event, which makes the server drop the session and notify plugins
+const UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+
 export class SessionClaimHandler {
   static readonly CLAIMED_TOPIC = 'xcuitest:sessionUdidClaimed';
   static readonly CONTENDED_TOPIC = 'xcuitest:sessionUdidContended';
@@ -23,6 +27,7 @@ export class SessionClaimHandler {
   private static readonly CONTENTION_PROBE_MS = 10;
   private static readonly RELEASE_WAIT_MS = 15000;
 
+  private readonly pendingTeardownsByUdid = new Map<string, Set<Promise<void>>>();
   private readonly subscriptionsBySessionId = new Map<string, IIpcSubscription<SessionUdidIpcMessage>>();
 
   constructor(private readonly getIpc: IpcProvider) {}
@@ -61,6 +66,70 @@ export class SessionClaimHandler {
 
   /** Publish this session's udid so any existing session on the same device can terminate. */
   async claimSessionUdid(driver: XCUITestDriver): Promise<void> {
+    await this.requestRelease(driver);
+    const udid = driver.opts.udid;
+    if (udid) {
+      await this.waitForPendingTeardowns(driver, udid);
+    }
+  }
+
+  /** Tracks a session teardown, so that a new session on the same device does not start before it is complete. */
+  async trackTeardown(driver: XCUITestDriver, teardown: () => Promise<void>): Promise<void> {
+    const udid = driver.opts.udid?.toLowerCase();
+    if (!udid) {
+      return await teardown();
+    }
+
+    const promise = teardown();
+    const tracked = (async () => {
+      try {
+        await promise;
+      } catch {
+        // the failure is reported to the caller of trackTeardown()
+      }
+    })();
+    const pending = this.pendingTeardownsByUdid.get(udid) ?? new Set<Promise<void>>();
+    pending.add(tracked);
+    this.pendingTeardownsByUdid.set(udid, pending);
+    try {
+      await promise;
+    } finally {
+      pending.delete(tracked);
+      if (pending.size === 0 && this.pendingTeardownsByUdid.get(udid) === pending) {
+        this.pendingTeardownsByUdid.delete(udid);
+      }
+    }
+  }
+
+  private async waitForPendingTeardowns(driver: XCUITestDriver, udid: string): Promise<void> {
+    const pending = this.pendingTeardownsByUdid.get(udid.toLowerCase());
+    if (!pending?.size) {
+      return;
+    }
+
+    driver.log.debug(`Waiting for ${util.pluralize('session', pending.size, true)} to finish quitting`);
+    const timer = new AbortController();
+    const timedOut = Symbol('timedOut');
+    const timeout = (async () => {
+      try {
+        return await delay(SessionClaimHandler.RELEASE_WAIT_MS, timedOut, {signal: timer.signal});
+      } catch {
+        return undefined; // aborted
+      }
+    })();
+    try {
+      if ((await Promise.race([Promise.all(pending), timeout])) === timedOut) {
+        driver.log.warn(
+          `Timed out after ${SessionClaimHandler.RELEASE_WAIT_MS}ms waiting for the previous session ` +
+            `to finish quitting. Proceeding with session startup.`,
+        );
+      }
+    } finally {
+      timer.abort();
+    }
+  }
+
+  private async requestRelease(driver: XCUITestDriver): Promise<void> {
     const ipc = await this.getIpc();
     if (!ipc) {
       driver.log.debug('Driver-instance IPC is unavailable. Skipping publication of the session udid.');
@@ -76,26 +145,30 @@ export class SessionClaimHandler {
 
     const contendingSessionIds = new Set<string>();
     const releasedSessionIds = new Set<string>();
-    const contendedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
-      SessionClaimHandler.CONTENDED_TOPIC,
-      this.getPublisherId(driver),
-    );
-    const releasedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
-      SessionClaimHandler.RELEASED_TOPIC,
-      this.getPublisherId(driver),
-    );
-    contendedSubscription.on('message', (message) => {
-      if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
-        contendingSessionIds.add(message.data.sessionId);
-      }
-    });
-    releasedSubscription.on('message', (message) => {
-      if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
-        releasedSessionIds.add(message.data.sessionId);
-      }
-    });
+    const subscriptions: IIpcSubscription<SessionUdidIpcMessage>[] = [];
 
     try {
+      const contendedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
+        SessionClaimHandler.CONTENDED_TOPIC,
+        this.getPublisherId(driver),
+      );
+      subscriptions.push(contendedSubscription);
+      const releasedSubscription = ipc.subscribe<SessionUdidIpcMessage>(
+        SessionClaimHandler.RELEASED_TOPIC,
+        this.getPublisherId(driver),
+      );
+      subscriptions.push(releasedSubscription);
+      contendedSubscription.on('message', (message) => {
+        if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
+          contendingSessionIds.add(message.data.sessionId);
+        }
+      });
+      releasedSubscription.on('message', (message) => {
+        if (this.isMatchingSessionUdidMessage(message, udid, sessionId)) {
+          releasedSessionIds.add(message.data.sessionId);
+        }
+      });
+
       await ipc.publish<SessionUdidIpcMessage>(SessionClaimHandler.CLAIMED_TOPIC, this.getPublisherId(driver), {
         udid,
         sessionId,
@@ -125,13 +198,13 @@ export class SessionClaimHandler {
         );
       }
     } finally {
-      contendedSubscription.unsubscribe();
-      releasedSubscription.unsubscribe();
+      subscriptions.forEach((sub) => sub.unsubscribe());
     }
   }
 
   /** @internal Exposed for unit tests. */
   resetForTesting(): void {
+    this.pendingTeardownsByUdid.clear();
     for (const subscription of this.subscriptionsBySessionId.values()) {
       subscription.unsubscribe();
     }
@@ -197,6 +270,14 @@ export class SessionClaimHandler {
     const {log} = driver;
 
     try {
+      // startUnexpectedShutdown() would also turn proxyCommand() into a no-op and so skip the DELETE
+      // on a retained WDA. Only notify the server (it drops the session), then tear down normally.
+      driver.eventEmitter.emit(
+        UNEXPECTED_SHUTDOWN_EVENT,
+        new errors.NoSuchDriverError(
+          `This session has been replaced by a newer one on the same device (udid '${udid}')`,
+        ),
+      );
       await driver.deleteSession();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
