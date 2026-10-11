@@ -127,7 +127,9 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    *
    * See [the FFMPEG wiki](https://trac.ffmpeg.org/wiki/Scaling) for possible values.
    *
-   * No scale is applied by default. If both `videoFilters` and `videoScale` are set, then only `videoFilters` value will be respected.
+   * By default, software recording fits frames into the first frame’s dimensions with aspect-preserving scaling and black padding.
+   * Explicit filters/scaling and hardware acceleration retain their configured behavior.
+   * If both `videoFilters` and `videoScale` are set, then only `videoFilters` value will be respected.
    * @see https://trac.ffmpeg.org/wiki/Scaling
    */
   videoScale?: string;
@@ -278,7 +280,7 @@ export interface DeviceInfo {
   timeZone: string;
   name: string;
   model: string;
-  uuid: 'unknown' | string;
+  uuid: string;
   userInterfaceIdiom: string;
   userInterfaceStyle: string;
   isSimulator: boolean;
