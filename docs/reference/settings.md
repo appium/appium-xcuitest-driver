@@ -112,8 +112,10 @@ is reset for each new session.
 
 While this setting has a value, screenshots use WebDriverAgent first and skip the MJPEG stream.
 If WDA capture fails on a simulator, the driver falls back to CoreSimulator. CoreSimulator resolves
-the selected WDA display ID to a display port internally for each capture.
-If the selected display goes away or cannot be mapped, capture fails rather than falling back to the main display.
+the selected display ID to a display port internally for each capture, without further requests to WDA.
+If CoreSimulator cannot resolve or capture the selected display, capture fails rather than switching displays.
+When this setting is `null`, CoreSimulator selects its default display. If multiple default ports
+are available (as on Duo), the fallback requires an explicit display ID.
 
 W3C action coordinates are in points, relative to the selected display in the application's
 current orientation. Page source and element lookup are not affected, because the accessibility
