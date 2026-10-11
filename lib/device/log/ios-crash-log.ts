@@ -130,7 +130,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
             this.log.warn(
               `Cannot export the crash report '${fileName}'. Skipping it. ` + `Original error: ${(e as Error).message}`,
             );
-            return;
+            continue;
           }
           fullPath = path.join(tmpRoot, fileName);
         }
