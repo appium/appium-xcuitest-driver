@@ -57,28 +57,22 @@ describe('screenshots commands', function () {
         assert.strictEqual(getScreenshotStub.notCalled, true);
       });
 
-      it('should get a screenshot from simctl if WDA call fails and Xcode version >= 8.1', async function () {
+      it('should get a screenshot from CoreSim if WDA call fails', async function () {
         proxyStub.returns(null);
         const screenshotBuffer = Buffer.from(base64PortraitResponse, 'base64');
         getScreenshotStub.resolves(screenshotBuffer);
 
-        driver.xcodeVersion = {
-          versionFloat: 8.3,
-        } as any;
         const result = await driver.getScreenshot();
         assert.strictEqual(result, screenshotBuffer.toString('base64'));
 
-        assert.strictEqual(proxyStub.calledOnce, true);
-        assert.strictEqual(getScreenshotStub.calledOnce, true);
+        sinon.assert.calledWithExactly(proxyStub, '/wda/screens', 'GET');
+        sinon.assert.calledOnceWithExactly(getScreenshotStub, undefined);
       });
 
       it('should throw UnableToCaptureScreen if the simulator returns an empty buffer', async function () {
         proxyStub.returns(null);
         getScreenshotStub.resolves(Buffer.alloc(0));
 
-        driver.xcodeVersion = {
-          versionFloat: 8.3,
-        } as any;
         await assert.rejects(driver.getScreenshot(), errors.UnableToCaptureScreen);
       });
     });
@@ -102,15 +96,6 @@ describe('screenshots commands', function () {
         assert.strictEqual(await driver.getScreenshot(), base64PortraitResponse);
         sinon.assert.calledOnceWithExactly(proxyStub, '/screenshot', 'GET');
         sinon.assert.notCalled(lastChunkStub);
-      });
-
-      it('should not fall back when the simulator package cannot enumerate displays', async function () {
-        const error = new errors.UnableToCaptureScreen('No display with id 3 is available');
-        proxyStub.rejects(error);
-
-        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
-        sinon.assert.calledOnce(proxyStub);
-        sinon.assert.notCalled(getScreenshotStub);
       });
 
       it('should capture a fresh main-display image after resetting display selection', async function () {
@@ -137,15 +122,13 @@ describe('screenshots commands', function () {
 
     describe('CoreSimulator display selection', function () {
       let capture: sinon.SinonStub;
-      let enumerate: sinon.SinonStub;
       let wdaDisplays: sinon.SinonStub;
       const wdaError = new errors.UnableToCaptureScreen('WDA screenshot failed');
 
       beforeEach(async function () {
         capture = sinon.stub().resolves(Buffer.from(base64PortraitResponse, 'base64'));
-        enumerate = sinon.stub().throws(new Error('Driver must not enumerate CoreSim ports'));
         driver.isSimulator = () => true;
-        driver._device = {getScreenshot: capture, getDisplays: enumerate} as any;
+        driver._device = {getScreenshot: capture} as any;
         await driver.updateSettings({currentDisplayId: 3});
         proxyStub.reset();
         proxyStub.rejects(wdaError);
@@ -155,10 +138,9 @@ describe('screenshots commands', function () {
         ] as any);
       });
 
-      it('passes the numeric WDA ID directly without enumerating CoreSim ports', async function () {
+      it('passes the numeric WDA ID directly without requiring a display-enumeration API', async function () {
         assert.equal(await driver.getScreenshot(), base64PortraitResponse);
         sinon.assert.calledOnceWithExactly(capture, {displayId: 3});
-        sinon.assert.notCalled(enumerate);
       });
 
       it('resolves the WDA main display after resetting selection', async function () {
