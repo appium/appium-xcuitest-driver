@@ -94,9 +94,9 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
    * @returns New crash log entries since the last successful poll (bounded by {@link MAX_RECENT_ITEMS}).
    */
   override async getLogs(): Promise<LogEntry[]> {
-    const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
+    const crashFiles = await this._listCrashFiles();
     const recentCrashFiles = new Set(this._recentCrashFiles);
-    const diffFiles = crashFiles.filter((file) => !recentCrashFiles.has(file));
+    const diffFiles = crashFiles.filter((file) => !recentCrashFiles.has(file)).slice(-MAX_RECENT_ITEMS);
     if (isEmpty(diffFiles)) {
       return [];
     }
