@@ -4,10 +4,11 @@ import {setTimeout as delay} from 'node:timers/promises';
 
 import {util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
-import type {Browser, ChainablePromiseElement} from 'webdriverio';
+import type {Browser} from 'webdriverio';
 
 import {extractCapabilityValue, getUICatalogCaps} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
+import {focusTextField} from '../helpers/text-field.js';
 
 describe('XCUITestDriver - elements -', function () {
   let driver: Browser;
@@ -156,17 +157,6 @@ describe('XCUITestDriver - elements -', function () {
       const secureText = new Array(text1.length).fill('•').join('');
       const phText = 'Placeholder text';
 
-      async function focusTextField(el: ChainablePromiseElement) {
-        // Switch focus directly. UIKitCatalog can keep the keyboard visible after clearing
-        // a field, so successful input must not depend on hideKeyboard dismissing it.
-        await el.waitForDisplayed({timeout: 10000});
-        await el.click();
-        await driver.waitUntil(() => driver.isKeyboardShown(), {
-          timeout: 10000,
-          timeoutMsg: 'Keyboard did not appear after focusing the next text field',
-        });
-      }
-
       beforeEach(async function () {
         const el = await retryInterval(10, 500, async function () {
           return await driver.$('~Text Fields');
@@ -209,13 +199,13 @@ describe('XCUITestDriver - elements -', function () {
           const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
-          await focusTextField(els[1]);
-          await els[1].setValue(text2);
+          const secondField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[2]');
+          await secondField.setValue(text2);
 
           let text = await els[0].getText();
           assert.strictEqual(text, text1);
 
-          text = await els[1].getText();
+          text = await secondField.getText();
           assert.strictEqual(text, text2);
         });
         it('should type in a secure text field', async function () {
@@ -274,22 +264,22 @@ describe('XCUITestDriver - elements -', function () {
           let text = await els[0].getText();
           assert.strictEqual(text, text1);
 
-          await focusTextField(els[1]);
-          await els[1].setValue(text2);
+          let secondField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[2]');
+          await secondField.setValue(text2);
 
-          text = await els[1].getText();
+          text = await secondField.getText();
           assert.strictEqual(text, text2);
 
-          await focusTextField(els[0]);
-          await els[0].clearValue();
+          const firstField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[1]');
+          await firstField.clearValue();
 
-          text = await els[0].getText();
+          text = await firstField.getText();
           assert.strictEqual(text, phText);
 
-          await focusTextField(els[1]);
-          await els[1].clearValue();
+          secondField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[2]');
+          await secondField.clearValue();
 
-          text = await els[1].getText();
+          text = await secondField.getText();
           assert.strictEqual(text, phText);
         });
         it('should clear a secure text field', async function () {

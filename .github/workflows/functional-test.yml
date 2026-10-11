@@ -118,17 +118,19 @@ jobs:
           TVOS_PLATFORM_VERSION: ${{ matrix.tvosVersion }}
           WATCHOS_DEVICE_NAME: ${{ matrix.watchosDeviceName }}
           WATCHOS_PLATFORM_VERSION: ${{ matrix.watchosVersion }}
-      - name: Start Simulator UI
-        # Xcode 27 replaced Simulator.app with DeviceHub.app, one directory level up from
-        # Simulator.app's location (Contents/Applications instead of Contents/Developer/Applications).
+      - name: Monitor simulator boot
+        id: monitorSimulator
+        # Boot failures occur before the test-stage resource monitor starts.
         run: |
-          if [ "${PLATFORM_VERSION%%.*}" -ge 27 ]; then
-            open -Fn "$(xcode-select --print-path)/../Applications/DeviceHub.app"
-          else
-            open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
-          fi
-        env:
-          PLATFORM_VERSION: ${{ steps.simTarget.outputs.platformVersion }}
+          nohup bash -c '
+            while true; do
+              date -u
+              top -l 1 -n 10 -o mem -stats pid,command,cpu,mem
+              df -h "$GITHUB_WORKSPACE"
+              sleep 60
+            done
+          ' > simulator-boot-resources.log 2>&1 < /dev/null &
+          echo "pid=$!" >> "$GITHUB_OUTPUT"
       - name: Prepare simulator
         id: prepareSimulator
         uses: futureware-tech/simulator-action@v6
@@ -140,6 +142,28 @@ jobs:
           wait_for_boot: true
           settle_timeout_seconds: 150
           settle_cpu_threshold_percent: 30
+
+      - name: Stop simulator boot monitor
+        if: ${{ always() && steps.monitorSimulator.outcome == 'success' }}
+        env:
+          MONITOR_PID: ${{ steps.monitorSimulator.outputs.pid }}
+        run: |
+          kill "$MONITOR_PID" 2>/dev/null || true
+          cat simulator-boot-resources.log
+
+      - name: Start Simulator UI
+        # Boot the selected device before opening the GUI, which may otherwise
+        # restore a different device while the action is erasing/booting its target.
+        # Xcode 27 replaced Simulator.app with DeviceHub.app.
+        run: |
+          if [ "${PLATFORM_VERSION%%.*}" -ge 27 ]; then
+            open -Fn "$(xcode-select --print-path)/../Applications/DeviceHub.app"
+          else
+            open -Fn "$(xcode-select --print-path)/Applications/Simulator.app" --args -CurrentDeviceUDID "$SIMULATOR_UDID"
+          fi
+        env:
+          PLATFORM_VERSION: ${{ steps.simTarget.outputs.platformVersion }}
+          SIMULATOR_UDID: ${{ steps.prepareSimulator.outputs.udid }}
 
       - run: |
           appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
@@ -236,3 +260,4 @@ jobs:
             appium.log
             functional-tests.log
             runner-resources.log
+            simulator-boot-resources.log
