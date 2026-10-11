@@ -110,12 +110,12 @@ Display IDs are assigned at runtime, so look them up rather than hardcoding them
 that no display has is an error. Setting it to `null` goes back to the main display. The value
 is reset for each new session.
 
-While this setting has a value, screenshots use WebDriverAgent first and skip the MJPEG stream.
-If WDA capture fails on a simulator, the driver falls back to CoreSimulator. CoreSimulator resolves
-the selected display ID to a display port internally for each capture, without further requests to WDA.
-If CoreSimulator cannot resolve or capture the selected display, capture fails rather than switching displays.
-When this setting is `null`, CoreSimulator selects its default display. If multiple default ports
-are available (as on Duo), the fallback requires an explicit display ID.
+While this setting has a value, screenshots skip the MJPEG stream and use WebDriverAgent first.
+On simulators, if WebDriverAgent capture fails, CoreSim attempts to capture the selected display.
+If that capture also fails, the command returns an error without switching displays.
+
+When this setting is `null`, the CoreSim fallback uses its default display. If the default is
+ambiguous, as on Duo, set an explicit display ID to use the fallback.
 
 W3C action coordinates are in points, relative to the selected display in the application's
 current orientation. Page source and element lookup are not affected, because the accessibility
