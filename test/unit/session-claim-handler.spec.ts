@@ -7,7 +7,8 @@ import {node} from 'appium/support.js';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
-import type {XCUITestDriver} from '../../lib/driver.js';
+import {stop as stopWda} from '../../lib/commands/wda/stop.js';
+import {XCUITestDriver} from '../../lib/driver.js';
 import {
   resetDriverInstanceIpcForTesting,
   SessionClaimHandler,
@@ -94,6 +95,7 @@ describe('SessionClaimHandler', function () {
         debug: sandbox.stub(),
         warn: sandbox.stub(),
       },
+      eventEmitter: new EventEmitter(),
       deleteSession: sandbox.stub().resolves(),
       ...overrides,
     } as unknown as XCUITestDriver;
@@ -228,6 +230,75 @@ describe('SessionClaimHandler', function () {
         sessionId: 'new-session',
       },
     ]);
+  });
+
+  it('should notify the server and still send the WDA session DELETE before confirming the release', async function () {
+    const events: string[] = [];
+    const oldDriver = new XCUITestDriver({} as any);
+    oldDriver.sessionId = 'old-session';
+    (oldDriver.opts as any).udid = 'device-1';
+    oldDriver._wda = {
+      fullyStarted: true,
+      jwproxy: {
+        command: async (url: string, method: string) => {
+          events.push(`wda:${method} ${url}`);
+        },
+      },
+      canSkipXcodebuild: false,
+      webDriverAgentUrl: 'http://localhost:8100',
+    } as any;
+    oldDriver.onUnexpectedShutdown(() => events.push('server-notified'));
+    // the real proxyCommand() and stop() implementations, as used by deleteSession()
+    oldDriver.deleteSession = async () => {
+      await stopWda.call(oldDriver);
+      sessionClaimHandler.unregisterActiveSession(oldDriver);
+    };
+    const publish = mockIpc.publish.bind(mockIpc);
+    sandbox.stub(mockIpc, 'publish').callsFake(async (topic: string, publisher: string, data: any) => {
+      if (topic === SessionClaimHandler.RELEASED_TOPIC) {
+        events.push('released');
+      }
+      await publish(topic, publisher, data);
+    });
+    await sessionClaimHandler.registerActiveSession(oldDriver);
+
+    const newDriver = makeDriver();
+    await sessionClaimHandler.registerActiveSession(newDriver);
+    await sessionClaimHandler.claimSessionUdid(newDriver);
+
+    assert.deepStrictEqual(events, ['server-notified', 'wda:DELETE /session/old-session', 'released']);
+  });
+
+  it('should wait for a session on the same device that is still quitting', async function () {
+    const events: string[] = [];
+    const oldDriver = makeDriver({sessionId: 'old-session', opts: {udid: 'DEVICE-1'} as any});
+    const teardown = sessionClaimHandler.trackTeardown(oldDriver, async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      events.push('old-quit');
+    });
+
+    const newDriver = makeDriver();
+    await sessionClaimHandler.registerActiveSession(newDriver);
+    await sessionClaimHandler.claimSessionUdid(newDriver);
+    events.push('claimed');
+    await teardown;
+
+    assert.deepStrictEqual(events, ['old-quit', 'claimed']);
+  });
+
+  it('should not wait for a session quitting on another device', async function () {
+    const otherDriver = makeDriver({sessionId: 'other-session', opts: {udid: 'device-2'} as any});
+    let finishTeardown!: () => void;
+    const teardown = sessionClaimHandler.trackTeardown(
+      otherDriver,
+      () => new Promise<void>((resolve) => (finishTeardown = resolve)),
+    );
+
+    const newDriver = makeDriver();
+    await sessionClaimHandler.registerActiveSession(newDriver);
+    await sessionClaimHandler.claimSessionUdid(newDriver);
+    finishTeardown();
+    await teardown;
   });
 
   it('should ignore udid publications from the same session', async function () {

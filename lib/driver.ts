@@ -946,7 +946,11 @@ export class XCUITestDriver
 
   override async deleteSession(sessionId?: string): Promise<void> {
     sessionClaimHandler.unregisterActiveSession(this);
+    // A new session on the same device waits for the teardown to complete before it starts
+    await sessionClaimHandler.trackTeardown(this, async () => await this.teardownSession(sessionId));
+  }
 
+  private async teardownSession(sessionId?: string): Promise<void> {
     await removeAllSessionWebSocketHandlers.bind(this as any)();
 
     for (const recorder of [this._recentScreenRecorder, this._audioRecorder].filter((r): r is NonNullable<typeof r> =>
