@@ -133,5 +133,36 @@ describe('app-utils', function () {
         }
       }
     });
+
+    for (const [disposition, expectedName] of [
+      ['attachment; filename="Quoted.ipa"', 'Quoted.ipa'],
+      ['attachment; filename=Unquoted.ipa', 'Unquoted.ipa'],
+      [`attachment; filename="fallback.ipa"; filename*=UTF-8''My%20App.ipa`, 'My App.ipa'],
+    ]) {
+      it(`should name the downloaded .ipa after ${disposition}`, async function () {
+        const sandbox = createSandbox();
+        const tmpDir = await tempDir.openDir();
+        let resultPath: string | undefined;
+        try {
+          const ipaPath = path.join(tmpDir, 'src.ipa');
+          await fs.writeFile(ipaPath, 'ipa');
+          const driver = new XCUITestDriver({} as any);
+          sandbox.stub(driver, 'isRealDevice').returns(true);
+          sandbox.stub(driver.appInfosCache, 'put').resolves();
+          resultPath = await onDownloadApp.call(driver, {
+            url: 'http://example.com/download',
+            headers: {'content-disposition': disposition},
+            stream: fs.createReadStream(ipaPath),
+          });
+          assert.strictEqual(path.basename(resultPath), expectedName);
+        } finally {
+          sandbox.restore();
+          await fs.rimraf(tmpDir);
+          if (resultPath) {
+            await fs.rimraf(path.dirname(resultPath));
+          }
+        }
+      });
+    }
   });
 });

@@ -516,19 +516,14 @@ async function isIpaBundle(appPath: string): Promise<boolean> {
 /**
  * Used to parse the file name value from response headers
  */
-function parseFileName(headers: HTTPHeaders): string | null {
+function parseFileName(driver: XCUITestDriver, headers: HTTPHeaders): string | null {
   const contentDisposition = headers['content-disposition'];
-  if (typeof contentDisposition !== 'string') {
+  if (typeof contentDisposition !== 'string' || !/^attachment/i.test(contentDisposition)) {
     return null;
   }
 
-  if (/^attachment/i.test(contentDisposition)) {
-    const match = /filename="([^"]+)/i.exec(contentDisposition);
-    if (match) {
-      return fs.sanitizeName(match[1], {replacement: SANITIZE_REPLACEMENT});
-    }
-  }
-  return null;
+  const fileName = driver.helpers.filenameFromContentDisposition(contentDisposition);
+  return fileName ? fs.sanitizeName(fileName, {replacement: SANITIZE_REPLACEMENT}) : null;
 }
 
 /**
@@ -550,7 +545,7 @@ async function downloadIpa(driver: XCUITestDriver, stream: Readable, headers: HT
   };
 
   // Check if the file to be downloaded is a .zip rather than .ipa
-  const fileName = parseFileName(headers) ?? `appium-app-${new Date().getTime()}${IPA_EXT}`;
+  const fileName = parseFileName(driver, headers) ?? `appium-app-${new Date().getTime()}${IPA_EXT}`;
   if (fileName.toLowerCase().endsWith(ZIP_EXT)) {
     const {rootDir, archiveSize} = await unzipStream(stream);
     logPerformance(rootDir, archiveSize, 'downloaded and unzipped');
