@@ -5,7 +5,7 @@ import {describe, it, before} from 'node:test';
 import {fs, tempDir, zip} from 'appium/support.js';
 import {createSandbox} from 'sinon';
 
-import {onDownloadApp, parseFileName, unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
+import {onDownloadApp, unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
 import {XCUITestDriver} from '../../lib/driver.js';
 import {getUIKitCatalogPath} from '../setup.js';
 
@@ -95,46 +95,6 @@ describe('app-utils', function () {
     });
   });
 
-  describe('parseFileName', function () {
-    it('should parse a quoted filename', function () {
-      assert.strictEqual(parseFileName({'content-disposition': 'attachment; filename="build.zip"'}), 'build.zip');
-    });
-
-    it('should parse an unquoted filename', function () {
-      assert.strictEqual(parseFileName({'content-disposition': 'attachment; filename=build.zip'}), 'build.zip');
-    });
-
-    it('should not let an unquoted filename swallow later parameters', function () {
-      assert.strictEqual(
-        parseFileName({'content-disposition': 'attachment; filename=build.zip; size=42'}),
-        'build.zip',
-      );
-    });
-
-    it('should prefer a percent-encoded RFC 5987 filename*', function () {
-      assert.strictEqual(
-        parseFileName({'content-disposition': `attachment; filename="fallback.ipa"; filename*=UTF-8''My%20App.zip`}),
-        'My App.zip',
-      );
-    });
-
-    it('should fall back to filename if filename* cannot be decoded', function () {
-      assert.strictEqual(
-        parseFileName({'content-disposition': `attachment; filename*=UTF-8''%E0%A4%A; filename="build.zip"`}),
-        'build.zip',
-      );
-    });
-
-    it('should return null if there is no filename', function () {
-      assert.strictEqual(parseFileName({'content-disposition': 'attachment'}), null);
-      assert.strictEqual(parseFileName({}), null);
-    });
-
-    it('should return null for inline dispositions', function () {
-      assert.strictEqual(parseFileName({'content-disposition': 'inline; filename=build.zip'}), null);
-    });
-  });
-
   describe('onDownloadApp', function () {
     it('should select an .ipa nested in a remote .zip on a real device', async function () {
       try {
@@ -173,5 +133,36 @@ describe('app-utils', function () {
         }
       }
     });
+
+    for (const [disposition, expectedName] of [
+      ['attachment; filename="Quoted.ipa"', 'Quoted.ipa'],
+      ['attachment; filename=Unquoted.ipa', 'Unquoted.ipa'],
+      [`attachment; filename="fallback.ipa"; filename*=UTF-8''My%20App.ipa`, 'My App.ipa'],
+    ]) {
+      it(`should name the downloaded .ipa after ${disposition}`, async function () {
+        const sandbox = createSandbox();
+        const tmpDir = await tempDir.openDir();
+        let resultPath: string | undefined;
+        try {
+          const ipaPath = path.join(tmpDir, 'src.ipa');
+          await fs.writeFile(ipaPath, 'ipa');
+          const driver = new XCUITestDriver({} as any);
+          sandbox.stub(driver, 'isRealDevice').returns(true);
+          sandbox.stub(driver.appInfosCache, 'put').resolves();
+          resultPath = await onDownloadApp.call(driver, {
+            url: 'http://example.com/download',
+            headers: {'content-disposition': disposition},
+            stream: fs.createReadStream(ipaPath),
+          });
+          assert.strictEqual(path.basename(resultPath), expectedName);
+        } finally {
+          sandbox.restore();
+          await fs.rimraf(tmpDir);
+          if (resultPath) {
+            await fs.rimraf(path.dirname(resultPath));
+          }
+        }
+      });
+    }
   });
 });
