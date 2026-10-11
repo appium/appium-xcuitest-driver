@@ -41,17 +41,12 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return data;
   };
 
-  // The current MJPEG stream and simulator fallback do not select a display.
-  // CoreSim supports display selection, but requires a display port UUID rather
-  // than WDA's numeric display ID. Use WDA until that mapping is implemented.
   const {currentDisplayId} = await this.settings.getSettings();
-  if (currentDisplayId !== undefined && currentDisplayId !== null) {
-    return await getScreenshotFromWDA();
-  }
+  const hasSelectedDisplay = currentDisplayId !== undefined && currentDisplayId !== null;
 
   // Frames carry no display identity. Once selection changes, even resetting to
   // the main display cannot safely reuse this stream (old frames may be queued).
-  if (this.mjpegStream && !this._hasUpdatedDisplaySelection) {
+  if (this.mjpegStream && !hasSelectedDisplay && !this._hasUpdatedDisplaySelection) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);
     // Preserve legacy conversion unless orientation correction was explicitly enabled.
     const fixOrientation = this.settings.getSettings().mjpegFixOrientation === true;
@@ -65,23 +60,73 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     );
   }
 
+  let wdaError: unknown;
   try {
     return await getScreenshotFromWDA();
   } catch (err: any) {
+    wdaError = err;
     this.log.warn(`Error getting screenshot: ${err.message}`);
   }
 
-  // simulator attempt
   if (this.isSimulator()) {
-    this.log.info(`Falling back to 'simctl io screenshot' API`);
-    const payload = await (this.device as Simulator).getScreenshot();
+    // Feature-detect the display enumeration API until older simulator packages
+    // are no longer supported. Their default capture cannot target a WDA ID.
+    const simulator = this.device as Simulator & {
+      getDisplays?: () => Promise<{id: string; screenId?: number; isMain: boolean}[]>;
+    };
+    let displayId: string | undefined;
+    if (simulator.getDisplays) {
+      const displays = await simulator.getDisplays();
+      let wdaDisplays;
+      try {
+        // Verify availability and resolve WDA's main display explicitly: Duo
+        // has more than one class-0 CoreSim display.
+        wdaDisplays = await this.mobileListDisplays();
+      } catch {
+        if (hasSelectedDisplay) {
+          throw wdaError;
+        }
+      }
+      if (wdaDisplays) {
+        const target = hasSelectedDisplay
+          ? wdaDisplays.find(({id}) => id === currentDisplayId)
+          : wdaDisplays.find(({isDefault}) => isDefault);
+        if (!target) {
+          throw wdaError;
+        }
+        const matches = displays.filter(({screenId}) => screenId === target.id);
+        if (matches.length === 1 && matches[0].id) {
+          displayId = matches[0].id;
+        } else if (hasSelectedDisplay || displays.some(({screenId}) => screenId !== undefined)) {
+          throw wdaError;
+        }
+      }
+      if (!displayId) {
+        // Older CoreSimulator versions may not expose guest IDs. With no
+        // explicit selection, a unique default port is still safe to use.
+        const mainDisplays = displays.filter(({isMain}) => isMain);
+        const candidates = mainDisplays.length ? mainDisplays : displays;
+        if (candidates.length !== 1 || !candidates[0].id) {
+          throw wdaError;
+        }
+        displayId = candidates[0].id;
+      }
+    } else if (hasSelectedDisplay) {
+      throw wdaError;
+    }
+    this.log.info('Falling back to CoreSimulator screenshot capture');
+    const payload = await simulator.getScreenshot(displayId ? {displayId} : undefined);
     if (!payload || payload.length === 0) {
       throw new errors.UnableToCaptureScreen();
     }
     return payload.toString('base64');
   }
 
-  // Retry for real devices only. Fail fast on Simulator if simctl does not work as expected
+  if (hasSelectedDisplay) {
+    throw wdaError;
+  }
+
+  // Retry for real devices only.
   return (await retryInterval(2, 1000, getScreenshotFromWDA)) as string;
 }
 
