@@ -104,7 +104,7 @@ describe('screenshots commands', function () {
         sinon.assert.notCalled(lastChunkStub);
       });
 
-      it('should not fall back to simctl if WDA call fails', async function () {
+      it('should not fall back when the simulator package cannot enumerate displays', async function () {
         const error = new errors.UnableToCaptureScreen('No display with id 3 is available');
         proxyStub.rejects(error);
 
@@ -132,6 +132,115 @@ describe('screenshots commands', function () {
 
         await driver.getScreenshot();
         sinon.assert.calledOnce(getScreenshotStub);
+      });
+    });
+
+    describe('CoreSimulator display mapping', function () {
+      let capture: sinon.SinonStub;
+      let enumerate: sinon.SinonStub;
+      let wdaDisplays: sinon.SinonStub;
+      const wdaError = new errors.UnableToCaptureScreen('WDA screenshot failed');
+
+      beforeEach(async function () {
+        capture = sinon.stub().resolves(Buffer.from(base64PortraitResponse, 'base64'));
+        // Deliberately put the non-main display first, and mark both as class 0.
+        enumerate = sinon.stub().resolves([
+          {id: 'inner-port', screenId: 3, isMain: true},
+          {id: 'outer-port', screenId: 1, isMain: true},
+        ]);
+        driver.isSimulator = () => true;
+        driver._device = {getScreenshot: capture, getDisplays: enumerate} as any;
+        await driver.updateSettings({currentDisplayId: 3});
+        proxyStub.reset();
+        proxyStub.rejects(wdaError);
+        wdaDisplays = sinon.stub(driver, 'mobileListDisplays').resolves([
+          {id: 1, isDefault: true},
+          {id: 3, isDefault: false},
+        ] as any);
+      });
+
+      it('maps the selected WDA ID to a CoreSimulator port UUID', async function () {
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 'inner-port'});
+      });
+
+      it('resolves the main display explicitly after resetting selection', async function () {
+        proxyStub.resolves();
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.rejects(wdaError);
+        await driver.getScreenshot();
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 'outer-port'});
+      });
+
+      it('refreshes port UUIDs on every fallback', async function () {
+        await driver.getScreenshot();
+        enumerate.resolves([{id: 'new-inner-port', screenId: 3, isMain: true}]);
+        await driver.getScreenshot();
+        assert.deepEqual(capture.secondCall.args, [{displayId: 'new-inner-port'}]);
+      });
+
+      for (const ports of [
+        [{id: 'outer-port', screenId: 1, isMain: true}],
+        [{id: 'inner-port', isMain: true}],
+        [{id: '', screenId: 3, isMain: true}],
+        [
+          {id: 'a', screenId: 3, isMain: true},
+          {id: 'b', screenId: 3, isMain: true},
+        ],
+      ]) {
+        it(`rejects a missing or ambiguous mapping: ${JSON.stringify(ports)}`, async function () {
+          enumerate.resolves(ports);
+          await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
+          sinon.assert.notCalled(capture);
+        });
+      }
+
+      it('does not capture a display that has disappeared from WDA', async function () {
+        wdaDisplays.resolves([{id: 1, isDefault: true}]);
+        await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
+        sinon.assert.notCalled(capture);
+      });
+
+      it('does not guess between two default ports when WDA enumeration fails', async function () {
+        proxyStub.resolves();
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.rejects(wdaError);
+        wdaDisplays.rejects(new Error('WDA unavailable'));
+        await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
+        sinon.assert.notCalled(capture);
+      });
+
+      it('can use a unique default port when WDA is unavailable', async function () {
+        proxyStub.resolves();
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.rejects(wdaError);
+        wdaDisplays.rejects(new Error('WDA unavailable'));
+        enumerate.resolves([{id: 'outer-port', screenId: 1, isMain: true}]);
+        await driver.getScreenshot();
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 'outer-port'});
+      });
+
+      for (const isMain of [true, false]) {
+        it(`supports a unique legacy default port (isMain=${isMain})`, async function () {
+          proxyStub.resolves();
+          await driver.updateSettings({currentDisplayId: null});
+          proxyStub.rejects(wdaError);
+          enumerate.resolves([{id: 'legacy-port', isMain}]);
+          await driver.getScreenshot();
+          sinon.assert.calledOnceWithExactly(capture, {displayId: 'legacy-port'});
+        });
+      }
+
+      it('rejects empty capture data', async function () {
+        capture.resolves(Buffer.alloc(0));
+        await assert.rejects(driver.getScreenshot(), errors.UnableToCaptureScreen);
+      });
+
+      it('does not enumerate simulator ports for a real device', async function () {
+        driver.isSimulator = () => false;
+        await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
+        sinon.assert.notCalled(enumerate);
+        sinon.assert.notCalled(capture);
       });
     });
 
