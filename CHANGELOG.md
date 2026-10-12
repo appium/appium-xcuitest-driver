@@ -1,3 +1,9 @@
+## [12.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.2...v12.17.3) (2026-10-12)
+
+### Bug Fixes
+
+* make tunnel-creation exit on Ctrl+C ([#3033](https://github.com/appium/appium-xcuitest-driver/issues/3033)) ([1dde1ec](https://github.com/appium/appium-xcuitest-driver/commit/1dde1ec4589b416205729d943c7cf5ab9d286617))
+
 ## [12.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.1...v12.17.2) (2026-10-12)
 
 ### Bug Fixes
