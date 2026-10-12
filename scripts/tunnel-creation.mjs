@@ -396,7 +396,7 @@ class TunnelCreator {
         try {
           const result = await this._createAppleTVTunnelForUdid(deviceId, prefetchedDevicesById.get(deviceId));
           results.push(result);
-          log.info(`✅ Apple TV tunnel ready for ${deviceId}`);
+          log.info(`✅ Apple TV tunnel ready for ${result.device.identifier}`);
         } catch (err) {
           log.warn(`Apple TV tunnel setup failed for ${deviceId}: ${/** @type {Error} */ (err)?.message ?? err}`);
           results.push({
@@ -468,7 +468,16 @@ class TunnelCreator {
       throw new Error('Apple TV TCP socket to listener port not established');
     }
 
-    log.info(`Creating tunnel for Apple TV: ${startResult.device.identifier}`);
+    // Track the tunnel by its pair record UDID, not the identifier it was discovered under: an
+    // Apple TV may advertise a different identifier each time, while startTunnel maps the pair
+    // record UDID back to whichever advert matches it, so reconnects keep finding the device.
+    const tunnelUdid = startResult.device.identifier;
+    if (tunnelUdid !== udid) {
+      this._appletvTunnelServicesByUdid.delete(udid);
+      this._appletvTunnelServicesByUdid.set(tunnelUdid, tunnelService);
+    }
+
+    log.info(`Creating tunnel for Apple TV: ${tunnelUdid}`);
     /** @type {{ notify: ((reason: string) => void) | null }} */
     const lifecycle = {notify: null};
     const tunnelConnection = await TunnelManager.getTunnelPsk(
@@ -479,7 +488,7 @@ class TunnelCreator {
       },
     );
 
-    this._appleTVDeviceIds.add(udid);
+    this._appleTVDeviceIds.add(tunnelUdid);
 
     /** @type {AppleTVTunnelSuccess} */
     const result = {
@@ -497,7 +506,7 @@ class TunnelCreator {
       tunnelService,
     };
 
-    this._registerEstablishedTunnel(udid, result);
+    this._registerEstablishedTunnel(tunnelUdid, result);
     return result;
   }
 
@@ -854,7 +863,8 @@ function collectStringValues(value, previous = []) {
 
 /**
  * Sets up signal and error handlers to ensure tunnels are cleaned up exactly once
- * and an appropriate process exit code is set on shutdown.
+ * and the process exits with an appropriate code on shutdown. A repeated shutdown
+ * signal during cleanup forces an immediate exit.
  *
  * @param {TunnelCreator} tunnelCreator
  * @returns {() => Promise<void>} cleanup function that can be awaited in a finally block
@@ -883,6 +893,10 @@ function setupCleanupHandlers(tunnelCreator) {
   const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
   for (const signal of shutdownSignals) {
     process.on(signal, () => {
+      if (shuttingDown) {
+        log.warn(`Received ${signal} during cleanup, forcing exit`);
+        process.exit(process.exitCode || 1);
+      }
       if (process.exitCode == null) {
         if (signal === 'SIGINT') {
           process.exitCode = 0;
@@ -892,7 +906,7 @@ function setupCleanupHandlers(tunnelCreator) {
           process.exitCode = 1;
         }
       }
-      void cleanupOnce();
+      void cleanupAndExit();
     });
   }
 
