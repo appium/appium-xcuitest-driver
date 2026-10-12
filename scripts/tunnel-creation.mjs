@@ -854,7 +854,8 @@ function collectStringValues(value, previous = []) {
 
 /**
  * Sets up signal and error handlers to ensure tunnels are cleaned up exactly once
- * and an appropriate process exit code is set on shutdown.
+ * and the process exits with an appropriate code on shutdown. A repeated shutdown
+ * signal during cleanup forces an immediate exit.
  *
  * @param {TunnelCreator} tunnelCreator
  * @returns {() => Promise<void>} cleanup function that can be awaited in a finally block
@@ -883,6 +884,10 @@ function setupCleanupHandlers(tunnelCreator) {
   const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
   for (const signal of shutdownSignals) {
     process.on(signal, () => {
+      if (shuttingDown) {
+        log.warn(`Received ${signal} during cleanup, forcing exit`);
+        process.exit(process.exitCode || 1);
+      }
       if (process.exitCode == null) {
         if (signal === 'SIGINT') {
           process.exitCode = 0;
@@ -892,7 +897,7 @@ function setupCleanupHandlers(tunnelCreator) {
           process.exitCode = 1;
         }
       }
-      void cleanupOnce();
+      void cleanupAndExit();
     });
   }
 
