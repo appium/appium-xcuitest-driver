@@ -1,3 +1,9 @@
+## [12.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.1...v12.17.2) (2026-10-12)
+
+### Bug Fixes
+
+* track Apple TV tunnels by pair record UDID ([#3032](https://github.com/appium/appium-xcuitest-driver/issues/3032)) ([10e7d17](https://github.com/appium/appium-xcuitest-driver/commit/10e7d17f8eddc0ab9915987a8ebee75644e799bd))
+
 ## [12.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.0...v12.17.1) (2026-10-10)
 
 ### Bug Fixes
