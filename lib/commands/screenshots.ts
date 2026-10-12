@@ -41,10 +41,21 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return data;
   };
 
-  // if we've specified an mjpeg server, use that
-  if (this.mjpegStream) {
+  // The current MJPEG stream and simulator fallback do not select a display.
+  // CoreSim supports display selection, but requires a display port UUID rather
+  // than WDA's numeric display ID. Use WDA until that mapping is implemented.
+  const {currentDisplayId} = await this.settings.getSettings();
+  if (currentDisplayId !== undefined && currentDisplayId !== null) {
+    return await getScreenshotFromWDA();
+  }
+
+  // Frames carry no display identity. Once selection changes, even resetting to
+  // the main display cannot safely reuse this stream (old frames may be queued).
+  if (this.mjpegStream && !this._hasUpdatedDisplaySelection) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);
-    const data = await this.mjpegStream.lastChunkPNGBase64();
+    // Preserve legacy conversion unless orientation correction was explicitly enabled.
+    const fixOrientation = this.settings.getSettings().mjpegFixOrientation === true;
+    const data = await this.mjpegStream.lastChunkPNGBase64(fixOrientation);
     if (data) {
       return data;
     }
@@ -108,7 +119,8 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
   const screenshot = await this.getScreenshot();
   // if we don't have a status bar, there's nothing to crop, so we can avoid
   // extra calls and return straight away
-  if ((await this.getStatusBarHeight()) === 0) {
+  const {scale, statusBarSize} = await this.getScreenInfo();
+  if (statusBarSize.height === 0) {
     return screenshot;
   }
 
@@ -118,15 +130,18 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
     throw new errors.UnableToCaptureScreen('The device screenshot is empty');
   }
   this.log.debug(`Screenshot dimensions: ${width}x${height}`);
-  const region = await this.getViewportRect();
-  if (region.width + region.left > width) {
-    this.log.info('Viewport region exceeds screenshot width, adjusting region to fit');
-    region.width = width - region.left;
+  // A screenshot covers the selected display, which need not have the same
+  // dimensions as the active app window. Preserve its full width and bottom edge,
+  // including fractional-scale rounding in the captured image.
+  const cropHeight = statusBarSize.height * scale;
+  if (!Number.isFinite(cropHeight) || cropHeight < 0 || cropHeight >= height) {
+    this.log.info(
+      `Status bar height ${cropHeight} is outside the screenshot bounds (${width}x${height}); returning the uncropped screenshot`,
+    );
+    return screenshot;
   }
-  if (region.height + region.top > height) {
-    this.log.info('Viewport region exceeds screenshot height, adjusting region to fit');
-    region.height = height - region.top;
-  }
+  const top = Math.trunc(cropHeight);
+  const region = {left: 0, top, width, height: height - top};
   this.log.debug(`Calculated viewport rect: ${JSON.stringify(region)}`);
   return await cropBase64Image(screenshot, region);
 }

@@ -1206,7 +1206,17 @@ The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}
 
 ### mobile: viewportScreenshot
 
-Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect))
+Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect)).
+Native screenshots are cropped using fresh screen information from WDA and the actual image
+bounds, preserving the full width and bottom edge. If WDA reports no top status bar, the
+screenshot is returned unchanged. If the reported status-bar geometry cannot produce a valid
+crop, the original screenshot is returned as a best-effort result. Side-mounted status UI
+cannot be removed by a top-edge crop.
+
+For multiple displays, WDA must provide screen information for the selected display as well
+as capture that display. Wait for folding, rotation, and display-selection transitions to finish
+before requesting a viewport screenshot. Screen information and image capture are separate
+requests, so this command cannot provide an atomic snapshot during a transition.
 
 !!! warning "Unreliable"
 
@@ -1218,7 +1228,7 @@ Base64-encoded string, which represents the viewport screenshot.
 
 ### mobile: deviceScreenInfo
 
-Get information about screen.
+Get current information about the screen from WDA. The driver does not cache this response.
 
 #### Returned Result
 
@@ -1226,6 +1236,35 @@ The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"sc
 
 `statusBarSize` contains status bar dimensions. It is the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars).
 `scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
+
+### mobile: listDisplays
+
+Lists the displays of the device under test. Use a returned `id` as the
+[`currentDisplayId`](./settings.md#currentdisplayid) setting value to target that display.
+The command retrieves a fresh list without changing the selected display. After folding or
+unfolding, query the displays again rather than assuming the main display is the visible one.
+See [iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
+
+#### Returned Result
+
+An array of display entries, where each entry contains:
+
+Name | Type | Description
+--- | --- | ---
+id | number | The display identifier, usable as the `currentDisplayId` setting value
+isDefault | boolean | Whether this is the device's main display
+metrics | object | Display dimensions and scale, as described below
+
+The `metrics` object contains:
+
+Name | Type | Description
+--- | --- | ---
+widthPixels | number | The display width in native pixels
+heightPixels | number | The display height in native pixels
+density | number | The display scale factor
+xStart | number | Horizontal coordinate offset
+yStart | number | Vertical coordinate offset
+traits | number | The display traits
 
 ### mobile: swipe
 
@@ -2106,6 +2145,52 @@ Name | Type | Description | Example
 latitude | number | Measurement of distance north or south of the Equator. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation). | 50.08546
 longitude | number | Measurement of distance east or west of the prime meridian. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation).  | -20.12345
 
+### mobile: getSimulatedHingeAngle
+
+Reads the current hinge angle in degrees, including changes made outside Appium.
+Requires a WebDriverAgent build with hinge angle reading support and an iOS
+simulator or device with an available hinge. tvOS, watchOS, and devices without
+hinge angle reading support are unsupported. WDA determines support at runtime;
+the driver forwards the request and propagates WDA errors.
+
+This command has been tested only on the Duo simulator. We have not tested it on a
+real Duo device and are awaiting feedback on whether hinge angle reading works on
+real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
+for real-device feedback.
+
+The command waits up to five seconds for a valid reading and returns an error if
+none arrives. A reading during folding may reflect an intermediate angle; it does
+not wait for the transition to finish or change the hinge angle or `currentDisplayId`.
+
+#### Returned Result
+
+The current hinge angle as a number in degrees, for example `90.5`.
+
+### mobile: setSimulatedHingeAngle
+
+Requests a simulated hinge angle change. Requires a WebDriverAgent build with
+simulated hinge angle support and an iOS simulator or device with an available
+hinge. WDA validates the angle and checks platform and device support at runtime;
+the driver forwards the request and propagates WDA errors. tvOS, watchOS, and devices
+without simulated hinge angle support are unsupported by the current WDA implementation.
+
+This command has been tested only on the Duo simulator. We have not tested it on a
+real Duo device and are awaiting feedback on whether simulated hinge angle changes
+work on real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
+for real-device feedback.
+
+Successful completion does not guarantee that the requested angle was applied.
+Wait for the expected application
+layout before issuing subsequent commands because folding completes asynchronously.
+It does not change device orientation or the `currentDisplayId` setting. Enumerate
+available screens and select the appropriate display separately.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+angle | number | yes | Finite hinge angle in degrees, from `0` (closed) to `180` (fully open). Fractional values are accepted. | 90
+
 ### mobile: setSimulatedLocation
 
 Sets simulated geolocation value.
@@ -2347,6 +2432,11 @@ utterance | string or null | The current spoken utterance, or `null` | Button
 
 Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the WebDriverAgent **MJPEG** stream. Equivalent to [`startRecordingScreen`](./commands.md#startrecordingscreen) over HTTP. Requires `ffmpeg` on `PATH`. Audio is not recorded.
 
+With software recording and no explicit `videoFilters` or `videoScale`, the first frame sets
+the video dimensions (rounded up to even numbers). If the display size changes, later frames
+are scaled to fit with their aspect ratio preserved and black padding. With custom filters,
+scaling, or hardware acceleration, configure fixed output dimensions if needed.
+
 #### Arguments
 
 Pass the same fields as for HTTP [`startRecordingScreen`](./commands.md#startrecordingscreen) `options`, as **top-level** keys on the execute argument object (they are forwarded into one options object server-side). Example:
@@ -2405,6 +2495,13 @@ to guard against internal storage overload. Simulators are not affected.
 If the screen recording is already running this API is a noop.
 
 The feature is only available since Xcode 15/iOS 17.
+
+On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
+XCTest recording of the closed device's outer display produced a one-frame black video
+despite successful start/stop responses. Inner-display recording worked; other runtimes
+and physical Duo devices remain unverified. If affected, use
+[`startRecordingScreen`](./commands.md#startrecordingscreen) and enable
+[`mjpegFixOrientation`](./settings.md) for upright video.
 
 #### Arguments
 

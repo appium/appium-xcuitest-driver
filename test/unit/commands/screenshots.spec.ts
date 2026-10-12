@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
+import sharp from 'sharp';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -22,6 +23,19 @@ describe('screenshots commands', function () {
   });
 
   describe('getScreenshot', function () {
+    it('should only correct MJPEG orientation when explicitly enabled', async function () {
+      const convert = sinon.stub().resolves(base64PortraitResponse);
+      driver.mjpegStream = {lastChunkPNGBase64: convert} as any;
+      for (const setting of [undefined, true, false]) {
+        if (setting !== undefined) {
+          await driver.updateSettings({mjpegFixOrientation: setting});
+        }
+        convert.resetHistory();
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.calledOnceWithExactly(convert, setting === true);
+      }
+    });
+
     describe('simulator', function () {
       let getScreenshotStub: sinon.SinonStub;
 
@@ -69,6 +83,58 @@ describe('screenshots commands', function () {
       });
     });
 
+    describe('with a selected display', function () {
+      let getScreenshotStub: sinon.SinonStub;
+
+      beforeEach(async function () {
+        getScreenshotStub = sinon.stub().resolves(Buffer.from(base64PortraitResponse, 'base64'));
+        driver.isSimulator = () => true;
+        driver._device = {getScreenshot: getScreenshotStub} as any;
+        await driver.updateSettings({currentDisplayId: 3});
+        proxyStub.reset();
+      });
+
+      it('should not use the MJPEG stream', async function () {
+        const lastChunkStub = sinon.stub().resolves(base64PortraitResponse);
+        driver.mjpegStream = {lastChunkPNGBase64: lastChunkStub} as any;
+        proxyStub.resolves(base64PortraitResponse);
+
+        assert.strictEqual(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.calledOnceWithExactly(proxyStub, '/screenshot', 'GET');
+        sinon.assert.notCalled(lastChunkStub);
+      });
+
+      it('should not fall back to simctl if WDA call fails', async function () {
+        const error = new errors.UnableToCaptureScreen('No display with id 3 is available');
+        proxyStub.rejects(error);
+
+        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
+        sinon.assert.calledOnce(proxyStub);
+        sinon.assert.notCalled(getScreenshotStub);
+      });
+
+      it('should capture a fresh main-display image after resetting display selection', async function () {
+        const lastChunkStub = sinon.stub().resolves('previous-inner-display');
+        driver.mjpegStream = {lastChunkPNGBase64: lastChunkStub} as any;
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.reset();
+        proxyStub.resolves(base64PortraitResponse);
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.notCalled(lastChunkStub);
+        sinon.assert.calledTwice(proxyStub);
+      });
+
+      it('should restore the fallback after the setting is cleared', async function () {
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.reset();
+        proxyStub.returns(null);
+
+        await driver.getScreenshot();
+        sinon.assert.calledOnce(getScreenshotStub);
+      });
+    });
+
     describe('real device', function () {
       it('should get a screenshot from WDA if no errors are detected', async function () {
         proxyStub.returns(base64PortraitResponse);
@@ -80,6 +146,82 @@ describe('screenshots commands', function () {
         assert.strictEqual(proxyStub.firstCall.args[0], '/screenshot');
         assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
       });
+    });
+  });
+  describe('getViewportScreenshot', function () {
+    async function screenshot(width: number, height: number): Promise<string> {
+      return (
+        await sharp({create: {width, height, channels: 3, background: '#abcdef'}})
+          .png()
+          .toBuffer()
+      ).toString('base64');
+    }
+
+    it('should crop each display using fresh geometry and the captured image bounds', async function () {
+      // The image is one pixel larger than the logical window scaled by two.
+      // Cropping must retain the right and bottom edges, including in a smaller app window.
+      const capture = sinon.stub(driver, 'getScreenshot');
+      sinon.stub(driver, 'getWindowRect').resolves({x: 0, y: 0, width: 400, height: 600});
+      for (const [width, height, scale, bar] of [
+        [1398, 2034, 3, 20],
+        [1903, 1339, 2, 24.5],
+        [1903, 1339, 2, 0],
+        [1398, 2034, 3, 24],
+      ]) {
+        const original = await screenshot(width, height);
+        capture.resolves(original);
+        proxyStub.withArgs('/wda/screen', 'GET').resolves({scale, statusBarSize: {width: width / scale, height: bar}});
+        proxyStub.resetHistory();
+        const result = await driver.getViewportScreenshot();
+        const expected = await sharp(Buffer.from(original, 'base64'))
+          .extract({left: 0, top: Math.trunc(bar * scale), width, height: height - Math.trunc(bar * scale)})
+          .raw()
+          .toBuffer();
+        assert.deepEqual(await sharp(Buffer.from(result, 'base64')).raw().toBuffer(), expected);
+        const dimensions = await sharp(Buffer.from(result, 'base64')).metadata();
+        assert.equal(dimensions.width, width);
+        assert.equal(dimensions.height, height - Math.trunc(bar * scale));
+        if (!bar) {
+          assert.equal(result, original);
+        }
+        sinon.assert.calledOnce(proxyStub);
+      }
+    });
+
+    it('should return the original screenshot when status bar geometry cannot be cropped', async function () {
+      // Use a distinct encoding so an accidental full-image crop/re-encode
+      // cannot pass the byte-for-byte preservation assertion.
+      const original = (
+        await sharp(Buffer.from(await screenshot(10, 10), 'base64'))
+          .png({compressionLevel: 0})
+          .toBuffer()
+      ).toString('base64');
+      sinon.stub(driver, 'getScreenshot').resolves(original);
+      for (const [scale, bar] of [
+        [2, 5],
+        [2, 6],
+        [2, -1],
+        [2, -0.1],
+        [0.5, -1],
+        [2, NaN],
+        [Infinity, 1],
+      ]) {
+        proxyStub.resolves({scale, statusBarSize: {width: 5, height: bar}});
+        assert.equal(await driver.getViewportScreenshot(), original);
+      }
+    });
+
+    it('should return web viewport screenshots without requesting native geometry', async function () {
+      sinon.stub(driver, 'isWebContext').returns(true);
+      const capture = sinon.stub(driver, '_webExecutionBackend').get(() => ({
+        screenshot: async () => 'web screenshot',
+      }));
+      try {
+        assert.equal(await driver.getViewportScreenshot(), 'web screenshot');
+        sinon.assert.notCalled(proxyStub);
+      } finally {
+        capture.restore();
+      }
     });
   });
 });

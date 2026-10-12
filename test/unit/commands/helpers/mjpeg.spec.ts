@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import http, {type Server} from 'node:http';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
-import sharp from 'sharp';
+import sharp, {type Metadata} from 'sharp';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
@@ -92,6 +92,46 @@ describe('mjpeg helpers', function () {
       // PNG signature
       assert.strictEqual(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
     });
+
+    for (const orientation of [1, 3, 6, 8]) {
+      it(`should apply EXIF orientation ${orientation} before dropping JPEG metadata`, async function () {
+        const source = await sharp({
+          create: {width: 40, height: 20, channels: 3, background: 'red'},
+        })
+          .composite([
+            {
+              input: await sharp({create: {width: 20, height: 20, channels: 3, background: 'blue'}})
+                .png()
+                .toBuffer(),
+              left: 0,
+              top: 0,
+            },
+          ])
+          .withMetadata({orientation})
+          .jpeg()
+          .toBuffer();
+        framesToSend = [source];
+        stream = new MJpegStream(serverUrl);
+        await stream.start();
+        // Unconfigured and explicitly disabled conversion retain the original pixels.
+        for (const fixOrientation of [undefined, false]) {
+          const legacyPng = await stream.lastChunkPNG(fixOrientation);
+          assert.ok(legacyPng);
+          assert.deepEqual(await sharp(legacyPng).raw().toBuffer(), await sharp(source).raw().toBuffer());
+          const legacyMetadata: Metadata = await sharp(legacyPng).metadata();
+          assert.equal(legacyMetadata.width, 40);
+          assert.equal(legacyMetadata.height, 20);
+        }
+        const png = Buffer.from((await stream.lastChunkPNGBase64(true))!, 'base64');
+        assert.ok(png);
+        const metadata = await sharp(png).metadata();
+        assert.equal(metadata.width, orientation >= 5 ? 20 : 40);
+        assert.equal(metadata.height, orientation >= 5 ? 40 : 20);
+        assert.equal(metadata.orientation, undefined);
+        const angle = {1: 0, 3: 180, 6: 90, 8: 270}[orientation];
+        assert.deepEqual(await sharp(png).raw().toBuffer(), await sharp(source).rotate(angle).raw().toBuffer());
+      });
+    }
 
     it('should keep track of newer frames as they arrive', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
       framesToSend = [jpeg, jpeg2];

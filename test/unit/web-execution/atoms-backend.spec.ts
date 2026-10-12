@@ -59,8 +59,14 @@ describe('AtomsBackend', function () {
       visualViewportScale: 1,
     };
     remoteStub.execute.returns(viewportState);
+    sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+    const proxy =
+      'restore' in driver.proxyCommand
+        ? (driver.proxyCommand as sinon.SinonStub)
+        : sandbox.stub(driver, 'proxyCommand');
+    proxy.withArgs('/element/webview/rect', 'GET').resolves({x: 0, y: 0, width: 400, height: 800});
     driver._webviewCalibrationCache = {
-      signature: `${driver.curContext}::${viewportSignature({...viewportState, orientation: 'PORTRAIT'})}`,
+      signature: `${driver.curContext}::${viewportSignature({...viewportState, orientation: 'PORTRAIT'})}::[null,0,0,400,800]`,
       data: {offsetX: 0, offsetY: 0, pixelRatioX: 1, pixelRatioY: 1},
     };
   }
@@ -475,8 +481,8 @@ describe('AtomsBackend', function () {
 
     await backend.performActions(actions);
 
-    assert.strictEqual(proxyStub.calledOnce, true);
-    const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
+    assert.strictEqual(proxyStub.withArgs('/actions').calledOnce, true);
+    const proxiedAction = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions[0];
     assert.strictEqual(proxiedAction.origin, 'viewport');
     // identity transform, so native coords equal the web ones: in-view center (120, 210)
     // offset by the action's own (5, -5)
@@ -530,7 +536,7 @@ describe('AtomsBackend', function () {
     // executeAtom is stubbed for every call, so no scroll-triggering get_top_left_coordinates or
     // get_size call is possible here in the first place - this asserts the two lookups instead
     // resolve to the two distinct, independent coordinates set up above
-    const [moveToSource, moveToTarget] = (proxyStub.firstCall.args[2] as any).actions[0].actions;
+    const [moveToSource, moveToTarget] = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions;
     assert.deepStrictEqual({x: moveToSource.x, y: moveToSource.y}, {x: 10, y: 10});
     assert.deepStrictEqual({x: moveToTarget.x, y: moveToTarget.y}, {x: 300, y: 300});
   });
@@ -549,7 +555,7 @@ describe('AtomsBackend', function () {
     await backend.performActions(actions);
 
     assert.strictEqual(executeAtomStub.called, false);
-    const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
+    const proxiedAction = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions[0];
     assert.deepStrictEqual(proxiedAction.origin, {ELEMENT: 'native-element-id'});
   });
 

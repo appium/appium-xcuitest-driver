@@ -133,22 +133,26 @@ export class MJpegStream extends Writable {
     return lastChunk && lastChunk.length > 0 ? lastChunk.toString('base64') : null;
   }
 
-  async lastChunkPNG(): Promise<Buffer | null> {
+  async lastChunkPNG(fixOrientation = false): Promise<Buffer | null> {
     const chunk = this.lastChunk;
     if (!chunk || chunk.length === 0) {
       return null;
     }
     try {
       const sharp = await requireSharp();
-      return await sharp(chunk).png().toBuffer();
+      const image = sharp(chunk);
+      if (fixOrientation) {
+        image.autoOrient();
+      }
+      return await image.png().toBuffer();
     } catch (err: any) {
       log.warn(`Cannot convert MJPEG chunk to PNG: ${err.message}`);
       return null;
     }
   }
 
-  async lastChunkPNGBase64(): Promise<string | null> {
-    const png = await this.lastChunkPNG();
+  async lastChunkPNGBase64(fixOrientation = false): Promise<string | null> {
+    const png = await this.lastChunkPNG(fixOrientation);
     return png ? png.toString('base64') : null;
   }
 

@@ -179,15 +179,25 @@ export class ScreenRecorder {
       args.push('-hwaccel_output_format', hwaccelOutputFormat);
     }
 
-    //Parameter `-r` is optional. See details: https://github.com/appium/appium/issues/12067
-    if ((videoFps && videoType === 'libx264') || videoTypeHWAccel) {
-      args.push('-r', String(videoFps));
+    // Raw MJPEG has no timestamps; override ffmpeg's 25 fps default for every codec.
+    args.push('-r', String(videoFps || DEFAULT_FPS));
+    const useAutomaticCanvas = !videoFilters && !videoScale && !hardwareAcceleration;
+    if (useAutomaticCanvas) {
+      // Preserve the first frame's filter geometry across input size changes.
+      // Let ffmpeg establish the canvas without a separate stream probe.
+      args.push('-reinit_filter', '0');
     }
     const parsed = new URL(remoteUrl);
     args.push('-i', `${parsed.protocol}//${parsed.hostname}:${remotePort}`);
 
     if (videoFilters || videoScale) {
       args.push('-vf', videoFilters || `${scaleFilterHWAccel || 'scale'}=${videoScale}`);
+    } else if (useAutomaticCanvas) {
+      args.push(
+        '-vf',
+        'scale=ceil(iw/2)*2:ceil(ih/2)*2:force_original_aspect_ratio=decrease:force_divisible_by=2,' +
+          'pad=ceil(iw/2)*2:ceil(ih/2)*2:(ow-iw)/2:(oh-ih)/2,setsar=1',
+      );
     }
 
     // Quicktime compatibility via pixelFormat: 'yuv420p'

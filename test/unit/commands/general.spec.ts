@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import sinon from 'sinon';
 
@@ -157,29 +157,6 @@ describe('general commands', function () {
       await driver.updateSettings({nativeWebTap: false});
       assert.strictEqual((await driver.getSettings()).nativeWebTap, false);
       assert.strictEqual(driver.opts.nativeWebTap, false);
-    });
-  });
-
-  describe('getDevicePixelRatio and getStatusBarHeight', function () {
-    before(function () {
-      mockDriver
-        .expects('proxyCommand')
-        .withExactArgs('/wda/screen', 'GET')
-        .returns({
-          statusBarSize: {
-            width: 100,
-            height: 20,
-          },
-          scale: 3,
-        });
-    });
-
-    it('should get the pixel ratio from WDA', async function () {
-      assert.strictEqual(await driver.getDevicePixelRatio(), 3);
-    });
-
-    it('should return the height of the status bar', async function () {
-      assert.strictEqual(await driver.getStatusBarHeight(), 20);
     });
   });
 });

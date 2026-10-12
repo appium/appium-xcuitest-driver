@@ -21,7 +21,7 @@ export const executeMethodMap = {
     command: 'mobileSelectPickerWheelValue',
     params: {
       required: ['elementId', 'order'],
-      optional: ['offset'],
+      optional: ['offset', 'value', 'maxAttempts'],
     },
   },
   'mobile: sendMemoryWarning': {
@@ -286,6 +286,9 @@ export const executeMethodMap = {
   'mobile: deviceScreenInfo': {
     command: 'getScreenInfo',
   },
+  'mobile: listDisplays': {
+    command: 'mobileListDisplays',
+  },
   'mobile: pressButton': {
     command: 'mobilePressButton',
     params: {
@@ -532,6 +535,13 @@ export const executeMethodMap = {
       required: ['url'],
       optional: ['bundleId'],
     },
+  },
+  'mobile: setSimulatedHingeAngle': {
+    command: 'mobileSetSimulatedHingeAngle',
+    params: {required: ['angle']},
+  },
+  'mobile: getSimulatedHingeAngle': {
+    command: 'mobileGetSimulatedHingeAngle',
   },
   'mobile: setSimulatedLocation': {
     command: 'mobileSetSimulatedLocation',
