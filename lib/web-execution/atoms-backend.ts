@@ -46,31 +46,52 @@ const DEFAULT_SCRIPT_TIMEOUT_MS = 30000;
 
 // The execute_script atom serializes a returned thenable to `{}`. Keep it on the window and
 // return a marker, so it can be awaited (https://w3c.github.io/webdriver/#execute-script).
+// The kept promise is handled at once (no unhandled rejection) and not enumerable.
 export function wrapScriptForPromise(script: string, promiseKey: string): string {
+  const key = JSON.stringify(promiseKey);
   return `
   var result = (function () {
 ${script}
   }).apply(null, arguments);
   if (result !== null && (typeof result === 'object' || typeof result === 'function') &&
       typeof result.then === 'function') {
-    window[${JSON.stringify(promiseKey)}] = result;
-    return {${JSON.stringify(promiseKey)}: true};
+    var promise = Promise.resolve(result);
+    promise.catch(function () {});
+    Object.defineProperty(window, ${key}, {value: promise, configurable: true});
+    return {${key}: true};
   }
   return result;
 `;
 }
 
-// Settles the thenable kept by wrapScriptForPromise under arguments[0].
-const AWAIT_SCRIPT_PROMISE_SCRIPT = `
+// Settles the promise kept by wrapScriptForPromise under arguments[0]. Always calls `done`:
+// a missing key (the page changed), a reason that cannot be read, or a value that cannot be
+// serialized give a rejection.
+export const AWAIT_SCRIPT_PROMISE_SCRIPT = `
   var done = arguments[arguments.length - 1];
   var key = arguments[0];
+  var fail = function (reason) {
+    var message;
+    try {
+      message = reason && reason.message !== undefined ? String(reason.message) : String(reason);
+    } catch (ign) {
+      message = 'The promise returned by the script was rejected';
+    }
+    done({rejected: true, message: message});
+  };
+  if (!Object.prototype.hasOwnProperty.call(window, key)) {
+    fail(new Error('The page changed before the promise returned by the script settled'));
+    return;
+  }
   var promise = window[key];
   delete window[key];
-  Promise.resolve(promise).then(function (value) {
-    done({value: value});
-  }, function (reason) {
-    done({rejected: true, message: reason && reason.message !== undefined ? String(reason.message) : String(reason)});
-  });
+  promise.then(function (value) {
+    try {
+      done({value: value});
+    } catch (err) {
+      fail(err);
+    }
+  }, fail);
 `;
 
 /**
@@ -391,13 +412,10 @@ export class AtomsBackend implements WebExecutionBackend {
     }
 
     // `||`: executeAsyncScript stores 0 when no script timeout is set
-    const settled = (await this.driver.waitForAtom(
-      this.driver.remote.executeAtomAsync(
-        'execute_async_script',
-        [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs || DEFAULT_SCRIPT_TIMEOUT_MS],
-        this.driver.curWebFrames,
-      ),
-    )) as {value?: unknown; rejected?: boolean; message?: string};
+    const settled = await this.driver.executeAtomAsync<{value?: unknown; rejected?: boolean; message?: string}>(
+      'execute_async_script',
+      [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs || DEFAULT_SCRIPT_TIMEOUT_MS],
+    );
     if (settled?.rejected) {
       throw new errors.JavaScriptError(settled.message);
     }

@@ -7,7 +7,11 @@ import type sinon from 'sinon';
 
 import {viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
-import {AtomsBackend, wrapScriptForPromise} from '../../../lib/web-execution/atoms-backend.js';
+import {
+  AtomsBackend,
+  AWAIT_SCRIPT_PROMISE_SCRIPT,
+  wrapScriptForPromise,
+} from '../../../lib/web-execution/atoms-backend.js';
 
 describe('AtomsBackend', function () {
   let sandbox: sinon.SinonSandbox;
@@ -428,7 +432,7 @@ describe('AtomsBackend', function () {
 
     describe('executeScript with a script that returns a promise', function () {
       const markerFor = (script: string) => {
-        const key = /window\["(appiumScriptPromise[0-9a-f]+)"\]/.exec(script)![1];
+        const key = /return \{"(appiumScriptPromise[0-9a-f]+)": true\}/.exec(script)![1];
         return {key, marker: {[key]: true}};
       };
       let waitForAtomStub: sinon.SinonStub;
@@ -450,7 +454,7 @@ describe('AtomsBackend', function () {
         const {key} = markerFor(executeAtomStub.firstCall.args[1][0]);
         const [atom, [awaitScript, awaitArgs, timeout], frames] = remoteStub.executeAtomAsync.firstCall.args;
         assert.strictEqual(atom, 'execute_async_script');
-        assert.match(awaitScript, /Promise\.resolve\(promise\)/);
+        assert.strictEqual(awaitScript, AWAIT_SCRIPT_PROMISE_SCRIPT);
         assert.deepStrictEqual(awaitArgs, [key]);
         assert.strictEqual(timeout, 30000);
         assert.strictEqual(frames, driver.curWebFrames);
@@ -506,6 +510,92 @@ describe('AtomsBackend', function () {
 
       it('throws when reading `then` throws', function () {
         assert.throws(() => run('return {get then() { throw new Error("no then"); }};'), /no then/);
+      });
+
+      it('handles a rejected promise at once and keeps it not enumerable', async function () {
+        const unhandled: unknown[] = [];
+        const onUnhandled = (reason: unknown) => unhandled.push(reason);
+        process.on('unhandledRejection', onUnhandled);
+        try {
+          const {result, win} = run('return Promise.reject(new Error("x"));');
+          await new Promise((resolve) => setImmediate(resolve));
+          assert.deepStrictEqual(result, {theKey: true});
+          assert.deepStrictEqual(unhandled, []);
+          assert.ok('theKey' in win);
+          assert.deepStrictEqual(Object.keys(win), []);
+        } finally {
+          process.off('unhandledRejection', onUnhandled);
+        }
+      });
+    });
+
+    describe('AWAIT_SCRIPT_PROMISE_SCRIPT', function () {
+      // as the execute_async_script atom runs it: `done` is the last argument
+      const settle = (win: object, done?: (result: unknown) => void) =>
+        new Promise((resolve) => {
+          const fn = new Function(
+            'window',
+            `return (function () {${AWAIT_SCRIPT_PROMISE_SCRIPT}}).apply(null, arguments[1]);`,
+          );
+          fn(win, ['theKey', done ? (result: unknown) => (done(result), resolve(result)) : resolve]);
+        });
+      const keep = (promise: Promise<unknown>) => {
+        const win = {};
+        promise.catch(() => {});
+        Object.defineProperty(win, 'theKey', {value: promise, configurable: true});
+        return win;
+      };
+
+      it('gives the value and deletes the key', async function () {
+        const win = keep(Promise.resolve(5));
+        assert.deepStrictEqual(await settle(win), {value: 5});
+        assert.strictEqual('theKey' in win, false);
+      });
+
+      it('gives the message of the rejection', async function () {
+        assert.deepStrictEqual(await settle(keep(Promise.reject(new Error('boom')))), {
+          rejected: true,
+          message: 'boom',
+        });
+        assert.deepStrictEqual(await settle(keep(Promise.reject('plain'))), {rejected: true, message: 'plain'});
+      });
+
+      it('gives a rejection when the reason cannot be read', async function () {
+        assert.deepStrictEqual(await settle(keep(Promise.reject(Object.create(null)))), {
+          rejected: true,
+          message: 'The promise returned by the script was rejected',
+        });
+      });
+
+      it('gives a rejection when the key is missing: the page changed', async function () {
+        const result = (await settle({})) as {rejected: boolean; message: string};
+        assert.strictEqual(result.rejected, true);
+        assert.match(result.message, /page changed/);
+      });
+
+      it('gives a rejection when the value cannot be serialized', async function () {
+        const calls: unknown[] = [];
+        const done = (result: unknown) => {
+          calls.push(result);
+          if (calls.length === 1) {
+            throw new Error('Recursive object cannot be transferred');
+          }
+        };
+        const win = keep(Promise.resolve({}));
+        await new Promise((resolve) => {
+          const fn = new Function(
+            'window',
+            `return (function () {${AWAIT_SCRIPT_PROMISE_SCRIPT}}).apply(null, arguments[1]);`,
+          );
+          fn(win, [
+            'theKey',
+            (result: unknown) => {
+              done(result);
+              resolve(undefined);
+            },
+          ]);
+        });
+        assert.deepStrictEqual(calls[1], {rejected: true, message: 'Recursive object cannot be transferred'});
       });
     });
 
