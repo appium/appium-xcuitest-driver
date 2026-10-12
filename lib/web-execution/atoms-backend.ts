@@ -391,13 +391,13 @@ export class AtomsBackend implements WebExecutionBackend {
     }
 
     // `||`: executeAsyncScript stores 0 when no script timeout is set
-    const settled = await this.driver.waitForAtom(
+    const settled = (await this.driver.waitForAtom(
       this.driver.remote.executeAtomAsync(
         'execute_async_script',
         [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs || DEFAULT_SCRIPT_TIMEOUT_MS],
         this.driver.curWebFrames,
       ),
-    ) as {value?: unknown; rejected?: boolean; message?: string};
+    )) as {value?: unknown; rejected?: boolean; message?: string};
     if (settled?.rejected) {
       throw new errors.JavaScriptError(settled.message);
     }

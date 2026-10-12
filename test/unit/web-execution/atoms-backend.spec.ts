@@ -478,7 +478,10 @@ describe('AtomsBackend', function () {
       // as the execute_script atom runs it: `this` is null
       const run = (script: string, args: unknown[] = []) => {
         const win: Record<string, unknown> = {};
-        const fn = new Function('window', `return (function () {${wrapScriptForPromise(script, 'theKey')}}).apply(null, arguments[1]);`);
+        const fn = new Function(
+          'window',
+          `return (function () {${wrapScriptForPromise(script, 'theKey')}}).apply(null, arguments[1]);`,
+        );
         return {result: fn(win, args), win};
       };
 
