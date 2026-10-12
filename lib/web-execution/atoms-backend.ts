@@ -1,6 +1,7 @@
 import type {ActionSequence, Cookie, Element, Position, Rect, Size} from '@appium/types';
 import type {AtomName} from 'appium-remote-debugger';
 import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 
 import {NATIVE_WIN} from '../commands/constants.js';
@@ -38,6 +39,38 @@ const IN_VIEW_CENTER_POINT_SCRIPT = `
     return null;
   }
   return {x: (x0 + x1) / 2, y: (y0 + y1) / 2};
+`;
+
+// W3C default script timeout.
+const DEFAULT_SCRIPT_TIMEOUT_MS = 30000;
+
+// The execute_script atom serializes a returned thenable to `{}`. Keep it on the window and
+// return a marker, so it can be awaited (https://w3c.github.io/webdriver/#execute-script).
+export function wrapScriptForPromise(script: string, promiseKey: string): string {
+  return `
+  var result = (function () {
+${script}
+  }).apply(null, arguments);
+  if (result !== null && (typeof result === 'object' || typeof result === 'function') &&
+      typeof result.then === 'function') {
+    window[${JSON.stringify(promiseKey)}] = result;
+    return {${JSON.stringify(promiseKey)}: true};
+  }
+  return result;
+`;
+}
+
+// Settles the thenable kept by wrapScriptForPromise under arguments[0].
+const AWAIT_SCRIPT_PROMISE_SCRIPT = `
+  var done = arguments[arguments.length - 1];
+  var key = arguments[0];
+  var promise = window[key];
+  delete window[key];
+  Promise.resolve(promise).then(function (value) {
+    done({value: value});
+  }, function (reason) {
+    done({rejected: true, message: reason && reason.message !== undefined ? String(reason.message) : String(reason)});
+  });
 `;
 
 /**
@@ -348,8 +381,27 @@ export class AtomsBackend implements WebExecutionBackend {
 
   async executeScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const atomsArgs = this.driver.convertElementsForAtoms(args);
-    const result = await this.driver.executeAtom('execute_script', [script, atomsArgs]);
-    return this.driver.cacheWebElements(result) as T;
+    const promiseKey = `appiumScriptPromise${util.uuidV4().replace(/-/g, '')}`;
+    const result = await this.driver.executeAtom('execute_script', [
+      wrapScriptForPromise(script, promiseKey),
+      atomsArgs,
+    ]);
+    if (!isPromiseMarker(result, promiseKey)) {
+      return this.driver.cacheWebElements(result) as T;
+    }
+
+    // `||`: executeAsyncScript stores 0 when no script timeout is set
+    const settled = await this.driver.waitForAtom(
+      this.driver.remote.executeAtomAsync(
+        'execute_async_script',
+        [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs || DEFAULT_SCRIPT_TIMEOUT_MS],
+        this.driver.curWebFrames,
+      ),
+    ) as {value?: unknown; rejected?: boolean; message?: string};
+    if (settled?.rejected) {
+      throw new errors.JavaScriptError(settled.message);
+    }
+    return this.driver.cacheWebElements(settled?.value) as T;
   }
 
   async executeAsyncScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
@@ -466,4 +518,13 @@ export class AtomsBackend implements WebExecutionBackend {
     }
     return await translateWebCoords.call(this.driver, center.x + offsetX, center.y + offsetY);
   }
+}
+
+function isPromiseMarker(result: unknown, promiseKey: string): boolean {
+  return (
+    result !== null &&
+    typeof result === 'object' &&
+    Object.keys(result).length === 1 &&
+    (result as Record<string, unknown>)[promiseKey] === true
+  );
 }

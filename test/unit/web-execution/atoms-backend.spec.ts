@@ -7,7 +7,7 @@ import type sinon from 'sinon';
 
 import {viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
-import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
+import {AtomsBackend, wrapScriptForPromise} from '../../../lib/web-execution/atoms-backend.js';
 
 describe('AtomsBackend', function () {
   let sandbox: sinon.SinonSandbox;
@@ -417,8 +417,93 @@ describe('AtomsBackend', function () {
       const result = await backend.executeScript('return 1;', ['arg']);
       assert.strictEqual(result, 'cached');
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(executeAtomStub.calledOnceWithExactly('execute_script', ['return 1;', ['converted']]), true);
+      assert.strictEqual(executeAtomStub.calledOnce, true);
+      const [atom, [script, atomsArgs]] = executeAtomStub.firstCall.args;
+      assert.strictEqual(atom, 'execute_script');
+      assert.match(script, /return 1;/);
+      assert.deepStrictEqual(atomsArgs, ['converted']);
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
+      assert.strictEqual(remoteStub.executeAtomAsync.called, false);
+    });
+
+    describe('executeScript with a script that returns a promise', function () {
+      const markerFor = (script: string) => {
+        const key = /window\["(appiumScriptPromise[0-9a-f]+)"\]/.exec(script)![1];
+        return {key, marker: {[key]: true}};
+      };
+      let waitForAtomStub: sinon.SinonStub;
+      let awaitedAtomPromise: Promise<unknown>;
+
+      beforeEach(function () {
+        sandbox.stub(driver, 'convertElementsForAtoms').returns(['converted']);
+        sandbox.stub(driver, 'cacheWebElements').callsFake((v: any) => v);
+        executeAtomStub.callsFake(async (_atom: string, [script]: [string]) => markerFor(script).marker);
+        awaitedAtomPromise = Promise.resolve('unused');
+        remoteStub.executeAtomAsync.returns(awaitedAtomPromise);
+        waitForAtomStub = sandbox.stub(driver, 'waitForAtom');
+      });
+
+      it('waits for the promise with the execute_async_script atom and gives its value', async function () {
+        waitForAtomStub.resolves({value: 5});
+        const result = await backend.executeScript('return Promise.resolve(5);', ['arg']);
+        assert.strictEqual(result, 5);
+        const {key} = markerFor(executeAtomStub.firstCall.args[1][0]);
+        const [atom, [awaitScript, awaitArgs, timeout], frames] = remoteStub.executeAtomAsync.firstCall.args;
+        assert.strictEqual(atom, 'execute_async_script');
+        assert.match(awaitScript, /Promise\.resolve\(promise\)/);
+        assert.deepStrictEqual(awaitArgs, [key]);
+        assert.strictEqual(timeout, 30000);
+        assert.strictEqual(frames, driver.curWebFrames);
+        assert.strictEqual(waitForAtomStub.calledOnceWithExactly(awaitedAtomPromise), true);
+      });
+
+      it('uses the script timeout of the session', async function () {
+        driver.asyncWaitMs = 5000;
+        waitForAtomStub.resolves({value: null});
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(remoteStub.executeAtomAsync.firstCall.args[1][2], 5000);
+      });
+
+      it('throws a JavaScriptError when the promise is rejected', async function () {
+        waitForAtomStub.resolves({rejected: true, message: 'boom'});
+        await assert.rejects(backend.executeScript('return Promise.reject(new Error("boom"));', []), (err: Error) => {
+          assert.ok(err instanceof errors.JavaScriptError);
+          assert.match(err.message, /boom/);
+          return true;
+        });
+      });
+    });
+
+    describe('wrapScriptForPromise', function () {
+      // as the execute_script atom runs it: `this` is null
+      const run = (script: string, args: unknown[] = []) => {
+        const win: Record<string, unknown> = {};
+        const fn = new Function('window', `return (function () {${wrapScriptForPromise(script, 'theKey')}}).apply(null, arguments[1]);`);
+        return {result: fn(win, args), win};
+      };
+
+      it('returns a value that is not a thenable as is', function () {
+        assert.strictEqual(run('return arguments[0] + 1;', [1]).result, 2);
+        assert.deepStrictEqual(run('return {then: 1};').result, {then: 1});
+        assert.strictEqual(run('return;').result, undefined);
+        assert.strictEqual(run('return null;').result, null);
+      });
+
+      it('keeps a thenable on the window and returns the marker', function () {
+        const {result, win} = run('return Promise.resolve(5);');
+        assert.deepStrictEqual(result, {theKey: true});
+        assert.ok(win.theKey instanceof Promise);
+        assert.deepStrictEqual(run('return {then: function () {}};').result, {theKey: true});
+      });
+
+      it('keeps the body semantics: strict mode, `this`, a last-line comment', function () {
+        assert.strictEqual(run('"use strict"; return this;').result, null);
+        assert.strictEqual(run('return 3; // a comment').result, 3);
+      });
+
+      it('throws when reading `then` throws', function () {
+        assert.throws(() => run('return {get then() { throw new Error("no then"); }};'), /no then/);
+      });
     });
 
     it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
