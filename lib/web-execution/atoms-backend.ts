@@ -158,7 +158,10 @@ export class AtomsBackend implements WebExecutionBackend {
       throw new errors.UnableToCaptureScreen('Cannot take a screenshot of a zero-size element');
     }
     const {x, y} = (await this.driver.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
-    return await this.driver.remote.captureScreenshot({rect: {x, y, width, height}});
+    return await this.driver.remote.captureScreenshot({
+      rect: {x, y, width, height},
+      captureBeyondViewport: true,
+    });
   }
 
   async navigate(url: string): Promise<void> {
