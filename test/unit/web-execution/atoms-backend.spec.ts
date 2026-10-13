@@ -140,14 +140,17 @@ describe('AtomsBackend', function () {
       await assert.rejects(backend.elementScreenshot('el-1'), errors.UnableToCaptureScreen);
     });
 
-    it('captures a screenshot scoped to the element rect', async function () {
+    it('captures the whole element rect, including parts outside the viewport', async function () {
       executeAtomStub.withArgs('get_size').resolves({width: 10, height: 20});
       executeAtomStub.withArgs('get_top_left_coordinates').resolves({x: 1, y: 2});
       remoteStub.captureScreenshot.resolves('base64==');
       const result = await backend.elementScreenshot('el-1');
       assert.strictEqual(result, 'base64==');
       assert.strictEqual(
-        remoteStub.captureScreenshot.calledOnceWithExactly({rect: {x: 1, y: 2, width: 10, height: 20}}),
+        remoteStub.captureScreenshot.calledOnceWithExactly({
+          rect: {x: 1, y: 2, width: 10, height: 20},
+          captureBeyondViewport: true,
+        }),
         true,
       );
     });
