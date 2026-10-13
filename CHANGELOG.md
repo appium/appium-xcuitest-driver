@@ -1,3 +1,9 @@
+## [12.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.0...v12.18.1) (2026-10-13)
+
+### Bug Fixes
+
+* capture the whole element in web element screenshots ([#3040](https://github.com/appium/appium-xcuitest-driver/issues/3040)) ([5614339](https://github.com/appium/appium-xcuitest-driver/commit/561433953b5bfa940702917c9089bc1a5a6e1db8))
+
 ## [12.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.3...v12.18.0) (2026-10-13)
 
 ### Features
