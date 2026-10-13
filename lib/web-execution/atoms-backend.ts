@@ -47,12 +47,11 @@ const DEFAULT_SCRIPT_TIMEOUT_MS = 30000;
 // The execute_script atom serializes a returned thenable to `{}`. Keep it on the window and
 // return a marker, so it can be awaited (https://w3c.github.io/webdriver/#execute-script).
 // The kept promise is handled at once (no unhandled rejection) and not enumerable.
+// The script is compiled with `Function`, as the atom does, so it sees only global names.
 export function wrapScriptForPromise(script: string, promiseKey: string): string {
   const key = JSON.stringify(promiseKey);
   return `
-  var result = (function () {
-${script}
-  }).apply(null, arguments);
+  var result = Function(${JSON.stringify(script)}).apply(null, arguments);
   if (result !== null && (typeof result === 'object' || typeof result === 'function') &&
       typeof result.then === 'function') {
     var promise = Promise.resolve(result);
@@ -411,10 +410,9 @@ export class AtomsBackend implements WebExecutionBackend {
       return this.driver.cacheWebElements(result) as T;
     }
 
-    // `||`: executeAsyncScript stores 0 when no script timeout is set
     const settled = await this.driver.executeAtomAsync<{value?: unknown; rejected?: boolean; message?: string}>(
       'execute_async_script',
-      [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs || DEFAULT_SCRIPT_TIMEOUT_MS],
+      [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs ?? DEFAULT_SCRIPT_TIMEOUT_MS],
     );
     if (settled?.rejected) {
       throw new errors.JavaScriptError(settled.message);
@@ -424,10 +422,10 @@ export class AtomsBackend implements WebExecutionBackend {
 
   async executeAsyncScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const convertedArgs = this.driver.convertElementsForAtoms(args);
-    this.driver.asyncWaitMs = this.driver.asyncWaitMs || 0;
+    // keep an unset script timeout unset: executeScript tells it from an explicit 0
     const promise = this.driver.remote.executeAtomAsync(
       'execute_async_script',
-      [script, convertedArgs, this.driver.asyncWaitMs],
+      [script, convertedArgs, this.driver.asyncWaitMs ?? 0],
       this.driver.curWebFrames,
     );
     return this.driver.cacheWebElements(await this.driver.waitForAtom(promise)) as T;

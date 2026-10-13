@@ -468,6 +468,21 @@ describe('AtomsBackend', function () {
         assert.strictEqual(remoteStub.executeAtomAsync.firstCall.args[1][2], 5000);
       });
 
+      it('keeps an explicit script timeout of 0', async function () {
+        driver.asyncWaitMs = 0;
+        waitForAtomStub.resolves({value: null});
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(remoteStub.executeAtomAsync.firstCall.args[1][2], 0);
+      });
+
+      it('uses the 30 s default after an executeAsyncScript call with no script timeout set', async function () {
+        waitForAtomStub.resolves({value: null});
+        await backend.executeAsyncScript('arguments[0]();', []);
+        assert.strictEqual(driver.asyncWaitMs, undefined);
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 30000);
+      });
+
       it('throws a JavaScriptError when the promise is rejected', async function () {
         waitForAtomStub.resolves({rejected: true, message: 'boom'});
         await assert.rejects(backend.executeScript('return Promise.reject(new Error("boom"));', []), (err: Error) => {
@@ -506,6 +521,19 @@ describe('AtomsBackend', function () {
       it('keeps the body semantics: strict mode, `this`, a last-line comment', function () {
         assert.strictEqual(run('"use strict"; return this;').result, null);
         assert.strictEqual(run('return 3; // a comment').result, 3);
+      });
+
+      it('resolves global names, also those of the wrapper variables', function () {
+        const page = globalThis as Record<string, unknown>;
+        page.result = 42;
+        page.promise = 'page promise';
+        try {
+          assert.strictEqual(run('return result;').result, 42);
+          assert.strictEqual(run('return promise;').result, 'page promise');
+        } finally {
+          delete page.result;
+          delete page.promise;
+        }
       });
 
       it('throws when reading `then` throws', function () {
