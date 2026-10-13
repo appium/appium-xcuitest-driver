@@ -1,3 +1,9 @@
+## [12.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.3...v12.18.0) (2026-10-13)
+
+### Features
+
+* add asAppUnderTest flag in mobile: launchApp command ([#3004](https://github.com/appium/appium-xcuitest-driver/issues/3004)) ([7d1d611](https://github.com/appium/appium-xcuitest-driver/commit/7d1d6115cc1bb046071c792f47997d0deeb389cb))
+
 ## [12.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.2...v12.17.3) (2026-10-12)
 
 ### Bug Fixes
