@@ -43,6 +43,10 @@ const IN_VIEW_CENTER_POINT_SCRIPT = `
 
 // W3C default script timeout.
 const DEFAULT_SCRIPT_TIMEOUT_MS = 30000;
+// The largest delay of a page timer; a longer one fires at once.
+const MAX_TIMER_MS = 2147483647;
+// The await script always sends `value` or `rejected`: another result means the page changed.
+const PAGE_CHANGED_MESSAGE = 'The page changed before the promise returned by the script settled';
 
 // The execute_script atom serializes a returned thenable to `{}`. Keep it on the window and
 // return a marker, so it can be awaited (https://w3c.github.io/webdriver/#execute-script).
@@ -73,13 +77,11 @@ export const AWAIT_SCRIPT_PROMISE_SCRIPT = `
     var message;
     try {
       message = reason && reason.message !== undefined ? String(reason.message) : String(reason);
-    } catch (ign) {
-      message = 'The promise returned by the script was rejected';
-    }
-    done({rejected: true, message: message});
+    } catch (ign) {}
+    done({rejected: true, message: message || 'The promise returned by the script was rejected'});
   };
   if (!Object.prototype.hasOwnProperty.call(window, key)) {
-    fail(new Error('The page changed before the promise returned by the script settled'));
+    fail(new Error(${JSON.stringify(PAGE_CHANGED_MESSAGE)}));
     return;
   }
   var promise = window[key];
@@ -412,10 +414,17 @@ export class AtomsBackend implements WebExecutionBackend {
 
     const settled = await this.driver.executeAtomAsync<{value?: unknown; rejected?: boolean; message?: string}>(
       'execute_async_script',
-      [AWAIT_SCRIPT_PROMISE_SCRIPT, [promiseKey], this.driver.asyncWaitMs ?? DEFAULT_SCRIPT_TIMEOUT_MS],
+      [
+        AWAIT_SCRIPT_PROMISE_SCRIPT,
+        [promiseKey],
+        Math.min(this.driver.asyncWaitMs ?? DEFAULT_SCRIPT_TIMEOUT_MS, MAX_TIMER_MS),
+      ],
     );
     if (settled?.rejected) {
       throw new errors.JavaScriptError(settled.message);
+    }
+    if (!settled || typeof settled !== 'object' || !('value' in settled)) {
+      throw new errors.JavaScriptError(PAGE_CHANGED_MESSAGE);
     }
     return this.driver.cacheWebElements(settled?.value) as T;
   }

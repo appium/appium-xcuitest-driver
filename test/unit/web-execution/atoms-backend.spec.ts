@@ -468,6 +468,24 @@ describe('AtomsBackend', function () {
         assert.strictEqual(remoteStub.executeAtomAsync.firstCall.args[1][2], 5000);
       });
 
+      it('limits the script timeout to the largest page timer delay', async function () {
+        driver.asyncWaitMs = 3600000000;
+        waitForAtomStub.resolves({value: null});
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(remoteStub.executeAtomAsync.firstCall.args[1][2], 2147483647);
+      });
+
+      it('throws when the second call gives no result: the page changed', async function () {
+        for (const settled of [null, undefined, {}]) {
+          waitForAtomStub.resolves(settled);
+          await assert.rejects(backend.executeScript('return Promise.resolve(1);', []), (err: Error) => {
+            assert.ok(err instanceof errors.JavaScriptError);
+            assert.match(err.message, /page changed/);
+            return true;
+          });
+        }
+      });
+
       it('keeps an explicit script timeout of 0', async function () {
         driver.asyncWaitMs = 0;
         waitForAtomStub.resolves({value: null});
@@ -586,6 +604,13 @@ describe('AtomsBackend', function () {
           message: 'boom',
         });
         assert.deepStrictEqual(await settle(keep(Promise.reject('plain'))), {rejected: true, message: 'plain'});
+      });
+
+      it('gives the fallback text for an empty message', async function () {
+        assert.deepStrictEqual(await settle(keep(Promise.reject(new Error('')))), {
+          rejected: true,
+          message: 'The promise returned by the script was rejected',
+        });
       });
 
       it('gives a rejection when the reason cannot be read', async function () {
