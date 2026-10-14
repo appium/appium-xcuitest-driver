@@ -1,7 +1,7 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import type {Element, Cookie} from '@appium/types';
-import type {AtomName} from 'appium-remote-debugger';
+import type {AtomName, ExecuteAtomOptions} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver.js';
 import {timing, util} from 'appium/support.js';
 
@@ -244,15 +244,17 @@ export function cacheWebElements(this: XCUITestDriver, response: unknown): unkno
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
+ * @param opts - Options for the remote debugger (e.g. `timeoutMs` for `execute_script`)
  */
 export async function executeAtom<T = any>(
   this: XCUITestDriver,
   atom: AtomName,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
+  opts: ExecuteAtomOptions = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const promise = this.remote.executeAtom(atom, args, frames);
+  const promise = this.remote.executeAtom(atom, args, frames, opts);
   return await this.waitForAtom(promise);
 }
 

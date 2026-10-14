@@ -54,6 +54,17 @@ describe('web commands', function () {
     });
   });
 
+  describe('executeAtom', function () {
+    it('gives the options to the remote debugger', async function () {
+      const otherDriver = new XCUITestDriver({} as any);
+      const executeAtom = sinon.stub().resolves('raw');
+      otherDriver._remote = {executeAtom} as any;
+      sinon.stub(otherDriver, 'waitForAtom').callsFake(async (promise: Promise<any>) => await promise);
+      assert.strictEqual(await otherDriver.executeAtom('execute_script', ['x', []], true, {timeoutMs: 500}), 'raw');
+      assert.strictEqual(executeAtom.calledOnceWithExactly('execute_script', ['x', []], [], {timeoutMs: 500}), true);
+    });
+  });
+
   describe('fitAffineTransform', function () {
     it('should reproduce the 2-point calibration transform', function () {
       // native = 93 + 7*(-1)=93, 107 for the two calibration taps; web-observed clicks at 100/98 and 114/102

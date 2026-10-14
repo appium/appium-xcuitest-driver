@@ -420,8 +420,37 @@ describe('AtomsBackend', function () {
       const result = await backend.executeScript('return 1;', ['arg']);
       assert.strictEqual(result, 'cached');
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(executeAtomStub.calledOnceWithExactly('execute_script', ['return 1;', ['converted']]), true);
+      assert.strictEqual(
+        executeAtomStub.calledOnceWithExactly('execute_script', ['return 1;', ['converted']], false, {
+          timeoutMs: 30000,
+        }),
+        true,
+      );
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
+    });
+
+    describe('executeScript timeout for a promise that the script returns', function () {
+      const timeoutOf = () => executeAtomStub.lastCall.args[3]?.timeoutMs;
+
+      it('uses the script timeout of the session', async function () {
+        driver.asyncWaitMs = 5000;
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(timeoutOf(), 5000);
+      });
+
+      it('keeps an explicit script timeout of 0', async function () {
+        driver.asyncWaitMs = 0;
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(timeoutOf(), 0);
+      });
+
+      it('uses the 30 s W3C default after an executeAsyncScript call with no script timeout set', async function () {
+        sandbox.stub(driver, 'waitForAtom').resolves(null);
+        await backend.executeAsyncScript('arguments[0]();', []);
+        assert.strictEqual(driver.asyncWaitMs, undefined);
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(timeoutOf(), 30000);
+      });
     });
 
     it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
