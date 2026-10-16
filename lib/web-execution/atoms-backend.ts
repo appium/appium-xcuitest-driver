@@ -7,7 +7,7 @@ import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
 import {translateWebCoords} from '../commands/web-native-bridge.js';
-import {checkForAlert, createJSCookie} from '../commands/web.js';
+import {checkForAlert, createJSCookie, getScriptAtomWaitMs} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
@@ -367,7 +367,9 @@ export class AtomsBackend implements WebExecutionBackend {
       [script, convertedArgs, this.driver.asyncWaitMs ?? 0],
       this.driver.curWebFrames,
     );
-    return this.driver.cacheWebElements(await this.driver.waitForAtom(promise)) as T;
+    return this.driver.cacheWebElements(
+      await this.driver.waitForAtom(promise, getScriptAtomWaitMs(this.driver.asyncWaitMs)),
+    ) as T;
   }
 
   async screenshot(coordinateSystem?: 'Viewport' | 'Page'): Promise<string> {

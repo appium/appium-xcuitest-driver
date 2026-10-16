@@ -63,6 +63,32 @@ describe('web commands', function () {
       assert.strictEqual(await otherDriver.executeAtom('execute_script', ['x', []], true, {timeoutMs: 500}), 'raw');
       assert.strictEqual(executeAtom.calledOnceWithExactly('execute_script', ['x', []], [], {timeoutMs: 500}), true);
     });
+
+    it('waits for the atom at least the script timeout plus a margin', async function () {
+      const otherDriver = new XCUITestDriver({} as any);
+      otherDriver._remote = {executeAtom: sinon.stub().resolves('raw')} as any;
+      const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
+      await otherDriver.executeAtom('execute_script', ['x', []], true, {timeoutMs: 500});
+      await otherDriver.executeAtom('get_text', [{}], true);
+      assert.deepStrictEqual(
+        waitForAtom.getCalls().map(({args}) => args[1]),
+        [5500, undefined],
+      );
+    });
+  });
+
+  describe('waitForAtom', function () {
+    const later = (ms: number) => new Promise((resolve) => setTimeout(() => resolve('done'), ms));
+
+    it('waits longer than webviewAtomWaitTimeout when the script needs it', async function () {
+      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 100} as any);
+      assert.strictEqual(await otherDriver.waitForAtom(later(200), 400), 'done');
+    });
+
+    it('keeps webviewAtomWaitTimeout when it is longer', async function () {
+      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 100} as any);
+      await assert.rejects(otherDriver.waitForAtom(later(300), 50), /did not respond/);
+    });
   });
 
   describe('fitAffineTransform', function () {

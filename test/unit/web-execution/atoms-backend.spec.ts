@@ -453,6 +453,18 @@ describe('AtomsBackend', function () {
       });
     });
 
+    it('executeAsyncScript waits for the atom at least the script timeout plus a margin', async function () {
+      const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves(null);
+      remoteStub.executeAtomAsync.resolves(null);
+      driver.asyncWaitMs = 200000;
+      try {
+        await backend.executeAsyncScript('arguments[0]();', []);
+      } finally {
+        driver.asyncWaitMs = undefined;
+      }
+      assert.strictEqual(waitForAtomStub.lastCall.args[1], 205000);
+    });
+
     it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
       const convertStub = sandbox.stub(driver, 'convertElementsForAtoms').returns(['converted']);
       const cacheStub = sandbox.stub(driver, 'cacheWebElements').returns('cached');
@@ -470,7 +482,7 @@ describe('AtomsBackend', function () {
         true,
       );
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise), true);
+      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise, undefined), true);
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
     });
   });
