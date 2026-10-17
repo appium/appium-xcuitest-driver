@@ -362,22 +362,11 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
   const frameX = x + frameOffset.offsetX;
   const frameY = y + frameOffset.offsetY;
 
-  const cmd =
-    '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
-    'outerWidth: window.outerWidth, outerHeight: window.outerHeight}; })()';
-  const wvDims = await this.waitForAtom(
-    this.remote.execute<{
-      innerWidth: number;
-      innerHeight: number;
-      outerWidth: number;
-      outerHeight: number;
-    }>(cmd),
-  );
-  // https://tripleodeon.com/2011/12/first-understand-your-screen/
-  const shouldApplyPixelRatio = wvDims.innerWidth > wvDims.outerWidth || wvDims.innerHeight > wvDims.outerHeight;
+  // Calibration already measures the CSS-to-native scale, including viewport zoom.
+  // Inner/outer window dimensions cannot determine whether that fitted scale applies.
   const newCoords = {
-    x: offsetX + frameX * (shouldApplyPixelRatio ? pixelRatioX : 1),
-    y: offsetY + frameY * (shouldApplyPixelRatio ? pixelRatioY : 1),
+    x: offsetX + frameX * pixelRatioX,
+    y: offsetY + frameY * pixelRatioY,
   };
 
   this.log.debug(`Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`);
