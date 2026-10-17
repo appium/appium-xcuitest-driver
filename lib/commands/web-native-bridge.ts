@@ -72,7 +72,10 @@ const INJECT_CALIBRATION_OVERLAY_SCRIPT = `(function () {
   (document.body || document.documentElement).appendChild(overlay);
   var taps = window.${CALIBRATION_TAPS_MARKER};
   overlay.contentDocument.addEventListener('click', function (e) {
-    taps.push({x: e.clientX, y: e.clientY});
+    // Match the parent-page client coordinates used by element geometry atoms.
+    // A fixed iframe can move relative to that viewport when Safari zooms/pans.
+    var rect = overlay.getBoundingClientRect();
+    taps.push({x: e.clientX + rect.left, y: e.clientY + rect.top});
   }, true);
   window.${CALIBRATION_OVERLAY_MARKER} = overlay;
 })();`;
