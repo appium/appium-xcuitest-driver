@@ -19,7 +19,10 @@ Duo apps are automated the same way as regular iOS/iPadOS apps - the standard
 Available displays can be listed with
 [`mobile: listDisplays`](../reference/execute-methods.md#mobile-listdisplays).
 Use the [`currentDisplayId` setting](../reference/settings.md#currentdisplayid) to select the
-display for screenshots and W3C touch actions.
+display for screenshots, W3C touch actions, the WDA MJPEG stream, and newly started XCTest
+recordings. Folding does not change the selection: select the inner display explicitly when
+opening Duo, and the outer display when closing it. An existing XCTest recording retains the
+display selected at its start; stop and restart it to change displays.
 
 The simulated hinge angle can be read and changed through the
 [`mobile: getSimulatedHingeAngle`](../reference/execute-methods.md#mobile-getsimulatedhingeangle) and
