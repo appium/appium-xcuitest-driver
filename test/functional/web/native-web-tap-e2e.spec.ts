@@ -35,6 +35,9 @@ async function loadPage(driver: Browser, url: string) {
   await retryInterval(5, 1000, async function () {
     await openPage(driver, url);
     assert.ok(!(await spinTitle(driver)).includes('Cannot Open Page'));
+    // pages share a title; a navigation from the previous tap can still win
+    const current = new URL(await driver.getUrl()).pathname;
+    assert.strictEqual(current, new URL(url).pathname, `Expected to load '${url}', but the page is '${current}'`);
   });
 }
 
@@ -264,7 +267,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await loadPage(driver, guineaPigPage(baseUrl));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -272,7 +275,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after scrolling', async function () {
-        await openPage(driver, guineaPigScrollablePage(baseUrl));
+        await loadPage(driver, guineaPigScrollablePage(baseUrl));
         await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
@@ -293,7 +296,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await loadPage(driver, guineaPigPage(baseUrl));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -301,7 +304,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after scrolling', async function () {
-        await openPage(driver, guineaPigScrollablePage(baseUrl));
+        await loadPage(driver, guineaPigScrollablePage(baseUrl));
         await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
@@ -310,7 +313,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after changing orientation', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await loadPage(driver, guineaPigPage(baseUrl));
 
         try {
           await driver.setOrientation('LANDSCAPE');
