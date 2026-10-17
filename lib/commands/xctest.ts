@@ -6,6 +6,18 @@ import {XCTestClient} from '../device/xctest-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {RunXCTestResult} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileRunXCTest(...args: Parameters<typeof mobileRunXCTest>): ReturnType<typeof mobileRunXCTest>;
+    mobileInstallXCTestBundle(
+      ...args: Parameters<typeof mobileInstallXCTestBundle>
+    ): ReturnType<typeof mobileInstallXCTestBundle>;
+    mobileListXCTestBundles(
+      ...args: Parameters<typeof mobileListXCTestBundles>
+    ): ReturnType<typeof mobileListXCTestBundles>;
+  }
+}
+
 const XCTEST_TIMEOUT = 360000; // 6 minute timeout
 
 const xctestLog = logger.getLogger('XCTest');

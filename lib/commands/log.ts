@@ -19,6 +19,19 @@ import {makeLogEntryAddedEvent} from './bidi/models.js';
 import {NATIVE_WIN} from './constants.js';
 import type {LogEntry, LogListener} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    extractLogs(...args: Parameters<typeof extractLogs>): ReturnType<typeof extractLogs>;
+    startLogCapture(...args: Parameters<typeof startLogCapture>): ReturnType<typeof startLogCapture>;
+    mobileStartLogsBroadcast(
+      ...args: Parameters<typeof mobileStartLogsBroadcast>
+    ): ReturnType<typeof mobileStartLogsBroadcast>;
+    mobileStopLogsBroadcast(
+      ...args: Parameters<typeof mobileStopLogsBroadcast>
+    ): ReturnType<typeof mobileStopLogsBroadcast>;
+  }
+}
+
 export type DriverLogs = Record<
   'syslog' | 'crashlog' | 'safariConsole' | 'safariNetwork' | 'performance',
   IOSLog<any, any> | undefined

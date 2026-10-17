@@ -9,6 +9,13 @@ import {isEmpty, truncateString} from '../utils/index.js';
 import {encodeBase64OrUpload, type UploadOptions} from './helpers/index.js';
 import type {ActiveAppInfo} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileStartPerfRecord(...args: Parameters<typeof mobileStartPerfRecord>): ReturnType<typeof mobileStartPerfRecord>;
+    mobileStopPerfRecord(...args: Parameters<typeof mobileStopPerfRecord>): ReturnType<typeof mobileStopPerfRecord>;
+  }
+}
+
 const PERF_RECORD_FEAT_NAME = 'perf_record';
 const PERF_RECORD_SECURITY_MESSAGE =
   'Performance measurement requires relaxing security for simulator. ' +

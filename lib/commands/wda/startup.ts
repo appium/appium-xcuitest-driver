@@ -25,6 +25,12 @@ import {
 } from './constants.js';
 import {getDerivedDataPath} from './utils.js';
 
+declare module '../../driver.js' {
+  interface XCUITestDriver {
+    startWda(...args: Parameters<typeof start>): ReturnType<typeof start>;
+  }
+}
+
 interface StartupRetryOptions {
   startupRetries: number;
   startupRetryInterval: number;

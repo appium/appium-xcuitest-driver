@@ -2,6 +2,14 @@ import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 import type {KeyboardOptions, LanguageOptions, LocaleOptions} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileConfigureLocalization(
+      ...args: Parameters<typeof mobileConfigureLocalization>
+    ): ReturnType<typeof mobileConfigureLocalization>;
+  }
+}
+
 /**
  * Change localization settings on the currently booted simulator
  *

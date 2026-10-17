@@ -2,6 +2,17 @@ import type {XCUITestDriver} from '../driver.js';
 import {WEBVIEW_BASE} from './context.js';
 import {requireSimulator, requireWebContext} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileStartAutomationSession(
+      ...args: Parameters<typeof mobileStartAutomationSession>
+    ): ReturnType<typeof mobileStartAutomationSession>;
+    mobileStopAutomationSession(
+      ...args: Parameters<typeof mobileStopAutomationSession>
+    ): ReturnType<typeof mobileStopAutomationSession>;
+  }
+}
+
 /**
  * Starts a WebKit `Automation`-domain session against the current Safari web view. From this
  * point on, web-execution commands route through the automation session instead of atoms, until

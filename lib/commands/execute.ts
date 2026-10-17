@@ -4,6 +4,13 @@ import {util} from 'appium/support.js';
 
 import {XCUITestDriver} from '../driver.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    execute<TReturn = unknown>(...args: Parameters<typeof execute<TReturn>>): ReturnType<typeof execute<TReturn>>;
+    executeAsync(...args: Parameters<typeof executeAsync>): ReturnType<typeof executeAsync>;
+  }
+}
+
 type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
 
 /**
