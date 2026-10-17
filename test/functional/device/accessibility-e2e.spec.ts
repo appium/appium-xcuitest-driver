@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
+import {retryInterval} from 'asyncbox';
 import type {Browser} from 'webdriverio';
 
 import {SETTINGS_CAPS, amendCapabilities} from '../desired.js';
@@ -33,16 +34,21 @@ describe('Accessibility', function () {
     }
   });
 
-  async function showAccessibilityTab(driver: any) {
-    await driver.$(`${PREDICATE_SEARCH}:name == 'Accessibility'`).click();
+  // first session after a Simulator boot: Settings can ignore the tap, so tap again until `selector` shows
+  async function openAccessibilityItem(driver: any, selector: string) {
+    await retryInterval(3, 0, async function () {
+      await driver.$(`${PREDICATE_SEARCH}:name == 'Accessibility'`).click();
+      await driver.$(selector).waitForExist({timeout: 5000});
+    });
+    await driver.$(selector).click();
   }
 
   describe('ReduceMotion', function () {
     async function getReduceMotion(driver: any) {
-      await showAccessibilityTab(driver);
-      await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`)
-        .click();
+      await openAccessibilityItem(
+        driver,
+        `${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`,
+      );
       return await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`)
         .getAttribute('value');
@@ -62,8 +68,7 @@ describe('Accessibility', function () {
 
   describe('ReduceTransparency', function () {
     async function getReduceTransparency(driver: any) {
-      await showAccessibilityTab(driver);
-      await driver.$(`${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`).click();
+      await openAccessibilityItem(driver, `${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`);
 
       return await driver
         .$(
