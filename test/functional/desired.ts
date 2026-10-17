@@ -43,6 +43,8 @@ export const GENERIC_CAPS = node.deepFreeze({
     platformName: 'iOS',
     'appium:platformVersion': PLATFORM_VERSION,
     'appium:deviceName': DEVICE_NAME,
+    // Reuse the simulator that CI has already booted and settled.
+    ...(process.env.SIMULATOR_UDID ? {'appium:udid': process.env.SIMULATOR_UDID} : {}),
     'appium:automationName': 'XCUITest',
     'appium:noReset': true,
     'appium:maxTypingFrequency': 30,

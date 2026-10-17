@@ -8,6 +8,7 @@ import type {Browser} from 'webdriverio';
 
 import {extractCapabilityValue, getUICatalogCaps} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
+import {focusTextField} from '../helpers/text-field.js';
 
 describe('XCUITestDriver - elements -', function () {
   let driver: Browser;
@@ -198,14 +199,13 @@ describe('XCUITestDriver - elements -', function () {
           const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
-          await driver.hideKeyboard();
-
-          await els[1].setValue(text2);
+          const secondField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[2]');
+          await secondField.setValue(text2);
 
           let text = await els[0].getText();
           assert.strictEqual(text, text1);
 
-          text = await els[1].getText();
+          text = await secondField.getText();
           assert.strictEqual(text, text2);
         });
         it('should type in a secure text field', async function () {
@@ -264,23 +264,22 @@ describe('XCUITestDriver - elements -', function () {
           let text = await els[0].getText();
           assert.strictEqual(text, text1);
 
-          await driver.hideKeyboard();
+          let secondField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[2]');
+          await secondField.setValue(text2);
 
-          await els[1].setValue(text2);
-
-          text = await els[1].getText();
+          text = await secondField.getText();
           assert.strictEqual(text, text2);
 
-          await els[0].clearValue();
+          const firstField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[1]');
+          await firstField.clearValue();
 
-          text = await els[0].getText();
+          text = await firstField.getText();
           assert.strictEqual(text, phText);
 
-          await driver.hideKeyboard();
+          secondField = await focusTextField(driver, '-ios class chain:**/XCUIElementTypeTextField[2]');
+          await secondField.clearValue();
 
-          await els[1].clearValue();
-
-          text = await els[1].getText();
+          text = await secondField.getText();
           assert.strictEqual(text, phText);
         });
         it('should clear a secure text field', async function () {

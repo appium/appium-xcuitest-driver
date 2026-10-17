@@ -4,8 +4,10 @@ import {describe, it, before, after} from 'node:test';
 import {retryInterval} from 'asyncbox';
 import type {Browser} from 'webdriverio';
 
+import {UICATALOG_BUNDLE_ID} from '../../setup.js';
 import {amendCapabilities, getUICatalogCaps, SAFARI_CAPS, DEVICE_NAME} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
+import {openHybridPage, switchToHybridWebview} from './helpers/hybrid.js';
 import {
   createGuineaPigServerSession,
   guineaPigAppBannerPage,
@@ -60,12 +62,8 @@ async function initHybridWebviewDriver(extraCaps: Record<string, unknown>): Prom
   // XCTest scrolls it into view on tap, so no explicit scroll/swipe is needed.
   await driver.$('~Web View').click();
 
-  const contexts = (await driver.execute('mobile: getContexts', {waitForWebviewMs: 5000})) as unknown as {
-    id: string;
-  }[];
-  const webviewContext = contexts.find((ctx) => ctx.id.startsWith('WEBVIEW_'));
-  assert.ok(webviewContext, `Expected to find a WEBVIEW_ context, but got: ${JSON.stringify(contexts)}`);
-  await driver.switchContext(webviewContext!.id);
+  await driver.$('XCUIElementTypeWebView').waitForExist({timeout: 10000});
+  await switchToHybridWebview(driver, UICATALOG_BUNDLE_ID);
 
   return driver;
 }
@@ -260,7 +258,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await openHybridPage(driver, guineaPigPage(baseUrl));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -268,7 +266,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after scrolling', async function () {
-        await openPage(driver, guineaPigScrollablePage(baseUrl));
+        await openHybridPage(driver, guineaPigScrollablePage(baseUrl));
         await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
@@ -289,7 +287,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await openHybridPage(driver, guineaPigPage(baseUrl));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -297,7 +295,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after scrolling', async function () {
-        await openPage(driver, guineaPigScrollablePage(baseUrl));
+        await openHybridPage(driver, guineaPigScrollablePage(baseUrl));
         await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
@@ -306,7 +304,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after changing orientation', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await openHybridPage(driver, guineaPigPage(baseUrl));
 
         try {
           await driver.setOrientation('LANDSCAPE');
