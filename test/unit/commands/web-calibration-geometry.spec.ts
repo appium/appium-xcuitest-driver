@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+import {runInNewContext} from 'node:vm';
 
 import sinon from 'sinon';
 
@@ -199,7 +200,22 @@ describe('web calibration zoom', () => {
           visualViewportOffsetTop: 0,
           visualViewportScale: zoom,
         };
-        let taps: {x: number; y: number}[] = [];
+        // A fixed overlay may have a nonzero client rect after visual-viewport panning.
+        const overlayRect = {left: -15, top: -80};
+        const page: any = {};
+        let onClick!: (event: {clientX: number; clientY: number}) => void;
+        const overlay = {
+          style: {},
+          setAttribute() {},
+          remove() {},
+          getBoundingClientRect: () => overlayRect,
+          contentDocument: {
+            addEventListener: (_name: string, listener: typeof onClick) => {
+              onClick = listener;
+            },
+          },
+        };
+        const document = {createElement: () => overlay, body: {appendChild() {}}};
         const sandbox = sinon.createSandbox();
         try {
           sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
@@ -209,17 +225,17 @@ describe('web calibration zoom', () => {
           sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
           sandbox.stub(driver, 'execute').resolves(frame);
           sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
-            taps.push({x: (x - rect.x) / zoom, y: (y - rect.y) / zoom});
+            onClick({clientX: (x - rect.x) / zoom - overlayRect.left, clientY: (y - rect.y) / zoom - overlayRect.top});
           });
           driver._remote = {
             executeAtom: async () => true,
             execute: async (script: string) => {
               if (script.includes('createElement')) {
-                taps = [];
+                runInNewContext(script, {window: page, document});
                 return;
               }
               if (script.includes('return window.__appiumCalibrationTaps')) {
-                return taps;
+                return page.__appiumCalibrationTaps;
               }
               return state;
             },
