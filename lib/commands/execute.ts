@@ -3,7 +3,6 @@ import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {executeMethodMap} from '../execute-method-map.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -11,6 +10,8 @@ declare module '../driver.js' {
     executeAsync(...args: Parameters<typeof executeAsync>): ReturnType<typeof executeAsync>;
   }
 }
+
+type ExecuteMethodMap = typeof XCUITestDriver.executeMethodMap;
 
 type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
 
@@ -26,8 +27,10 @@ export async function execute<TReturn = unknown>(
 ): Promise<TReturn> {
   // TODO: create a type that converts args to the parameters of the associated method using the `command` prop of `executeMethodMap`
   script = script.trim().replace(/^mobile:\s*/, 'mobile: ');
-  if (isExecuteMethod(script)) {
-    const executeMethodArgs = preprocessExecuteMethodArgs(script, args as ExecuteMethodArgs | undefined);
+  // same lookup as the base driver's `executeMethod`, so descendants can extend the map
+  const methodMap = (this.constructor as typeof XCUITestDriver).executeMethodMap;
+  if (isExecuteMethod(methodMap, script)) {
+    const executeMethodArgs = preprocessExecuteMethodArgs(methodMap, script, args as ExecuteMethodArgs | undefined);
     return await this.executeMethod(script, [executeMethodArgs]);
   } else if (this.isWebContext()) {
     return await this._webExecutionBackend.executeScript<TReturn>(script, args as unknown[] | undefined);
@@ -50,17 +53,19 @@ export async function executeAsync(this: XCUITestDriver, script: string, args?: 
 /**
  * Checks if script expects a particular parameter (either optional or required).
  * @template Script
+ * @param methodMap - The execute method map
  * @param script - Script name
  * @param param - Parameter name
  * @returns {boolean}
  */
-function executeMethodExpectsParam<Script extends keyof typeof executeMethodMap>(
+function executeMethodExpectsParam<Script extends keyof ExecuteMethodMap>(
+  methodMap: ExecuteMethodMap,
   script: Script,
   param: string,
 ): boolean {
   let required: ReadonlyArray<string> | undefined;
   let optional: ReadonlyArray<string> | undefined;
-  const execMethodDef = executeMethodMap[script];
+  const execMethodDef = methodMap[script];
   if ('params' in execMethodDef) {
     if ('required' in execMethodDef.params) {
       required = execMethodDef.params.required;
@@ -74,20 +79,23 @@ function executeMethodExpectsParam<Script extends keyof typeof executeMethodMap>
 }
 
 /**
+ * @param methodMap
  * @param script
- * @returns {script is keyof typeof executeMethodMap}
+ * @returns {script is keyof ExecuteMethodMap}
  */
-function isExecuteMethod(script: string): script is keyof typeof executeMethodMap {
-  return script in executeMethodMap;
+function isExecuteMethod(methodMap: ExecuteMethodMap, script: string): script is keyof ExecuteMethodMap {
+  return script in methodMap;
 }
 
 /**
  * Massages the arguments going into an execute method.
+ * @param methodMap
  * @param script
  * @param args
  */
 function preprocessExecuteMethodArgs(
-  script: keyof typeof executeMethodMap,
+  methodMap: ExecuteMethodMap,
+  script: keyof ExecuteMethodMap,
   args?: ExecuteMethodArgs,
 ): StringRecord<unknown> {
   if (Array.isArray(args)) {
@@ -109,7 +117,7 @@ function preprocessExecuteMethodArgs(
    *
    * Most of these Execute Methods (typically beginning with `mobile*`) will accept an `Element|string` for `elementId`, in practice they will only ever get a `string`. `Element|string` in the method's docstring is simply for documentation purposes.
    */
-  if ('elementId' in executeMethodArgs && executeMethodExpectsParam(script, 'elementId')) {
+  if ('elementId' in executeMethodArgs && executeMethodExpectsParam(methodMap, script, 'elementId')) {
     executeMethodArgs.elementId = util.unwrapElement(executeMethodArgs.elementId as Element<string> | string);
   }
 
