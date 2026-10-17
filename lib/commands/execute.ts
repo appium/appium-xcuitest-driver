@@ -2,7 +2,8 @@ import type {Element, StringRecord} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 
-import {XCUITestDriver} from '../driver.js';
+import type {XCUITestDriver} from '../driver.js';
+import {executeMethodMap} from '../execute-method-map.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -53,13 +54,13 @@ export async function executeAsync(this: XCUITestDriver, script: string, args?: 
  * @param param - Parameter name
  * @returns {boolean}
  */
-function executeMethodExpectsParam<Script extends keyof typeof XCUITestDriver.executeMethodMap>(
+function executeMethodExpectsParam<Script extends keyof typeof executeMethodMap>(
   script: Script,
   param: string,
 ): boolean {
   let required: ReadonlyArray<string> | undefined;
   let optional: ReadonlyArray<string> | undefined;
-  const execMethodDef = XCUITestDriver.executeMethodMap[script];
+  const execMethodDef = executeMethodMap[script];
   if ('params' in execMethodDef) {
     if ('required' in execMethodDef.params) {
       required = execMethodDef.params.required;
@@ -74,10 +75,10 @@ function executeMethodExpectsParam<Script extends keyof typeof XCUITestDriver.ex
 
 /**
  * @param script
- * @returns {script is keyof XCUITestDriver.executeMethodMap}
+ * @returns {script is keyof typeof executeMethodMap}
  */
-function isExecuteMethod(script: string): script is keyof typeof XCUITestDriver.executeMethodMap {
-  return script in XCUITestDriver.executeMethodMap;
+function isExecuteMethod(script: string): script is keyof typeof executeMethodMap {
+  return script in executeMethodMap;
 }
 
 /**
@@ -86,7 +87,7 @@ function isExecuteMethod(script: string): script is keyof typeof XCUITestDriver.
  * @param args
  */
 function preprocessExecuteMethodArgs(
-  script: keyof typeof XCUITestDriver.executeMethodMap,
+  script: keyof typeof executeMethodMap,
   args?: ExecuteMethodArgs,
 ): StringRecord<unknown> {
   if (Array.isArray(args)) {
