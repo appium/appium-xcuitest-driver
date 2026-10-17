@@ -24,6 +24,10 @@ const SPIN_RETRIES = 25;
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 const SCROLL_AMT = 1400;
+// within the page: iOS 26 clamps a scroll past the end ~300 ms later, so the target moves
+const SCROLL_SCRIPT =
+  `window.scrollBy(0, Math.min(${SCROLL_AMT}, ` +
+  'document.documentElement.scrollHeight - window.innerHeight - window.scrollY))';
 
 let baseUrl: string;
 
@@ -112,7 +116,7 @@ describe('native web tap -', function () {
       it('should be able to tap on an element after scrolling', async function () {
         await loadPage(driver, guineaPigScrollablePage(baseUrl));
         // mobile: scroll selects text instead of scrolling in Safari, so scroll via JS instead.
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -166,7 +170,7 @@ describe('native web tap -', function () {
       it('should be able to tap on an element after scrolling', async function () {
         await loadPage(driver, guineaPigScrollablePage(baseUrl));
         // mobile: scroll selects text instead of scrolling in Safari, so scroll via JS instead.
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -269,7 +273,7 @@ describe('native web tap -', function () {
 
       it('should be able to tap on an element after scrolling', async function () {
         await openPage(driver, guineaPigScrollablePage(baseUrl));
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -298,7 +302,7 @@ describe('native web tap -', function () {
 
       it('should be able to tap on an element after scrolling', async function () {
         await openPage(driver, guineaPigScrollablePage(baseUrl));
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
