@@ -49,9 +49,9 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return data;
   };
 
-  // The current MJPEG stream and simulator fallback do not select a display.
-  // CoreSim supports display selection, but requires a display port UUID rather
-  // than WDA's numeric display ID. Use WDA until that mapping is implemented.
+  // Cached MJPEG frames carry no display identity, and the simulator fallback
+  // does not map WDA numeric display IDs to CoreSim display port UUIDs.
+  // Capture directly through WDA to ensure this request targets the selected display.
   const {currentDisplayId} = await this.settings.getSettings();
   if (currentDisplayId !== undefined && currentDisplayId !== null) {
     return await getScreenshotFromWDA();
