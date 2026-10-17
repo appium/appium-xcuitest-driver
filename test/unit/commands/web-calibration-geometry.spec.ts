@@ -178,3 +178,69 @@ describe('native web tap atom requests', () => {
     }
   });
 });
+
+describe('web calibration zoom', () => {
+  for (const zoom of [0.8, 1, 1.25, 2]) {
+    for (const inFrame of [false, true]) {
+      it(`applies the fitted ${zoom}x transform with iframe=${inFrame}`, async () => {
+        const driver = new XCUITestDriver({} as any);
+        driver.curContext = 'WEBVIEW_zoom';
+        driver.curWebFrames = inFrame ? ['frame'] : [];
+        const rect = {x: 20, y: 50, width: 400, height: 600};
+        const frame = {crossOrigin: false, offsetX: 30, offsetY: 40};
+        const state = {
+          innerWidth: 400 / zoom,
+          innerHeight: 600 / zoom,
+          outerWidth: 400,
+          outerHeight: 600,
+          visualViewportWidth: 400 / zoom,
+          visualViewportHeight: 600 / zoom,
+          visualViewportOffsetLeft: 0,
+          visualViewportOffsetTop: 0,
+          visualViewportScale: zoom,
+        };
+        let taps: {x: number; y: number}[] = [];
+        const sandbox = sinon.createSandbox();
+        try {
+          sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+          sandbox
+            .stub(driver, 'findNativeElementOrElements')
+            .resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+          sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+          sandbox.stub(driver, 'execute').resolves(frame);
+          sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+            taps.push({x: (x - rect.x) / zoom, y: (y - rect.y) / zoom});
+          });
+          driver._remote = {
+            executeAtom: async () => true,
+            execute: async (script: string) => {
+              if (script.includes('createElement')) {
+                taps = [];
+                return;
+              }
+              if (script.includes('return window.__appiumCalibrationTaps')) {
+                return taps;
+              }
+              return state;
+            },
+          } as any;
+          // Exercise real calibration and its cached transform, with nonzero offsets.
+          for (const point of [
+            {x: 100, y: 100},
+            {x: 140, y: 180},
+          ]) {
+            const actual = await driver.translateWebCoords(point.x, point.y);
+            const expected = {
+              x: rect.x + (point.x + (inFrame ? frame.offsetX : 0)) * zoom,
+              y: rect.y + (point.y + (inFrame ? frame.offsetY : 0)) * zoom,
+            };
+            assert.ok(Math.abs(actual.x - expected.x) < 1e-8, JSON.stringify({actual, expected}));
+            assert.ok(Math.abs(actual.y - expected.y) < 1e-8, JSON.stringify({actual, expected}));
+          }
+        } finally {
+          sandbox.restore();
+        }
+      });
+    }
+  }
+});
