@@ -1,7 +1,7 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import type {Element, Cookie} from '@appium/types';
-import type {AtomName} from 'appium-remote-debugger';
+import type {AtomName, ExecuteAtomOptions} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver.js';
 import {timing, util} from 'appium/support.js';
 
@@ -20,6 +20,8 @@ const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
 // This value must be greater than the alerts check interval in WDA:
 // https://github.com/appium/WebDriverAgent/blob/8bc3135f021b529d916846477544f4b8ca890f59/WebDriverAgentLib/Utilities/FBAlertsMonitor.m#L17
 const ATOM_INITIAL_WAIT_MS = 2100;
+/** Lets the remote debugger answer `script timeout` first */
+const SCRIPT_TIMEOUT_MARGIN_MS = 5000;
 const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
@@ -244,16 +246,18 @@ export function cacheWebElements(this: XCUITestDriver, response: unknown): unkno
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
+ * @param opts - Options for the remote debugger (e.g. `timeoutMs` for `execute_script`)
  */
 export async function executeAtom<T = any>(
   this: XCUITestDriver,
   atom: AtomName,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
+  opts: ExecuteAtomOptions = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const promise = this.remote.executeAtom(atom, args, frames);
-  return await this.waitForAtom(promise);
+  const promise = this.remote.executeAtom(atom, args, frames, opts);
+  return await this.waitForAtom(promise, getScriptAtomWaitMs(opts.timeoutMs));
 }
 
 /**
@@ -402,17 +406,24 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
  *
  * @template T - Type of the atom execution result
  * @param promise - Promise returned by atom execution
+ * @param minTimeoutMs - Minimum wait in ms (e.g. a script timeout); `webviewAtomWaitTimeout` applies when longer
  * @returns The result of the atom execution
  * @throws {errors.UnexpectedAlertOpenError} If an alert appears during execution
  * @throws {errors.TimeoutError} If the atom execution times out
  */
-export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Promise<T>): Promise<T> {
+export async function waitForAtom<T = unknown>(
+  this: XCUITestDriver,
+  promise: Promise<T>,
+  minTimeoutMs?: number,
+): Promise<T> {
   const timer = new timing.Timer().start();
 
-  const atomWaitTimeoutMs =
+  const atomWaitTimeoutMs = Math.max(
     typeof this.opts.webviewAtomWaitTimeout === 'number' && this.opts.webviewAtomWaitTimeout > 0
       ? this.opts.webviewAtomWaitTimeout
-      : ATOM_WAIT_TIMEOUT_MS;
+      : ATOM_WAIT_TIMEOUT_MS,
+    minTimeoutMs ?? 0,
+  );
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
@@ -527,6 +538,17 @@ export async function mobileUpdateSafariPreferences(
 
   this.log.debug(`About to update Safari preferences: ${JSON.stringify(preferences)}`);
   await simulator.updateSafariSettings(preferences);
+}
+
+/**
+ * Min atom wait for a script: its timeout plus a margin (W3C: the script timeout, not
+ * `webviewAtomWaitTimeout`, ends a script).
+ *
+ * @param timeoutMs - Script timeout in ms
+ * @returns The minimum atom wait, or `undefined` without a script timeout
+ */
+export function getScriptAtomWaitMs(timeoutMs?: number): number | undefined {
+  return typeof timeoutMs === 'number' ? timeoutMs + SCRIPT_TIMEOUT_MARGIN_MS : undefined;
 }
 
 /**
