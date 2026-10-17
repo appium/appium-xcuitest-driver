@@ -104,15 +104,21 @@ explains the difference.
 | -- | -- |
 | `int` or `null` | `null` (the main display) |
 
-The display targeted by screenshots and W3C actions, for devices with more than one display.
+The display targeted by screenshots, W3C actions, the WDA MJPEG stream, and newly started
+XCTest recordings, for devices with more than one display.
 Use an `id` returned by [`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays).
 Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
 that no display has is an error. Setting it to `null` goes back to the main display. The value
 is reset for each new session.
 
-While this setting has a value, screenshots are only taken by WebDriverAgent. The MJPEG stream
-and the simulator fallback always capture the main display, so they are skipped. If the selected
+While this setting has a value, screenshot commands capture directly through WebDriverAgent
+rather than using cached MJPEG frames or the main-display simulator fallback. If the selected
 display goes away, screenshots and actions fail rather than falling back to the main display.
+
+The WDA MJPEG stream follows changes to this setting. A newly started XCTest recording uses
+the selected display, but an already running XCTest recording keeps its original target.
+If the selected display becomes unavailable, MJPEG frame delivery pauses.
+`mjpegFixOrientation` controls frame orientation; it does not select a display.
 
 W3C action coordinates are in points, relative to the selected display in the application's
 current orientation. Page source and element lookup are not affected, because the accessibility
