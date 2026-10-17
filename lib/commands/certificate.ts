@@ -16,6 +16,20 @@ import {isEmpty} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 import type {CertificateList} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileInstallCertificate(
+      ...args: Parameters<typeof mobileInstallCertificate>
+    ): ReturnType<typeof mobileInstallCertificate>;
+    mobileListCertificates(
+      ...args: Parameters<typeof mobileListCertificates>
+    ): ReturnType<typeof mobileListCertificates>;
+    mobileRemoveCertificate(
+      ...args: Parameters<typeof mobileRemoveCertificate>
+    ): ReturnType<typeof mobileRemoveCertificate>;
+  }
+}
+
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];
 const TMPSERVER_STARTUP_TIMEOUT = 5000;

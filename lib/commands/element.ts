@@ -5,6 +5,31 @@ import {util} from 'appium/support.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {AtomsElement} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    active(...args: Parameters<typeof active>): ReturnType<typeof active>;
+    elementDisplayed(...args: Parameters<typeof elementDisplayed>): ReturnType<typeof elementDisplayed>;
+    elementEnabled(...args: Parameters<typeof elementEnabled>): ReturnType<typeof elementEnabled>;
+    elementSelected(...args: Parameters<typeof elementSelected>): ReturnType<typeof elementSelected>;
+    getName(...args: Parameters<typeof getName>): ReturnType<typeof getName>;
+    getNativeAttribute(...args: Parameters<typeof getNativeAttribute>): ReturnType<typeof getNativeAttribute>;
+    getAttribute(...args: Parameters<typeof getAttribute>): ReturnType<typeof getAttribute>;
+    getProperty(...args: Parameters<typeof getProperty>): ReturnType<typeof getProperty>;
+    getText(...args: Parameters<typeof getText>): ReturnType<typeof getText>;
+    getElementRect(...args: Parameters<typeof getElementRect>): ReturnType<typeof getElementRect>;
+    getLocation(...args: Parameters<typeof getLocation>): ReturnType<typeof getLocation>;
+    getLocationInView(...args: Parameters<typeof getLocationInView>): ReturnType<typeof getLocationInView>;
+    getSize(...args: Parameters<typeof getSize>): ReturnType<typeof getSize>;
+    setValueImmediate(...args: Parameters<typeof setValueImmediate>): ReturnType<typeof setValueImmediate>;
+    setValue(...args: Parameters<typeof setValue>): ReturnType<typeof setValue>;
+    setValueWithWebAtom(...args: Parameters<typeof setValueWithWebAtom>): ReturnType<typeof setValueWithWebAtom>;
+    keys(...args: Parameters<typeof keys>): ReturnType<typeof keys>;
+    clear(...args: Parameters<typeof clear>): ReturnType<typeof clear>;
+    getContentSize(...args: Parameters<typeof getContentSize>): ReturnType<typeof getContentSize>;
+    getNativeRect(...args: Parameters<typeof getNativeRect>): ReturnType<typeof getNativeRect>;
+  }
+}
+
 /**
  * Gets the currently active element.
  *

@@ -3,6 +3,18 @@ import type {XCUITestDriver} from '../driver.js';
 import type {Condition} from '../types.js';
 import {requireRealDevice} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    listConditionInducers(...args: Parameters<typeof listConditionInducers>): ReturnType<typeof listConditionInducers>;
+    enableConditionInducer(
+      ...args: Parameters<typeof enableConditionInducer>
+    ): ReturnType<typeof enableConditionInducer>;
+    disableConditionInducer(
+      ...args: Parameters<typeof disableConditionInducer>
+    ): ReturnType<typeof disableConditionInducer>;
+  }
+}
+
 /**
  * Get all available ConditionInducer configuration information, which can be used with
  * {@linkcode XCUITestDriver.enableConditionInducer}

@@ -2,6 +2,17 @@ import type {XCUITestDriver} from '../driver.js';
 import {requireWatchOs} from './helpers/index.js';
 import type {HandGestureName} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileRotateDigitalCrown(
+      ...args: Parameters<typeof mobileRotateDigitalCrown>
+    ): ReturnType<typeof mobileRotateDigitalCrown>;
+    mobilePerformHandGesture(
+      ...args: Parameters<typeof mobilePerformHandGesture>
+    ): ReturnType<typeof mobilePerformHandGesture>;
+  }
+}
+
 /**
  * Rotates the Digital Crown on a watchOS Simulator.
  *

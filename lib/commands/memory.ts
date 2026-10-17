@@ -4,6 +4,14 @@ import type {XCUITestDriver} from '../driver.js';
 import {escapeRegExp, isEmpty} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileSendMemoryWarning(
+      ...args: Parameters<typeof mobileSendMemoryWarning>
+    ): ReturnType<typeof mobileSendMemoryWarning>;
+  }
+}
+
 /**
  * Simulates Low Memory warning on the given application
  *

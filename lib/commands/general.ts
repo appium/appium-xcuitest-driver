@@ -9,6 +9,21 @@ import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {ButtonName} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    touchId(...args: Parameters<typeof touchId>): ReturnType<typeof touchId>;
+    toggleEnrollTouchId(...args: Parameters<typeof toggleEnrollTouchId>): ReturnType<typeof toggleEnrollTouchId>;
+    getDeviceTime(...args: Parameters<typeof getDeviceTime>): ReturnType<typeof getDeviceTime>;
+    mobileGetDeviceTime(...args: Parameters<typeof mobileGetDeviceTime>): ReturnType<typeof mobileGetDeviceTime>;
+    removeApp(...args: Parameters<typeof removeApp>): ReturnType<typeof removeApp>;
+    launchApp(...args: Parameters<typeof launchApp>): ReturnType<typeof launchApp>;
+    closeApp(...args: Parameters<typeof closeApp>): ReturnType<typeof closeApp>;
+    setUrl(...args: Parameters<typeof setUrl>): ReturnType<typeof setUrl>;
+    mobilePressButton(...args: Parameters<typeof mobilePressButton>): ReturnType<typeof mobilePressButton>;
+    mobileSiriCommand(...args: Parameters<typeof mobileSiriCommand>): ReturnType<typeof mobileSiriCommand>;
+  }
+}
+
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
 /**

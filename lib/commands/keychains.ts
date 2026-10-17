@@ -1,6 +1,12 @@
 import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileClearKeychains(...args: Parameters<typeof mobileClearKeychains>): ReturnType<typeof mobileClearKeychains>;
+  }
+}
+
 /**
  * Clears keychains on a simulated device.
  *

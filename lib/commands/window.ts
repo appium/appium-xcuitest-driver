@@ -4,6 +4,21 @@ import {errors, isErrorType} from 'appium/driver.js';
 import type {XCUITestDriver} from '../driver.js';
 import {requireAutomationSessionActive, requireWebContext} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    setWindow(...args: Parameters<typeof setWindow>): ReturnType<typeof setWindow>;
+    getWindowHandle(...args: Parameters<typeof getWindowHandle>): ReturnType<typeof getWindowHandle>;
+    getWindowHandles(...args: Parameters<typeof getWindowHandles>): ReturnType<typeof getWindowHandles>;
+    getWindowSize(...args: Parameters<typeof getWindowSize>): ReturnType<typeof getWindowSize>;
+    getWindowRect(...args: Parameters<typeof getWindowRect>): ReturnType<typeof getWindowRect>;
+    setWindowRect(...args: Parameters<typeof setWindowRect>): ReturnType<typeof setWindowRect>;
+    maximizeWindow(...args: Parameters<typeof maximizeWindow>): ReturnType<typeof maximizeWindow>;
+    minimizeWindow(...args: Parameters<typeof minimizeWindow>): ReturnType<typeof minimizeWindow>;
+    fullScreenWindow(...args: Parameters<typeof fullScreenWindow>): ReturnType<typeof fullScreenWindow>;
+    closeWindow(...args: Parameters<typeof closeWindow>): ReturnType<typeof closeWindow>;
+  }
+}
+
 /**
  * Two different guards show up in this file, matching two different kinds of command:
  * - `setWindow`/`getWindowHandle(s)`/`getWindowRect`/`closeWindow` have an atoms-based

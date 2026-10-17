@@ -4,6 +4,13 @@ import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 import type {ContentSizeAction, ContentSizeResult} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileSetContentSize(...args: Parameters<typeof mobileSetContentSize>): ReturnType<typeof mobileSetContentSize>;
+    mobileGetContentSize(...args: Parameters<typeof mobileGetContentSize>): ReturnType<typeof mobileGetContentSize>;
+  }
+}
+
 const CONTENT_SIZE = [
   'extra-small',
   'small',

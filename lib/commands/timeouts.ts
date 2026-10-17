@@ -2,6 +2,15 @@ import {BaseDriver} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    asyncScriptTimeout(...args: Parameters<typeof asyncScriptTimeout>): ReturnType<typeof asyncScriptTimeout>;
+    setPageLoadTimeout(...args: Parameters<typeof setPageLoadTimeout>): ReturnType<typeof setPageLoadTimeout>;
+    setScriptTimeout(...args: Parameters<typeof setScriptTimeout>): ReturnType<typeof setScriptTimeout>;
+    setImplicitWait(...args: Parameters<typeof setImplicitWait>): ReturnType<typeof setImplicitWait>;
+  }
+}
+
 /** Keeps an already-started automation session's timeout in sync with the driver's own. */
 function syncAutomationSessionTimeout(
   driver: XCUITestDriver,

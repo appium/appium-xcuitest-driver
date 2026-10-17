@@ -16,6 +16,31 @@ import {NATIVE_WIN} from './constants.js';
 import {assignBiDiLogListener} from './log.js';
 import type {ViewContext, FullContext, PageChangeNotification} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getContexts(...args: Parameters<typeof getContexts>): ReturnType<typeof getContexts>;
+    getCurrentContext(...args: Parameters<typeof getCurrentContext>): ReturnType<typeof getCurrentContext>;
+    setContext(...args: Parameters<typeof setContext>): ReturnType<typeof setContext>;
+    activateRecentWebview(...args: Parameters<typeof activateRecentWebview>): ReturnType<typeof activateRecentWebview>;
+    connectToRemoteDebugger(
+      ...args: Parameters<typeof connectToRemoteDebugger>
+    ): ReturnType<typeof connectToRemoteDebugger>;
+    getContextsAndViews(...args: Parameters<typeof getContextsAndViews>): ReturnType<typeof getContextsAndViews>;
+    listWebFrames(...args: Parameters<typeof listWebFrames>): ReturnType<typeof listWebFrames>;
+    mobileGetContexts(...args: Parameters<typeof mobileGetContexts>): ReturnType<typeof mobileGetContexts>;
+    onPageChange(...args: Parameters<typeof onPageChange>): ReturnType<typeof onPageChange>;
+    getCurrentUrl(...args: Parameters<typeof getCurrentUrl>): ReturnType<typeof getCurrentUrl>;
+    getNewRemoteDebugger(...args: Parameters<typeof getNewRemoteDebugger>): ReturnType<typeof getNewRemoteDebugger>;
+    getRecentWebviewContextId(
+      ...args: Parameters<typeof getRecentWebviewContextId>
+    ): ReturnType<typeof getRecentWebviewContextId>;
+    isWebContext(...args: Parameters<typeof isWebContext>): ReturnType<typeof isWebContext>;
+    isWebview(...args: Parameters<typeof isWebview>): ReturnType<typeof isWebview>;
+    setCurrentUrl(...args: Parameters<typeof setCurrentUrl>): ReturnType<typeof setCurrentUrl>;
+    stopRemote(...args: Parameters<typeof stopRemote>): ReturnType<typeof stopRemote>;
+  }
+}
+
 const WEBVIEW_WIN = 'WEBVIEW';
 export const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
 const DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS = 5000;

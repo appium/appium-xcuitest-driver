@@ -7,6 +7,26 @@ import type {XCUITestDriver} from '../driver.js';
 import {isEmpty} from '../utils/index.js';
 import type {AllowedHttpMethod} from './proxy-helper.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    findElOrEls(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+    findElOrEls(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+    findElOrEls(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element | Element[]>;
+    findNativeElementOrElements(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+    findNativeElementOrElements(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+    findNativeElementOrElements(
+      strategy: string,
+      selector: string,
+      mult: boolean,
+      context?: any,
+    ): Promise<Element | Element[]>;
+    doNativeFind(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+    doNativeFind(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+    doNativeFind(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element | Element[]>;
+    getFirstVisibleChild(...args: Parameters<typeof getFirstVisibleChild>): ReturnType<typeof getFirstVisibleChild>;
+  }
+}
+
 /**
  * Finds elements, delegating to web or native based on context.
  */

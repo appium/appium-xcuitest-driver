@@ -2,6 +2,18 @@ import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 import type {BiometricFeature} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileEnrollBiometric(...args: Parameters<typeof mobileEnrollBiometric>): ReturnType<typeof mobileEnrollBiometric>;
+    mobileSendBiometricMatch(
+      ...args: Parameters<typeof mobileSendBiometricMatch>
+    ): ReturnType<typeof mobileSendBiometricMatch>;
+    mobileIsBiometricEnrolled(
+      ...args: Parameters<typeof mobileIsBiometricEnrolled>
+    ): ReturnType<typeof mobileIsBiometricEnrolled>;
+  }
+}
+
 /**
  * Enrolls biometric authentication on a simulated device.
  *
