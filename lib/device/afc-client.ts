@@ -13,6 +13,7 @@ import {fs, util} from 'appium/support.js';
 
 import {withTimeout} from '../commands/helpers/index.js';
 import {log} from '../logger.js';
+import type {ClosableService} from '../types.js';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
@@ -60,10 +61,10 @@ interface WalkDirPullWalkContext {
  * and iOS 18 and above (appium-ios-remotexpc).
  */
 export class AfcClient {
-  private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
+  private readonly service: RemoteXPCAfcService | ClosableService;
   private readonly _isRemoteXPC: boolean;
 
-  private constructor(service: RemoteXPCAfcService | IOSDeviceAfcService, isRemoteXPC: boolean = false) {
+  private constructor(service: RemoteXPCAfcService | ClosableService, isRemoteXPC: boolean = false) {
     this.service = service;
     this._isRemoteXPC = isRemoteXPC;
   }

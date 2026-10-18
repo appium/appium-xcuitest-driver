@@ -71,7 +71,8 @@ export async function mobileRunXCTest(
 export async function mobileInstallXCTestBundle(this: XCUITestDriver, xctestApp: string): Promise<void> {
   if (typeof xctestApp !== 'string') {
     throw new errors.InvalidArgumentError(
-      `'xctestApp' is a required parameter for 'installXCTestBundle' and ` + `must be a string. Found '${xctestApp}'`,
+      `'xctestApp' is a required parameter for 'installXCTestBundle' and ` +
+        `must be a string. Found '${String(xctestApp)}'`,
     );
   }
   xctestLog.info(`Installing bundle '${xctestApp}'`);

@@ -307,7 +307,7 @@ export async function allocateMjpegServerPort(driver: XCUITestDriver): Promise<v
       throw new Error(
         `Cannot ensure MJPEG broadcast functionality by forwarding the local port ${mjpegServerPort} ` +
           `requested by the 'mjpegServerPort' capability to the device port ${mjpegServerPort}. ` +
-          `Original error: ${error}`,
+          `Original error: ${String(error)}`,
         {cause: error},
       );
     }
