@@ -62,6 +62,17 @@ native application before entering it, you can have XCUITest driver automaticall
 the web view context on session initialization by setting the `autoWebview`
 [capability](../reference/capabilities.md) to `true`.
 
+### Script timeouts
+
+In a web view context, `execute` waits for a returned Promise, and `executeAsync` waits for its
+callback. Both end with `script timeout` after the session script timeout (W3C default `30000` ms,
+set with `POST /session/:id/timeouts`). For scripts that take more than 30 s, set a longer script
+timeout.
+
+A script that blocks the page ends with `timeout` after
+[`appium:webviewAtomWaitTimeout`](../reference/capabilities.md) (default `120000` ms), when that
+value is longer than the script timeout.
+
 
 ### Using a native WebKit automation session
 
