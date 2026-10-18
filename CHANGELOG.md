@@ -1,3 +1,9 @@
+## [12.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.1...v12.18.2) (2026-10-18)
+
+### Bug Fixes
+
+* resolve WDA downloads from the monorepo release ([#3050](https://github.com/appium/appium-xcuitest-driver/issues/3050)) ([0e990dc](https://github.com/appium/appium-xcuitest-driver/commit/0e990dcf45fddcb2b635bd9dad7cd278c066f735))
+
 ## [12.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.0...v12.18.1) (2026-10-13)
 
 ### Bug Fixes
