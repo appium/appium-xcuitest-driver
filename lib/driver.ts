@@ -1167,7 +1167,8 @@ export class XCUITestDriver
     // (what GET /timeouts reports) start out in sync with our pageLoadMs/asyncWaitMs defaults.
     this.setImplicitWait(0);
     this.setPageLoadTimeout(6000);
-    this.setScriptTimeout(0);
+    // W3C default script timeout
+    this.setScriptTimeout(30000);
 
     this.webElementsCache = new LRUCache({
       max: WEB_ELEMENTS_CACHE_SIZE,

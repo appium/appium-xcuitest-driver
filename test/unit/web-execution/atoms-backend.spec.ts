@@ -446,6 +446,7 @@ describe('AtomsBackend', function () {
 
       it('uses the 30 s W3C default after an executeAsyncScript call with no script timeout set', async function () {
         sandbox.stub(driver, 'waitForAtom').resolves(null);
+        driver.asyncWaitMs = undefined;
         await backend.executeAsyncScript('arguments[0]();', []);
         assert.strictEqual(driver.asyncWaitMs, undefined);
         await backend.executeScript('return Promise.resolve();', []);
@@ -476,13 +477,13 @@ describe('AtomsBackend', function () {
       assert.strictEqual(
         remoteStub.executeAtomAsync.calledOnceWithExactly(
           'execute_async_script',
-          ['return 1;', ['converted'], 0],
+          ['return 1;', ['converted'], 30000],
           driver.curWebFrames,
         ),
         true,
       );
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise, undefined), true);
+      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise, 35000), true);
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
     });
   });

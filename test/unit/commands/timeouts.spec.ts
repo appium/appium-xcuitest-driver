@@ -62,7 +62,7 @@ describe('timeouts commands', function () {
     // timeouts didn't match its effective behavior.
     it('keeps GET /timeouts in sync with pageLoadMs/asyncWaitMs from the start, before any explicit timeout command', async function () {
       assert.strictEqual(driver.pageLoadMs, 6000);
-      assert.strictEqual(driver.asyncWaitMs, 0);
+      assert.strictEqual(driver.asyncWaitMs, 30000);
       assert.strictEqual(driver.implicitWaitMs, 0);
 
       const timeouts = await driver.getTimeouts();
