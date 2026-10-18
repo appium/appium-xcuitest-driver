@@ -34,13 +34,6 @@ describe('timeouts commands', function () {
     });
   });
 
-  describe('asyncScriptTimeout (deprecated alias)', function () {
-    it('delegates to setScriptTimeout', async function () {
-      await driver.asyncScriptTimeout(2345);
-      assert.strictEqual(driver.asyncWaitMs, 2345);
-    });
-  });
-
   describe('setPageLoadTimeout', function () {
     it('is reachable through the base timeouts() command with a W3C pageLoad value', async function () {
       await driver.timeouts(undefined, undefined, undefined, 6000);
