@@ -352,12 +352,10 @@ export class AtomsBackend implements WebExecutionBackend {
 
   async executeScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const atomsArgs = this.driver.convertElementsForAtoms(args);
-    const {asyncWaitMs} = this.driver;
-    const promise = this.driver.remote.executeAtom('execute_script', [script, atomsArgs], this.driver.curWebFrames, {
-      // W3C null: no limit; the remote debugger limits a number to 1 h
-      timeoutMs: asyncWaitMs === null ? undefined : limitTimerDelayMs(asyncWaitMs),
+    const result = await this.driver.executeAtom('execute_script', [script, atomsArgs], false, {
+      timeoutMs: this.driver.asyncWaitMs,
     });
-    return this.driver.cacheWebElements(await this.driver.waitForAtom(promise, limitTimerDelayMs(asyncWaitMs))) as T;
+    return this.driver.cacheWebElements(result) as T;
   }
 
   async executeAsyncScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {

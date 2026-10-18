@@ -299,16 +299,25 @@ export function cacheWebElements(this: XCUITestDriver, response: unknown): unkno
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
+ * @param opts - `timeoutMs`: the script timeout of `execute_script` (W3C `null`: no limit)
  */
 export async function executeAtom<T = any>(
   this: XCUITestDriver,
   atom: AtomName,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
+  opts: {timeoutMs?: number | null} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const promise = this.remote.executeAtom(atom, args, frames);
-  return await this.waitForAtom(promise);
+  const {timeoutMs} = opts;
+  if (atom !== 'execute_script' || timeoutMs === undefined) {
+    return await this.waitForAtom(this.remote.executeAtom(atom, args, frames));
+  }
+  const promise = this.remote.executeAtom(atom, args, frames, {
+    // W3C null: no limit; the remote debugger limits a number to 1 h
+    timeoutMs: timeoutMs === null ? undefined : limitTimerDelayMs(timeoutMs),
+  });
+  return await this.waitForAtom(promise, limitTimerDelayMs(timeoutMs));
 }
 
 /**

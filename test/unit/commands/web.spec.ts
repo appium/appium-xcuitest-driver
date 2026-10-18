@@ -55,6 +55,46 @@ describe('web commands', function () {
     });
   });
 
+  describe('executeAtom', function () {
+    const run = async (atom: any, opts?: {timeoutMs?: number | null}) => {
+      const otherDriver = new XCUITestDriver({} as any);
+      const remoteExecuteAtom = sinon.stub().resolves('raw');
+      otherDriver._remote = {executeAtom: remoteExecuteAtom} as any;
+      const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
+      await otherDriver.executeAtom(atom, ['x', []], true, opts);
+      return {remoteArgs: remoteExecuteAtom.lastCall.args, waitMs: waitForAtom.lastCall.args[1]};
+    };
+
+    it('gives the script timeout to the remote debugger and waitForAtom', async function () {
+      const {remoteArgs, waitMs} = await run('execute_script', {timeoutMs: 500});
+      assert.deepStrictEqual(remoteArgs, ['execute_script', ['x', []], [], {timeoutMs: 500}]);
+      assert.strictEqual(waitMs, 500);
+    });
+
+    it('limits the script timeout to the longest timer delay', async function () {
+      const {remoteArgs, waitMs} = await run('execute_script', {timeoutMs: Number.MAX_SAFE_INTEGER});
+      assert.strictEqual(remoteArgs[3].timeoutMs, 2 ** 31 - 1);
+      assert.strictEqual(waitMs, 2 ** 31 - 1);
+    });
+
+    it('gives no limit to the remote debugger for a W3C null script timeout', async function () {
+      const {remoteArgs, waitMs} = await run('execute_script', {timeoutMs: null});
+      assert.strictEqual(remoteArgs[3].timeoutMs, undefined);
+      assert.strictEqual(waitMs, 2 ** 31 - 1);
+    });
+
+    it('keeps the default wait for other atoms and scripts with no timeout', async function () {
+      for (const [atom, opts] of [
+        ['get_text', {timeoutMs: 500}],
+        ['execute_script', undefined],
+      ] as const) {
+        const {remoteArgs, waitMs} = await run(atom, opts);
+        assert.strictEqual(remoteArgs.length, 3);
+        assert.strictEqual(waitMs, undefined);
+      }
+    });
+  });
+
   describe('waitForAtom', function () {
     const later = (ms: number) => new Promise((resolve) => setTimeout(() => resolve('done'), ms));
 
