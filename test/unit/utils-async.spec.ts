@@ -28,6 +28,10 @@ describe('utils/async', function () {
     it('limits a longer timeout to 1 h', function () {
       assert.strictEqual(limitScriptTimeoutMs(Number.MAX_SAFE_INTEGER), 3600000);
     });
+
+    it('gives 1 h for a W3C null (no limit)', function () {
+      assert.strictEqual(limitScriptTimeoutMs(null), 3600000);
+    });
   });
 
   describe('withTimeout', function () {

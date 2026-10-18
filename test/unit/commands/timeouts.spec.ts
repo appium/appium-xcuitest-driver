@@ -37,6 +37,14 @@ describe('timeouts commands', function () {
       driver.setScriptTimeout(Number.MAX_SAFE_INTEGER);
       assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 3600000);
     });
+
+    it('gives a started automation session 1 h for a W3C null script timeout (no limit)', function () {
+      (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
+      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
+      driver.setScriptTimeout(null as any);
+      assert.strictEqual(driver.scriptTimeoutMs, null);
+      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 3600000);
+    });
   });
 
   describe('setPageLoadTimeout', function () {

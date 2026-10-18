@@ -446,6 +446,15 @@ describe('AtomsBackend', function () {
       assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 3600000);
     });
 
+    it('executeAsyncScript limits a W3C null script timeout (no limit) to 1 h', async function () {
+      sandbox.stub(driver, 'waitForAtom').resolves(null);
+      remoteStub.executeAtomAsync.resolves(null);
+      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
+      driver.scriptTimeoutMs = null as any;
+      await backend.executeAsyncScript('arguments[0]();', []);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 3600000);
+    });
+
     it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
       const convertStub = sandbox.stub(driver, 'convertElementsForAtoms').returns(['converted']);
       const cacheStub = sandbox.stub(driver, 'cacheWebElements').returns('cached');

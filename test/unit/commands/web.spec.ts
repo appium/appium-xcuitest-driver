@@ -56,9 +56,10 @@ describe('web commands', function () {
   });
 
   describe('executeAtom', function () {
-    const run = async (atom: any, opts?: {isUserScript?: boolean}, scriptTimeoutMs = 500) => {
+    const run = async (atom: any, opts?: {isUserScript?: boolean}, scriptTimeoutMs: number | null = 500) => {
       const otherDriver = new XCUITestDriver({} as any);
-      otherDriver.setScriptTimeout(scriptTimeoutMs);
+      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
+      otherDriver.scriptTimeoutMs = scriptTimeoutMs as number;
       const remoteExecuteAtom = sinon.stub().resolves('raw');
       otherDriver._remote = {executeAtom: remoteExecuteAtom} as any;
       const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
@@ -79,6 +80,11 @@ describe('web commands', function () {
 
     it('limits the script timeout to 1 h', async function () {
       const {remoteArgs} = await run('execute_script', {isUserScript: true}, Number.MAX_SAFE_INTEGER);
+      assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
+    });
+
+    it('limits a W3C null script timeout (no limit) to 1 h', async function () {
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null);
       assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
     });
 
@@ -138,6 +144,12 @@ describe('web commands', function () {
       assert.strictEqual(errorBefore, undefined);
       assert.ok(error instanceof errors.ScriptTimeoutError);
       assert.doesNotMatch(error.message, /webviewAtomWaitTimeout/);
+    });
+
+    it('limits a W3C null script timeout (no limit) to 1 h', async function () {
+      const {errorBefore, error} = await waitWithFakeTimers(1000, null as any, 3600000 + 6000 + 6000);
+      assert.strictEqual(errorBefore, undefined);
+      assert.ok(error instanceof errors.ScriptTimeoutError);
     });
 
     it('limits a very long script timeout to 1 h', async function () {
