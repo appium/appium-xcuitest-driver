@@ -308,7 +308,8 @@ export class XCUITestDriver
   _preAutomationSessionContext: string | null = null;
 
   _webviewCalibrationCache: CalibrationCacheEntry | null;
-  asyncWaitMs!: number;
+  /** W3C script timeout; `null`: no limit */
+  asyncWaitMs!: number | null;
   _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null = null;
   _perfRecorders: PerfRecorder[];
   webElementsCache: LRUCache<any, any>;

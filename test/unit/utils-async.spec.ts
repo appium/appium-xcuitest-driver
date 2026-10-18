@@ -28,6 +28,10 @@ describe('utils/async', function () {
     it('limits a longer delay to the longest timer delay', function () {
       assert.strictEqual(limitTimerDelayMs(Number.MAX_SAFE_INTEGER), 2 ** 31 - 1);
     });
+
+    it('gives the longest timer delay for a W3C null (no limit)', function () {
+      assert.strictEqual(limitTimerDelayMs(null), 2 ** 31 - 1);
+    });
   });
 
   describe('withTimeout', function () {

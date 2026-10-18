@@ -2,6 +2,7 @@ import type {TimeoutValue} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
+import {limitTimerDelayMs} from './helpers/index.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -48,12 +49,16 @@ export function setPageLoadTimeout(this: XCUITestDriver, ms: number): void {
  * `GET /timeouts` reports) in sync, additionally tracking our own `asyncWaitMs` and the active
  * automation session (if any), neither of which the base implementation knows about.
  *
- * @param ms - Timeout in milliseconds
+ * W3C allows `null` (no limit). TODO: `@appium/base-driver` `timeouts()` skips `null` and
+ * types the timeout as a number.
+ *
+ * @param ms - Timeout in milliseconds, or `null` for no limit
  */
-export function setScriptTimeout(this: XCUITestDriver, ms: number): void {
-  BaseDriver.prototype.setScriptTimeout.call(this, ms);
+export function setScriptTimeout(this: XCUITestDriver, ms: number | null): void {
+  // W3C: GET /timeouts reports null
+  BaseDriver.prototype.setScriptTimeout.call(this, ms as number);
   this.asyncWaitMs = ms;
-  syncAutomationSessionTimeout(this, 'scriptTimeoutMs', ms);
+  syncAutomationSessionTimeout(this, 'scriptTimeoutMs', limitTimerDelayMs(ms));
 }
 
 /**

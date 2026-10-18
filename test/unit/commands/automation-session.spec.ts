@@ -67,6 +67,16 @@ describe('automation-session commands', function () {
       assert.strictEqual(session.scriptTimeoutMs, 6789);
       assert.strictEqual(session.implicitWaitTimeoutMs, 42);
     });
+
+    it('seeds the session with the longest timer delay for a W3C null script timeout', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
+      const session = {} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
+      driver.asyncWaitMs = null;
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(session.scriptTimeoutMs, 2 ** 31 - 1);
+    });
   });
 
   describe('mobileStopAutomationSession', function () {

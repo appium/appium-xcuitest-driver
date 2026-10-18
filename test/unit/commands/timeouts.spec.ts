@@ -26,6 +26,14 @@ describe('timeouts commands', function () {
       assert.strictEqual((await driver.getTimeouts()).script, 5000);
     });
 
+    it('keeps a W3C null (no limit) for GET /timeouts', async function () {
+      (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
+      driver.setScriptTimeout(null);
+      assert.strictEqual(driver.asyncWaitMs, null);
+      assert.strictEqual((await driver.getTimeouts()).script, null);
+      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 2 ** 31 - 1);
+    });
+
     it('keeps a started automation session in sync', function () {
       (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
       driver.setScriptTimeout(1234);
