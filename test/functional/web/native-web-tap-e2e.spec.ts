@@ -24,6 +24,10 @@ const SPIN_RETRIES = 25;
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 const SCROLL_AMT = 1400;
+// within the page: iOS 26 clamps a scroll past the end ~300 ms later, so the target moves
+const SCROLL_SCRIPT =
+  `window.scrollBy(0, Math.min(${SCROLL_AMT}, ` +
+  'document.documentElement.scrollHeight - window.innerHeight - window.scrollY))';
 
 let baseUrl: string;
 
@@ -31,6 +35,9 @@ async function loadPage(driver: Browser, url: string) {
   await retryInterval(5, 1000, async function () {
     await openPage(driver, url);
     assert.ok(!(await spinTitle(driver)).includes('Cannot Open Page'));
+    // pages share a title; a navigation from the previous tap can still win
+    const current = new URL(await driver.getUrl()).pathname;
+    assert.strictEqual(current, new URL(url).pathname, `Expected to load '${url}', but the page is '${current}'`);
   });
 }
 
@@ -112,7 +119,7 @@ describe('native web tap -', function () {
       it('should be able to tap on an element after scrolling', async function () {
         await loadPage(driver, guineaPigScrollablePage(baseUrl));
         // mobile: scroll selects text instead of scrolling in Safari, so scroll via JS instead.
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -166,7 +173,7 @@ describe('native web tap -', function () {
       it('should be able to tap on an element after scrolling', async function () {
         await loadPage(driver, guineaPigScrollablePage(baseUrl));
         // mobile: scroll selects text instead of scrolling in Safari, so scroll via JS instead.
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -260,7 +267,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await loadPage(driver, guineaPigPage(baseUrl));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -268,8 +275,8 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after scrolling', async function () {
-        await openPage(driver, guineaPigScrollablePage(baseUrl));
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await loadPage(driver, guineaPigScrollablePage(baseUrl));
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -289,7 +296,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await loadPage(driver, guineaPigPage(baseUrl));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -297,8 +304,8 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after scrolling', async function () {
-        await openPage(driver, guineaPigScrollablePage(baseUrl));
-        await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+        await loadPage(driver, guineaPigScrollablePage(baseUrl));
+        await driver.execute(SCROLL_SCRIPT);
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -306,7 +313,7 @@ describe('native web tap -', function () {
       });
 
       it('should be able to tap on an element after changing orientation', async function () {
-        await openPage(driver, guineaPigPage(baseUrl));
+        await loadPage(driver, guineaPigPage(baseUrl));
 
         try {
           await driver.setOrientation('LANDSCAPE');

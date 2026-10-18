@@ -59,6 +59,12 @@ section, though they are limited and less reliable compared to Remote XPC.
     identifier _may_ be different from the device's standard UDID - in such cases it should replace
     the standard UDID in all future actions.
 
+    Pairings made with `appium-ios-remotexpc` versions before 5.25.0 still work, but the tunnel script
+    cannot tell which Apple TV they belong to, so it tries them against every discovered Apple TV that
+    no other pairing matched. With `--appletv-device-id`, the tunnel script logs a warning for each such
+    pairing when more than one Apple TV is on the network. Pair that Apple TV again to avoid the extra
+    connection attempts.
+
     For additional details on this procedure (discovery, cryptography, credential storage,
     troubleshooting), refer to [the full pairing guide](https://github.com/appium/appium-ios-remotexpc/blob/main/docs/apple-tv-pairing-guide.md)
     in the `appium-ios-remotexpc` project.
