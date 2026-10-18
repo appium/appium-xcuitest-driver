@@ -4,6 +4,17 @@ import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 import type {IncreaseContrastAction, IncreaseContrastResult} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileSetIncreaseContrast(
+      ...args: Parameters<typeof mobileSetIncreaseContrast>
+    ): ReturnType<typeof mobileSetIncreaseContrast>;
+    mobileGetIncreaseContrast(
+      ...args: Parameters<typeof mobileGetIncreaseContrast>
+    ): ReturnType<typeof mobileGetIncreaseContrast>;
+  }
+}
+
 const INCREASE_CONTRAST_CONFIG = ['enabled', 'disabled'] as const;
 
 /**

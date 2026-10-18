@@ -3,6 +3,22 @@ import {errors} from 'appium/driver.js';
 import type {XCUITestDriver} from '../driver.js';
 import {toApiLevelRequirementText, supportsApiLevel27} from '../utils/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileEnableVoiceOver(...args: Parameters<typeof mobileEnableVoiceOver>): ReturnType<typeof mobileEnableVoiceOver>;
+    mobileDisableVoiceOver(
+      ...args: Parameters<typeof mobileDisableVoiceOver>
+    ): ReturnType<typeof mobileDisableVoiceOver>;
+    mobileIsVoiceOverEnabled(
+      ...args: Parameters<typeof mobileIsVoiceOverEnabled>
+    ): ReturnType<typeof mobileIsVoiceOverEnabled>;
+    mobileVoiceOverMove(...args: Parameters<typeof mobileVoiceOverMove>): ReturnType<typeof mobileVoiceOverMove>;
+    mobileVoiceOverCurrentSpeech(
+      ...args: Parameters<typeof mobileVoiceOverCurrentSpeech>
+    ): ReturnType<typeof mobileVoiceOverCurrentSpeech>;
+  }
+}
+
 export interface VoiceOverSpeechResult {
   utterance: string | null;
 }

@@ -8,6 +8,12 @@ import {isEmpty, mergeDeep} from '../utils/index.js';
 import {APP_EXT} from './constants.js';
 import {findApps} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getStrings(...args: Parameters<typeof getStrings>): ReturnType<typeof getStrings>;
+  }
+}
+
 const STRINGSDICT_RESOURCE = '.stringsdict';
 const STRINGS_RESOURCE = '.strings';
 

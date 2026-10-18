@@ -3,6 +3,14 @@ import {errors, routeToCommandName} from 'appium/driver.js';
 import type {XCUITestDriver} from '../driver.js';
 import {withTimeout, TimeoutError} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    proxyCommand<TReq = any, TRes = unknown>(
+      ...args: Parameters<typeof proxyCommand<TReq, TRes>>
+    ): ReturnType<typeof proxyCommand<TReq, TRes>>;
+  }
+}
+
 const GET = 'GET';
 const POST = 'POST';
 const DELETE = 'DELETE';

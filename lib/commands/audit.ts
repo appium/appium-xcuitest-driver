@@ -1,6 +1,14 @@
 import type {XCUITestDriver} from '../driver.js';
 import type {AccessibilityAuditItem} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobilePerformAccessibilityAudit(
+      ...args: Parameters<typeof mobilePerformAccessibilityAudit>
+    ): ReturnType<typeof mobilePerformAccessibilityAudit>;
+  }
+}
+
 /**
  * Performs accessibility audit of the current application according to the given type or multiple types.
  *

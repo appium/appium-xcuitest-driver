@@ -3,6 +3,15 @@ import type {Element} from '@appium/types';
 import type {XCUITestDriver} from '../driver.js';
 import {isTvOs} from '../utils/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    back(...args: Parameters<typeof back>): ReturnType<typeof back>;
+    forward(...args: Parameters<typeof forward>): ReturnType<typeof forward>;
+    nativeBack(...args: Parameters<typeof nativeBack>): ReturnType<typeof nativeBack>;
+    mobileDeepLink(...args: Parameters<typeof mobileDeepLink>): ReturnType<typeof mobileDeepLink>;
+  }
+}
+
 /**
  * Navigate back in the browser history or native app navigation.
  */

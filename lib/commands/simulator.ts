@@ -4,6 +4,13 @@ import {setLocalizationPrefs, setSafariPrefs, shutdownOtherSimulators} from '../
 import type {XCUITestDriver} from '../driver.js';
 import {upperFirst} from '../utils/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    initSimulator(...args: Parameters<typeof initSimulator>): ReturnType<typeof initSimulator>;
+    startSim(...args: Parameters<typeof startSim>): ReturnType<typeof startSim>;
+  }
+}
+
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
 /**

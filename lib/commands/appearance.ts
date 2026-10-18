@@ -4,6 +4,13 @@ import {util} from 'appium/support.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {Style} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileSetAppearance(...args: Parameters<typeof mobileSetAppearance>): ReturnType<typeof mobileSetAppearance>;
+    mobileGetAppearance(...args: Parameters<typeof mobileGetAppearance>): ReturnType<typeof mobileGetAppearance>;
+  }
+}
+
 /**
  * Set the device's UI appearance style
  *

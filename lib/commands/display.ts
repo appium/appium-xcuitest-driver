@@ -1,6 +1,22 @@
 import type {XCUITestDriver} from '../driver.js';
 import type {Viewport, ScreenInfo, DisplayInfo, WDADisplayInfo} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getViewportRect(...args: Parameters<typeof getViewportRect>): ReturnType<typeof getViewportRect>;
+    getScreenInfo(...args: Parameters<typeof getScreenInfo>): ReturnType<typeof getScreenInfo>;
+    mobileListDisplays(...args: Parameters<typeof mobileListDisplays>): ReturnType<typeof mobileListDisplays>;
+    getStatusBarHeight(...args: Parameters<typeof getStatusBarHeight>): ReturnType<typeof getStatusBarHeight>;
+    getDevicePixelRatio(...args: Parameters<typeof getDevicePixelRatio>): ReturnType<typeof getDevicePixelRatio>;
+    mobileSetSimulatedHingeAngle(
+      ...args: Parameters<typeof mobileSetSimulatedHingeAngle>
+    ): ReturnType<typeof mobileSetSimulatedHingeAngle>;
+    mobileGetSimulatedHingeAngle(
+      ...args: Parameters<typeof mobileGetSimulatedHingeAngle>
+    ): ReturnType<typeof mobileGetSimulatedHingeAngle>;
+  }
+}
+
 /**
  * Retrieves the viewport dimensions.
  *

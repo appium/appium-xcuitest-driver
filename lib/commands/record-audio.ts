@@ -6,6 +6,13 @@ import type {XCUITestDriver} from '../driver.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
 import type {AudioRecorderOptions} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    startAudioRecording(...args: Parameters<typeof startAudioRecording>): ReturnType<typeof startAudioRecording>;
+    stopAudioRecording(...args: Parameters<typeof stopAudioRecording>): ReturnType<typeof stopAudioRecording>;
+  }
+}
+
 const MAX_RECORDING_TIME_SEC = 43200;
 const AUDIO_RECORD_FEAT_NAME = 'audio_record';
 const DEFAULT_SOURCE = 'avfoundation';

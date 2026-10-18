@@ -1,6 +1,12 @@
 import type {XCUITestDriver} from '../../driver.js';
 import {cleanup} from './cleanup.js';
 
+declare module '../../driver.js' {
+  interface XCUITestDriver {
+    stopWda(...args: Parameters<typeof stop>): ReturnType<typeof stop>;
+  }
+}
+
 /**
  * Stops the active WebDriverAgent session, optionally quits the WDA process, and cleans up system files.
  */

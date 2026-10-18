@@ -8,6 +8,19 @@ import type {XCUITestDriver} from '../driver.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
 import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    startRecordingScreen(...args: Parameters<typeof startRecordingScreen>): ReturnType<typeof startRecordingScreen>;
+    stopRecordingScreen(...args: Parameters<typeof stopRecordingScreen>): ReturnType<typeof stopRecordingScreen>;
+    mobileStartScreenRecording(
+      ...args: Parameters<typeof mobileStartScreenRecording>
+    ): ReturnType<typeof mobileStartScreenRecording>;
+    mobileStopScreenRecording(
+      ...args: Parameters<typeof mobileStopScreenRecording>
+    ): ReturnType<typeof mobileStopScreenRecording>;
+  }
+}
+
 /**
  * Optional execute-script keys for `mobile: startScreenRecording`, in Appium flattened-arg order.
  * Keep in sync with `lib/execute-method-map.ts` (`mobile: startScreenRecording` optional keys).

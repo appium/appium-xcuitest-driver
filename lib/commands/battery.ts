@@ -2,6 +2,12 @@ import {BatteryInfoClient, type AdvancedBatteryInfo} from '../device/battery-inf
 import type {XCUITestDriver} from '../driver.js';
 import type {BatteryInfo} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileGetBatteryInfo(...args: Parameters<typeof mobileGetBatteryInfo>): ReturnType<typeof mobileGetBatteryInfo>;
+  }
+}
+
 /**
  * Reads the battery information from the device under test.
  *

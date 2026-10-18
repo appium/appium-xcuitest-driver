@@ -13,6 +13,19 @@ import {
 import type {XCUITestDriver} from '../driver.js';
 import type {ContainerObject, ContainerRootSupplier} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    pushFile(...args: Parameters<typeof pushFile>): ReturnType<typeof pushFile>;
+    mobilePushFile(...args: Parameters<typeof mobilePushFile>): ReturnType<typeof mobilePushFile>;
+    pullFile(...args: Parameters<typeof pullFile>): ReturnType<typeof pullFile>;
+    mobilePullFile(...args: Parameters<typeof mobilePullFile>): ReturnType<typeof mobilePullFile>;
+    mobileDeleteFolder(...args: Parameters<typeof mobileDeleteFolder>): ReturnType<typeof mobileDeleteFolder>;
+    mobileDeleteFile(...args: Parameters<typeof mobileDeleteFile>): ReturnType<typeof mobileDeleteFile>;
+    pullFolder(...args: Parameters<typeof pullFolder>): ReturnType<typeof pullFolder>;
+    mobilePullFolder(...args: Parameters<typeof mobilePullFolder>): ReturnType<typeof mobilePullFolder>;
+  }
+}
+
 //#region Type Definitions
 
 interface CreateServiceResult {
