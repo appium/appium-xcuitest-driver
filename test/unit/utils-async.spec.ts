@@ -50,7 +50,8 @@ describe('utils/async', function () {
     });
 
     it('should reject with TimeoutError when the deadline elapses first', async function () {
-      const clock = sandbox.useFakeTimers();
+      // only these: with a fake nextTick, the test runner stops reporting the next tests
+      const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         const hanging = new Promise<string>(() => {});
         const out = withTimeout(hanging, 100, 'deadline exceeded');
@@ -72,7 +73,7 @@ describe('utils/async', function () {
     });
 
     it('should resolve when the inner promise wins the race', async function () {
-      const clock = sandbox.useFakeTimers();
+      const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         const inner = new Promise<number>((resolve) => {
           setTimeout(() => resolve(42), 50);
@@ -86,7 +87,7 @@ describe('utils/async', function () {
     });
 
     it('should clear the deadline timer when the inner promise wins', async function () {
-      const clock = sandbox.useFakeTimers();
+      const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         const inner = new Promise<number>((resolve) => {
           setTimeout(() => resolve(1), 20);

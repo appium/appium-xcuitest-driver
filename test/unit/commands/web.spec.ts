@@ -91,7 +91,7 @@ describe('web commands', function () {
       const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout} as any);
       // no alert monitor after the initial wait
       otherDriver._waitingAtoms.alertMonitor = Promise.resolve();
-      // only these: with all fake timers, the test runner stops reporting to its parent process
+      // only these: with a fake nextTick, the test runner stops reporting the next tests
       const clock = sinon.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         let error: any;
