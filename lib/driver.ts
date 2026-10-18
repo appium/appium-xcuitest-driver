@@ -1645,6 +1645,8 @@ export class XCUITestDriver
     this.contexts = [];
     this.implicitWaitMs = 0;
     this.pageLoadMs = 6000;
+    // W3C default script timeout
+    this.asyncWaitMs = 30000;
     this.landscapeWebCoordsOffset = 0;
     this._remote = null;
     this._conditionInducer = null;

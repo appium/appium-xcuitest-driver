@@ -54,6 +54,15 @@ describe('automation-session commands', function () {
       assert.strictEqual(driver._preAutomationSessionContext, 'PID:123.4');
     });
 
+    it('seeds the session with the W3C default script timeout', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
+      const session = {} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(session.scriptTimeoutMs, 30000);
+    });
+
     it('seeds the session with the driver current page-load/script/implicit-wait timeouts', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
       sandbox.stub(driver, 'isSimulator').returns(true);

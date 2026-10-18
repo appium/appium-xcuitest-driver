@@ -127,6 +127,13 @@ describe('XCUITestDriver', function () {
     currentInstallAUT = defaultInstallAUT;
   });
 
+  describe('timeouts', function () {
+    it('starts with the W3C default script timeout', function () {
+      const driver = new XCUITestDriver({} as any);
+      assert.strictEqual(driver.asyncWaitMs, 30000);
+    });
+  });
+
   describe('getDefaultUrl', function () {
     let driver: InstanceType<typeof XCUITestDriver>;
     let realDevice: RealDevice;

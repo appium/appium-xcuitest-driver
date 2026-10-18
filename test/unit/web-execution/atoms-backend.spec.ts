@@ -435,7 +435,7 @@ describe('AtomsBackend', function () {
       assert.strictEqual(
         remoteStub.executeAtomAsync.calledOnceWithExactly(
           'execute_async_script',
-          ['return 1;', ['converted'], 0],
+          ['return 1;', ['converted'], 30000],
           driver.curWebFrames,
         ),
         true,
@@ -443,6 +443,16 @@ describe('AtomsBackend', function () {
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
       assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise), true);
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
+    });
+
+    it('executeAsyncScript uses the script timeout of the session', async function () {
+      sandbox.stub(driver, 'convertElementsForAtoms').returns([]);
+      sandbox.stub(driver, 'cacheWebElements').returns('cached');
+      sandbox.stub(driver, 'waitForAtom').resolves('raw');
+      remoteStub.executeAtomAsync.returns(Promise.resolve('unused'));
+      await driver.scriptTimeoutW3C(0);
+      await backend.executeAsyncScript('return 1;', []);
+      assert.deepStrictEqual(remoteStub.executeAtomAsync.firstCall.args[1], ['return 1;', [], 0]);
     });
   });
 
