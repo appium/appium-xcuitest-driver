@@ -207,15 +207,6 @@ const defaultServerCaps = {
   takesScreenshot: true,
   networkConnectionEnabled: false,
 };
-// Deprecated: web-to-native coordinate translation now calibrates itself
-// automatically (see lib/commands/web.ts), so these settings no longer have
-// any effect. They are still accepted for backward compatibility and will
-// be removed in a future major version.
-const DEPRECATED_NATIVE_WEB_TAP_SETTINGS = [
-  'nativeWebTapTabBarVisibility',
-  'nativeWebTapSmartAppBannerVisibility',
-  'safariTabBarPosition',
-];
 const DEFAULT_SETTINGS = {
   nativeWebTap: false,
   nativeWebTapStrict: false,
@@ -785,14 +776,6 @@ export class XCUITestDriver
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
     if (['pageSourceExcludedAttributes'].includes(key)) {
-      return;
-    }
-
-    if (DEPRECATED_NATIVE_WEB_TAP_SETTINGS.includes(key)) {
-      this.log.info(
-        `The '${key}' setting is deprecated and no longer has any effect: web-to-native coordinate ` +
-          `translation is now calibrated automatically. It will be removed in a future major version.`,
-      );
       return;
     }
 
