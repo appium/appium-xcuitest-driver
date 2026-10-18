@@ -65,12 +65,12 @@ describe('web commands', function () {
       assert.strictEqual(executeAtom.calledOnceWithExactly('execute_script', ['x', []], [], {timeoutMs: 500}), true);
     });
 
-    it('gives the script timeout to waitForAtom', async function () {
+    it('gives the script timeout to waitForAtom only for execute_script', async function () {
       const otherDriver = new XCUITestDriver({} as any);
       otherDriver._remote = {executeAtom: sinon.stub().resolves('raw')} as any;
       const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
       await otherDriver.executeAtom('execute_script', ['x', []], true, {timeoutMs: 500});
-      await otherDriver.executeAtom('get_text', [{}], true);
+      await otherDriver.executeAtom('get_text', [{}], true, {timeoutMs: 500});
       assert.deepStrictEqual(
         waitForAtom.getCalls().map(({args}) => args[1]),
         [500, undefined],

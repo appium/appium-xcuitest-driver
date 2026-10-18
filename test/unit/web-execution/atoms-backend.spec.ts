@@ -438,6 +438,12 @@ describe('AtomsBackend', function () {
         assert.strictEqual(timeoutOf(), 5000);
       });
 
+      it('limits the script timeout to the longest timer delay', async function () {
+        driver.asyncWaitMs = Number.MAX_SAFE_INTEGER;
+        await backend.executeScript('return Promise.resolve();', []);
+        assert.strictEqual(timeoutOf(), 2 ** 31 - 1);
+      });
+
       it('keeps an explicit script timeout of 0', async function () {
         driver.asyncWaitMs = 0;
         await backend.executeScript('return Promise.resolve();', []);

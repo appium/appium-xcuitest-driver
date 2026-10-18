@@ -36,13 +36,9 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   requireSimulator(this, 'Starting an automation session');
   this._preAutomationSessionContext = this.curContext;
   const session = await this.remote.startAutomationSession();
-  if (this.pageLoadMs != null) {
-    session.pageLoadTimeoutMs = this.pageLoadMs;
-  }
+  session.pageLoadTimeoutMs = this.pageLoadMs;
   session.scriptTimeoutMs = this.asyncWaitMs;
-  if (this.implicitWaitMs != null) {
-    session.implicitWaitTimeoutMs = this.implicitWaitMs;
-  }
+  session.implicitWaitTimeoutMs = this.implicitWaitMs;
 }
 
 /**

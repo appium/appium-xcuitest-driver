@@ -9,7 +9,7 @@ export {
   onPostConfigureApp,
 } from './app.js';
 
-export {TimeoutError, withTimeout} from './async.js';
+export {limitTimerDelayMs, TimeoutError, withTimeout} from './async.js';
 
 export {
   requireAutomationSessionActive,

@@ -6,8 +6,9 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
+import {limitTimerDelayMs} from '../commands/helpers/index.js';
 import {translateWebCoords} from '../commands/web-native-bridge.js';
-import {checkForAlert, createJSCookie, MAX_TIMER_DELAY_MS} from '../commands/web.js';
+import {checkForAlert, createJSCookie} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
@@ -352,7 +353,7 @@ export class AtomsBackend implements WebExecutionBackend {
   async executeScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const atomsArgs = this.driver.convertElementsForAtoms(args);
     const result = await this.driver.executeAtom('execute_script', [script, atomsArgs], false, {
-      timeoutMs: this.driver.asyncWaitMs,
+      timeoutMs: limitTimerDelayMs(this.driver.asyncWaitMs),
     });
     return this.driver.cacheWebElements(result) as T;
   }
@@ -361,8 +362,7 @@ export class AtomsBackend implements WebExecutionBackend {
     const convertedArgs = this.driver.convertElementsForAtoms(args);
     const promise = this.driver.remote.executeAtomAsync(
       'execute_async_script',
-      // the page timer of the atom fires at once after a longer delay
-      [script, convertedArgs, Math.min(this.driver.asyncWaitMs, MAX_TIMER_DELAY_MS)],
+      [script, convertedArgs, limitTimerDelayMs(this.driver.asyncWaitMs)],
       this.driver.curWebFrames,
     );
     return this.driver.cacheWebElements(await this.driver.waitForAtom(promise, this.driver.asyncWaitMs)) as T;

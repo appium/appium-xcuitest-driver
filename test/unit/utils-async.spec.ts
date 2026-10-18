@@ -3,7 +3,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {createSandbox} from 'sinon';
 
-import {withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
+import {limitTimerDelayMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
 
 describe('utils/async', function () {
   describe('TimeoutError', function () {
@@ -16,6 +16,17 @@ describe('utils/async', function () {
     it('should accept a custom message', function () {
       const err = new TimeoutError('custom deadline');
       assert.strictEqual(err.message, 'custom deadline');
+    });
+  });
+
+  describe('limitTimerDelayMs', function () {
+    it('keeps a delay that a timer accepts', function () {
+      assert.strictEqual(limitTimerDelayMs(30000), 30000);
+      assert.strictEqual(limitTimerDelayMs(2 ** 31 - 1), 2 ** 31 - 1);
+    });
+
+    it('limits a longer delay to the longest timer delay', function () {
+      assert.strictEqual(limitTimerDelayMs(Number.MAX_SAFE_INTEGER), 2 ** 31 - 1);
     });
   });
 

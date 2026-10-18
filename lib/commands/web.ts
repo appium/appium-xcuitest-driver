@@ -8,6 +8,7 @@ import {timing, util} from 'appium/support.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
+  limitTimerDelayMs,
   requireAutomationSessionActive,
   requireSimulator,
   requireWebContext,
@@ -74,8 +75,6 @@ const ATOM_INITIAL_WAIT_MS = 2100;
 const REMOTE_DEBUGGER_BACKUP_TIMER_MS = 1000;
 /** How long the remote debugger waits for a WebKit response (its `RPC_RESPONSE_TIMEOUT_MS`) */
 const REMOTE_DEBUGGER_RESPONSE_TIMEOUT_MS = 5000;
-/** The longest delay of a Node or WebKit timer: a longer delay fires at once */
-export const MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
 const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
@@ -311,7 +310,8 @@ export async function executeAtom<T = any>(
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   const promise = this.remote.executeAtom(atom, args, frames, opts);
-  return await this.waitForAtom(promise, opts.timeoutMs);
+  // the remote debugger uses timeoutMs only for execute_script
+  return await this.waitForAtom(promise, atom === 'execute_script' ? opts.timeoutMs : undefined);
 }
 
 /**
@@ -473,7 +473,7 @@ export async function waitForAtom<T = unknown>(
       ? 0
       : scriptTimeoutMs + this.pageLoadMs + REMOTE_DEBUGGER_BACKUP_TIMER_MS + REMOTE_DEBUGGER_RESPONSE_TIMEOUT_MS;
   const isScriptTimeout = scriptWaitMs > defaultWaitMs;
-  const atomWaitTimeoutMs = Math.min(Math.max(defaultWaitMs, scriptWaitMs), MAX_TIMER_DELAY_MS);
+  const atomWaitTimeoutMs = limitTimerDelayMs(Math.max(defaultWaitMs, scriptWaitMs));
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
