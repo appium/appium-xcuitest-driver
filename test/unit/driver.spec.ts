@@ -132,6 +132,13 @@ describe('XCUITestDriver', function () {
       const driver = new XCUITestDriver({} as any);
       assert.strictEqual(driver.asyncWaitMs, 30000);
     });
+
+    it('sets the W3C default script timeout again when the session is reset', function () {
+      const driver = new XCUITestDriver({} as any);
+      driver.asyncWaitMs = 0;
+      (driver as any).resetProperties();
+      assert.strictEqual(driver.asyncWaitMs, 30000);
+    });
   });
 
   describe('getDefaultUrl', function () {
