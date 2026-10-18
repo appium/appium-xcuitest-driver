@@ -1,7 +1,7 @@
 import {constants as fsConstants, promises as fsPromises} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {pathToFileURL} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 
 import {fs, logger, zip, net, node} from 'appium/support.js';
 import {Command} from 'commander';
@@ -76,7 +76,7 @@ function normalizeKind(kind) {
  * @returns {Promise<string>}
  */
 async function getWebdriveragentPkgVersion() {
-  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
+  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', fileURLToPath(import.meta.url));
   if (!moduleRoot) {
     throw new Error('Cannot resolve module root for appium-xcuitest-driver');
   }
