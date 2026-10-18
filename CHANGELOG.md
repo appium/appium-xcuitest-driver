@@ -1,3 +1,9 @@
+## [12.18.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.2...v12.18.3) (2026-10-18)
+
+### Bug Fixes
+
+* preserve calibrated scale and viewport origin for native web taps ([#3046](https://github.com/appium/appium-xcuitest-driver/issues/3046)) ([e62b338](https://github.com/appium/appium-xcuitest-driver/commit/e62b338a21f6f8ce401d93c81801e42e26047a45))
+
 ## [12.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.1...v12.18.2) (2026-10-18)
 
 ### Bug Fixes
