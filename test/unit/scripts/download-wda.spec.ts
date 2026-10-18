@@ -11,7 +11,10 @@ const net = {...support.net};
 const zip = {...support.zip};
 import sinon from 'sinon';
 
-mock.module('appium/support.js', {namedExports: {...support, net, zip}});
+// Avoid copying CommonJS interop exports such as __esModule into the mock.
+mock.module('appium/support.js', {
+  namedExports: {fs, logger: support.logger, node: support.node, net, zip},
+});
 const {getWDAPrebuiltPackage} = await import(pathToFileURL(path.resolve('scripts/download-wda.mjs')).href);
 
 describe('prebuilt WDA release migration', () => {
