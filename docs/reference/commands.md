@@ -401,26 +401,6 @@ Trigger a touch/fingerprint match or match failure
 
 ``null``
 
-### `asyncScriptTimeout`
-
-!!! warning "Deprecated"
-
-    This method is deprecated. Please use `setScriptTimeout` instead
-
-`POST` **`/session/:sessionId/timeouts/async_script`**
-
-Alias for XCUITestDriver.setScriptTimeout.
-
-#### Arguments
-
-| Name | Type |
-| :------ | :------ |
-| `ms` | `any` |
-
-#### Returned Result
-
-``null``
-
 ### `getLocation`
 
 !!! warning "Deprecated"

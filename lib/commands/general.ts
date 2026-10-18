@@ -19,8 +19,6 @@ declare module '../driver.js' {
     getDeviceTime(...args: Parameters<typeof getDeviceTime>): ReturnType<typeof getDeviceTime>;
     mobileGetDeviceTime(...args: Parameters<typeof mobileGetDeviceTime>): ReturnType<typeof mobileGetDeviceTime>;
     removeApp(...args: Parameters<typeof removeApp>): ReturnType<typeof removeApp>;
-    launchApp(...args: Parameters<typeof launchApp>): ReturnType<typeof launchApp>;
-    closeApp(...args: Parameters<typeof closeApp>): ReturnType<typeof closeApp>;
     setUrl(...args: Parameters<typeof setUrl>): ReturnType<typeof setUrl>;
     mobilePressButton(...args: Parameters<typeof mobilePressButton>): ReturnType<typeof mobilePressButton>;
     mobileSiriCommand(...args: Parameters<typeof mobileSiriCommand>): ReturnType<typeof mobileSiriCommand>;
@@ -115,34 +113,6 @@ export async function mobileGetDeviceTime(this: XCUITestDriver, format = DATETIM
  */
 export async function removeApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   return await this.mobileRemoveApp(bundleId);
-}
-
-/**
- * Launches the app.
- *
- * @deprecated This API has been deprecated and is not supported anymore.
- * Consider using corresponding 'mobile:' extensions to manage the state of the app under test.
- * @throws {Error} Always throws an error indicating the API is deprecated
- */
-export async function launchApp(this: XCUITestDriver): Promise<void> {
-  throw new Error(
-    `The launchApp API has been deprecated and is not supported anymore. ` +
-      `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
-  );
-}
-
-/**
- * Closes the app.
- *
- * @deprecated This API has been deprecated and is not supported anymore.
- * Consider using corresponding 'mobile:' extensions to manage the state of the app under test.
- * @throws {Error} Always throws an error indicating the API is deprecated
- */
-export async function closeApp(this: XCUITestDriver): Promise<void> {
-  throw new Error(
-    `The closeApp API has been deprecated and is not supported anymore. ` +
-      `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
-  );
 }
 
 /**

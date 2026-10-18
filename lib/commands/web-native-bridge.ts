@@ -16,15 +16,6 @@ declare module '../driver.js' {
     mobileCalibrateWebToRealCoordinatesTranslation(
       ...args: Parameters<typeof mobileCalibrateWebToRealCoordinatesTranslation>
     ): ReturnType<typeof mobileCalibrateWebToRealCoordinatesTranslation>;
-    getSafariIsIphone(...args: Parameters<typeof getSafariIsIphone>): ReturnType<typeof getSafariIsIphone>;
-    getSafariDeviceSize(...args: Parameters<typeof getSafariDeviceSize>): ReturnType<typeof getSafariDeviceSize>;
-    getSafariIsNotched(...args: Parameters<typeof getSafariIsNotched>): ReturnType<typeof getSafariIsNotched>;
-    getExtraTranslateWebCoordsOffset(
-      ...args: Parameters<typeof getExtraTranslateWebCoordsOffset>
-    ): ReturnType<typeof getExtraTranslateWebCoordsOffset>;
-    getExtraNativeWebTapOffset(
-      ...args: Parameters<typeof getExtraNativeWebTapOffset>
-    ): ReturnType<typeof getExtraNativeWebTapOffset>;
   }
 }
 
@@ -267,62 +258,6 @@ export function viewportSignature(state: ViewportState): string {
 export async function clickWebCoords(this: XCUITestDriver, x: number, y: number): Promise<void> {
   const {x: translatedX, y: translatedY} = await this.translateWebCoords(x, y);
   await this.mobileTap(translatedX, translatedY);
-}
-
-/**
- * @deprecated No longer used: coordinate translation is calibrated
- * automatically and no longer needs a device-type hint. Kept as a no-op only
- * for backward compatibility with existing callers.
- */
-export async function getSafariIsIphone(this: XCUITestDriver): Promise<boolean> {
-  return true;
-}
-
-/**
- * @deprecated No longer used: coordinate translation is calibrated
- * automatically and no longer needs the device's screen size. Kept as a
- * no-op only for backward compatibility with existing callers.
- */
-export async function getSafariDeviceSize(this: XCUITestDriver): Promise<Size> {
-  return {width: 0, height: 0};
-}
-
-/**
- * @deprecated No longer used: coordinate translation is calibrated
- * automatically and no longer needs a notch hint. Kept as a no-op only for
- * backward compatibility with existing callers.
- */
-export async function getSafariIsNotched(this: XCUITestDriver): Promise<boolean> {
-  return false;
-}
-
-/**
- * @deprecated No longer used: coordinate translation is calibrated
- * automatically instead of computing Safari-chrome offsets. Kept as a no-op
- * only for backward compatibility with existing callers.
- */
-export async function getExtraTranslateWebCoordsOffset(
-  this: XCUITestDriver,
-  wvPos: {x: number; y: number},
-  realDims: {w: number; h: number},
-): Promise<void> {
-  void wvPos;
-  void realDims;
-}
-
-/**
- * @deprecated No longer used: coordinate translation is calibrated
- * automatically instead of computing a smart-app-banner offset. Kept as a
- * no-op only for backward compatibility with existing callers.
- */
-export async function getExtraNativeWebTapOffset(
-  this: XCUITestDriver,
-  isIphone: boolean,
-  bannerVisibility: string,
-): Promise<number> {
-  void isIphone;
-  void bannerVisibility;
-  return 0;
 }
 
 /**

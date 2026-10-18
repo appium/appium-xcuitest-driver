@@ -4,7 +4,6 @@ import type {XCUITestDriver} from '../driver.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
-    asyncScriptTimeout(...args: Parameters<typeof asyncScriptTimeout>): ReturnType<typeof asyncScriptTimeout>;
     setPageLoadTimeout(...args: Parameters<typeof setPageLoadTimeout>): ReturnType<typeof setPageLoadTimeout>;
     setScriptTimeout(...args: Parameters<typeof setScriptTimeout>): ReturnType<typeof setScriptTimeout>;
     setImplicitWait(...args: Parameters<typeof setImplicitWait>): ReturnType<typeof setImplicitWait>;
@@ -20,17 +19,6 @@ function syncAutomationSessionTimeout(
   if (driver._remote?.automationSession?.isStarted) {
     driver._remote.automationSession[field] = ms;
   }
-}
-
-/**
- * Alias for {@linkcode XCUITestDriver.setScriptTimeout}, kept for the deprecated
- * `/timeouts/async_script` route.
- *
- * @param ms - The timeout in milliseconds
- * @deprecated Use {@linkcode XCUITestDriver.setScriptTimeout} instead
- */
-export async function asyncScriptTimeout(this: XCUITestDriver, ms: number): Promise<void> {
-  this.setScriptTimeout(this.parseTimeoutArgument(ms));
 }
 
 /**

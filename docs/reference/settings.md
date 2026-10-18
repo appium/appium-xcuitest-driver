@@ -340,23 +340,6 @@ position, bypassing the native-tap/coordinate-calibration path entirely.
 
 This property can also be set using the [`appium:nativeWebTap`](./capabilities.md) capability.
 
-## nativeWebTapSmartAppBannerVisibility
-
-!!! warning "Deprecated"
-
-    Accepted for backward compatibility but has no effect, and will be removed in a future major
-    version.
-
-| Type | Default |
-| -- | -- |
-| `string` | `detect` |
-
-The visibility state of the smart app banner. Setting this value may speed up tap actions in webview
-context. Supported values are `detect`, `visible`, and `invisible`.
-
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) and [`nativeWebTapStrict`](#nativewebtapstrict)
-settings are both set to `true`.
-
 ## nativeWebTapStrict
 
 | Type | Default |
@@ -376,23 +359,6 @@ which itself has no effect once a
 [`mobile: startAutomationSession`](./execute-methods.md#mobile-startautomationsession) is active.
 
 This property can also be set using the [`appium:nativeWebTapStrict`](./capabilities.md) capability.
-
-## nativeWebTapTabBarVisibility
-
-!!! warning "Deprecated"
-
-    Accepted for backward compatibility but has no effect, and will be removed in a future major
-    version.
-
-| Type | Default |
-| -- | -- |
-| `string` | `detect` |
-
-The visibility state of the browser tab bar. Setting this value may speed up tap actions in webview
-context. Supported values are `detect`, `visible`, and `invisible`.
-
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) and [`nativeWebTapStrict`](#nativewebtapstrict)
-settings are both set to `true`.
 
 ## pageSourceExcludedAttributes
 
@@ -428,21 +394,6 @@ Currently the driver sets the app under test as active if XCTest identifies it a
 foreground. The presence of a native alert element does not change the value returned by XCTest,
 which results in the driver being blocked from interacting with the app. Changing this setting can
 avoid such issues.
-
-## safariTabBarPosition
-
-!!! warning "Deprecated"
-
-    Accepted for backward compatibility but has no effect, and will be removed in a future major
-    version.
-
-| Type | Default |
-| -- | -- |
-| `string` | `bottom` for iPhones on iOS 15+, otherwise `top` |
-
-The tab bar position in Safari. Supported values are `bottom` and `top`.
-
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) setting is set to `true`.
 
 ## screenshotOrientation
 

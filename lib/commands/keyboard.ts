@@ -14,7 +14,7 @@ declare module '../driver.js' {
 /**
  * Hides the keyboard.
  *
- * @deprecated
+ * Backs the legacy `/appium/device/hide_keyboard` route.
  */
 export async function hideKeyboard(
   this: XCUITestDriver,

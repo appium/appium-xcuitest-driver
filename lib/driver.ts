@@ -127,14 +127,7 @@ import {executeMethodMap} from './execute-method-map.js';
 import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
 import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
-import {
-  hasElementId as hasElementIdUtil,
-  isEmpty,
-  isPlainObject,
-  isWatchOs,
-  memoize,
-  normalizePlatformVersion,
-} from './utils/index.js';
+import {isEmpty, isPlainObject, isWatchOs, memoize, normalizePlatformVersion} from './utils/index.js';
 import {AtomsBackend} from './web-execution/atoms-backend.js';
 import {AutomationSessionBackend} from './web-execution/automation-session-backend.js';
 import type {WebExecutionBackend} from './web-execution/types.js';
@@ -208,15 +201,6 @@ const defaultServerCaps = {
   takesScreenshot: true,
   networkConnectionEnabled: false,
 };
-// Deprecated: web-to-native coordinate translation now calibrates itself
-// automatically (see lib/commands/web.ts), so these settings no longer have
-// any effect. They are still accepted for backward compatibility and will
-// be removed in a future major version.
-const DEPRECATED_NATIVE_WEB_TAP_SETTINGS = [
-  'nativeWebTapTabBarVisibility',
-  'nativeWebTapSmartAppBannerVisibility',
-  'safariTabBarPosition',
-];
 const DEFAULT_SETTINGS = {
   nativeWebTap: false,
   nativeWebTapStrict: false,
@@ -352,9 +336,6 @@ export class XCUITestDriver
   _hasUpdatedDisplaySelection = false;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
-
-  /** @deprecated */
-  hasElementId = hasElementIdUtil;
 
   // a plain value, not a command function
   supportedLogTypes = logCommands.supportedLogTypes;
@@ -798,14 +779,6 @@ export class XCUITestDriver
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
     if (['pageSourceExcludedAttributes'].includes(key)) {
-      return;
-    }
-
-    if (DEPRECATED_NATIVE_WEB_TAP_SETTINGS.includes(key)) {
-      this.log.info(
-        `The '${key}' setting is deprecated and no longer has any effect: web-to-native coordinate ` +
-          `translation is now calibrated automatically. It will be removed in a future major version.`,
-      );
       return;
     }
 
@@ -1375,8 +1348,6 @@ Object.assign(XCUITestDriver.prototype, {
   getDeviceTime: generalCommands.getDeviceTime,
   mobileGetDeviceTime: generalCommands.mobileGetDeviceTime,
   removeApp: generalCommands.removeApp,
-  launchApp: generalCommands.launchApp,
-  closeApp: generalCommands.closeApp,
   setUrl: generalCommands.setUrl,
   mobilePressButton: generalCommands.mobilePressButton,
   mobileSiriCommand: generalCommands.mobileSiriCommand,
@@ -1517,7 +1488,6 @@ Object.assign(XCUITestDriver.prototype, {
   mobileGetSource: sourceCommands.mobileGetSource,
 
   // timeouts
-  asyncScriptTimeout: timeoutCommands.asyncScriptTimeout,
   setPageLoadTimeout: timeoutCommands.setPageLoadTimeout,
   setScriptTimeout: timeoutCommands.setScriptTimeout,
   setImplicitWait: timeoutCommands.setImplicitWait,
@@ -1565,11 +1535,6 @@ Object.assign(XCUITestDriver.prototype, {
   translateWebCoords: webNativeBridgeCommands.translateWebCoords,
   mobileCalibrateWebToRealCoordinatesTranslation:
     webNativeBridgeCommands.mobileCalibrateWebToRealCoordinatesTranslation,
-  getSafariIsIphone: webNativeBridgeCommands.getSafariIsIphone,
-  getSafariDeviceSize: webNativeBridgeCommands.getSafariDeviceSize,
-  getSafariIsNotched: webNativeBridgeCommands.getSafariIsNotched,
-  getExtraTranslateWebCoordsOffset: webNativeBridgeCommands.getExtraTranslateWebCoordsOffset,
-  getExtraNativeWebTapOffset: webNativeBridgeCommands.getExtraNativeWebTapOffset,
 
   // startup
   startWda: start,

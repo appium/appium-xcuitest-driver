@@ -198,7 +198,7 @@ describe('XCUITestDriver - elements -', function () {
           const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
-          await driver.hideKeyboard();
+          await driver.execute('mobile: hideKeyboard');
 
           await els[1].setValue(text2);
 
@@ -264,7 +264,7 @@ describe('XCUITestDriver - elements -', function () {
           let text = await els[0].getText();
           assert.strictEqual(text, text1);
 
-          await driver.hideKeyboard();
+          await driver.execute('mobile: hideKeyboard');
 
           await els[1].setValue(text2);
 
@@ -276,7 +276,7 @@ describe('XCUITestDriver - elements -', function () {
           text = await els[0].getText();
           assert.strictEqual(text, phText);
 
-          await driver.hideKeyboard();
+          await driver.execute('mobile: hideKeyboard');
 
           await els[1].clearValue();
 
@@ -336,7 +336,7 @@ describe('XCUITestDriver - elements -', function () {
       });
       describe('hide keyboard', function () {
         it('should pass if the keyboard is already hidden', async function () {
-          await assert.doesNotReject(driver.hideKeyboard());
+          await assert.doesNotReject(driver.execute('mobile: hideKeyboard'));
         });
       });
     });
