@@ -1,11 +1,11 @@
 import {TimeoutError as AsyncboxTimeoutError, withTimeout as asyncboxWithTimeout} from 'asyncbox';
 
-/** The longest script timeout: the remote debugger also stops a script after 1 h */
-const MAX_SCRIPT_TIMEOUT_MS = 60 * 60 * 1000;
+/** The longest script or page load timeout: the remote debugger also stops a script after 1 h */
+const MAX_TIMEOUT_MS = 60 * 60 * 1000;
 
-/** Limits a script timeout to {@link MAX_SCRIPT_TIMEOUT_MS}; W3C `null` (no limit) gives that limit. */
-export function limitScriptTimeoutMs(ms: number | null): number {
-  return Math.min(ms ?? MAX_SCRIPT_TIMEOUT_MS, MAX_SCRIPT_TIMEOUT_MS);
+/** Limits a script or page load timeout to {@link MAX_TIMEOUT_MS}; W3C `null` (no limit) gives that limit. */
+export function limitTimeoutMs(ms: number | null): number {
+  return Math.min(ms ?? MAX_TIMEOUT_MS, MAX_TIMEOUT_MS);
 }
 
 /** Error thrown by {@link withTimeout} when the deadline is exceeded. */

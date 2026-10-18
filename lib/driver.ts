@@ -52,7 +52,7 @@ import {
   getDriverInfo,
   handleMjpegOptions,
   installAUT,
-  limitScriptTimeoutMs,
+  limitTimeoutMs,
   normalizeCommandTimeouts,
   onDownloadApp,
   onPostConfigureApp,
@@ -590,6 +590,7 @@ export class XCUITestDriver
     return true;
   }
 
+  // TODO: the timeout setters get `number | null` with base driver 11 (appium/appium#22961)
   /**
    * Sets the page load timeout, and also our own `pageLoadMs` and the active automation session
    * (if any), neither of which the base implementation knows about.
@@ -597,13 +598,12 @@ export class XCUITestDriver
    * @param ms - Timeout in milliseconds
    */
   override setPageLoadTimeout(ms: number): void {
-    ms = parseInt(String(ms), 10);
     super.setPageLoadTimeout(ms);
-    this.pageLoadMs = ms;
+    this.pageLoadMs = limitTimeoutMs(ms);
     if (this._remote) {
-      this.remote.pageLoadMs = ms;
+      this.remote.pageLoadMs = this.pageLoadMs;
     }
-    this.syncAutomationSessionTimeout('pageLoadTimeoutMs', ms);
+    this.syncAutomationSessionTimeout('pageLoadTimeoutMs', this.pageLoadMs);
   }
 
   /**
@@ -613,7 +613,7 @@ export class XCUITestDriver
    */
   override setScriptTimeout(ms: number): void {
     super.setScriptTimeout(ms);
-    this.syncAutomationSessionTimeout('scriptTimeoutMs', limitScriptTimeoutMs(ms));
+    this.syncAutomationSessionTimeout('scriptTimeoutMs', limitTimeoutMs(ms));
   }
 
   /**
@@ -624,7 +624,8 @@ export class XCUITestDriver
    */
   override setImplicitWait(ms: number): void {
     super.setImplicitWait(ms);
-    this.syncAutomationSessionTimeout('implicitWaitTimeoutMs', ms);
+    // W3C default implicit wait for null
+    this.syncAutomationSessionTimeout('implicitWaitTimeoutMs', ms ?? 0);
   }
 
   override validateLocatorStrategy(strategy: string): void {

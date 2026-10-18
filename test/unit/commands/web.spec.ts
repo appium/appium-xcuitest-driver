@@ -90,7 +90,7 @@ describe('web commands', function () {
 
     it('keeps the default wait for other atoms and internal scripts', async function () {
       for (const [atom, opts] of [
-        ['get_text', {isUserScript: true}],
+        ['get_text', undefined],
         ['execute_script', undefined],
       ] as const) {
         const {remoteArgs, waitOpts} = await run(atom, opts);
@@ -144,6 +144,13 @@ describe('web commands', function () {
       assert.strictEqual(errorBefore, undefined);
       assert.ok(error instanceof errors.ScriptTimeoutError);
       assert.doesNotMatch(error.message, /webviewAtomWaitTimeout/);
+    });
+
+    it('waits for a script after a W3C null page load timeout', async function () {
+      const otherDriver = new XCUITestDriver({} as any);
+      // W3C null comes from base driver 11 (appium/appium#22961)
+      otherDriver.setPageLoadTimeout(null as any);
+      assert.strictEqual(await otherDriver.waitForAtom(later(50), {isUserScript: true}), 'done');
     });
 
     it('limits a W3C null script timeout (no limit) to 1 h', async function () {

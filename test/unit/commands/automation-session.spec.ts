@@ -68,6 +68,17 @@ describe('automation-session commands', function () {
       assert.strictEqual(session.implicitWaitTimeoutMs, 42);
     });
 
+    it('seeds the session with an implicit wait of 0 for a W3C null implicit wait', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
+      const session = {} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
+      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
+      driver.implicitWaitMs = null as any;
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(session.implicitWaitTimeoutMs, 0);
+    });
+
     it('seeds the session with a script timeout of at most 1 h', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
       sandbox.stub(driver, 'isSimulator').returns(true);

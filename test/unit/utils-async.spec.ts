@@ -3,7 +3,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {createSandbox} from 'sinon';
 
-import {limitScriptTimeoutMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
+import {limitTimeoutMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
 
 describe('utils/async', function () {
   describe('TimeoutError', function () {
@@ -19,18 +19,18 @@ describe('utils/async', function () {
     });
   });
 
-  describe('limitScriptTimeoutMs', function () {
+  describe('limitTimeoutMs', function () {
     it('keeps a timeout up to 1 h', function () {
-      assert.strictEqual(limitScriptTimeoutMs(30000), 30000);
-      assert.strictEqual(limitScriptTimeoutMs(3600000), 3600000);
+      assert.strictEqual(limitTimeoutMs(30000), 30000);
+      assert.strictEqual(limitTimeoutMs(3600000), 3600000);
     });
 
     it('limits a longer timeout to 1 h', function () {
-      assert.strictEqual(limitScriptTimeoutMs(Number.MAX_SAFE_INTEGER), 3600000);
+      assert.strictEqual(limitTimeoutMs(Number.MAX_SAFE_INTEGER), 3600000);
     });
 
     it('gives 1 h for a W3C null (no limit)', function () {
-      assert.strictEqual(limitScriptTimeoutMs(null), 3600000);
+      assert.strictEqual(limitTimeoutMs(null), 3600000);
     });
   });
 

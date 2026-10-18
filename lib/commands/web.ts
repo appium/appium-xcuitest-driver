@@ -8,7 +8,7 @@ import {timing, util} from 'appium/support.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
-  limitScriptTimeoutMs,
+  limitTimeoutMs,
   requireAutomationSessionActive,
   requireSimulator,
   requireWebContext,
@@ -310,11 +310,11 @@ export async function executeAtom<T = any>(
   opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  if (atom !== 'execute_script' || !opts.isUserScript) {
+  if (!opts.isUserScript) {
     return await this.waitForAtom(this.remote.executeAtom(atom, args, frames));
   }
   const promise = this.remote.executeAtom(atom, args, frames, {
-    timeoutMs: limitScriptTimeoutMs(this.scriptTimeoutMs),
+    timeoutMs: limitTimeoutMs(this.scriptTimeoutMs),
   });
   return await this.waitForAtom(promise, {isUserScript: true});
 }
@@ -474,7 +474,7 @@ export async function waitForAtom<T = unknown>(
   // the remote debugger waits for its garbage collection and the page (up to pageLoadMs), then
   // for the script timeout and its backup timer
   const scriptWaitMs = opts.isUserScript
-    ? limitScriptTimeoutMs(this.scriptTimeoutMs) +
+    ? limitTimeoutMs(this.scriptTimeoutMs) +
       this.pageLoadMs +
       REMOTE_DEBUGGER_BACKUP_TIMER_MS +
       REMOTE_DEBUGGER_GC_TIMEOUT_MS

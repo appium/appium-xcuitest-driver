@@ -53,6 +53,24 @@ describe('timeouts commands', function () {
       assert.strictEqual(driver.pageLoadMs, 6000);
       assert.strictEqual((await driver.getTimeouts()).pageLoad, 6000);
     });
+
+    it('gives the driver and a started automation session 1 h for a W3C null page load timeout', async function () {
+      (driver as any)._remote = {automationSession: {isStarted: true, pageLoadTimeoutMs: 0}};
+      // W3C null comes from base driver 11 (appium/appium#22961)
+      driver.setPageLoadTimeout(null as any);
+      assert.strictEqual(driver.pageLoadMs, 3600000);
+      assert.strictEqual((driver as any)._remote.pageLoadMs, 3600000);
+      assert.strictEqual((driver as any)._remote.automationSession.pageLoadTimeoutMs, 3600000);
+      assert.strictEqual((await driver.getTimeouts()).pageLoad, null);
+    });
+  });
+
+  describe('setImplicitWait', function () {
+    it('gives a started automation session 0 for a W3C null implicit wait', function () {
+      (driver as any)._remote = {automationSession: {isStarted: true, implicitWaitTimeoutMs: 5}};
+      driver.setImplicitWait(null as any);
+      assert.strictEqual((driver as any)._remote.automationSession.implicitWaitTimeoutMs, 0);
+    });
   });
 
   describe('setImplicitWait', function () {
