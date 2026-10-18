@@ -69,14 +69,17 @@ We recommend this method if you don't need to modify the WDA source code.
     from iOS/tvOS 17 and watchOS 10. For older OS versions, use the default `xcodebuild` flow, or
     provide `appium:webDriverAgentUrl` if you already have a running WDA server.
 
-[The Appium WebDriverAgent GitHub page](https://github.com/appium/WebDriverAgent/releases) provides
-downloads for WebDriverAgent packages for real devices and simulators.
+Prebuilt WebDriverAgent packages for real devices and simulators are published in
+[appium/appium-ios releases](https://github.com/appium/appium-ios/releases) starting with WDA 16.16.0,
+under tags named `appium-webdriveragent@<version>`. Earlier versions remain in
+[appium/WebDriverAgent releases](https://github.com/appium/WebDriverAgent/releases),
+under tags named `v<version>`. Select the release matching the installed `appium-webdriveragent` version.
 WebDriverAgent packages for real devices do not have embedded XCTest frameworks so that
 they can run on iOS 17+ devices. Please read [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md)
 for more details about running on real devices and simulators. Understanding app signing is also important when working with real devices.
 Simulators need everything, so WDA package sizes for simulators are greater than for real devices.
 The [Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and
-[Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml)
+[Building WebDriverAgent](https://github.com/appium/appium-ios/actions/workflows/webdriveragent-build-assets.yml)
 workflows may help with validating the build script.
 
 [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md) provides `appium:prebuiltWDAPath`
@@ -84,12 +87,16 @@ and `appium:usePreinstalledWDA` capabilities.
 These capabilities allow the XCUITest driver to install prebuilt WDA specified with
 `appium:prebuiltWDAPath` and start it **without** running `xcodebuild`.
 
-The `download-wda` command helps to download the proper version of WDA for your XCUITest driver version
-for simulator use.
+The [`download-wda` command](../reference/scripts.md#download-wda) selects the matching WDA version
+and release location automatically. For example, to download an iOS simulator build:
 
 ```bash
 appium driver run xcuitest download-wda -- --outdir=/path/to/target/directory --kind=sim --platform=ios
 ```
+
+The requested archive must be available in that release. If it has not been published, use the
+[source build approach above](#understanding-how-xcodebuild-works) or wait for the matching archive to be published.
+The command does not fall back to an older WDA binary.
 
 To see all available options for the script, including flags and defaults, run:
 
