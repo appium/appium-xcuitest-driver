@@ -1404,6 +1404,7 @@ Object.assign(XCUITestDriver.prototype, {
   mobileClearKeychains: keychainsCommands.mobileClearKeychains,
 
   // keyboard
+  hideKeyboard: keyboardCommands.hideKeyboard,
   mobileHideKeyboard: keyboardCommands.mobileHideKeyboard,
   isKeyboardShown: keyboardCommands.isKeyboardShown,
   mobileKeys: keyboardCommands.mobileKeys,

@@ -3,10 +3,30 @@ import type {KeyboardKey} from './types.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
+    hideKeyboard(...args: Parameters<typeof hideKeyboard>): ReturnType<typeof hideKeyboard>;
     mobileHideKeyboard(...args: Parameters<typeof mobileHideKeyboard>): ReturnType<typeof mobileHideKeyboard>;
     isKeyboardShown(...args: Parameters<typeof isKeyboardShown>): ReturnType<typeof isKeyboardShown>;
     mobileKeys(...args: Parameters<typeof mobileKeys>): ReturnType<typeof mobileKeys>;
   }
+}
+
+/**
+ * Hides the keyboard.
+ *
+ * Backs the legacy `/appium/device/hide_keyboard` route.
+ */
+export async function hideKeyboard(
+  this: XCUITestDriver,
+  _strategy?: string,
+  ...possibleKeys: string[]
+): Promise<boolean> {
+  // last parameter is the session id
+  const keyNames = possibleKeys
+    .slice(0, -1)
+    .filter(Boolean)
+    .map((x) => `${x}`);
+  await this.mobileHideKeyboard(keyNames);
+  return true;
 }
 
 /**

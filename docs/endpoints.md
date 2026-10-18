@@ -82,6 +82,7 @@
 | POST   | /appium/device/lock                      | | seconds |
 | POST   | /appium/device/rotate                    | x, y, radius, rotation, touchCount, duration | element |
 | POST   | /appium/device/remove_app                | appId or bundleId | |
+| POST   | /appium/device/hide_keyboard             | | strategy, key, keyCode, keyName |
 | POST   | /appium/device/push_file                 | path, data | |
 | POST   | /appium/device/pull_file                 | path | |
 | POST   | /appium/device/pull_folder               | path | |

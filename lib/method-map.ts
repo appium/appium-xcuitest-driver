@@ -53,6 +53,12 @@ export const newMethodMap = {
       deprecated: true,
     },
   },
+  '/session/:sessionId/appium/device/hide_keyboard': {
+    POST: {
+      command: 'hideKeyboard',
+      payloadParams: {optional: ['strategy', 'key', 'keyCode', 'keyName']},
+    },
+  },
   '/session/:sessionId/appium/device/lock': {
     POST: {
       command: 'lock',
