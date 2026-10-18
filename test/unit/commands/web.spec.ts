@@ -56,8 +56,13 @@ describe('web commands', function () {
   });
 
   describe('executeAtom', function () {
-    const run = async (atom: any, opts?: {isUserScript?: boolean}, scriptTimeoutMs: number | null = 500) => {
-      const otherDriver = new XCUITestDriver({} as any);
+    const run = async (
+      atom: any,
+      opts?: {isUserScript?: boolean},
+      scriptTimeoutMs: number | null = 500,
+      driverOpts: Record<string, unknown> = {},
+    ) => {
+      const otherDriver = new XCUITestDriver(driverOpts as any);
       otherDriver.setScriptTimeout(scriptTimeoutMs);
       const remoteExecuteAtom = sinon.stub().resolves('raw');
       otherDriver._remote = {executeAtom: remoteExecuteAtom} as any;
@@ -76,13 +81,18 @@ describe('web commands', function () {
       assert.strictEqual(remoteArgs[3].timeoutMs, 0);
     });
 
-    it('limits the script timeout to 1 h', async function () {
+    it('limits the script timeout to webviewAtomWaitTimeout', async function () {
       const {remoteArgs} = await run('execute_script', {isUserScript: true}, Number.MAX_SAFE_INTEGER);
-      assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
+      assert.strictEqual(remoteArgs[3].timeoutMs, 120000);
     });
 
-    it('limits a W3C null script timeout (no limit) to 1 h', async function () {
-      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null);
+    it('limits a W3C null script timeout (no limit) to webviewAtomWaitTimeout', async function () {
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null, {webviewAtomWaitTimeout: 5000});
+      assert.strictEqual(remoteArgs[3].timeoutMs, 5000);
+    });
+
+    it('limits the script timeout to 1 h with a longer webviewAtomWaitTimeout', async function () {
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null, {webviewAtomWaitTimeout: 7200000});
       assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
     });
 

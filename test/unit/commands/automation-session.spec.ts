@@ -78,14 +78,14 @@ describe('automation-session commands', function () {
       assert.strictEqual(session.implicitWaitTimeoutMs, 0);
     });
 
-    it('seeds the session with a script timeout of at most 1 h', async function () {
+    it('seeds the session with a script timeout of at most webviewAtomWaitTimeout', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
       sandbox.stub(driver, 'isSimulator').returns(true);
       const session = {} as any;
       driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
       driver.scriptTimeoutMs = Number.MAX_SAFE_INTEGER;
       await driver.mobileStartAutomationSession();
-      assert.strictEqual(session.scriptTimeoutMs, 3600000);
+      assert.strictEqual(session.scriptTimeoutMs, 120000);
     });
   });
 

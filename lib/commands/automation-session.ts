@@ -1,6 +1,7 @@
 import type {XCUITestDriver} from '../driver.js';
 import {WEBVIEW_BASE} from './context.js';
-import {limitTimeoutMs, requireSimulator, requireWebContext} from './helpers/index.js';
+import {requireSimulator, requireWebContext} from './helpers/index.js';
+import {getScriptTimeoutMs} from './web.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -37,7 +38,7 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   this._preAutomationSessionContext = this.curContext;
   const session = await this.remote.startAutomationSession();
   session.pageLoadTimeoutMs = this.pageLoadMs;
-  session.scriptTimeoutMs = limitTimeoutMs(this.scriptTimeoutMs);
+  session.scriptTimeoutMs = getScriptTimeoutMs(this);
   // W3C default implicit wait for null
   session.implicitWaitTimeoutMs = this.implicitWaitMs ?? 0;
 }

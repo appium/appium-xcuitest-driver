@@ -432,25 +432,25 @@ describe('AtomsBackend', function () {
     it('executeAsyncScript gives the session script timeout to the page atom', async function () {
       sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
-      driver.scriptTimeoutMs = 200000;
+      driver.scriptTimeoutMs = 20000;
       await backend.executeAsyncScript('arguments[0]();', []);
-      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 200000);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 20000);
     });
 
-    it('executeAsyncScript limits the timeout of the page atom to 1 h', async function () {
+    it('executeAsyncScript limits the timeout of the page atom to webviewAtomWaitTimeout', async function () {
       sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
       driver.scriptTimeoutMs = Number.MAX_SAFE_INTEGER;
       await backend.executeAsyncScript('arguments[0]();', []);
-      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 3600000);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 120000);
     });
 
-    it('executeAsyncScript limits a W3C null script timeout (no limit) to 1 h', async function () {
+    it('executeAsyncScript limits a W3C null script timeout (no limit) to webviewAtomWaitTimeout', async function () {
       sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
       driver.scriptTimeoutMs = null;
       await backend.executeAsyncScript('arguments[0]();', []);
-      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 3600000);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 120000);
     });
 
     it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result (no script timeout by default)', async function () {
@@ -464,7 +464,7 @@ describe('AtomsBackend', function () {
       assert.strictEqual(
         remoteStub.executeAtomAsync.calledOnceWithExactly(
           'execute_async_script',
-          ['return 1;', ['converted'], 3600000],
+          ['return 1;', ['converted'], 120000],
           driver.curWebFrames,
         ),
         true,

@@ -32,17 +32,17 @@ describe('timeouts commands', function () {
       assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 1234);
     });
 
-    it('limits the script timeout of a started automation session to 1 h', function () {
+    it('limits the script timeout of a started automation session to webviewAtomWaitTimeout', function () {
       (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
       driver.setScriptTimeout(Number.MAX_SAFE_INTEGER);
-      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 3600000);
+      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 120000);
     });
 
-    it('gives a started automation session 1 h for a W3C null script timeout (no limit)', function () {
+    it('gives a started automation session webviewAtomWaitTimeout for a W3C null script timeout (no limit)', function () {
       (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
       driver.setScriptTimeout(null);
       assert.strictEqual(driver.scriptTimeoutMs, null);
-      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 3600000);
+      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 120000);
     });
   });
 

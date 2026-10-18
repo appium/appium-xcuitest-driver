@@ -613,7 +613,7 @@ export class XCUITestDriver
    */
   override setScriptTimeout(ms: TimeoutValue): void {
     super.setScriptTimeout(ms);
-    this.syncAutomationSessionTimeout('scriptTimeoutMs', limitTimeoutMs(ms));
+    this.syncAutomationSessionTimeout('scriptTimeoutMs', webCommands.getScriptTimeoutMs(this));
   }
 
   /**
@@ -1204,6 +1204,7 @@ export class XCUITestDriver
     this.setImplicitWait(0);
     this.setPageLoadTimeout(6000);
     // unset: webviewAtomWaitTimeout limits scripts
+    // TODO: next major: the W3C default script timeout (30000)
     this.setScriptTimeout(null);
 
     this.webElementsCache = new LRUCache({

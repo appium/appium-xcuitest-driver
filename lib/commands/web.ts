@@ -306,7 +306,7 @@ export async function executeAtom<T = any>(
   opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const atomOpts = opts.isUserScript ? {timeoutMs: limitTimeoutMs(this.scriptTimeoutMs)} : {};
+  const atomOpts = opts.isUserScript ? {timeoutMs: getScriptTimeoutMs(this)} : {};
   return await this.waitForAtom(this.remote.executeAtom(atom, args, frames, atomOpts));
 }
 
@@ -439,6 +439,18 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
   return typeof (await this.getAlertText()) === 'string';
 }
 
+/** The time budget of every atom (`webviewAtomWaitTimeout`). */
+export function getAtomWaitTimeoutMs(driver: XCUITestDriver): number {
+  return typeof driver.opts.webviewAtomWaitTimeout === 'number' && driver.opts.webviewAtomWaitTimeout > 0
+    ? driver.opts.webviewAtomWaitTimeout
+    : ATOM_WAIT_TIMEOUT_MS;
+}
+
+/** The script timeout of a user script, at most the atom budget, so that no wait outlives the atom. */
+export function getScriptTimeoutMs(driver: XCUITestDriver): number {
+  return Math.min(limitTimeoutMs(driver.scriptTimeoutMs), getAtomWaitTimeoutMs(driver));
+}
+
 /**
  * Waits for an atom promise to resolve, monitoring for alerts during execution.
  *
@@ -451,10 +463,7 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
 export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Promise<T>): Promise<T> {
   const timer = new timing.Timer().start();
 
-  const atomWaitTimeoutMs =
-    typeof this.opts.webviewAtomWaitTimeout === 'number' && this.opts.webviewAtomWaitTimeout > 0
-      ? this.opts.webviewAtomWaitTimeout
-      : ATOM_WAIT_TIMEOUT_MS;
+  const atomWaitTimeoutMs = getAtomWaitTimeoutMs(this);
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
