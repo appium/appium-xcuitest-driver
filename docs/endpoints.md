@@ -16,7 +16,6 @@
 | GET    | /:sessionId                              | | |
 | DELETE | /:sessionId                              | | |
 | POST   | /timeouts                                | type, ms | |
-| POST   | /timeouts/async_script                   | ms | |
 | POST   | /timeouts/implicit_wait                  | ms | |
 | GET    | /window_handle                           | | |
 | GET    | /window_handles                          | | |
@@ -83,13 +82,10 @@
 | POST   | /appium/device/lock                      | | seconds |
 | POST   | /appium/device/rotate                    | x, y, radius, rotation, touchCount, duration | element |
 | POST   | /appium/device/remove_app                | appId or bundleId | |
-| POST   | /appium/device/hide_keyboard             | | strategy, key, keyCode, keyName |
 | POST   | /appium/device/push_file                 | path, data | |
 | POST   | /appium/device/pull_file                 | path | |
 | POST   | /appium/device/pull_folder               | path | |
 | POST   | /appium/simulator/touch_id               | match | |
-| POST   | /appium/app/launch                       | none | |
-| POST   | /appium/app/close                        | none | |
 | POST   | /appium/app/background                   | seconds | |
 | POST   | /appium/app/strings                      | | language, stringFile |
 | POST   | /appium/element/:elementId/value         | value | |

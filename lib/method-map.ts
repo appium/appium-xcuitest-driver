@@ -3,13 +3,6 @@ import type {MethodMap} from '@appium/types';
 import type {XCUITestDriver} from './driver.js';
 
 export const newMethodMap = {
-  '/session/:sessionId/timeouts/async_script': {
-    POST: {
-      command: 'asyncScriptTimeout',
-      payloadParams: {required: ['ms']},
-      deprecated: true,
-    },
-  },
   '/session/:sessionId/timeouts/implicit_wait': {
     POST: {
       command: 'implicitWait',
@@ -109,18 +102,6 @@ export const newMethodMap = {
     POST: {
       command: 'toggleEnrollTouchId',
       payloadParams: {optional: ['enabled']},
-      deprecated: true,
-    },
-  },
-  '/session/:sessionId/appium/app/launch': {
-    POST: {
-      command: 'launchApp',
-      deprecated: true,
-    },
-  },
-  '/session/:sessionId/appium/app/close': {
-    POST: {
-      command: 'closeApp',
       deprecated: true,
     },
   },

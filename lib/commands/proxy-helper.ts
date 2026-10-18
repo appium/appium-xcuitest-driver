@@ -42,7 +42,7 @@ const WDA_ROUTES = {
     POST: 'touchId',
   },
   '/wda/keyboard/dismiss': {
-    POST: 'hideKeyboard',
+    POST: 'mobileHideKeyboard',
   },
   '/wda/lock': {
     POST: 'lock',

@@ -128,7 +128,6 @@ import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
 import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
 import {
-  hasElementId as hasElementIdUtil,
   isEmpty,
   isPlainObject,
   isWatchOs,
@@ -361,9 +360,6 @@ export class XCUITestDriver
   _hasUpdatedDisplaySelection = false;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
-
-  /** @deprecated */
-  hasElementId = hasElementIdUtil;
 
   // a plain value, not a command function
   supportedLogTypes = logCommands.supportedLogTypes;
@@ -1370,8 +1366,6 @@ Object.assign(XCUITestDriver.prototype, {
   getDeviceTime: generalCommands.getDeviceTime,
   mobileGetDeviceTime: generalCommands.mobileGetDeviceTime,
   removeApp: generalCommands.removeApp,
-  launchApp: generalCommands.launchApp,
-  closeApp: generalCommands.closeApp,
   setUrl: generalCommands.setUrl,
   mobilePressButton: generalCommands.mobilePressButton,
   mobileSiriCommand: generalCommands.mobileSiriCommand,
@@ -1433,7 +1427,6 @@ Object.assign(XCUITestDriver.prototype, {
   mobileClearKeychains: keychainsCommands.mobileClearKeychains,
 
   // keyboard
-  hideKeyboard: keyboardCommands.hideKeyboard,
   mobileHideKeyboard: keyboardCommands.mobileHideKeyboard,
   isKeyboardShown: keyboardCommands.isKeyboardShown,
   mobileKeys: keyboardCommands.mobileKeys,
@@ -1511,7 +1504,6 @@ Object.assign(XCUITestDriver.prototype, {
   mobileGetSource: sourceCommands.mobileGetSource,
 
   // timeouts
-  asyncScriptTimeout: timeoutCommands.asyncScriptTimeout,
   setPageLoadTimeout: timeoutCommands.setPageLoadTimeout,
   setScriptTimeout: timeoutCommands.setScriptTimeout,
   setImplicitWait: timeoutCommands.setImplicitWait,
@@ -1559,11 +1551,6 @@ Object.assign(XCUITestDriver.prototype, {
   translateWebCoords: webNativeBridgeCommands.translateWebCoords,
   mobileCalibrateWebToRealCoordinatesTranslation:
     webNativeBridgeCommands.mobileCalibrateWebToRealCoordinatesTranslation,
-  getSafariIsIphone: webNativeBridgeCommands.getSafariIsIphone,
-  getSafariDeviceSize: webNativeBridgeCommands.getSafariDeviceSize,
-  getSafariIsNotched: webNativeBridgeCommands.getSafariIsNotched,
-  getExtraTranslateWebCoordsOffset: webNativeBridgeCommands.getExtraTranslateWebCoordsOffset,
-  getExtraNativeWebTapOffset: webNativeBridgeCommands.getExtraNativeWebTapOffset,
 
   // startup
   startWda: start,
