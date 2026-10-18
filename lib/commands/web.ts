@@ -70,10 +70,12 @@ const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
 // This value must be greater than the alerts check interval in WDA:
 // https://github.com/appium/WebDriverAgent/blob/8bc3135f021b529d916846477544f4b8ca890f59/WebDriverAgentLib/Utilities/FBAlertsMonitor.m#L17
 const ATOM_INITIAL_WAIT_MS = 2100;
-/** Lets the remote debugger answer `script timeout` first */
-const SCRIPT_TIMEOUT_MARGIN_MS = 5000;
-/** The longest delay of a Node timer: a longer delay fires after 1 ms */
-const MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
+/** The backup timer of the remote debugger after a script timeout (its `NODE_TIMEOUT_MARGIN_MS`) */
+const REMOTE_DEBUGGER_BACKUP_TIMER_MS = 1000;
+/** How long the remote debugger waits for a WebKit response (its `RPC_RESPONSE_TIMEOUT_MS`) */
+const REMOTE_DEBUGGER_RESPONSE_TIMEOUT_MS = 5000;
+/** The longest delay of a Node or WebKit timer: a longer delay fires at once */
+export const MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
 const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
@@ -309,7 +311,7 @@ export async function executeAtom<T = any>(
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   const promise = this.remote.executeAtom(atom, args, frames, opts);
-  return await this.waitForAtom(promise, getScriptAtomWaitMs(opts.timeoutMs));
+  return await this.waitForAtom(promise, opts.timeoutMs);
 }
 
 /**
@@ -446,16 +448,17 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
  *
  * @template T - Type of the atom execution result
  * @param promise - Promise returned by atom execution
- * @param minTimeoutMs - Minimum wait in ms (e.g. a script timeout); `webviewAtomWaitTimeout` applies when longer
+ * @param scriptTimeoutMs - Script timeout in ms of a script atom; the atom then waits at least this
+ * timeout plus the time that the remote debugger needs to answer `script timeout` first
  * @returns The result of the atom execution
  * @throws {errors.UnexpectedAlertOpenError} If an alert appears during execution
- * @throws {errors.ScriptTimeoutError} If the atom execution times out after `minTimeoutMs`
+ * @throws {errors.ScriptTimeoutError} If the atom execution times out after the script wait
  * @throws {errors.TimeoutError} If the atom execution times out after `webviewAtomWaitTimeout`
  */
 export async function waitForAtom<T = unknown>(
   this: XCUITestDriver,
   promise: Promise<T>,
-  minTimeoutMs?: number,
+  scriptTimeoutMs?: number,
 ): Promise<T> {
   const timer = new timing.Timer().start();
 
@@ -463,8 +466,14 @@ export async function waitForAtom<T = unknown>(
     typeof this.opts.webviewAtomWaitTimeout === 'number' && this.opts.webviewAtomWaitTimeout > 0
       ? this.opts.webviewAtomWaitTimeout
       : ATOM_WAIT_TIMEOUT_MS;
-  const isScriptTimeout = (minTimeoutMs ?? 0) > defaultWaitMs;
-  const atomWaitTimeoutMs = Math.min(Math.max(defaultWaitMs, minTimeoutMs ?? 0), MAX_TIMER_DELAY_MS);
+  // the remote debugger waits for the page (up to pageLoadMs), then for the script timeout,
+  // its backup timer and a WebKit response
+  const scriptWaitMs =
+    scriptTimeoutMs === undefined
+      ? 0
+      : scriptTimeoutMs + this.pageLoadMs + REMOTE_DEBUGGER_BACKUP_TIMER_MS + REMOTE_DEBUGGER_RESPONSE_TIMEOUT_MS;
+  const isScriptTimeout = scriptWaitMs > defaultWaitMs;
+  const atomWaitTimeoutMs = Math.min(Math.max(defaultWaitMs, scriptWaitMs), MAX_TIMER_DELAY_MS);
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
@@ -579,17 +588,6 @@ export async function mobileUpdateSafariPreferences(
 
   this.log.debug(`About to update Safari preferences: ${JSON.stringify(preferences)}`);
   await simulator.updateSafariSettings(preferences);
-}
-
-/**
- * Min atom wait for a script: its timeout plus a margin (W3C: the script timeout, not
- * `webviewAtomWaitTimeout`, ends a script).
- *
- * @param timeoutMs - Script timeout in ms
- * @returns The minimum atom wait, or `undefined` without a script timeout
- */
-export function getScriptAtomWaitMs(timeoutMs?: number): number | undefined {
-  return typeof timeoutMs === 'number' ? timeoutMs + SCRIPT_TIMEOUT_MARGIN_MS : undefined;
 }
 
 /**

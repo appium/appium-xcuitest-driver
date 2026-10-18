@@ -39,9 +39,7 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   if (this.pageLoadMs != null) {
     session.pageLoadTimeoutMs = this.pageLoadMs;
   }
-  if (this.asyncWaitMs != null) {
-    session.scriptTimeoutMs = this.asyncWaitMs;
-  }
+  session.scriptTimeoutMs = this.asyncWaitMs;
   if (this.implicitWaitMs != null) {
     session.implicitWaitTimeoutMs = this.implicitWaitMs;
   }

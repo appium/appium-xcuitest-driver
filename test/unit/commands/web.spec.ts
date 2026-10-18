@@ -65,7 +65,7 @@ describe('web commands', function () {
       assert.strictEqual(executeAtom.calledOnceWithExactly('execute_script', ['x', []], [], {timeoutMs: 500}), true);
     });
 
-    it('waits for the atom at least the script timeout plus a margin', async function () {
+    it('gives the script timeout to waitForAtom', async function () {
       const otherDriver = new XCUITestDriver({} as any);
       otherDriver._remote = {executeAtom: sinon.stub().resolves('raw')} as any;
       const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
@@ -73,7 +73,7 @@ describe('web commands', function () {
       await otherDriver.executeAtom('get_text', [{}], true);
       assert.deepStrictEqual(
         waitForAtom.getCalls().map(({args}) => args[1]),
-        [5500, undefined],
+        [500, undefined],
       );
     });
   });
@@ -86,20 +86,40 @@ describe('web commands', function () {
       assert.strictEqual(await otherDriver.waitForAtom(later(200), 400), 'done');
     });
 
+    // with fake timers: the script wait includes pageLoadMs and 6 s for the remote debugger
+    const waitWithFakeTimers = async (webviewAtomWaitTimeout: number, scriptTimeoutMs: number, ms: number) => {
+      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout} as any);
+      // no alert monitor after the initial wait
+      otherDriver._waitingAtoms.alertMonitor = Promise.resolve();
+      // only these: with all fake timers, the test runner stops reporting to its parent process
+      const clock = sinon.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+      try {
+        let error: any;
+        otherDriver.waitForAtom(new Promise(() => {}), scriptTimeoutMs).catch((err) => {
+          error = err;
+        });
+        await clock.tickAsync(ms - 1);
+        const errorBefore = error;
+        await clock.tickAsync(1);
+        return {errorBefore, error};
+      } finally {
+        clock.restore();
+      }
+    };
+
     it('keeps webviewAtomWaitTimeout when it is longer', async function () {
-      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 100} as any);
-      await assert.rejects(
-        otherDriver.waitForAtom(later(300), 50),
-        (err: any) => err instanceof errors.TimeoutError && /did not respond/.test(err.message),
-      );
+      // 30000 + 6000 + 6000 < 60000
+      const {errorBefore, error} = await waitWithFakeTimers(60000, 30000, 60000);
+      assert.strictEqual(errorBefore, undefined);
+      assert.ok(error instanceof errors.TimeoutError && !(error instanceof errors.ScriptTimeoutError));
+      assert.match(error.message, /did not respond/);
     });
 
-    it('gives a script timeout error when the script timeout ends the atom', async function () {
-      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 50} as any);
-      await assert.rejects(
-        otherDriver.waitForAtom(later(300), 100),
-        (err: any) => err instanceof errors.ScriptTimeoutError && !/webviewAtomWaitTimeout/.test(err.message),
-      );
+    it('gives a script timeout error after the script timeout, pageLoadMs and 6 s', async function () {
+      const {errorBefore, error} = await waitWithFakeTimers(1000, 30000, 30000 + 6000 + 6000);
+      assert.strictEqual(errorBefore, undefined);
+      assert.ok(error instanceof errors.ScriptTimeoutError);
+      assert.doesNotMatch(error.message, /webviewAtomWaitTimeout/);
     });
 
     it('limits a very long script timeout to the longest Node timer delay', async function () {
