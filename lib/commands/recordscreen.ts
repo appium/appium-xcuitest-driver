@@ -145,6 +145,7 @@ export class ScreenRecorder {
   private readonly udid: string;
   private mainProcess: SubProcess | null;
   private timeoutHandler: NodeJS.Timeout | null;
+  private stopFailed = false;
 
   constructor(udid: string, log: any, videoPath: string, opts: ScreenRecorderOptions) {
     this.videoPath = videoPath;
@@ -273,15 +274,26 @@ export class ScreenRecorder {
     if (mainProcess?.isRunning) {
       try {
         await mainProcess.stop(force ? 'SIGTERM' : 'SIGINT');
-        // Keep the reference until the process is gone, so a failed stop can be retried
-        if (this.mainProcess === mainProcess) {
-          this.mainProcess = null;
-        }
       } catch (e: any) {
+        // A disconnected MJPEG source can leave ffmpeg waiting to reconnect. Keep
+        // its handle so cleanup can retry; its MP4 trailer may not be written.
+        this.stopFailed = true;
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
         );
         result = false;
+        if (force && mainProcess.isRunning) {
+          try {
+            await mainProcess.stop('SIGKILL');
+            result = true;
+          } catch (killError: any) {
+            this.log.warn(`Cannot kill ${FFMPEG_BINARY}. Original error: ${killError.message}`);
+          }
+        }
+      } finally {
+        if (!mainProcess.isRunning && this.mainProcess === mainProcess) {
+          this.mainProcess = null;
+        }
       }
     }
 
@@ -289,7 +301,10 @@ export class ScreenRecorder {
   }
 
   async finish(): Promise<string> {
-    await this.interrupt();
+    const stopped = await this.interrupt();
+    if (!stopped || this.stopFailed) {
+      throw new Error(`Cannot finalize the screen recording because ${FFMPEG_BINARY} failed to stop gracefully`);
+    }
     return this.videoPath;
   }
 
