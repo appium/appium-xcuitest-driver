@@ -500,7 +500,8 @@ export class DeviceConnectionsFactory {
 }
 
 function dispatchProcessTermination(): void {
-  for (const fn of terminationCallbacks) {
+  // Copy: callbacks may add/remove entries while we iterate
+  for (const fn of Array.from(terminationCallbacks)) {
     try {
       fn();
     } catch {

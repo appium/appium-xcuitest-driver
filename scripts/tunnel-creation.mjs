@@ -196,7 +196,7 @@ class TunnelCreator {
     } catch (err) {
       recordCleanupError('Failed to close managed tunnel(s)', /** @type {Error} */ (err));
     }
-    await Promise.allSettled(this._reconnectTasks.values());
+    await Promise.allSettled(Array.from(this._reconnectTasks.values()));
 
     if (cleanupErrors.length > 0) {
       throw new AggregateError(cleanupErrors, 'Tunnel cleanup encountered errors');
@@ -450,7 +450,7 @@ class TunnelCreator {
 
   /**
    * @param {string} udid
-   * @param {AppleTVDevice  } [prefetchedDevice]
+   * @param {AppleTVDevice} [prefetchedDevice]
    * @returns {Promise<AppleTVTunnelResult>}
    */
   async _createAppleTVTunnelForUdid(udid, prefetchedDevice) {
