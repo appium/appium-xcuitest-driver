@@ -56,41 +56,40 @@ describe('web commands', function () {
   });
 
   describe('executeAtom', function () {
-    const run = async (atom: any, opts?: {timeoutMs?: number | null}) => {
+    const run = async (atom: any, opts?: {isUserScript?: boolean}, scriptTimeoutMs = 500) => {
       const otherDriver = new XCUITestDriver({} as any);
+      otherDriver.setScriptTimeout(scriptTimeoutMs);
       const remoteExecuteAtom = sinon.stub().resolves('raw');
       otherDriver._remote = {executeAtom: remoteExecuteAtom} as any;
       const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
       await otherDriver.executeAtom(atom, ['x', []], true, opts);
-      return {remoteArgs: remoteExecuteAtom.lastCall.args, waitMs: waitForAtom.lastCall.args[1]};
+      return {remoteArgs: remoteExecuteAtom.lastCall.args, waitOpts: waitForAtom.lastCall.args[1]};
     };
 
-    it('gives the script timeout to the remote debugger and waitForAtom', async function () {
-      const {remoteArgs, waitMs} = await run('execute_script', {timeoutMs: 500});
+    it('gives the session script timeout to the remote debugger and waitForAtom for a user script', async function () {
+      const {remoteArgs, waitOpts} = await run('execute_script', {isUserScript: true});
       assert.deepStrictEqual(remoteArgs, ['execute_script', ['x', []], [], {timeoutMs: 500}]);
-      assert.strictEqual(waitMs, 500);
+      assert.deepStrictEqual(waitOpts, {isUserScript: true});
     });
 
-    it('limits the script timeout to the longest timer delay', async function () {
-      const {remoteArgs, waitMs} = await run('execute_script', {timeoutMs: Number.MAX_SAFE_INTEGER});
-      assert.strictEqual(remoteArgs[3].timeoutMs, 2 ** 31 - 1);
-      assert.strictEqual(waitMs, 2 ** 31 - 1);
+    it('keeps an explicit script timeout of 0', async function () {
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, 0);
+      assert.strictEqual(remoteArgs[3].timeoutMs, 0);
     });
 
-    it('gives no limit to the remote debugger for a W3C null script timeout', async function () {
-      const {remoteArgs, waitMs} = await run('execute_script', {timeoutMs: null});
-      assert.strictEqual(remoteArgs[3].timeoutMs, undefined);
-      assert.strictEqual(waitMs, 2 ** 31 - 1);
+    it('limits the script timeout to 1 h', async function () {
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, Number.MAX_SAFE_INTEGER);
+      assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
     });
 
-    it('keeps the default wait for other atoms and scripts with no timeout', async function () {
+    it('keeps the default wait for other atoms and internal scripts', async function () {
       for (const [atom, opts] of [
-        ['get_text', {timeoutMs: 500}],
+        ['get_text', {isUserScript: true}],
         ['execute_script', undefined],
       ] as const) {
-        const {remoteArgs, waitMs} = await run(atom, opts);
+        const {remoteArgs, waitOpts} = await run(atom, opts);
         assert.strictEqual(remoteArgs.length, 3);
-        assert.strictEqual(waitMs, undefined);
+        assert.strictEqual(waitOpts, undefined);
       }
     });
   });
@@ -100,19 +99,21 @@ describe('web commands', function () {
 
     it('waits longer than webviewAtomWaitTimeout when the script needs it', async function () {
       const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 100} as any);
-      assert.strictEqual(await otherDriver.waitForAtom(later(200), 400), 'done');
+      otherDriver.setScriptTimeout(400);
+      assert.strictEqual(await otherDriver.waitForAtom(later(200), {isUserScript: true}), 'done');
     });
 
     // with fake timers: the script wait includes pageLoadMs and 6 s for the remote debugger
     const waitWithFakeTimers = async (webviewAtomWaitTimeout: number, scriptTimeoutMs: number, ms: number) => {
       const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout} as any);
+      otherDriver.setScriptTimeout(scriptTimeoutMs);
       // no alert monitor after the initial wait
       otherDriver._waitingAtoms.alertMonitor = Promise.resolve();
       // only these: with a fake nextTick, the test runner stops reporting the next tests
       const clock = sinon.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         let error: any;
-        otherDriver.waitForAtom(new Promise(() => {}), scriptTimeoutMs).catch((err) => {
+        otherDriver.waitForAtom(new Promise(() => {}), {isUserScript: true}).catch((err) => {
           error = err;
         });
         await clock.tickAsync(ms - 1);
@@ -139,9 +140,10 @@ describe('web commands', function () {
       assert.doesNotMatch(error.message, /webviewAtomWaitTimeout/);
     });
 
-    it('limits a very long script timeout to the longest Node timer delay', async function () {
-      const otherDriver = new XCUITestDriver({} as any);
-      assert.strictEqual(await otherDriver.waitForAtom(later(50), Number.MAX_SAFE_INTEGER), 'done');
+    it('limits a very long script timeout to 1 h', async function () {
+      const {errorBefore, error} = await waitWithFakeTimers(1000, Number.MAX_SAFE_INTEGER, 3600000 + 6000 + 6000);
+      assert.strictEqual(errorBefore, undefined);
+      assert.ok(error instanceof errors.ScriptTimeoutError);
     });
   });
 

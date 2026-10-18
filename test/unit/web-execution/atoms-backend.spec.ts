@@ -422,59 +422,28 @@ describe('AtomsBackend', function () {
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
       assert.strictEqual(
         executeAtomStub.calledOnceWithExactly('execute_script', ['return 1;', ['converted']], false, {
-          timeoutMs: 30000,
+          isUserScript: true,
         }),
         true,
       );
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
     });
 
-    describe('executeScript timeout for a promise that the script returns', function () {
-      const timeoutOf = () => executeAtomStub.lastCall.args[3].timeoutMs;
-
-      it('uses the script timeout of the session', async function () {
-        driver.asyncWaitMs = 5000;
-        await backend.executeScript('return Promise.resolve();', []);
-        assert.strictEqual(timeoutOf(), 5000);
-      });
-
-      it('gives a W3C null script timeout (no limit)', async function () {
-        driver.asyncWaitMs = null;
-        await backend.executeScript('return Promise.resolve();', []);
-        assert.strictEqual(timeoutOf(), null);
-      });
-
-      it('keeps an explicit script timeout of 0', async function () {
-        driver.asyncWaitMs = 0;
-        await backend.executeScript('return Promise.resolve();', []);
-        assert.strictEqual(timeoutOf(), 0);
-      });
-    });
-
-    it('executeAsyncScript gives the script timeout to waitForAtom', async function () {
+    it('executeAsyncScript gives the session script timeout to the page atom', async function () {
       const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
-      driver.asyncWaitMs = 200000;
+      driver.scriptTimeoutMs = 200000;
       await backend.executeAsyncScript('arguments[0]();', []);
-      assert.strictEqual(waitForAtomStub.lastCall.args[1], 200000);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 200000);
+      assert.deepStrictEqual(waitForAtomStub.lastCall.args[1], {isUserScript: true});
     });
 
-    it('executeAsyncScript limits the timeout of the page atom to the longest timer delay', async function () {
+    it('executeAsyncScript limits the timeout of the page atom to 1 h', async function () {
       sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
-      driver.asyncWaitMs = Number.MAX_SAFE_INTEGER;
+      driver.scriptTimeoutMs = Number.MAX_SAFE_INTEGER;
       await backend.executeAsyncScript('arguments[0]();', []);
-      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 2 ** 31 - 1);
-    });
-
-    it('executeAsyncScript waits the longest timer delay for a W3C null script timeout', async function () {
-      const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves(null);
-      remoteStub.executeAtomAsync.resolves(null);
-      driver.asyncWaitMs = null;
-      await backend.executeAsyncScript('arguments[0]();', []);
-      // the page atom makes null 0, a timeout at once
-      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 2 ** 31 - 1);
-      assert.strictEqual(waitForAtomStub.lastCall.args[1], 2 ** 31 - 1);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 3600000);
     });
 
     it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
@@ -494,7 +463,7 @@ describe('AtomsBackend', function () {
         true,
       );
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise, 30000), true);
+      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise, {isUserScript: true}), true);
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
     });
   });

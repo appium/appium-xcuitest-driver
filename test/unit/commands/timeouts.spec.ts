@@ -15,30 +15,27 @@ describe('timeouts commands', function () {
       // base-driver's timeouts() dispatches the W3C `script` field straight to
       // setScriptTimeout() - this is the actual path a modern client's setTimeout() call takes.
       await driver.timeouts(undefined, undefined, 5000);
-      assert.strictEqual(driver.asyncWaitMs, 5000);
-      // GET /timeouts is served from BaseDriver's own scriptTimeoutMs, not our asyncWaitMs.
+      assert.strictEqual(driver.scriptTimeoutMs, 5000);
       assert.strictEqual((await driver.getTimeouts()).script, 5000);
     });
 
     it('is reachable through the base timeouts() command with the legacy type/ms form', async function () {
       await driver.timeouts('script', 5000);
-      assert.strictEqual(driver.asyncWaitMs, 5000);
+      assert.strictEqual(driver.scriptTimeoutMs, 5000);
       assert.strictEqual((await driver.getTimeouts()).script, 5000);
-    });
-
-    it('keeps a W3C null (no limit) for GET /timeouts', async function () {
-      (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
-      driver.setScriptTimeout(null);
-      assert.strictEqual(driver.asyncWaitMs, null);
-      assert.strictEqual((await driver.getTimeouts()).script, null);
-      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 2 ** 31 - 1);
     });
 
     it('keeps a started automation session in sync', function () {
       (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
       driver.setScriptTimeout(1234);
-      assert.strictEqual(driver.asyncWaitMs, 1234);
+      assert.strictEqual(driver.scriptTimeoutMs, 1234);
       assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 1234);
+    });
+
+    it('limits the script timeout of a started automation session to 1 h', function () {
+      (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
+      driver.setScriptTimeout(Number.MAX_SAFE_INTEGER);
+      assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 3600000);
     });
   });
 
@@ -65,17 +62,17 @@ describe('timeouts commands', function () {
 
   describe('initial (post-construction) defaults', function () {
     // Regression test: GET /timeouts used to report BaseDriver's own stock defaults
-    // (script: 30000, pageLoad: 300000) while pageLoadMs/asyncWaitMs (what actually
-    // drives browser timeouts) started out at 6000/0 - a fresh session's reported
+    // (script: 30000, pageLoad: 300000) while pageLoadMs (what actually
+    // drives browser timeouts) started out at 6000 - a fresh session's reported
     // timeouts didn't match its effective behavior.
-    it('keeps GET /timeouts in sync with pageLoadMs/asyncWaitMs from the start, before any explicit timeout command', async function () {
+    it('keeps GET /timeouts in sync with pageLoadMs from the start, before any explicit timeout command', async function () {
       assert.strictEqual(driver.pageLoadMs, 6000);
-      assert.strictEqual(driver.asyncWaitMs, 30000);
+      assert.strictEqual(driver.scriptTimeoutMs, 30000);
       assert.strictEqual(driver.implicitWaitMs, 0);
 
       const timeouts = await driver.getTimeouts();
       assert.strictEqual(timeouts.pageLoad, driver.pageLoadMs);
-      assert.strictEqual(timeouts.script, driver.asyncWaitMs);
+      assert.strictEqual(timeouts.script, 30000);
       assert.strictEqual(timeouts.implicit, driver.implicitWaitMs);
     });
   });

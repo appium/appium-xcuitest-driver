@@ -6,7 +6,7 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
-import {limitTimerDelayMs} from '../commands/helpers/index.js';
+import {limitScriptTimeoutMs} from '../commands/helpers/index.js';
 import {translateWebCoords} from '../commands/web-native-bridge.js';
 import {checkForAlert, createJSCookie} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
@@ -352,21 +352,18 @@ export class AtomsBackend implements WebExecutionBackend {
 
   async executeScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const atomsArgs = this.driver.convertElementsForAtoms(args);
-    const result = await this.driver.executeAtom('execute_script', [script, atomsArgs], false, {
-      timeoutMs: this.driver.asyncWaitMs,
-    });
+    const result = await this.driver.executeAtom('execute_script', [script, atomsArgs], false, {isUserScript: true});
     return this.driver.cacheWebElements(result) as T;
   }
 
   async executeAsyncScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const convertedArgs = this.driver.convertElementsForAtoms(args);
-    const timeoutMs = limitTimerDelayMs(this.driver.asyncWaitMs);
     const promise = this.driver.remote.executeAtomAsync(
       'execute_async_script',
-      [script, convertedArgs, timeoutMs],
+      [script, convertedArgs, limitScriptTimeoutMs(this.driver.scriptTimeoutMs)],
       this.driver.curWebFrames,
     );
-    return this.driver.cacheWebElements(await this.driver.waitForAtom(promise, timeoutMs)) as T;
+    return this.driver.cacheWebElements(await this.driver.waitForAtom(promise, {isUserScript: true})) as T;
   }
 
   async screenshot(coordinateSystem?: 'Viewport' | 'Page'): Promise<string> {

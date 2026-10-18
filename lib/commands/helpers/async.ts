@@ -1,11 +1,11 @@
 import {TimeoutError as AsyncboxTimeoutError, withTimeout as asyncboxWithTimeout} from 'asyncbox';
 
-/** The longest delay of a Node or WebKit timer: a longer delay fires at once */
-const MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
+/** The longest script timeout: the remote debugger also stops a script after 1 h */
+const MAX_SCRIPT_TIMEOUT_MS = 60 * 60 * 1000;
 
-/** Limits `ms` to the longest timer delay; `null` (W3C: no script timeout) gives that delay. */
-export function limitTimerDelayMs(ms: number | null): number {
-  return Math.min(ms ?? Infinity, MAX_TIMER_DELAY_MS);
+/** Limits a script timeout to {@link MAX_SCRIPT_TIMEOUT_MS}. */
+export function limitScriptTimeoutMs(ms: number): number {
+  return Math.min(ms, MAX_SCRIPT_TIMEOUT_MS);
 }
 
 /** Error thrown by {@link withTimeout} when the deadline is exceeded. */

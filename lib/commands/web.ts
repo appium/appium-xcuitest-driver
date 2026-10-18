@@ -8,7 +8,7 @@ import {timing, util} from 'appium/support.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
-  limitTimerDelayMs,
+  limitScriptTimeoutMs,
   requireAutomationSessionActive,
   requireSimulator,
   requireWebContext,
@@ -299,25 +299,24 @@ export function cacheWebElements(this: XCUITestDriver, response: unknown): unkno
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
- * @param opts - `timeoutMs`: the script timeout of `execute_script` (W3C `null`: no limit)
+ * @param opts - `isUserScript`: a script of `execute`, limited by the session script timeout; internal
+ * scripts keep `webviewAtomWaitTimeout`
  */
 export async function executeAtom<T = any>(
   this: XCUITestDriver,
   atom: AtomName,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
-  opts: {timeoutMs?: number | null} = {},
+  opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const {timeoutMs} = opts;
-  if (atom !== 'execute_script' || timeoutMs === undefined) {
+  if (atom !== 'execute_script' || !opts.isUserScript) {
     return await this.waitForAtom(this.remote.executeAtom(atom, args, frames));
   }
   const promise = this.remote.executeAtom(atom, args, frames, {
-    // W3C null: no limit; the remote debugger limits a number to 1 h
-    timeoutMs: timeoutMs === null ? undefined : limitTimerDelayMs(timeoutMs),
+    timeoutMs: limitScriptTimeoutMs(this.scriptTimeoutMs),
   });
-  return await this.waitForAtom(promise, limitTimerDelayMs(timeoutMs));
+  return await this.waitForAtom(promise, {isUserScript: true});
 }
 
 /**
@@ -454,8 +453,8 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
  *
  * @template T - Type of the atom execution result
  * @param promise - Promise returned by atom execution
- * @param scriptTimeoutMs - Script timeout in ms of a script atom; the atom then waits at least this
- * timeout plus the time that the remote debugger needs to answer `script timeout` first
+ * @param opts - `isUserScript`: a script of `execute` or `executeAsync`; the atom then waits at least
+ * the session script timeout plus the time that the remote debugger needs to answer `script timeout`
  * @returns The result of the atom execution
  * @throws {errors.UnexpectedAlertOpenError} If an alert appears during execution
  * @throws {errors.ScriptTimeoutError} If the atom execution times out after the script wait
@@ -464,7 +463,7 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
 export async function waitForAtom<T = unknown>(
   this: XCUITestDriver,
   promise: Promise<T>,
-  scriptTimeoutMs?: number,
+  opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const timer = new timing.Timer().start();
 
@@ -474,12 +473,14 @@ export async function waitForAtom<T = unknown>(
       : ATOM_WAIT_TIMEOUT_MS;
   // the remote debugger waits for its garbage collection and the page (up to pageLoadMs), then
   // for the script timeout and its backup timer
-  const scriptWaitMs =
-    scriptTimeoutMs === undefined
-      ? 0
-      : scriptTimeoutMs + this.pageLoadMs + REMOTE_DEBUGGER_BACKUP_TIMER_MS + REMOTE_DEBUGGER_GC_TIMEOUT_MS;
+  const scriptWaitMs = opts.isUserScript
+    ? limitScriptTimeoutMs(this.scriptTimeoutMs) +
+      this.pageLoadMs +
+      REMOTE_DEBUGGER_BACKUP_TIMER_MS +
+      REMOTE_DEBUGGER_GC_TIMEOUT_MS
+    : 0;
   const isScriptTimeout = scriptWaitMs > defaultWaitMs;
-  const atomWaitTimeoutMs = limitTimerDelayMs(Math.max(defaultWaitMs, scriptWaitMs));
+  const atomWaitTimeoutMs = Math.max(defaultWaitMs, scriptWaitMs);
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(

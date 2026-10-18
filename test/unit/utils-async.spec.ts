@@ -3,7 +3,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {createSandbox} from 'sinon';
 
-import {limitTimerDelayMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
+import {limitScriptTimeoutMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
 
 describe('utils/async', function () {
   describe('TimeoutError', function () {
@@ -19,18 +19,14 @@ describe('utils/async', function () {
     });
   });
 
-  describe('limitTimerDelayMs', function () {
-    it('keeps a delay that a timer accepts', function () {
-      assert.strictEqual(limitTimerDelayMs(30000), 30000);
-      assert.strictEqual(limitTimerDelayMs(2 ** 31 - 1), 2 ** 31 - 1);
+  describe('limitScriptTimeoutMs', function () {
+    it('keeps a timeout up to 1 h', function () {
+      assert.strictEqual(limitScriptTimeoutMs(30000), 30000);
+      assert.strictEqual(limitScriptTimeoutMs(3600000), 3600000);
     });
 
-    it('limits a longer delay to the longest timer delay', function () {
-      assert.strictEqual(limitTimerDelayMs(Number.MAX_SAFE_INTEGER), 2 ** 31 - 1);
-    });
-
-    it('gives the longest timer delay for a W3C null (no limit)', function () {
-      assert.strictEqual(limitTimerDelayMs(null), 2 ** 31 - 1);
+    it('limits a longer timeout to 1 h', function () {
+      assert.strictEqual(limitScriptTimeoutMs(Number.MAX_SAFE_INTEGER), 3600000);
     });
   });
 
