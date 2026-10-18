@@ -24,8 +24,8 @@ declare module '../driver.js' {
  * Seeded with the driver's current page-load/script/implicit-wait timeouts - the session's own
  * defaults (in particular a `0` implicit wait) otherwise differ from what the client configured,
  * silently changing WebDriver timeout behavior on session start. Later timeout updates are kept
- * in sync too, by {@linkcode setPageLoadTimeout}/{@linkcode setScriptTimeout}/
- * {@linkcode setImplicitWait}.
+ * in sync too, by {@linkcode XCUITestDriver.setPageLoadTimeout},
+ * {@linkcode XCUITestDriver.setScriptTimeout} and {@linkcode XCUITestDriver.setImplicitWait}.
  *
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context

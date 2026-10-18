@@ -310,13 +310,8 @@ export async function executeAtom<T = any>(
   opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  if (!opts.isUserScript) {
-    return await this.waitForAtom(this.remote.executeAtom(atom, args, frames));
-  }
-  const promise = this.remote.executeAtom(atom, args, frames, {
-    timeoutMs: limitTimeoutMs(this.scriptTimeoutMs),
-  });
-  return await this.waitForAtom(promise, {isUserScript: true});
+  const atomOpts = opts.isUserScript ? {timeoutMs: limitTimeoutMs(this.scriptTimeoutMs)} : {};
+  return await this.waitForAtom(this.remote.executeAtom(atom, args, frames, atomOpts), opts);
 }
 
 /**

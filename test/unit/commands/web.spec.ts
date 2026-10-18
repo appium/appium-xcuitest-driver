@@ -94,8 +94,8 @@ describe('web commands', function () {
         ['execute_script', undefined],
       ] as const) {
         const {remoteArgs, waitOpts} = await run(atom, opts);
-        assert.strictEqual(remoteArgs.length, 3);
-        assert.strictEqual(waitOpts, undefined);
+        assert.deepStrictEqual(remoteArgs[3], {});
+        assert.deepStrictEqual(waitOpts, {});
       }
     });
   });

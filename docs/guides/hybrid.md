@@ -66,7 +66,8 @@ the web view context on session initialization by setting the `autoWebview`
 
 In a web view context, `execute` waits for a returned Promise, and `executeAsync` waits for its
 callback, up to the session script timeout (W3C default `30000` ms, at most 1 h). Then they end
-with `script timeout`. A script that blocks the page ends with `timeout`, see
+with `script timeout`. With `mobile: startAutomationSession`, `execute` does not use the script
+timeout. A script that blocks the page ends with `timeout`, see
 [`appium:webviewAtomWaitTimeout`](../reference/capabilities.md).
 
 
