@@ -3316,23 +3316,29 @@ We recommend this method if you don't need to modify the WDA source code.</p>
 from iOS/tvOS 17 and watchOS 10. For older OS versions, use the default <code>xcodebuild</code> flow, or
 provide <code>appium:webDriverAgentUrl</code> if you already have a running WDA server.</p>
 </div>
-<p><a href="https://github.com/appium/WebDriverAgent/releases">The Appium WebDriverAgent GitHub page</a> provides
-downloads for WebDriverAgent packages for real devices and simulators.
+<p>Prebuilt WebDriverAgent packages for real devices and simulators are published in
+<a href="https://github.com/appium/appium-ios/releases">appium/appium-ios releases</a> starting with WDA 16.16.0,
+under tags named <code>appium-webdriveragent@&lt;version&gt;</code>. Earlier versions remain in
+<a href="https://github.com/appium/WebDriverAgent/releases">appium/WebDriverAgent releases</a>,
+under tags named <code>v&lt;version&gt;</code>. Select the release matching the installed <code>appium-webdriveragent</code> version.
 WebDriverAgent packages for real devices do not have embedded XCTest frameworks so that
 they can run on iOS 17+ devices. Please read <a href="../run-preinstalled-wda/">Run Preinstalled WebDriverAgentRunner</a>
 for more details about running on real devices and simulators. Understanding app signing is also important when working with real devices.
 Simulators need everything, so WDA package sizes for simulators are greater than for real devices.
 The <a href="https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml">Release</a> and
-<a href="https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml">Building WebDriverAgent</a>
+<a href="https://github.com/appium/appium-ios/actions/workflows/webdriveragent-build-assets.yml">Building WebDriverAgent</a>
 workflows may help with validating the build script.</p>
 <p><a href="../run-preinstalled-wda/">Run Preinstalled WebDriverAgentRunner</a> provides <code>appium:prebuiltWDAPath</code>
 and <code>appium:usePreinstalledWDA</code> capabilities.
 These capabilities allow the XCUITest driver to install prebuilt WDA specified with
 <code>appium:prebuiltWDAPath</code> and start it <strong>without</strong> running <code>xcodebuild</code>.</p>
-<p>The <code>download-wda</code> command helps to download the proper version of WDA for your XCUITest driver version
-for simulator use.</p>
+<p>The <a href="../../reference/scripts/#download-wda"><code>download-wda</code> command</a> selects the matching WDA version
+and release location automatically. For example, to download an iOS simulator build:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>download-wda<span class="w"> </span>--<span class="w"> </span>--outdir<span class="o">=</span>/path/to/target/directory<span class="w"> </span>--kind<span class="o">=</span>sim<span class="w"> </span>--platform<span class="o">=</span>ios
 </span></code></pre></div>
+<p>The requested archive must be available in that release. If it has not been published, use the
+<a href="#understanding-how-xcodebuild-works">source build approach above</a> or wait for the matching archive to be published.
+The command does not fall back to an older WDA binary.</p>
 <p>To see all available options for the script, including flags and defaults, run:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>download-wda<span class="w"> </span>--<span class="w"> </span>--help
 </span></code></pre></div>
@@ -3392,7 +3398,7 @@ combination, but it could help <code>appium:usePrebuiltWDA</code> to not manage 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="August 25, 2026 17:15:19 UTC"><span class="timeago" datetime="2026-08-25T17:15:19+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 25, 2026 17:15:19 UTC">2026-08-25</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 18, 2026 07:31:42 UTC"><span class="timeago" datetime="2026-10-18T07:31:42+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 18, 2026 07:31:42 UTC">2026-10-18</span>
   </span>
 
     
