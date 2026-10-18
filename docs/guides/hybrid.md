@@ -65,13 +65,12 @@ the web view context on session initialization by setting the `autoWebview`
 ### Script timeouts
 
 In a web view context, `execute` waits for a returned Promise, and `executeAsync` waits for its
-callback. Both end with `script timeout` after the session script timeout (W3C default `30000` ms,
-set with `POST /session/:id/timeouts`). For scripts that take more than 30 s, set a longer script
-timeout. The driver limits the script timeout to 1 h.
+callback, up to the session script timeout (W3C default `30000` ms, at most 1 h). Then they end
+with `script timeout`.
 
 A script that blocks the page ends with `timeout` after
-[`appium:webviewAtomWaitTimeout`](../reference/capabilities.md) (default `120000` ms), when that
-value is longer than the script timeout.
+[`appium:webviewAtomWaitTimeout`](../reference/capabilities.md) (default `120000` ms), if that
+value is longer than the script timeout plus the page load timeout plus 6 s.
 
 
 ### Using a native WebKit automation session
