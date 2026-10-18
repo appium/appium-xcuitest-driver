@@ -57,28 +57,22 @@ describe('screenshots commands', function () {
         assert.strictEqual(getScreenshotStub.notCalled, true);
       });
 
-      it('should get a screenshot from simctl if WDA call fails and Xcode version >= 8.1', async function () {
+      it('should get a screenshot from CoreSim if WDA call fails', async function () {
         proxyStub.returns(null);
         const screenshotBuffer = Buffer.from(base64PortraitResponse, 'base64');
         getScreenshotStub.resolves(screenshotBuffer);
 
-        driver.xcodeVersion = {
-          versionFloat: 8.3,
-        } as any;
         const result = await driver.getScreenshot();
         assert.strictEqual(result, screenshotBuffer.toString('base64'));
 
-        assert.strictEqual(proxyStub.calledOnce, true);
-        assert.strictEqual(getScreenshotStub.calledOnce, true);
+        sinon.assert.calledOnceWithExactly(proxyStub, '/screenshot', 'GET');
+        sinon.assert.calledOnceWithExactly(getScreenshotStub, {displayId: undefined});
       });
 
       it('should throw UnableToCaptureScreen if the simulator returns an empty buffer', async function () {
         proxyStub.returns(null);
         getScreenshotStub.resolves(Buffer.alloc(0));
 
-        driver.xcodeVersion = {
-          versionFloat: 8.3,
-        } as any;
         await assert.rejects(driver.getScreenshot(), errors.UnableToCaptureScreen);
       });
     });
@@ -104,15 +98,6 @@ describe('screenshots commands', function () {
         sinon.assert.notCalled(lastChunkStub);
       });
 
-      it('should not fall back to simctl if WDA call fails', async function () {
-        const error = new errors.UnableToCaptureScreen('No display with id 3 is available');
-        proxyStub.rejects(error);
-
-        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
-        sinon.assert.calledOnce(proxyStub);
-        sinon.assert.notCalled(getScreenshotStub);
-      });
-
       it('should capture a fresh main-display image after resetting display selection', async function () {
         const lastChunkStub = sinon.stub().resolves('previous-inner-display');
         driver.mjpegStream = {lastChunkPNGBase64: lastChunkStub} as any;
@@ -132,6 +117,67 @@ describe('screenshots commands', function () {
 
         await driver.getScreenshot();
         sinon.assert.calledOnce(getScreenshotStub);
+      });
+    });
+
+    describe('CoreSimulator display selection', function () {
+      let capture: sinon.SinonStub;
+      let wdaDisplays: sinon.SinonStub;
+      const wdaError = new errors.UnableToCaptureScreen('WDA screenshot failed');
+
+      beforeEach(async function () {
+        capture = sinon.stub().resolves(Buffer.from(base64PortraitResponse, 'base64'));
+        driver.isSimulator = () => true;
+        driver._device = {getScreenshot: capture} as any;
+        await driver.updateSettings({currentDisplayId: 3});
+        proxyStub.reset();
+        proxyStub.rejects(wdaError);
+        wdaDisplays = sinon.stub(driver, 'mobileListDisplays').rejects(new Error('WDA unavailable'));
+      });
+
+      it('falls back directly even when WDA is unavailable', async function () {
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 3});
+        sinon.assert.calledOnceWithExactly(proxyStub, '/screenshot', 'GET');
+        sinon.assert.notCalled(wdaDisplays);
+      });
+
+      it('lets CoreSim select the default after resetting selection', async function () {
+        proxyStub.resolves();
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.rejects(wdaError);
+        await driver.getScreenshot();
+        sinon.assert.calledOnceWithExactly(capture, {displayId: undefined});
+        sinon.assert.notCalled(wdaDisplays);
+      });
+
+      it('propagates an ambiguous default error from CoreSim', async function () {
+        proxyStub.resolves();
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.rejects(wdaError);
+        const error = new Error('Multiple default display ports are available; specify displayId');
+        capture.rejects(error);
+        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
+        sinon.assert.calledOnceWithExactly(capture, {displayId: undefined});
+        sinon.assert.notCalled(wdaDisplays);
+      });
+
+      it('propagates CoreSim resolution errors without retrying the default display', async function () {
+        const error = new Error('Cannot uniquely resolve guest screen ID 3');
+        capture.rejects(error);
+        await assert.rejects(driver.getScreenshot(), (actual) => actual === error);
+        sinon.assert.calledOnceWithExactly(capture, {displayId: 3});
+      });
+
+      it('rejects empty capture data', async function () {
+        capture.resolves(Buffer.alloc(0));
+        await assert.rejects(driver.getScreenshot(), errors.UnableToCaptureScreen);
+      });
+
+      it('does not use simulator capture for a real device', async function () {
+        driver.isSimulator = () => false;
+        await assert.rejects(driver.getScreenshot(), (error) => error === wdaError);
+        sinon.assert.notCalled(capture);
       });
     });
 
