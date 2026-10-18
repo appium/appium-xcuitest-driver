@@ -1,17 +1,24 @@
 import {constants as fsConstants, promises as fsPromises} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {pathToFileURL} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 
 import {fs, logger, zip, net, node} from 'appium/support.js';
 import {Command} from 'commander';
+import semver from 'semver';
 
 const log = logger.getLogger('download-wda');
 const WDA_KIND_REAL = 'real';
 const WDA_KIND_SIM = 'sim';
+const WDA_MONOREPO_VERSION = '16.16.0';
 
-const wdaUrl = (/** @type {string} */ version, /** @type {string} */ zipFileName) =>
-  `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
+const wdaUrl = (/** @type {string} */ version, /** @type {string} */ zipFileName) => {
+  // 16.16.0 is the first release published from the appium-ios monorepo.
+  const release = semver.gte(version, WDA_MONOREPO_VERSION)
+    ? `appium-ios/releases/download/appium-webdriveragent@${version}`
+    : `WebDriverAgent/releases/download/v${version}`;
+  return `https://github.com/appium/${release}/${zipFileName}`;
+};
 
 /**
  * Download and unpack a prebuilt WDA package for the given platform and kind.
@@ -69,7 +76,7 @@ function normalizeKind(kind) {
  * @returns {Promise<string>}
  */
 async function getWebdriveragentPkgVersion() {
-  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
+  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', fileURLToPath(import.meta.url));
   if (!moduleRoot) {
     throw new Error('Cannot resolve module root for appium-xcuitest-driver');
   }

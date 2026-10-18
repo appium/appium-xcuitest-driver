@@ -97,8 +97,18 @@ appium driver run xcuitest cleanup-videos -- --udid=<udid>
 
 ### `download-wda`
 
-Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
-for use with real devices or simulators.
+Downloads a prebuilt WebDriverAgent (WDA) application matching the `appium-webdriveragent`
+version installed with the XCUITest driver, for use with real devices or simulators.
+The download location depends on the WDA version:
+
+|WDA version|Repository|Release tag|
+|--|--|--|
+|Earlier than 16.16.0|[appium/WebDriverAgent](https://github.com/appium/WebDriverAgent/releases)|`v<version>`|
+|16.16.0 and later|[appium/appium-ios](https://github.com/appium/appium-ios/releases)|`appium-webdriveragent@<version>`|
+
+The matching release must include an archive for the requested platform, device kind, and
+simulator architecture. If that asset has not been published, the download fails; the script
+does not substitute a different WDA version.
 
 For information about running tests with a prebuilt WDA application, [refer to this guide](../guides/run-prebuilt-wda.md).
 
@@ -143,8 +153,8 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
 
     Use the `download-wda` script with the `--kind=sim` flag instead
 
-Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
-for use in a simulator device.
+Downloads a prebuilt WebDriverAgent (WDA) application for a simulator using the same
+version selection and release locations as [`download-wda`](#download-wda).
 
 For information about running tests with a prebuilt WDA application, [refer to this guide](../guides/run-prebuilt-wda.md).
 

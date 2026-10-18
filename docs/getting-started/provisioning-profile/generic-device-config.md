@@ -34,7 +34,7 @@ codesigning was not correct, the installation will fail.
 ## Using Appium-Provided Prebuilt WDA
 
 The Appium team distributes generic builds with `CODE_SIGNING_ALLOWED=NO` at
-[WebDriverAgent package releases](https://github.com/appium/WebDriverAgent/releases). These builds
+[WebDriverAgent package releases](../../guides/run-prebuilt-wda.md#download-prebuilt-wda-and-run-them-with-appiumprebuiltwdapath-and-appiumusepreinstalledwda). These builds
 must be codesigned first, after which they can be installed as described in the previous section.
 
 ## Signing WDA
