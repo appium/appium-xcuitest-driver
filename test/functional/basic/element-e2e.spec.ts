@@ -153,7 +153,7 @@ describe('XCUITestDriver - elements -', function () {
       const text1 = 'bunchoftext';
       const text2 = 'differenttext';
       const text3 = 'http://appium.io/';
-      const secureText = new Array(text1.length).fill('•').join('');
+      const secureText = '•'.repeat(text1.length);
       const phText = 'Placeholder text';
 
       beforeEach(async function () {

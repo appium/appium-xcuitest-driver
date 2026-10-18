@@ -300,7 +300,7 @@ export async function setValueWithWebAtom(
     input.dispatchEvent(event);
   }
 
-  const scriptAsString = `return (${triggerInputEvent}).apply(null, arguments)`;
+  const scriptAsString = `return (${triggerInputEvent.toString()}).apply(null, arguments)`;
   await this.executeAtom('execute_script', [scriptAsString, [atomsElement]]);
 }
 
@@ -383,7 +383,9 @@ export async function getContentSize(this: XCUITestDriver, el: Element | string)
         break;
       }
       default:
-        throw new Error(`Programming error: type '${type}' was not valid but should have already been rejected`);
+        throw new Error(
+          `Programming error: type '${String(type)}' was not valid but should have already been rejected`,
+        );
     }
   }
   const size = await this.getSize(el);
@@ -419,6 +421,8 @@ export function prepareInputValue(inp: string | string[] | number): string[] {
   } else if (Number.isFinite(inp)) {
     inp = `${inp}`;
   }
+  // Code-point split is intended: each key is a single code point
+  // oxlint-disable-next-line typescript/no-misused-spread
   return [...String(inp)].map((k) => {
     if (['\uE006', '\uE007'].includes(k)) {
       return '\n';

@@ -54,7 +54,7 @@ export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts =
     } catch {}
     throw new Error(
       `'deviceName' must be provided in order to create a new Simulator for ${platform} platform. ` +
-        `Currently available device names: ${deviceNames}`,
+        `Currently available device names: ${deviceNames.join(', ')}`,
     );
   }
 

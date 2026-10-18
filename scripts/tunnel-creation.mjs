@@ -196,7 +196,7 @@ class TunnelCreator {
     } catch (err) {
       recordCleanupError('Failed to close managed tunnel(s)', /** @type {Error} */ (err));
     }
-    await Promise.allSettled([...this._reconnectTasks.values()]);
+    await Promise.allSettled(this._reconnectTasks.values());
 
     if (cleanupErrors.length > 0) {
       throw new AggregateError(cleanupErrors, 'Tunnel cleanup encountered errors');
@@ -344,7 +344,7 @@ class TunnelCreator {
         const result = await this.createUsbTunnelForDevice(device);
         results.push(result);
       } catch (err) {
-        const errorMessage = `Failed to create tunnel for device ${device.Properties.SerialNumber}: ${err}`;
+        const errorMessage = `Failed to create tunnel for device ${device.Properties.SerialNumber}: ${String(err)}`;
         log.error(`❌ ${errorMessage}`);
         results.push({
           kind: 'usb',
@@ -360,7 +360,7 @@ class TunnelCreator {
 
   /**
    * Sets up tunnel(s) for paired Apple TV device(s) over WiFi.
-   * @param {string[]|undefined} [specificDeviceIds] - Optional Apple TV device identifiers to target.
+   * @param {string[]} [specificDeviceIds] - Optional Apple TV device identifiers to target.
    * @param {AppleTVDevice[] | null} [prefetchedDevices] - Optional prefetched Apple TV devices.
    * @returns {Promise<AppleTVTunnelResult[]>} Apple TV tunnel results.
    */
@@ -419,7 +419,7 @@ class TunnelCreator {
 
   /**
    * @param {string[] | undefined} specificDeviceIds
-   * @returns {{startedAt: number, timeoutMs: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}}
+   * @returns {{startedAt: number, timeoutMs: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown}>}}
    */
   prefetchAppleTVDevices(specificDeviceIds) {
     const startedAt = performance.now();
@@ -450,7 +450,7 @@ class TunnelCreator {
 
   /**
    * @param {string} udid
-   * @param {AppleTVDevice | undefined} [prefetchedDevice]
+   * @param {AppleTVDevice  } [prefetchedDevice]
    * @returns {Promise<AppleTVTunnelResult>}
    */
   async _createAppleTVTunnelForUdid(udid, prefetchedDevice) {
@@ -754,7 +754,7 @@ function isNoAppleTVDevicesFoundError(err) {
 }
 
 /**
- * @param {{startedAt: number, timeoutMs: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}} discovery
+ * @param {{startedAt: number, timeoutMs: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown}>}} discovery
  * @returns {Promise<AppleTVDevice[] | null>}
  */
 async function waitForAppleTVDiscovery(discovery) {
@@ -998,8 +998,8 @@ async function main() {
 
   program.parse(process.argv);
   const options = program.opts();
-  const requestedUdids = [...new Set([...(options.udid ?? [])])];
-  const requestedAppleTVIds = [...new Set([...(options.appletvDeviceId ?? [])])];
+  const requestedUdids = [...new Set(options.udid ?? [])];
+  const requestedAppleTVIds = [...new Set(options.appletvDeviceId ?? [])];
   const hasRequestedUdids = requestedUdids.length > 0;
   const hasRequestedAppleTVIds = requestedAppleTVIds.length > 0;
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;

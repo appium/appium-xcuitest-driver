@@ -143,3 +143,8 @@ export interface AppInfo {
  * Mapping of bundle identifiers to application information
  */
 export type AppInfoMapping = Record<string, AppInfo>;
+
+/** Minimal shape of the untyped appium-ios-device services */
+export interface ClosableService {
+  close(): void;
+}

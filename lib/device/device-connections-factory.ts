@@ -500,7 +500,7 @@ export class DeviceConnectionsFactory {
 }
 
 function dispatchProcessTermination(): void {
-  for (const fn of [...terminationCallbacks]) {
+  for (const fn of terminationCallbacks) {
     try {
       fn();
     } catch {

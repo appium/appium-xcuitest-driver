@@ -83,7 +83,7 @@ export async function clearSystemFiles(retrieveDerivedDataPath: RetrieveDerivedD
       })();
       promises.push(promise);
     }
-    log.debug(`Started XCTest logs cleanup in '${dstFolders}'`);
+    log.debug(`Started XCTest logs cleanup in '${dstFolders.join(', ')}'`);
     if (promises.length) {
       await Promise.all(promises);
     }

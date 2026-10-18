@@ -117,7 +117,7 @@ export async function mobileHandleAlert(
     default:
       throw new Error(
         `The 'action' value should be either 'accept', 'dismiss' or 'getButtons'. ` +
-          `'${action}' is provided instead.`,
+          `'${String(action)}' is provided instead.`,
       );
   }
 }
