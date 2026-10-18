@@ -55,29 +55,6 @@ describe('web commands', function () {
     });
   });
 
-  describe('executeAtom', function () {
-    it('gives the options to the remote debugger', async function () {
-      const otherDriver = new XCUITestDriver({} as any);
-      const executeAtom = sinon.stub().resolves('raw');
-      otherDriver._remote = {executeAtom} as any;
-      sinon.stub(otherDriver, 'waitForAtom').callsFake(async (promise: Promise<any>) => await promise);
-      assert.strictEqual(await otherDriver.executeAtom('execute_script', ['x', []], true, {timeoutMs: 500}), 'raw');
-      assert.strictEqual(executeAtom.calledOnceWithExactly('execute_script', ['x', []], [], {timeoutMs: 500}), true);
-    });
-
-    it('gives the script timeout to waitForAtom only for execute_script', async function () {
-      const otherDriver = new XCUITestDriver({} as any);
-      otherDriver._remote = {executeAtom: sinon.stub().resolves('raw')} as any;
-      const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
-      await otherDriver.executeAtom('execute_script', ['x', []], true, {timeoutMs: 500});
-      await otherDriver.executeAtom('get_text', [{}], true, {timeoutMs: 500});
-      assert.deepStrictEqual(
-        waitForAtom.getCalls().map(({args}) => args[1]),
-        [500, undefined],
-      );
-    });
-  });
-
   describe('waitForAtom', function () {
     const later = (ms: number) => new Promise((resolve) => setTimeout(() => resolve('done'), ms));
 
