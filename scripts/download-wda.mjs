@@ -10,10 +10,11 @@ import semver from 'semver';
 const log = logger.getLogger('download-wda');
 const WDA_KIND_REAL = 'real';
 const WDA_KIND_SIM = 'sim';
+const WDA_MONOREPO_VERSION = '16.16.0';
 
 const wdaUrl = (/** @type {string} */ version, /** @type {string} */ zipFileName) => {
   // 16.16.0 is the first release published from the appium-ios monorepo.
-  const release = semver.gte(version, '16.16.0')
+  const release = semver.gte(version, WDA_MONOREPO_VERSION)
     ? `appium-ios/releases/download/appium-webdriveragent@${version}`
     : `WebDriverAgent/releases/download/v${version}`;
   return `https://github.com/appium/${release}/${zipFileName}`;
