@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {performance} from 'node:perf_hooks';
 import {describe, it, afterEach} from 'node:test';
 
+import {errors} from 'appium/driver.js';
 import sinon from 'sinon';
 
 import {fitAffineTransform, viewportSignature} from '../../../lib/commands/web-native-bridge.js';
@@ -87,7 +88,23 @@ describe('web commands', function () {
 
     it('keeps webviewAtomWaitTimeout when it is longer', async function () {
       const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 100} as any);
-      await assert.rejects(otherDriver.waitForAtom(later(300), 50), /did not respond/);
+      await assert.rejects(
+        otherDriver.waitForAtom(later(300), 50),
+        (err: any) => err instanceof errors.TimeoutError && /did not respond/.test(err.message),
+      );
+    });
+
+    it('gives a script timeout error when the script timeout ends the atom', async function () {
+      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 50} as any);
+      await assert.rejects(
+        otherDriver.waitForAtom(later(300), 100),
+        (err: any) => err instanceof errors.ScriptTimeoutError && !/webviewAtomWaitTimeout/.test(err.message),
+      );
+    });
+
+    it('limits a very long script timeout to the longest Node timer delay', async function () {
+      const otherDriver = new XCUITestDriver({} as any);
+      assert.strictEqual(await otherDriver.waitForAtom(later(50), Number.MAX_SAFE_INTEGER), 'done');
     });
   });
 

@@ -443,26 +443,13 @@ describe('AtomsBackend', function () {
         await backend.executeScript('return Promise.resolve();', []);
         assert.strictEqual(timeoutOf(), 0);
       });
-
-      it('uses the 30 s W3C default after an executeAsyncScript call with no script timeout set', async function () {
-        sandbox.stub(driver, 'waitForAtom').resolves(null);
-        driver.asyncWaitMs = undefined;
-        await backend.executeAsyncScript('arguments[0]();', []);
-        assert.strictEqual(driver.asyncWaitMs, undefined);
-        await backend.executeScript('return Promise.resolve();', []);
-        assert.strictEqual(timeoutOf(), 30000);
-      });
     });
 
     it('executeAsyncScript waits for the atom at least the script timeout plus a margin', async function () {
       const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
       driver.asyncWaitMs = 200000;
-      try {
-        await backend.executeAsyncScript('arguments[0]();', []);
-      } finally {
-        driver.asyncWaitMs = undefined;
-      }
+      await backend.executeAsyncScript('arguments[0]();', []);
       assert.strictEqual(waitForAtomStub.lastCall.args[1], 205000);
     });
 

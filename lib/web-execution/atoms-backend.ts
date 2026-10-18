@@ -12,8 +12,6 @@ import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
 
-// W3C default script timeout, for a promise that a script returns
-const DEFAULT_SCRIPT_TIMEOUT_MS = 30000;
 const CLOSE_WINDOW_TIMEOUT_MS = 5000;
 const CLOSE_WINDOW_INTERVAL_MS = 100;
 
@@ -354,17 +352,16 @@ export class AtomsBackend implements WebExecutionBackend {
   async executeScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const atomsArgs = this.driver.convertElementsForAtoms(args);
     const result = await this.driver.executeAtom('execute_script', [script, atomsArgs], false, {
-      timeoutMs: this.driver.asyncWaitMs ?? DEFAULT_SCRIPT_TIMEOUT_MS,
+      timeoutMs: this.driver.asyncWaitMs,
     });
     return this.driver.cacheWebElements(result) as T;
   }
 
   async executeAsyncScript<T = unknown>(script: string, args: unknown[] = []): Promise<T> {
     const convertedArgs = this.driver.convertElementsForAtoms(args);
-    // keep an unset script timeout unset: executeScript tells it from an explicit 0
     const promise = this.driver.remote.executeAtomAsync(
       'execute_async_script',
-      [script, convertedArgs, this.driver.asyncWaitMs ?? 0],
+      [script, convertedArgs, this.driver.asyncWaitMs],
       this.driver.curWebFrames,
     );
     return this.driver.cacheWebElements(

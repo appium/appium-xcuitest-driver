@@ -72,6 +72,8 @@ const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
 const ATOM_INITIAL_WAIT_MS = 2100;
 /** Lets the remote debugger answer `script timeout` first */
 const SCRIPT_TIMEOUT_MARGIN_MS = 5000;
+/** The longest delay of a Node timer: a longer delay fires after 1 ms */
+const MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
 const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
@@ -447,7 +449,8 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
  * @param minTimeoutMs - Minimum wait in ms (e.g. a script timeout); `webviewAtomWaitTimeout` applies when longer
  * @returns The result of the atom execution
  * @throws {errors.UnexpectedAlertOpenError} If an alert appears during execution
- * @throws {errors.TimeoutError} If the atom execution times out
+ * @throws {errors.ScriptTimeoutError} If the atom execution times out after `minTimeoutMs`
+ * @throws {errors.TimeoutError} If the atom execution times out after `webviewAtomWaitTimeout`
  */
 export async function waitForAtom<T = unknown>(
   this: XCUITestDriver,
@@ -456,12 +459,12 @@ export async function waitForAtom<T = unknown>(
 ): Promise<T> {
   const timer = new timing.Timer().start();
 
-  const atomWaitTimeoutMs = Math.max(
+  const defaultWaitMs =
     typeof this.opts.webviewAtomWaitTimeout === 'number' && this.opts.webviewAtomWaitTimeout > 0
       ? this.opts.webviewAtomWaitTimeout
-      : ATOM_WAIT_TIMEOUT_MS,
-    minTimeoutMs ?? 0,
-  );
+      : ATOM_WAIT_TIMEOUT_MS;
+  const isScriptTimeout = (minTimeoutMs ?? 0) > defaultWaitMs;
+  const atomWaitTimeoutMs = Math.min(Math.max(defaultWaitMs, minTimeoutMs ?? 0), MAX_TIMER_DELAY_MS);
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
@@ -474,7 +477,7 @@ export async function waitForAtom<T = unknown>(
       return await p;
     } catch (err) {
       this.log.debug(`Error received while executing atom: ${toErrorMessage(err)}`);
-      throw err instanceof TimeoutError ? await generateAtomTimeoutError.bind(this)(timer) : err;
+      throw err instanceof TimeoutError ? await generateAtomTimeoutError.bind(this)(timer, isScriptTimeout) : err;
     }
   };
   // if the atom promise is fulfilled within ATOM_INITIAL_WAIT_MS
@@ -593,12 +596,14 @@ export function getScriptAtomWaitMs(timeoutMs?: number): number | undefined {
  * Generates a timeout error with detailed information about atom execution failure.
  *
  * @param timer - Timer instance to get duration from
+ * @param isScriptTimeout - If true, the script timeout (not `webviewAtomWaitTimeout`) ended the atom
  * @returns Timeout error with descriptive message
  */
 async function generateAtomTimeoutError(
   this: XCUITestDriver,
   timer: timing.Timer,
-): Promise<InstanceType<typeof errors.TimeoutError>> {
+  isScriptTimeout: boolean = false,
+): Promise<InstanceType<typeof errors.TimeoutError | typeof errors.ScriptTimeoutError>> {
   let message =
     `The remote Safari debugger did not respond to the requested ` +
     `command after ${timer.getDuration().asMilliSeconds}ms. `;
@@ -608,6 +613,9 @@ async function generateAtomTimeoutError(
       `or a JavaScript routine monopolizing the event loop.`
     : `However, the debugger still responds to JavaScript commands, ` +
       `which suggests that the provided atom script is taking too long to execute.`;
+  if (isScriptTimeout) {
+    return new errors.ScriptTimeoutError(message);
+  }
   if (this.opts.webviewAtomWaitTimeout === undefined) {
     message +=
       ` You may also consider adjusting the timeout by setting the ` + `'webviewAtomWaitTimeout' driver capability.`;
