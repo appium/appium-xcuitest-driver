@@ -127,13 +127,7 @@ import {executeMethodMap} from './execute-method-map.js';
 import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
 import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
-import {
-  isEmpty,
-  isPlainObject,
-  isWatchOs,
-  memoize,
-  normalizePlatformVersion,
-} from './utils/index.js';
+import {isEmpty, isPlainObject, isWatchOs, memoize, normalizePlatformVersion} from './utils/index.js';
 import {AtomsBackend} from './web-execution/atoms-backend.js';
 import {AutomationSessionBackend} from './web-execution/automation-session-backend.js';
 import type {WebExecutionBackend} from './web-execution/types.js';
