@@ -11,7 +11,7 @@ export const FIXTURES_ROOT = path.resolve(
 );
 
 const UICATALOG_URL =
-  'https://github.com/appium/ios-uicatalog/releases/download/v4.0.1/UIKitCatalog-iphonesimulator.zip';
+  'https://github.com/appium/appium-ios/releases/download/ios-uicatalog@4.1.2/UIKitCatalog-iphonesimulator.zip';
 const UICATALOG_CACHE_PATH = path.resolve(FIXTURES_ROOT, 'UIKitCatalog-iphonesimulator.app');
 export const UICATALOG_BUNDLE_ID = 'com.example.apple-samplecode.UICatalog';
 
