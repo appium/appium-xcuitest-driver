@@ -9,6 +9,7 @@ import type {
   W3CDriverCaps,
   DriverCaps,
   DriverOpts,
+  TimeoutValue,
 } from '@appium/types';
 import {BaseSimulator, type Simulator} from 'appium-ios-simulator';
 import type {RemoteDebugger} from 'appium-remote-debugger';
@@ -590,14 +591,13 @@ export class XCUITestDriver
     return true;
   }
 
-  // TODO: the timeout setters get `number | null` with base driver 11 (appium/appium#22961)
   /**
    * Sets the page load timeout, and also our own `pageLoadMs` and the active automation session
    * (if any), neither of which the base implementation knows about.
    *
-   * @param ms - Timeout in milliseconds
+   * @param ms - Timeout in milliseconds, or `null` for no limit
    */
-  override setPageLoadTimeout(ms: number): void {
+  override setPageLoadTimeout(ms: TimeoutValue): void {
     super.setPageLoadTimeout(ms);
     this.pageLoadMs = limitTimeoutMs(ms);
     if (this._remote) {
@@ -609,9 +609,9 @@ export class XCUITestDriver
   /**
    * Sets the script timeout, and also the active automation session (if any).
    *
-   * @param ms - Timeout in milliseconds
+   * @param ms - Timeout in milliseconds, or `null` for no limit
    */
-  override setScriptTimeout(ms: number): void {
+  override setScriptTimeout(ms: TimeoutValue): void {
     super.setScriptTimeout(ms);
     this.syncAutomationSessionTimeout('scriptTimeoutMs', limitTimeoutMs(ms));
   }
@@ -620,9 +620,9 @@ export class XCUITestDriver
    * Sets the implicit wait timeout, and also the active automation session (if any): its implicit
    * wait defaults to `0` independently of the rest of the driver.
    *
-   * @param ms - Timeout in milliseconds
+   * @param ms - Timeout in milliseconds, or `null` for no limit
    */
-  override setImplicitWait(ms: number): void {
+  override setImplicitWait(ms: TimeoutValue): void {
     super.setImplicitWait(ms);
     // W3C default implicit wait for null
     this.syncAutomationSessionTimeout('implicitWaitTimeoutMs', ms ?? 0);
@@ -1203,8 +1203,8 @@ export class XCUITestDriver
     // (what GET /timeouts reports) start out in sync with our pageLoadMs default.
     this.setImplicitWait(0);
     this.setPageLoadTimeout(6000);
-    // W3C default script timeout
-    this.setScriptTimeout(30000);
+    // unset: webviewAtomWaitTimeout limits scripts
+    this.setScriptTimeout(null);
 
     this.webElementsCache = new LRUCache({
       max: WEB_ELEMENTS_CACHE_SIZE,

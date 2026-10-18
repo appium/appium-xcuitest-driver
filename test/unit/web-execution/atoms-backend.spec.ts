@@ -430,12 +430,11 @@ describe('AtomsBackend', function () {
     });
 
     it('executeAsyncScript gives the session script timeout to the page atom', async function () {
-      const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves(null);
+      sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
       driver.scriptTimeoutMs = 200000;
       await backend.executeAsyncScript('arguments[0]();', []);
       assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 200000);
-      assert.deepStrictEqual(waitForAtomStub.lastCall.args[1], {isUserScript: true});
     });
 
     it('executeAsyncScript limits the timeout of the page atom to 1 h', async function () {
@@ -449,13 +448,12 @@ describe('AtomsBackend', function () {
     it('executeAsyncScript limits a W3C null script timeout (no limit) to 1 h', async function () {
       sandbox.stub(driver, 'waitForAtom').resolves(null);
       remoteStub.executeAtomAsync.resolves(null);
-      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
-      driver.scriptTimeoutMs = null as any;
+      driver.scriptTimeoutMs = null;
       await backend.executeAsyncScript('arguments[0]();', []);
       assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 3600000);
     });
 
-    it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
+    it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result (no script timeout by default)', async function () {
       const convertStub = sandbox.stub(driver, 'convertElementsForAtoms').returns(['converted']);
       const cacheStub = sandbox.stub(driver, 'cacheWebElements').returns('cached');
       const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves('raw');
@@ -466,13 +464,13 @@ describe('AtomsBackend', function () {
       assert.strictEqual(
         remoteStub.executeAtomAsync.calledOnceWithExactly(
           'execute_async_script',
-          ['return 1;', ['converted'], 30000],
+          ['return 1;', ['converted'], 3600000],
           driver.curWebFrames,
         ),
         true,
       );
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise, {isUserScript: true}), true);
+      assert.strictEqual(waitForAtomStub.calledOnceWithExactly(theAtomPromise), true);
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
     });
   });

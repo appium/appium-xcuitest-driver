@@ -363,7 +363,7 @@ export class AtomsBackend implements WebExecutionBackend {
       [script, convertedArgs, limitTimeoutMs(this.driver.scriptTimeoutMs)],
       this.driver.curWebFrames,
     );
-    return this.driver.cacheWebElements(await this.driver.waitForAtom(promise, {isUserScript: true})) as T;
+    return this.driver.cacheWebElements(await this.driver.waitForAtom(promise)) as T;
   }
 
   async screenshot(coordinateSystem?: 'Viewport' | 'Page'): Promise<string> {

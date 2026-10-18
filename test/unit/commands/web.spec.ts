@@ -58,19 +58,17 @@ describe('web commands', function () {
   describe('executeAtom', function () {
     const run = async (atom: any, opts?: {isUserScript?: boolean}, scriptTimeoutMs: number | null = 500) => {
       const otherDriver = new XCUITestDriver({} as any);
-      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
-      otherDriver.scriptTimeoutMs = scriptTimeoutMs as number;
+      otherDriver.setScriptTimeout(scriptTimeoutMs);
       const remoteExecuteAtom = sinon.stub().resolves('raw');
       otherDriver._remote = {executeAtom: remoteExecuteAtom} as any;
-      const waitForAtom = sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
+      sinon.stub(otherDriver, 'waitForAtom').resolves('raw');
       await otherDriver.executeAtom(atom, ['x', []], true, opts);
-      return {remoteArgs: remoteExecuteAtom.lastCall.args, waitOpts: waitForAtom.lastCall.args[1]};
+      return {remoteArgs: remoteExecuteAtom.lastCall.args};
     };
 
-    it('gives the session script timeout to the remote debugger and waitForAtom for a user script', async function () {
-      const {remoteArgs, waitOpts} = await run('execute_script', {isUserScript: true});
+    it('gives the session script timeout to the remote debugger for a user script', async function () {
+      const {remoteArgs} = await run('execute_script', {isUserScript: true});
       assert.deepStrictEqual(remoteArgs, ['execute_script', ['x', []], [], {timeoutMs: 500}]);
-      assert.deepStrictEqual(waitOpts, {isUserScript: true});
     });
 
     it('keeps an explicit script timeout of 0', async function () {
@@ -88,81 +86,39 @@ describe('web commands', function () {
       assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
     });
 
-    it('keeps the default wait for other atoms and internal scripts', async function () {
+    it('gives no script timeout to other atoms and internal scripts', async function () {
       for (const [atom, opts] of [
         ['get_text', undefined],
         ['execute_script', undefined],
       ] as const) {
-        const {remoteArgs, waitOpts} = await run(atom, opts);
+        const {remoteArgs} = await run(atom, opts);
         assert.deepStrictEqual(remoteArgs[3], {});
-        assert.deepStrictEqual(waitOpts, {});
       }
     });
   });
 
   describe('waitForAtom', function () {
-    const later = (ms: number) => new Promise((resolve) => setTimeout(() => resolve('done'), ms));
-
-    it('waits longer than webviewAtomWaitTimeout when the script needs it', async function () {
-      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 100} as any);
-      otherDriver.setScriptTimeout(400);
-      assert.strictEqual(await otherDriver.waitForAtom(later(200), {isUserScript: true}), 'done');
-    });
-
-    // with fake timers: the script wait includes pageLoadMs and 6 s for the remote debugger
-    const waitWithFakeTimers = async (webviewAtomWaitTimeout: number, scriptTimeoutMs: number, ms: number) => {
-      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout} as any);
-      otherDriver.setScriptTimeout(scriptTimeoutMs);
+    it('stops at webviewAtomWaitTimeout, also when the script timeout is longer', async function () {
+      const otherDriver = new XCUITestDriver({webviewAtomWaitTimeout: 1000} as any);
+      otherDriver.setScriptTimeout(30000);
       // no alert monitor after the initial wait
       otherDriver._waitingAtoms.alertMonitor = Promise.resolve();
       // only these: with a fake nextTick, the test runner stops reporting the next tests
       const clock = sinon.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         let error: any;
-        otherDriver.waitForAtom(new Promise(() => {}), {isUserScript: true}).catch((err) => {
+        otherDriver.waitForAtom(new Promise(() => {})).catch((err) => {
           error = err;
         });
-        await clock.tickAsync(ms - 1);
+        await clock.tickAsync(999);
         const errorBefore = error;
         await clock.tickAsync(1);
-        return {errorBefore, error};
+        assert.strictEqual(errorBefore, undefined);
+        assert.ok(error instanceof errors.TimeoutError && !(error instanceof errors.ScriptTimeoutError));
+        assert.match(error.message, /did not respond/);
       } finally {
         clock.restore();
       }
-    };
-
-    it('keeps webviewAtomWaitTimeout when it is longer', async function () {
-      // 30000 + 6000 + 6000 < 60000
-      const {errorBefore, error} = await waitWithFakeTimers(60000, 30000, 60000);
-      assert.strictEqual(errorBefore, undefined);
-      assert.ok(error instanceof errors.TimeoutError && !(error instanceof errors.ScriptTimeoutError));
-      assert.match(error.message, /did not respond/);
-    });
-
-    it('gives a script timeout error after the script timeout, pageLoadMs and 6 s', async function () {
-      const {errorBefore, error} = await waitWithFakeTimers(1000, 30000, 30000 + 6000 + 6000);
-      assert.strictEqual(errorBefore, undefined);
-      assert.ok(error instanceof errors.ScriptTimeoutError);
-      assert.doesNotMatch(error.message, /webviewAtomWaitTimeout/);
-    });
-
-    it('waits for a script after a W3C null page load timeout', async function () {
-      const otherDriver = new XCUITestDriver({} as any);
-      // W3C null comes from base driver 11 (appium/appium#22961)
-      otherDriver.setPageLoadTimeout(null as any);
-      assert.strictEqual(await otherDriver.waitForAtom(later(50), {isUserScript: true}), 'done');
-    });
-
-    it('limits a W3C null script timeout (no limit) to 1 h', async function () {
-      const {errorBefore, error} = await waitWithFakeTimers(1000, null as any, 3600000 + 6000 + 6000);
-      assert.strictEqual(errorBefore, undefined);
-      assert.ok(error instanceof errors.ScriptTimeoutError);
-    });
-
-    it('limits a very long script timeout to 1 h', async function () {
-      const {errorBefore, error} = await waitWithFakeTimers(1000, Number.MAX_SAFE_INTEGER, 3600000 + 6000 + 6000);
-      assert.strictEqual(errorBefore, undefined);
-      assert.ok(error instanceof errors.ScriptTimeoutError);
     });
   });
 

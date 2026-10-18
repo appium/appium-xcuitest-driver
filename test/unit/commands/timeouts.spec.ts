@@ -40,8 +40,7 @@ describe('timeouts commands', function () {
 
     it('gives a started automation session 1 h for a W3C null script timeout (no limit)', function () {
       (driver as any)._remote = {automationSession: {isStarted: true, scriptTimeoutMs: 0}};
-      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
-      driver.setScriptTimeout(null as any);
+      driver.setScriptTimeout(null);
       assert.strictEqual(driver.scriptTimeoutMs, null);
       assert.strictEqual((driver as any)._remote.automationSession.scriptTimeoutMs, 3600000);
     });
@@ -56,8 +55,7 @@ describe('timeouts commands', function () {
 
     it('gives the driver and a started automation session 1 h for a W3C null page load timeout', async function () {
       (driver as any)._remote = {automationSession: {isStarted: true, pageLoadTimeoutMs: 0}};
-      // W3C null comes from base driver 11 (appium/appium#22961)
-      driver.setPageLoadTimeout(null as any);
+      driver.setPageLoadTimeout(null);
       assert.strictEqual(driver.pageLoadMs, 3600000);
       assert.strictEqual((driver as any)._remote.pageLoadMs, 3600000);
       assert.strictEqual((driver as any)._remote.automationSession.pageLoadTimeoutMs, 3600000);
@@ -68,7 +66,7 @@ describe('timeouts commands', function () {
   describe('setImplicitWait', function () {
     it('gives a started automation session 0 for a W3C null implicit wait', function () {
       (driver as any)._remote = {automationSession: {isStarted: true, implicitWaitTimeoutMs: 5}};
-      driver.setImplicitWait(null as any);
+      driver.setImplicitWait(null);
       assert.strictEqual((driver as any)._remote.automationSession.implicitWaitTimeoutMs, 0);
     });
   });
@@ -93,12 +91,13 @@ describe('timeouts commands', function () {
     // timeouts didn't match its effective behavior.
     it('keeps GET /timeouts in sync with pageLoadMs from the start, before any explicit timeout command', async function () {
       assert.strictEqual(driver.pageLoadMs, 6000);
-      assert.strictEqual(driver.scriptTimeoutMs, 30000);
+      // unset: webviewAtomWaitTimeout limits scripts
+      assert.strictEqual(driver.scriptTimeoutMs, null);
       assert.strictEqual(driver.implicitWaitMs, 0);
 
       const timeouts = await driver.getTimeouts();
       assert.strictEqual(timeouts.pageLoad, driver.pageLoadMs);
-      assert.strictEqual(timeouts.script, 30000);
+      assert.strictEqual(timeouts.script, null);
       assert.strictEqual(timeouts.implicit, driver.implicitWaitMs);
     });
   });

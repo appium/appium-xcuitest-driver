@@ -73,8 +73,7 @@ describe('automation-session commands', function () {
       sandbox.stub(driver, 'isSimulator').returns(true);
       const session = {} as any;
       driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
-      // W3C null comes from base driver 11 (appium/appium#22961, #22983)
-      driver.implicitWaitMs = null as any;
+      driver.implicitWaitMs = null;
       await driver.mobileStartAutomationSession();
       assert.strictEqual(session.implicitWaitTimeoutMs, 0);
     });
