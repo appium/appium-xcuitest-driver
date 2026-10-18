@@ -228,7 +228,7 @@ function getStartupRetryOptions(driver: XCUITestDriver): StartupRetryOptions {
     }
   } else {
     driver.log.debug(
-      `Trying to start WebDriverAgent once since at least one of ${CAP_NAMES_NO_XCODEBUILD_REQUIRED} capabilities is provided`,
+      `Trying to start WebDriverAgent once since at least one of ${CAP_NAMES_NO_XCODEBUILD_REQUIRED.join(', ')} capabilities is provided`,
     );
     startupRetries = 1;
   }
@@ -432,7 +432,7 @@ async function quitAndThrow(driver: XCUITestDriver, msg: string): Promise<never>
   driver.log.debug(msg);
   if (!isXcodebuildNeeded(driver.opts)) {
     driver.log.debug(
-      `Not quitting WebDriverAgent since at least one of ${CAP_NAMES_NO_XCODEBUILD_REQUIRED} capabilities is provided`,
+      `Not quitting WebDriverAgent since at least one of ${CAP_NAMES_NO_XCODEBUILD_REQUIRED.join(', ')} capabilities is provided`,
     );
     throw new Error(msg);
   }

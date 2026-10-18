@@ -115,7 +115,7 @@ export class AppInfosCache {
           manifestPayload = await this._readPlist(plistPath, ipaPath);
           if (isPlainObject(manifestPayload) && entry.uncompressedSize <= MAX_MANIFEST_SIZE) {
             this.log.debug(
-              `Caching the manifest '${entry.fileName}' for ${manifestPayload?.CFBundleIdentifier} app ` +
+              `Caching the manifest '${entry.fileName}' for ${String(manifestPayload?.CFBundleIdentifier)} app ` +
                 `from the compressed source using the key '${hash}'`,
             );
             MANIFEST_CACHE.set(hash, manifestPayload);
@@ -158,7 +158,7 @@ export class AppInfosCache {
     const [payload, stat] = await Promise.all([this._readPlist(manifestPath, appPath), fs.stat(manifestPath)]);
     if (stat.size <= MAX_MANIFEST_SIZE && isPlainObject(payload)) {
       this.log.debug(
-        `Caching the manifest for ${payload.CFBundleIdentifier} app from a file source using the key '${hash}'`,
+        `Caching the manifest for ${String(payload.CFBundleIdentifier)} app from a file source using the key '${hash}'`,
       );
       MANIFEST_CACHE.set(hash, payload);
     }
