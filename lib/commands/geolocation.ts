@@ -1,5 +1,19 @@
 import type {XCUITestDriver} from '../driver.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileGetSimulatedLocation(
+      ...args: Parameters<typeof mobileGetSimulatedLocation>
+    ): ReturnType<typeof mobileGetSimulatedLocation>;
+    mobileSetSimulatedLocation(
+      ...args: Parameters<typeof mobileSetSimulatedLocation>
+    ): ReturnType<typeof mobileSetSimulatedLocation>;
+    mobileResetSimulatedLocation(
+      ...args: Parameters<typeof mobileResetSimulatedLocation>
+    ): ReturnType<typeof mobileResetSimulatedLocation>;
+  }
+}
+
 export interface GeolocationInfo {
   /** Measurement of distance north or south of the Equator, or `null` if {@linkcode XCUITestDriver.mobileSetSimulatedLocation} has not been called or {@linkcode mobileResetSimulatedLocation} has been called. */
   latitude: number | null;

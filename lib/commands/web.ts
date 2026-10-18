@@ -16,6 +16,59 @@ import {
 } from './helpers/index.js';
 import type {AtomsElement} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    setFrame(...args: Parameters<typeof setFrame>): ReturnType<typeof setFrame>;
+    switchToParentFrame(...args: Parameters<typeof switchToParentFrame>): ReturnType<typeof switchToParentFrame>;
+    getCssProperty(...args: Parameters<typeof getCssProperty>): ReturnType<typeof getCssProperty>;
+    submit(...args: Parameters<typeof submit>): ReturnType<typeof submit>;
+    refresh(...args: Parameters<typeof refresh>): ReturnType<typeof refresh>;
+    getUrl(...args: Parameters<typeof getUrl>): ReturnType<typeof getUrl>;
+    title(...args: Parameters<typeof title>): ReturnType<typeof title>;
+    getCookies(...args: Parameters<typeof getCookies>): ReturnType<typeof getCookies>;
+    setCookie(...args: Parameters<typeof setCookie>): ReturnType<typeof setCookie>;
+    deleteCookie(...args: Parameters<typeof deleteCookie>): ReturnType<typeof deleteCookie>;
+    deleteCookies(...args: Parameters<typeof deleteCookies>): ReturnType<typeof deleteCookies>;
+    cacheWebElement(...args: Parameters<typeof cacheWebElement>): ReturnType<typeof cacheWebElement>;
+    cacheWebElements(...args: Parameters<typeof cacheWebElements>): ReturnType<typeof cacheWebElements>;
+    executeAtom<T = any>(...args: Parameters<typeof executeAtom<T>>): ReturnType<typeof executeAtom<T>>;
+    executeAtomAsync<T = unknown>(
+      ...args: Parameters<typeof executeAtomAsync<T>>
+    ): ReturnType<typeof executeAtomAsync<T>>;
+    getAtomsElement<S extends string = string>(
+      ...args: Parameters<typeof getAtomsElement<S>>
+    ): ReturnType<typeof getAtomsElement<S>>;
+    convertElementsForAtoms(
+      ...args: Parameters<typeof convertElementsForAtoms>
+    ): ReturnType<typeof convertElementsForAtoms>;
+    getElementId(...args: Parameters<typeof getElementId>): ReturnType<typeof getElementId>;
+    findWebElementOrElements(
+      strategy: string,
+      selector: string,
+      many: true,
+      ctx?: Element | string | null,
+    ): Promise<Element[]>;
+    findWebElementOrElements(
+      strategy: string,
+      selector: string,
+      many?: false,
+      ctx?: Element | string | null,
+    ): Promise<Element>;
+    findWebElementOrElements(
+      strategy: string,
+      selector: string,
+      many?: boolean,
+      ctx?: Element | string | null,
+    ): Promise<Element | Element[]>;
+    checkForAlert(...args: Parameters<typeof checkForAlert>): ReturnType<typeof checkForAlert>;
+    waitForAtom<T = unknown>(...args: Parameters<typeof waitForAtom<T>>): ReturnType<typeof waitForAtom<T>>;
+    mobileWebNav(...args: Parameters<typeof mobileWebNav>): ReturnType<typeof mobileWebNav>;
+    mobileUpdateSafariPreferences(
+      ...args: Parameters<typeof mobileUpdateSafariPreferences>
+    ): ReturnType<typeof mobileUpdateSafariPreferences>;
+  }
+}
+
 const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
 // This value must be greater than the alerts check interval in WDA:
 // https://github.com/appium/WebDriverAgent/blob/8bc3135f021b529d916846477544f4b8ca890f59/WebDriverAgentLib/Utilities/FBAlertsMonitor.m#L17

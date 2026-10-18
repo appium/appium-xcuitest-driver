@@ -12,6 +12,20 @@ import type {XCUITestDriver} from '../driver.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileStartXctestScreenRecording(
+      ...args: Parameters<typeof mobileStartXctestScreenRecording>
+    ): ReturnType<typeof mobileStartXctestScreenRecording>;
+    mobileGetXctestScreenRecordingInfo(
+      ...args: Parameters<typeof mobileGetXctestScreenRecordingInfo>
+    ): ReturnType<typeof mobileGetXctestScreenRecordingInfo>;
+    mobileStopXctestScreenRecording(
+      ...args: Parameters<typeof mobileStopXctestScreenRecording>
+    ): ReturnType<typeof mobileStopXctestScreenRecording>;
+  }
+}
+
 const MOV_EXT = '.mov';
 /**
  * On simulators XCTest stores screen recording attachments under

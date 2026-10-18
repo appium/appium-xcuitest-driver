@@ -7,6 +7,17 @@ import {getDuoSimulator, withDuoArgumentErrors} from './helpers/duo.js';
 import {requireRealDevice} from './helpers/index.js';
 import {HIDUsageEvent, HIDPageEvent} from './hid-event.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobilePerformIoHidEvent(
+      ...args: Parameters<typeof mobilePerformIoHidEvent>
+    ): ReturnType<typeof mobilePerformIoHidEvent>;
+    mobilePerformIndigoHidEvent(
+      ...args: Parameters<typeof mobilePerformIndigoHidEvent>
+    ): ReturnType<typeof mobilePerformIndigoHidEvent>;
+  }
+}
+
 /**
  * Emulates triggering of the given low-level IO HID device event.
  *

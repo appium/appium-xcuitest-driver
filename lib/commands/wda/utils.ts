@@ -4,6 +4,12 @@ import type {WebDriverAgent} from 'appium-webdriveragent';
 
 import type {XCUITestDriver} from '../../driver.js';
 
+declare module '../../driver.js' {
+  interface XCUITestDriver {
+    getWdaLocalhostRoot(...args: Parameters<typeof getWdaLocalhostRoot>): ReturnType<typeof getWdaLocalhostRoot>;
+  }
+}
+
 /**
  * Returns the WebDriverAgent derived data root from Xcode build settings.
  */

@@ -7,6 +7,14 @@ import {retryInterval} from 'asyncbox';
 import type {XCUITestDriver} from '../driver.js';
 import {capitalize, cropBase64Image, requireSharp} from '../utils/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getScreenshot(...args: Parameters<typeof getScreenshot>): ReturnType<typeof getScreenshot>;
+    getElementScreenshot(...args: Parameters<typeof getElementScreenshot>): ReturnType<typeof getElementScreenshot>;
+    getViewportScreenshot(...args: Parameters<typeof getViewportScreenshot>): ReturnType<typeof getViewportScreenshot>;
+  }
+}
+
 /**
  * Takes a screenshot of the current screen.
  *

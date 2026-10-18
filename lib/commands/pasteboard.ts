@@ -1,6 +1,13 @@
 import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileSetPasteboard(...args: Parameters<typeof mobileSetPasteboard>): ReturnType<typeof mobileSetPasteboard>;
+    mobileGetPasteboard(...args: Parameters<typeof mobileGetPasteboard>): ReturnType<typeof mobileGetPasteboard>;
+  }
+}
+
 /**
  * Sets the Simulator's pasteboard content to the given value.
  *

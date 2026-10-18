@@ -1,6 +1,14 @@
 import type {XCUITestDriver} from '../driver.js';
 import type {ActiveAppInfo} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileGetActiveAppInfo(
+      ...args: Parameters<typeof mobileGetActiveAppInfo>
+    ): ReturnType<typeof mobileGetActiveAppInfo>;
+  }
+}
+
 /**
  * Returns information about the active application.
  *

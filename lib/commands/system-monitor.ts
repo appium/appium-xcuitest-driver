@@ -5,6 +5,17 @@ import type {XCUITestDriver} from '../driver.js';
 import {supportsApiLevel18} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileStartSystemMonitor(
+      ...args: Parameters<typeof mobileStartSystemMonitor>
+    ): ReturnType<typeof mobileStartSystemMonitor>;
+    mobileStopSystemMonitor(
+      ...args: Parameters<typeof mobileStopSystemMonitor>
+    ): ReturnType<typeof mobileStopSystemMonitor>;
+  }
+}
+
 /**
  * Starts streaming DVT sysmontap (CPU / memory / per-process) samples to WebDriver BiDi subscribers
  * (`appium:xcuitest.systemMonitor`).

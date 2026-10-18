@@ -7,6 +7,38 @@ import {hasWebElementId, isPlainObject} from '../utils/index.js';
 import {requireSimulator} from './helpers/index.js';
 import type {Direction} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileShake(...args: Parameters<typeof mobileShake>): ReturnType<typeof mobileShake>;
+    click(...args: Parameters<typeof click>): ReturnType<typeof click>;
+    releaseActions(...args: Parameters<typeof releaseActions>): ReturnType<typeof releaseActions>;
+    performActions(...args: Parameters<typeof performActions>): ReturnType<typeof performActions>;
+    nativeClick(...args: Parameters<typeof nativeClick>): ReturnType<typeof nativeClick>;
+    mobileScrollToElement(...args: Parameters<typeof mobileScrollToElement>): ReturnType<typeof mobileScrollToElement>;
+    mobileScroll(...args: Parameters<typeof mobileScroll>): ReturnType<typeof mobileScroll>;
+    mobileSwipe(...args: Parameters<typeof mobileSwipe>): ReturnType<typeof mobileSwipe>;
+    mobilePinch(...args: Parameters<typeof mobilePinch>): ReturnType<typeof mobilePinch>;
+    mobileDoubleTap(...args: Parameters<typeof mobileDoubleTap>): ReturnType<typeof mobileDoubleTap>;
+    mobileTwoFingerTap(...args: Parameters<typeof mobileTwoFingerTap>): ReturnType<typeof mobileTwoFingerTap>;
+    mobileTouchAndHold(...args: Parameters<typeof mobileTouchAndHold>): ReturnType<typeof mobileTouchAndHold>;
+    mobileTap(...args: Parameters<typeof mobileTap>): ReturnType<typeof mobileTap>;
+    mobileDragFromToForDuration(
+      ...args: Parameters<typeof mobileDragFromToForDuration>
+    ): ReturnType<typeof mobileDragFromToForDuration>;
+    mobileDragFromToWithVelocity(
+      ...args: Parameters<typeof mobileDragFromToWithVelocity>
+    ): ReturnType<typeof mobileDragFromToWithVelocity>;
+    mobileTapWithNumberOfTaps(
+      ...args: Parameters<typeof mobileTapWithNumberOfTaps>
+    ): ReturnType<typeof mobileTapWithNumberOfTaps>;
+    mobileForcePress(...args: Parameters<typeof mobileForcePress>): ReturnType<typeof mobileForcePress>;
+    mobileSelectPickerWheelValue(
+      ...args: Parameters<typeof mobileSelectPickerWheelValue>
+    ): ReturnType<typeof mobileSelectPickerWheelValue>;
+    mobileRotateElement(...args: Parameters<typeof mobileRotateElement>): ReturnType<typeof mobileRotateElement>;
+  }
+}
+
 const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
 
 interface WdaScrollParams {

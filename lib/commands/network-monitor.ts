@@ -5,6 +5,17 @@ import type {XCUITestDriver} from '../driver.js';
 import {supportsApiLevel18} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileStartNetworkMonitor(
+      ...args: Parameters<typeof mobileStartNetworkMonitor>
+    ): ReturnType<typeof mobileStartNetworkMonitor>;
+    mobileStopNetworkMonitor(
+      ...args: Parameters<typeof mobileStopNetworkMonitor>
+    ): ReturnType<typeof mobileStopNetworkMonitor>;
+  }
+}
+
 /**
  * Starts streaming DVT NetworkMonitor events to WebDriver BiDi subscribers (`appium:xcuitest.networkMonitor`).
  *

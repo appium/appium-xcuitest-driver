@@ -2,6 +2,17 @@ import {errors, isErrorType} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getAlertText(...args: Parameters<typeof getAlertText>): ReturnType<typeof getAlertText>;
+    setAlertText(...args: Parameters<typeof setAlertText>): ReturnType<typeof setAlertText>;
+    postAcceptAlert(...args: Parameters<typeof postAcceptAlert>): ReturnType<typeof postAcceptAlert>;
+    postDismissAlert(...args: Parameters<typeof postDismissAlert>): ReturnType<typeof postDismissAlert>;
+    getAlertButtons(...args: Parameters<typeof getAlertButtons>): ReturnType<typeof getAlertButtons>;
+    mobileHandleAlert(...args: Parameters<typeof mobileHandleAlert>): ReturnType<typeof mobileHandleAlert>;
+  }
+}
+
 export type AlertAction = 'accept' | 'dismiss' | 'getButtons';
 
 interface AlertOptions {

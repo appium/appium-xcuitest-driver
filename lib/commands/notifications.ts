@@ -5,6 +5,17 @@ import {isPlainObject} from '../utils/index.js';
 import {requireSimulator} from './helpers/index.js';
 import type {PushPayload, NotificationType} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobilePushNotification(
+      ...args: Parameters<typeof mobilePushNotification>
+    ): ReturnType<typeof mobilePushNotification>;
+    mobileExpectNotification(
+      ...args: Parameters<typeof mobileExpectNotification>
+    ): ReturnType<typeof mobileExpectNotification>;
+  }
+}
+
 /**
  * Simulates push notification delivery to a simulated device.
  *

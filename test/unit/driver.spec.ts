@@ -504,6 +504,26 @@ describe('XCUITestDriver', function () {
     });
   });
 
+  describe('command overrides', function () {
+    it('should expose commands as prototype methods', function () {
+      for (const name of ['getAlertText', 'mobileGetBatteryInfo', 'startWda', 'getPageSource']) {
+        assert.strictEqual(Object.hasOwn(new XCUITestDriver({} as any), name), false, name);
+      }
+    });
+
+    it('should allow descendants to override a command and call super', async function () {
+      class CustomDriver extends XCUITestDriver {
+        async getAlertText(): Promise<string> {
+          return `custom:${await super.getAlertText()}`;
+        }
+      }
+      const driver = new (CustomDriver as any)({});
+      sandbox.stub(driver, 'isWebContext').returns(false);
+      sandbox.stub(driver, 'proxyCommand').resolves('hello');
+      assert.strictEqual(await driver.getAlertText(), 'custom:hello');
+    });
+  });
+
   describe('installOtherApps', function () {
     let driver: InstanceType<typeof XCUITestDriver>;
 

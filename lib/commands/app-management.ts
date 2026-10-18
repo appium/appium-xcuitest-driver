@@ -11,6 +11,27 @@ import {SUPPORTED_EXTENSIONS} from './constants.js';
 import type {AppState} from './enum.js';
 import {checkAutInstallationState, onDownloadApp, onPostConfigureApp, requireRealDevice} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileInstallApp(...args: Parameters<typeof mobileInstallApp>): ReturnType<typeof mobileInstallApp>;
+    mobileIsAppInstalled(...args: Parameters<typeof mobileIsAppInstalled>): ReturnType<typeof mobileIsAppInstalled>;
+    mobileRemoveApp(...args: Parameters<typeof mobileRemoveApp>): ReturnType<typeof mobileRemoveApp>;
+    mobileLaunchApp(...args: Parameters<typeof mobileLaunchApp>): ReturnType<typeof mobileLaunchApp>;
+    mobileTerminateApp(...args: Parameters<typeof mobileTerminateApp>): ReturnType<typeof mobileTerminateApp>;
+    mobileActivateApp(...args: Parameters<typeof mobileActivateApp>): ReturnType<typeof mobileActivateApp>;
+    mobileKillApp(...args: Parameters<typeof mobileKillApp>): ReturnType<typeof mobileKillApp>;
+    mobileQueryAppState(...args: Parameters<typeof mobileQueryAppState>): ReturnType<typeof mobileQueryAppState>;
+    installApp(...args: Parameters<typeof installApp>): ReturnType<typeof installApp>;
+    activateApp(...args: Parameters<typeof activateApp>): ReturnType<typeof activateApp>;
+    isAppInstalled(...args: Parameters<typeof isAppInstalled>): ReturnType<typeof isAppInstalled>;
+    terminateApp(...args: Parameters<typeof terminateApp>): ReturnType<typeof terminateApp>;
+    queryAppState(...args: Parameters<typeof queryAppState>): ReturnType<typeof queryAppState>;
+    mobileListApps(...args: Parameters<typeof mobileListApps>): ReturnType<typeof mobileListApps>;
+    mobileClearApp(...args: Parameters<typeof mobileClearApp>): ReturnType<typeof mobileClearApp>;
+    background(...args: Parameters<typeof background>): ReturnType<typeof background>;
+  }
+}
+
 /**
  * Installs the given application to the device under test.
  *

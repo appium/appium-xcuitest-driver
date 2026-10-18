@@ -8,6 +8,26 @@ import {isEmpty, toErrorMessage, withoutImplicitWait} from '../utils/index.js';
 import {requireWebContext} from './helpers/index.js';
 import type {AtomsElement} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    clickWebCoords(...args: Parameters<typeof clickWebCoords>): ReturnType<typeof clickWebCoords>;
+    nativeWebTap(...args: Parameters<typeof nativeWebTap>): ReturnType<typeof nativeWebTap>;
+    translateWebCoords(...args: Parameters<typeof translateWebCoords>): ReturnType<typeof translateWebCoords>;
+    mobileCalibrateWebToRealCoordinatesTranslation(
+      ...args: Parameters<typeof mobileCalibrateWebToRealCoordinatesTranslation>
+    ): ReturnType<typeof mobileCalibrateWebToRealCoordinatesTranslation>;
+    getSafariIsIphone(...args: Parameters<typeof getSafariIsIphone>): ReturnType<typeof getSafariIsIphone>;
+    getSafariDeviceSize(...args: Parameters<typeof getSafariDeviceSize>): ReturnType<typeof getSafariDeviceSize>;
+    getSafariIsNotched(...args: Parameters<typeof getSafariIsNotched>): ReturnType<typeof getSafariIsNotched>;
+    getExtraTranslateWebCoordsOffset(
+      ...args: Parameters<typeof getExtraTranslateWebCoordsOffset>
+    ): ReturnType<typeof getExtraTranslateWebCoordsOffset>;
+    getExtraNativeWebTapOffset(
+      ...args: Parameters<typeof getExtraNativeWebTapOffset>
+    ): ReturnType<typeof getExtraNativeWebTapOffset>;
+  }
+}
+
 // Native taps used to fit the calibration transform are placed this many
 // pixels away (in native screen coordinates) from the webview's center point.
 const CALIBRATION_TAP_DELTA_PX = 7;

@@ -2,6 +2,12 @@ import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {DeviceInfo, LockdownInfo} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileGetDeviceInfo(...args: Parameters<typeof mobileGetDeviceInfo>): ReturnType<typeof mobileGetDeviceInfo>;
+  }
+}
+
 /**
  * Returns the miscellaneous information about the device under test.
  *

@@ -4,6 +4,14 @@ import {PermissionService} from './enum.js';
 import {requireSimulator} from './helpers/index.js';
 import type {PermissionState} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileResetPermission(...args: Parameters<typeof mobileResetPermission>): ReturnType<typeof mobileResetPermission>;
+    mobileGetPermission(...args: Parameters<typeof mobileGetPermission>): ReturnType<typeof mobileGetPermission>;
+    mobileSetPermissions(...args: Parameters<typeof mobileSetPermissions>): ReturnType<typeof mobileSetPermissions>;
+  }
+}
+
 /**
  * Resets the given permission for the active application under test.
  * Works for both Simulator and real devices using Xcode SDK 11.4+

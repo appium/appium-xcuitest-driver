@@ -4,6 +4,12 @@ import {exec} from 'teen_process';
 import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    mobileSimctl(...args: Parameters<typeof mobileSimctl>): ReturnType<typeof mobileSimctl>;
+  }
+}
+
 /**
  * List of subcommands for `simctl` we provide as mobile simctl command.
  * They accept 'device' target.

@@ -5,6 +5,13 @@ import type {XCUITestDriver} from '../driver.js';
 import {isEmpty} from '../utils/index.js';
 import type {SourceFormat} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getPageSource(...args: Parameters<typeof getPageSource>): ReturnType<typeof getPageSource>;
+    mobileGetSource(...args: Parameters<typeof mobileGetSource>): ReturnType<typeof mobileGetSource>;
+  }
+}
+
 const APPIUM_AUT_TAG = 'AppiumAUT';
 
 /**

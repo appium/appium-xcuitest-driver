@@ -2,6 +2,13 @@ import {PasteboardClient} from '../device/pasteboard-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import {requireRealDevice} from './helpers/index.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    setClipboard(...args: Parameters<typeof setClipboard>): ReturnType<typeof setClipboard>;
+    getClipboard(...args: Parameters<typeof getClipboard>): ReturnType<typeof getClipboard>;
+  }
+}
+
 /**
  * Sets the primary clipboard's content on the device under test.
  *

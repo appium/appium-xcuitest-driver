@@ -8,6 +8,16 @@ import {supportsApiLevel17} from '../utils/index.js';
 import {AuthorizationStatus} from './enum.js';
 import type {LocationWithAltitude, WDALocationInfo} from './types.js';
 
+declare module '../driver.js' {
+  interface XCUITestDriver {
+    getGeoLocation(...args: Parameters<typeof getGeoLocation>): ReturnType<typeof getGeoLocation>;
+    setGeoLocation(...args: Parameters<typeof setGeoLocation>): ReturnType<typeof setGeoLocation>;
+    mobileResetLocationService(
+      ...args: Parameters<typeof mobileResetLocationService>
+    ): ReturnType<typeof mobileResetLocationService>;
+  }
+}
+
 /**
  * Returns the geographic location of the device under test.
  *
