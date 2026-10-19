@@ -47,12 +47,6 @@ describe('timeouts commands', function () {
   });
 
   describe('setPageLoadTimeout', function () {
-    it('is reachable through the base timeouts() command with a W3C pageLoad value', async function () {
-      await driver.timeouts(undefined, undefined, undefined, 6000);
-      assert.strictEqual(driver.pageLoadMs, 6000);
-      assert.strictEqual((await driver.getTimeouts()).pageLoad, 6000);
-    });
-
     it('gives the driver and a started automation session 1 h for a W3C null page load timeout', async function () {
       (driver as any)._remote = {automationSession: {isStarted: true, pageLoadTimeoutMs: 0}};
       driver.setPageLoadTimeout(null);
@@ -61,13 +55,24 @@ describe('timeouts commands', function () {
       assert.strictEqual((driver as any)._remote.automationSession.pageLoadTimeoutMs, 3600000);
       assert.strictEqual((await driver.getTimeouts()).pageLoad, null);
     });
+
+    it('is reachable through the base timeouts() command with a W3C pageLoad value', async function () {
+      await driver.timeouts(undefined, undefined, undefined, 6000);
+      assert.strictEqual(driver.pageLoadMs, 6000);
+      assert.strictEqual((await driver.getTimeouts()).pageLoad, 6000);
+    });
   });
 
   describe('setImplicitWait', function () {
-    it('gives a started automation session 0 for a W3C null implicit wait', function () {
-      (driver as any)._remote = {automationSession: {isStarted: true, implicitWaitTimeoutMs: 5}};
+    it('preserves a null driver timeout and uses zero for the automation session', async function () {
+      const session = {isStarted: true, implicitWaitTimeoutMs: 1234};
+      (driver as any)._remote = {automationSession: session};
       driver.setImplicitWait(null);
-      assert.strictEqual((driver as any)._remote.automationSession.implicitWaitTimeoutMs, 0);
+      assert.strictEqual((await driver.getTimeouts()).implicit, null);
+      assert.strictEqual(session.implicitWaitTimeoutMs, 0);
+      driver.setImplicitWait(1234);
+      assert.strictEqual((await driver.getTimeouts()).implicit, 1234);
+      assert.strictEqual(session.implicitWaitTimeoutMs, 1234);
     });
   });
 

@@ -27,10 +27,6 @@ export const desiredCapConstraints = {
   bundleId: {
     isString: true,
   },
-  // no longer a base capability in Appium 4 (appium/appium#22950)
-  autoLaunch: {
-    isBoolean: true,
-  },
   udid: {
     isString: true,
   },
