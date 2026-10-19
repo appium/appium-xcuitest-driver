@@ -217,7 +217,7 @@ export async function mobileScroll(
     params.name = name;
   } else if (direction) {
     if (!SUPPORTED_GESTURE_DIRECTIONS.includes(String(direction).toLowerCase() as any)) {
-      throw new errors.InvalidArgumentError(`'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`);
+      throw new errors.InvalidArgumentError(`'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS.join(', ')}`);
     }
     params.direction = direction;
     // we can also optionally pass a distance which appears to be a ratio of
@@ -254,7 +254,7 @@ export async function mobileSwipe(
   elementId?: Element | string,
 ): Promise<void> {
   if (!SUPPORTED_GESTURE_DIRECTIONS.includes(String(direction).toLowerCase() as any)) {
-    throw new errors.InvalidArgumentError(`'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`);
+    throw new errors.InvalidArgumentError(`'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS.join(', ')}`);
   }
   const params: {direction: Direction; velocity?: number} = {direction};
   if (velocity != null) {
@@ -506,7 +506,7 @@ export async function mobileTapWithNumberOfTaps(
   this: XCUITestDriver,
   numberOfTouches: number = 1,
   numberOfTaps: number = 1,
-  elementId: Element | string | undefined = undefined,
+  elementId?: Element | string,
 ): Promise<void> {
   const endpoint = elementId
     ? `/wda/element/${util.unwrapElement(elementId)}/tapWithNumberOfTaps`
