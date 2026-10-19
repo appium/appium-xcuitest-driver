@@ -6047,16 +6047,19 @@ explains the difference.</p>
 </tr>
 </tbody>
 </table>
-<p>The display targeted by screenshots and W3C actions, for devices with more than one display.
+<p>Selects the display for screenshots, W3C actions, WDA MJPEG, and new XCTest recordings.
 Use an <code>id</code> returned by <a href="../execute-methods/#mobile-listdisplays"><code>mobile: listDisplays</code></a>.
 Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
 that no display has is an error. Setting it to <code>null</code> goes back to the main display. The value
 is reset for each new session.</p>
 <p>While this setting has a value, screenshots skip the MJPEG stream and use WebDriverAgent first.
-On simulators, if WebDriverAgent capture fails, CoreSim attempts to capture the selected display.
+On simulators, failed WDA captures fall back to CoreSim using the same numeric display ID.
 If that capture also fails, the command returns an error without switching displays.</p>
 <p>When this setting is <code>null</code>, the CoreSim fallback uses its default display. If the default is
 ambiguous, as on Duo, set an explicit display ID to use the fallback.</p>
+<p>WDA MJPEG follows display changes and pauses if the display becomes unavailable.
+XCTest recordings retain their initial display; restart recording to change it.
+<code>mjpegFixOrientation</code> changes orientation, not display selection.</p>
 <p>W3C action coordinates are in points, relative to the selected display in the application's
 current orientation. Page source and element lookup are not affected, because the accessibility
 hierarchy belongs to the application rather than to a display.</p>
@@ -6773,7 +6776,7 @@ not even start/freeze if the app under test is constantly hogging the main threa
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 18, 2026 23:56:35 UTC"><span class="timeago" datetime="2026-10-18T23:56:35+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 18, 2026 23:56:35 UTC">2026-10-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 19, 2026 00:35:52 UTC"><span class="timeago" datetime="2026-10-19T00:35:52+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 19, 2026 00:35:52 UTC">2026-10-19</span>
   </span>
 
     
