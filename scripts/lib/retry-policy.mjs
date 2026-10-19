@@ -123,5 +123,5 @@ export function createDisconnectRetryPolicy({
       jitter,
     });
   }
-  throw new Error(`Invalid disconnect retry strategy: ${strategy}. Expected 'fixed' or 'exponential'.`);
+  throw new Error(`Invalid disconnect retry strategy: ${String(strategy)}. Expected 'fixed' or 'exponential'.`);
 }

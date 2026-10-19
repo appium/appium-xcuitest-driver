@@ -10,6 +10,7 @@ export function compileLodashTemplate(template: string): (params: Record<string,
     lastIndex = match.index + match[0].length;
   }
   parts.push(JSON.stringify(template.slice(lastIndex)));
+  // oxlint-disable-next-line typescript/no-implied-eval -- test-only template compiler
   const fn = new Function('obj', `with (obj) { return ${parts.join(' + ')}; }`);
   return (params) => fn(params) as string;
 }

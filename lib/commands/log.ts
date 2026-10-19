@@ -3,7 +3,7 @@ import type {EventEmitter} from 'node:events';
 import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver.js';
-import WebSocket, {WebSocketServer} from 'ws';
+import {WebSocket, WebSocketServer} from 'ws';
 
 import {toLogEntry} from '../device/log/helpers.js';
 import {IOSCrashLog} from '../device/log/ios-crash-log.js';
@@ -125,7 +125,9 @@ export async function extractLogs(
         `to the 'appium:${LOG_NAMES_TO_CAPABILITY_NAMES_MAP[logType]}' capability.`,
     );
   }
-  throw new Error(`No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES)}.`);
+  throw new Error(
+    `No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES).join(', ')}.`,
+  );
 }
 
 /**
@@ -256,7 +258,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       const remoteIp = isEmpty(req.headers['x-forwarded-for'])
         ? req.connection?.remoteAddress
         : req.headers['x-forwarded-for'];
-      this.log.debug(`Established a new system logs listener web socket connection from ${remoteIp}`);
+      this.log.debug(`Established a new system logs listener web socket connection from ${String(remoteIp)}`);
     } else {
       this.log.debug('Established a new system logs listener web socket connection');
     }

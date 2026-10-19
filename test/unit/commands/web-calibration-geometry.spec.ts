@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+import {runInNewContext} from 'node:vm';
 
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('web calibration native geometry', () => {
-  for (const change of ['position', 'size', 'display', 'reset', 'unchanged']) {
+  for (const change of ['position', 'size', 'display', 'reset', 'unchanged', 'null timeout']) {
     it(`should handle ${change} with an unchanged CSS viewport`, async () => {
       const driver = new XCUITestDriver({} as any);
       driver.curContext = 'WEBVIEW_same';
@@ -51,7 +52,8 @@ describe('web calibration native geometry', () => {
         if (change === 'reset') {
           await driver.updateSettings({currentDisplayId: 3});
         }
-        driver.implicitWaitMs = 1234;
+        const implicitWaitMs = change === 'null timeout' ? null : 1234;
+        driver.implicitWaitMs = implicitWaitMs;
         assert.deepEqual(await driver.translateWebCoords(10, 10), {x: 30, y: 60});
         assert.equal(tap.callCount, 2);
         if (change === 'position') {
@@ -67,8 +69,8 @@ describe('web calibration native geometry', () => {
           await driver.updateSettings({currentDisplayId: null});
         }
         assert.deepEqual(await driver.translateWebCoords(10, 10), {x: rect.x + 10, y: rect.y + 10});
-        assert.equal(tap.callCount, change === 'unchanged' ? 2 : 4);
-        assert.equal(driver.implicitWaitMs, 1234);
+        assert.equal(tap.callCount, ['unchanged', 'null timeout'].includes(change) ? 2 : 4);
+        assert.equal(driver.implicitWaitMs, implicitWaitMs);
       } finally {
         sandbox.restore();
       }
@@ -177,4 +179,85 @@ describe('native web tap atom requests', () => {
       sandbox.restore();
     }
   });
+});
+
+describe('web calibration zoom', () => {
+  for (const zoom of [0.8, 1, 1.25, 2]) {
+    for (const inFrame of [false, true]) {
+      it(`applies the fitted ${zoom}x transform with iframe=${inFrame}`, async () => {
+        const driver = new XCUITestDriver({} as any);
+        driver.curContext = 'WEBVIEW_zoom';
+        driver.curWebFrames = inFrame ? ['frame'] : [];
+        const rect = {x: 20, y: 50, width: 400, height: 600};
+        const frame = {crossOrigin: false, offsetX: 30, offsetY: 40};
+        const state = {
+          innerWidth: 400 / zoom,
+          innerHeight: 600 / zoom,
+          outerWidth: 400,
+          outerHeight: 600,
+          visualViewportWidth: 400 / zoom,
+          visualViewportHeight: 600 / zoom,
+          visualViewportOffsetLeft: 0,
+          visualViewportOffsetTop: 0,
+          visualViewportScale: zoom,
+        };
+        // A fixed overlay may have a nonzero client rect after visual-viewport panning.
+        const overlayRect = {left: -15, top: -80};
+        const page: any = {};
+        let onClick!: (event: {clientX: number; clientY: number}) => void;
+        const overlay = {
+          style: {},
+          setAttribute() {},
+          remove() {},
+          getBoundingClientRect: () => overlayRect,
+          contentDocument: {
+            addEventListener: (_name: string, listener: typeof onClick) => {
+              onClick = listener;
+            },
+          },
+        };
+        const document = {createElement: () => overlay, body: {appendChild() {}}};
+        const sandbox = sinon.createSandbox();
+        try {
+          sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+          sandbox
+            .stub(driver, 'findNativeElementOrElements')
+            .resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+          sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+          sandbox.stub(driver, 'execute').resolves(frame);
+          sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+            onClick({clientX: (x - rect.x) / zoom - overlayRect.left, clientY: (y - rect.y) / zoom - overlayRect.top});
+          });
+          driver._remote = {
+            executeAtom: async () => true,
+            execute: async (script: string) => {
+              if (script.includes('createElement')) {
+                runInNewContext(script, {window: page, document});
+                return;
+              }
+              if (script.includes('return window.__appiumCalibrationTaps')) {
+                return page.__appiumCalibrationTaps;
+              }
+              return state;
+            },
+          } as any;
+          // Exercise real calibration and its cached transform, with nonzero offsets.
+          for (const point of [
+            {x: 100, y: 100},
+            {x: 140, y: 180},
+          ]) {
+            const actual = await driver.translateWebCoords(point.x, point.y);
+            const expected = {
+              x: rect.x + (point.x + (inFrame ? frame.offsetX : 0)) * zoom,
+              y: rect.y + (point.y + (inFrame ? frame.offsetY : 0)) * zoom,
+            };
+            assert.ok(Math.abs(actual.x - expected.x) < 1e-8, JSON.stringify({actual, expected}));
+            assert.ok(Math.abs(actual.y - expected.y) < 1e-8, JSON.stringify({actual, expected}));
+          }
+        } finally {
+          sandbox.restore();
+        }
+      });
+    }
+  }
 });

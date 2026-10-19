@@ -554,7 +554,7 @@ async function downloadIpa(driver: XCUITestDriver, stream: Readable, headers: HT
       if (!isEmpty(matchedPaths)) {
         driver.log.debug(
           `Found ${util.pluralize(`${IPA_EXT} application`, matchedPaths.length, true)} in ` +
-            `'${path.basename(rootDir)}': ${matchedPaths}`,
+            `'${path.basename(rootDir)}': ${matchedPaths.join(', ')}`,
         );
       }
       for (const matchedPath of matchedPaths) {
@@ -713,7 +713,7 @@ async function unzipApp(
   } else {
     driver.log.debug(
       `Found ${util.pluralize('bundle', matchedPaths.length, true)} in ` +
-        `'${path.basename(rootDir)}': ${matchedPaths}`,
+        `'${path.basename(rootDir)}': ${matchedPaths.join(', ')}`,
     );
   }
   try {

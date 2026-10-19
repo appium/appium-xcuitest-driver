@@ -67,7 +67,7 @@ export class AppTerminationClient {
         return {terminated: false, reason: 'not_running'};
       }
       const executableName = apps[bundleId].CFBundleExecutable;
-      this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
+      this.log.debug(`The executable name for the bundle id '${bundleId}' was '${String(executableName)}'`);
       if (supportsApiLevel17(this.platformVersion)) {
         if (process.platform !== 'darwin') {
           return {
@@ -78,7 +78,7 @@ export class AppTerminationClient {
         }
         this.log.debug(`Calling devicectl to kill the process`);
         const pids = (await this.devicectl.listProcesses())
-          .filter(({executable}) => executable.endsWith(`/${executableName}`))
+          .filter(({executable}) => executable.endsWith(`/${String(executableName)}`))
           .map(({processIdentifier}) => processIdentifier);
         if (isEmpty(pids)) {
           return {terminated: false, reason: 'not_running'};
