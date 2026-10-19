@@ -1507,7 +1507,6 @@ Object.assign(XCUITestDriver.prototype, {
   cacheWebElement: webCommands.cacheWebElement,
   cacheWebElements: webCommands.cacheWebElements,
   executeAtom: webCommands.executeAtom,
-  executeAtomAsync: webCommands.executeAtomAsync,
   getAtomsElement: webCommands.getAtomsElement,
   convertElementsForAtoms: webCommands.convertElementsForAtoms,
   getElementId: webCommands.getElementId,

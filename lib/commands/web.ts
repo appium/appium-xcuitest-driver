@@ -32,9 +32,6 @@ declare module '../driver.js' {
     cacheWebElement(...args: Parameters<typeof cacheWebElement>): ReturnType<typeof cacheWebElement>;
     cacheWebElements(...args: Parameters<typeof cacheWebElements>): ReturnType<typeof cacheWebElements>;
     executeAtom<T = any>(...args: Parameters<typeof executeAtom<T>>): ReturnType<typeof executeAtom<T>>;
-    executeAtomAsync<T = unknown>(
-      ...args: Parameters<typeof executeAtomAsync<T>>
-    ): ReturnType<typeof executeAtomAsync<T>>;
     getAtomsElement<S extends string = string>(
       ...args: Parameters<typeof getAtomsElement<S>>
     ): ReturnType<typeof getAtomsElement<S>>;
@@ -307,18 +304,6 @@ export async function executeAtom<T = any>(
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   const promise = this.remote.executeAtom(atom, args, frames);
   return await this.waitForAtom(promise);
-}
-
-/**
- * Executes a Selenium atom script asynchronously.
- *
- * @template T - Expected result type; defaults to `unknown` for callers that don't need it
- * @param atom - Name of the atom to execute
- * @param args - Arguments to pass to the atom
- */
-export async function executeAtomAsync<T = unknown>(this: XCUITestDriver, atom: AtomName, args: unknown[]): Promise<T> {
-  const promise = this.remote.executeAtomAsync(atom, args, this.curWebFrames);
-  return await this.waitForAtom<T>(promise);
 }
 
 /**
