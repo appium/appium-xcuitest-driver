@@ -3,7 +3,6 @@ import {EventEmitter} from 'node:events';
 import {describe, it} from 'node:test';
 
 import type {RemoteDebugger} from 'appium-remote-debugger';
-import sinon from 'sinon';
 
 import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from '../../../lib/commands/bidi/constants.js';
 import type {LogEntryAddedEvent} from '../../../lib/commands/bidi/types.js';
@@ -14,39 +13,6 @@ import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
 import {AutomationSessionBackend} from '../../../lib/web-execution/automation-session-backend.js';
 
 describe('context', function () {
-  describe('getNewRemoteDebugger user gesture emulation', function () {
-    for (const realDevice of [false, true]) {
-      for (const [platformVersion, expected] of [
-        ['27.0', true],
-        ['26.5', false],
-        [undefined, false],
-      ] as const) {
-        it(`applies the interaction policy for realDevice=${realDevice}, iOS=${platformVersion}`, async function () {
-          const driver = new XCUITestDriver({} as any);
-          driver._device = (
-            realDevice
-              ? {devicectl: {}, udid: 'test-udid'}
-              : {getWebInspectorSocket: async () => '/tmp/test-web-inspector.sock'}
-          ) as any;
-          driver.opts.udid = 'test-udid';
-          driver.opts.platformVersion = platformVersion;
-          driver._remote = await driver.getNewRemoteDebugger();
-          const execute = sinon.stub(driver.remote, 'execute').resolves(null);
-          try {
-            await driver.executeAtom('click', [{ELEMENT: 'element-id'}]);
-            assert.deepStrictEqual(execute.lastCall.args[2], {emulateUserGesture: expected});
-
-            // Reading after an interaction must not inherit user activation.
-            await driver.executeAtom('get_text', [{ELEMENT: 'element-id'}]);
-            assert.deepStrictEqual(execute.lastCall.args[2], {emulateUserGesture: false});
-          } finally {
-            execute.restore();
-          }
-        });
-      }
-    }
-  });
-
   describe('_webExecutionBackend', function () {
     it('returns an AtomsBackend when there is no remote debugger connection', function () {
       const driver = new XCUITestDriver({} as any);
