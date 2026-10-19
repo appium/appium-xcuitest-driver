@@ -7,7 +7,7 @@ import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('web calibration native geometry', () => {
-  for (const change of ['position', 'size', 'display', 'reset', 'unchanged']) {
+  for (const change of ['position', 'size', 'display', 'reset', 'unchanged', 'null timeout']) {
     it(`should handle ${change} with an unchanged CSS viewport`, async () => {
       const driver = new XCUITestDriver({} as any);
       driver.curContext = 'WEBVIEW_same';
@@ -52,7 +52,8 @@ describe('web calibration native geometry', () => {
         if (change === 'reset') {
           await driver.updateSettings({currentDisplayId: 3});
         }
-        driver.implicitWaitMs = 1234;
+        const implicitWaitMs = change === 'null timeout' ? null : 1234;
+        driver.implicitWaitMs = implicitWaitMs;
         assert.deepEqual(await driver.translateWebCoords(10, 10), {x: 30, y: 60});
         assert.equal(tap.callCount, 2);
         if (change === 'position') {
@@ -68,8 +69,8 @@ describe('web calibration native geometry', () => {
           await driver.updateSettings({currentDisplayId: null});
         }
         assert.deepEqual(await driver.translateWebCoords(10, 10), {x: rect.x + 10, y: rect.y + 10});
-        assert.equal(tap.callCount, change === 'unchanged' ? 2 : 4);
-        assert.equal(driver.implicitWaitMs, 1234);
+        assert.equal(tap.callCount, ['unchanged', 'null timeout'].includes(change) ? 2 : 4);
+        assert.equal(driver.implicitWaitMs, implicitWaitMs);
       } finally {
         sandbox.restore();
       }
