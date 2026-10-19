@@ -1,6 +1,6 @@
 {
   "name": "appium-xcuitest-driver",
-  "version": "12.17.3",
+  "version": "12.19.0",
   "description": "Appium driver for iOS using XCUITest for backend",
   "keywords": [
     "appium",
@@ -74,9 +74,9 @@
     "@appium/strongbox": "^2.0.0",
     "@colors/colors": "^1.6.0",
     "appium-ios-device": "^3.1.24",
-    "appium-ios-simulator": "^10.7.0",
+    "appium-ios-simulator": "^10.9.1",
     "appium-remote-debugger": "^17.7.3",
-    "appium-webdriveragent": "^16.14.2",
+    "appium-webdriveragent": "^16.15.0",
     "appium-xcode": "^7.1.1",
     "async-lock": "^1.4.0",
     "asyncbox": "^6.4.3",

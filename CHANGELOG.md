@@ -1,3 +1,38 @@
+## [12.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.3...v12.19.0) (2026-10-18)
+
+### Features
+
+* capture selected simulator displays through CoreSim fallback ([#3030](https://github.com/appium/appium-xcuitest-driver/issues/3030)) ([80b341c](https://github.com/appium/appium-xcuitest-driver/commit/80b341c929b26a3ac278089a5fd1c3af8ca9a943))
+
+### Bug Fixes
+
+* preserve recording padding when MJPEG frame geometry changes ([#3048](https://github.com/appium/appium-xcuitest-driver/issues/3048)) ([c860f30](https://github.com/appium/appium-xcuitest-driver/commit/c860f308b23c29e33d2bfa37773e691045c15c4c))
+* retain and clean up screen recorder after stop failure ([#3049](https://github.com/appium/appium-xcuitest-driver/issues/3049)) ([a4b262a](https://github.com/appium/appium-xcuitest-driver/commit/a4b262a642da4e5f9a6a83a99959bdba9f7dce8c))
+
+## [12.18.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.2...v12.18.3) (2026-10-18)
+
+### Bug Fixes
+
+* preserve calibrated scale and viewport origin for native web taps ([#3046](https://github.com/appium/appium-xcuitest-driver/issues/3046)) ([e62b338](https://github.com/appium/appium-xcuitest-driver/commit/e62b338a21f6f8ce401d93c81801e42e26047a45))
+
+## [12.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.1...v12.18.2) (2026-10-18)
+
+### Bug Fixes
+
+* resolve WDA downloads from the monorepo release ([#3050](https://github.com/appium/appium-xcuitest-driver/issues/3050)) ([0e990dc](https://github.com/appium/appium-xcuitest-driver/commit/0e990dcf45fddcb2b635bd9dad7cd278c066f735))
+
+## [12.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.0...v12.18.1) (2026-10-13)
+
+### Bug Fixes
+
+* capture the whole element in web element screenshots ([#3040](https://github.com/appium/appium-xcuitest-driver/issues/3040)) ([5614339](https://github.com/appium/appium-xcuitest-driver/commit/561433953b5bfa940702917c9089bc1a5a6e1db8))
+
+## [12.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.3...v12.18.0) (2026-10-13)
+
+### Features
+
+* add asAppUnderTest flag in mobile: launchApp command ([#3004](https://github.com/appium/appium-xcuitest-driver/issues/3004)) ([7d1d611](https://github.com/appium/appium-xcuitest-driver/commit/7d1d6115cc1bb046071c792f47997d0deeb389cb))
+
 ## [12.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.17.2...v12.17.3) (2026-10-12)
 
 ### Bug Fixes

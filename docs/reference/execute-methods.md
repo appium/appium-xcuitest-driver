@@ -280,6 +280,13 @@ XCTest lets you to start an application process by specifying [Language and Loca
 Check the [Testing Specific Languages and Regions part of the Testing Your Internationalized App](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/TestingYourInternationalApp/TestingYourInternationalApp.html) for more details.
 Make sure to terminate the application before launching it with `arguments` if it is already running.
 
+Set `asAppUnderTest` to `true` to make the launched application the application under test of the current session,
+as if it was launched automatically on session startup. This is useful if the session has been created with
+`appium:autoLaunch` set to `false`. WebDriverAgent then waits for the application to become idle before interacting
+with it, considers system alerts shown over it if the [respectSystemAlerts](./settings.md#respectsystemalerts)
+setting is enabled, reports its unexpected termination as a crash, and terminates it on session quit if
+`appium:shouldTerminateApp` is enabled. The application replaces the current application under test, if any.
+
 === "Java"
 
     ```java
@@ -332,6 +339,7 @@ Name | Type | Required | Description | Example
 bundleId | string | yes | The bundle identifier of the application to be launched | com.mycompany.myapp
 arguments | string&#124;array | no | One or more command line arguments for the app. If the app is already running then this argument is ignored. | ['-s', '-m']
 environment | dict | no | Environment variables mapping for the app. If the app is already running then this argument is ignored. | {'var': 'value'}
+asAppUnderTest | boolean | no | Whether to make the app the application under test of the current session. `false` by default | true
 
 ### mobile: terminateApp
 
