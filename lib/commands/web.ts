@@ -439,16 +439,21 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
   return typeof (await this.getAlertText()) === 'string';
 }
 
-/** The time budget of every atom (`webviewAtomWaitTimeout`). */
-export function getAtomWaitTimeoutMs(driver: XCUITestDriver): number {
-  return typeof driver.opts.webviewAtomWaitTimeout === 'number' && driver.opts.webviewAtomWaitTimeout > 0
-    ? driver.opts.webviewAtomWaitTimeout
+/**
+ * Gives the time budget of every atom.
+ *
+ * @param webviewAtomWaitTimeout - The `webviewAtomWaitTimeout` capability
+ * @returns The capability when it is a positive number, else {@link ATOM_WAIT_TIMEOUT_MS}
+ */
+export function getAtomWaitTimeoutMs(webviewAtomWaitTimeout?: number): number {
+  return typeof webviewAtomWaitTimeout === 'number' && webviewAtomWaitTimeout > 0
+    ? webviewAtomWaitTimeout
     : ATOM_WAIT_TIMEOUT_MS;
 }
 
 /** The script timeout of a user script, at most the atom budget, so that no wait outlives the atom. */
 export function getScriptTimeoutMs(driver: XCUITestDriver): number {
-  return Math.min(limitTimeoutMs(driver.scriptTimeoutMs), getAtomWaitTimeoutMs(driver));
+  return Math.min(limitTimeoutMs(driver.scriptTimeoutMs), getAtomWaitTimeoutMs(driver.opts.webviewAtomWaitTimeout));
 }
 
 /**
@@ -463,7 +468,7 @@ export function getScriptTimeoutMs(driver: XCUITestDriver): number {
 export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Promise<T>): Promise<T> {
   const timer = new timing.Timer().start();
 
-  const atomWaitTimeoutMs = getAtomWaitTimeoutMs(this);
+  const atomWaitTimeoutMs = getAtomWaitTimeoutMs(this.opts.webviewAtomWaitTimeout);
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
