@@ -3,7 +3,7 @@ import {EventEmitter} from 'node:events';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
-import WebSocket from 'ws';
+import {WebSocket} from 'ws';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
 

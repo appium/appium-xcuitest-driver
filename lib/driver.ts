@@ -636,7 +636,7 @@ export class XCUITestDriver
         } catch (err) {
           throw this.log.errorWithException(
             `processArguments must be a JSON format or an object with format {args : [], env : {a:b, c:d}}. ` +
-              `Both environment and argument can be null. Error: ${err}`,
+              `Both environment and argument can be null. Error: ${String(err)}`,
           );
         }
       } else if (isPlainObject(caps.processArguments)) {
