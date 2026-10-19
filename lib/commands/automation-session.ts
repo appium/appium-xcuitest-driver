@@ -38,7 +38,7 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   this._preAutomationSessionContext = this.curContext;
   const session = await this.remote.startAutomationSession();
   session.pageLoadTimeoutMs = this.pageLoadMs;
-  session.scriptTimeoutMs = getScriptTimeoutMs(this);
+  session.scriptTimeoutMs = getScriptTimeoutMs(this.scriptTimeoutMs, this.opts.webviewAtomWaitTimeout);
   // the automation session needs a number: null (no limit in BaseDriver) gives 0
   session.implicitWaitTimeoutMs = this.implicitWaitMs ?? 0;
 }

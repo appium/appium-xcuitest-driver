@@ -359,7 +359,7 @@ export class AtomsBackend implements WebExecutionBackend {
     const convertedArgs = this.driver.convertElementsForAtoms(args);
     const promise = this.driver.remote.executeAtomAsync(
       'execute_async_script',
-      [script, convertedArgs, getScriptTimeoutMs(this.driver)],
+      [script, convertedArgs, getScriptTimeoutMs(this.driver.scriptTimeoutMs, this.driver.opts.webviewAtomWaitTimeout)],
       this.driver.curWebFrames,
     );
     return this.driver.cacheWebElements(await this.driver.waitForAtom(promise)) as T;

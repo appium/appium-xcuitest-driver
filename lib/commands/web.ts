@@ -306,7 +306,9 @@ export async function executeAtom<T = any>(
   opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const atomOpts = opts.isUserScript ? {timeoutMs: getScriptTimeoutMs(this)} : {};
+  const atomOpts = opts.isUserScript
+    ? {timeoutMs: getScriptTimeoutMs(this.scriptTimeoutMs, this.opts.webviewAtomWaitTimeout)}
+    : {};
   return await this.waitForAtom(this.remote.executeAtom(atom, args, frames, atomOpts));
 }
 
@@ -451,9 +453,15 @@ export function getAtomWaitTimeoutMs(webviewAtomWaitTimeout?: number): number {
     : ATOM_WAIT_TIMEOUT_MS;
 }
 
-/** The script timeout of a user script, at most the atom budget, so that no wait outlives the atom. */
-export function getScriptTimeoutMs(driver: XCUITestDriver): number {
-  return Math.min(limitTimeoutMs(driver.scriptTimeoutMs), getAtomWaitTimeoutMs(driver.opts.webviewAtomWaitTimeout));
+/**
+ * Gives the script timeout of a user script, at most the atom budget, so that no wait outlives the atom.
+ *
+ * @param scriptTimeoutMs - The script timeout of the session (`null`: no limit)
+ * @param webviewAtomWaitTimeout - The `webviewAtomWaitTimeout` capability
+ * @returns The script timeout to apply
+ */
+export function getScriptTimeoutMs(scriptTimeoutMs: number | null, webviewAtomWaitTimeout?: number): number {
+  return Math.min(limitTimeoutMs(scriptTimeoutMs), getAtomWaitTimeoutMs(webviewAtomWaitTimeout));
 }
 
 /**

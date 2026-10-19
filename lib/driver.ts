@@ -613,7 +613,10 @@ export class XCUITestDriver
    */
   override setScriptTimeout(ms: TimeoutValue): void {
     super.setScriptTimeout(ms);
-    this.syncAutomationSessionTimeout('scriptTimeoutMs', webCommands.getScriptTimeoutMs(this));
+    this.syncAutomationSessionTimeout(
+      'scriptTimeoutMs',
+      webCommands.getScriptTimeoutMs(this.scriptTimeoutMs, this.opts.webviewAtomWaitTimeout),
+    );
   }
 
   /**
