@@ -2,7 +2,7 @@ import {WDA_BASE_URL} from 'appium-webdriveragent';
 import type {WDASettings} from 'appium-webdriveragent';
 import {fs, tempDir, logger, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
-import {SubProcess} from 'teen_process';
+import {exec, SubProcess} from 'teen_process';
 
 import type {XCUITestDriver} from '../driver.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
@@ -196,21 +196,57 @@ export class ScreenRecorder {
     // Raw MJPEG has no timestamps; override ffmpeg's 25 fps default for every codec.
     args.push('-r', String(videoFps || DEFAULT_FPS));
     const useAutomaticCanvas = !videoFilters && !videoScale && !hardwareAcceleration;
+    const parsed = new URL(remoteUrl);
+    const streamUrl = `${parsed.protocol}//${parsed.hostname}:${remotePort}`;
+    let canvas: {width: number; height: number} | undefined;
     if (useAutomaticCanvas) {
-      // Preserve the first frame's filter geometry across input size changes.
-      // Let ffmpeg establish the canvas without a separate stream probe.
+      // pad must recalculate its offsets when frames change size, but its canvas
+      // must remain fixed. Probe with ffmpeg itself to support raw and multipart
+      // MJPEG without requiring ffprobe or an optional image library.
+      const {stdout} = await exec(
+        FFMPEG_BINARY,
+        [
+          '-v',
+          'error',
+          '-f',
+          'mjpeg',
+          '-probesize',
+          '32',
+          '-analyzeduration',
+          '0',
+          '-i',
+          streamUrl,
+          '-frames:v',
+          '1',
+          '-c:v',
+          'png',
+          '-f',
+          'image2pipe',
+          'pipe:1',
+        ],
+        {isBuffer: true, timeout: Math.min(timeoutMs, 10000), maxStdoutBufferSize: 32 * 1024 * 1024},
+      );
+      if (stdout.length < 24 || !stdout.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) {
+        throw new Error('Cannot determine the recording canvas from the first MJPEG frame');
+      }
+      canvas = {
+        width: Math.ceil(stdout.readUInt32BE(16) / 2) * 2,
+        height: Math.ceil(stdout.readUInt32BE(20) / 2) * 2,
+      };
+      if (!canvas.width || !canvas.height) {
+        throw new Error('The first MJPEG frame has invalid dimensions');
+      }
       args.push('-reinit_filter', '0');
     }
-    const parsed = new URL(remoteUrl);
-    args.push('-i', `${parsed.protocol}//${parsed.hostname}:${remotePort}`);
+    args.push('-i', streamUrl);
 
     if (videoFilters || videoScale) {
       args.push('-vf', videoFilters || `${scaleFilterHWAccel || 'scale'}=${videoScale}`);
-    } else if (useAutomaticCanvas) {
+    } else if (canvas) {
       args.push(
         '-vf',
-        'scale=ceil(iw/2)*2:ceil(ih/2)*2:force_original_aspect_ratio=decrease:force_divisible_by=2,' +
-          'pad=ceil(iw/2)*2:ceil(ih/2)*2:(ow-iw)/2:(oh-ih)/2,setsar=1',
+        `scale=${canvas.width}:${canvas.height}:force_original_aspect_ratio=decrease:force_divisible_by=2:eval=frame,` +
+          `pad=${canvas.width}:${canvas.height}:(ow-iw)/2:(oh-ih)/2:eval=frame,setsar=1`,
       );
     }
 
