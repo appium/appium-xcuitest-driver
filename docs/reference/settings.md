@@ -104,18 +104,22 @@ explains the difference.
 | -- | -- |
 | `int` or `null` | `null` (the main display) |
 
-The display targeted by screenshots and W3C actions, for devices with more than one display.
+Selects the display for screenshots, W3C actions, WDA MJPEG, and new XCTest recordings.
 Use an `id` returned by [`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays).
 Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
 that no display has is an error. Setting it to `null` goes back to the main display. The value
 is reset for each new session.
 
 While this setting has a value, screenshots skip the MJPEG stream and use WebDriverAgent first.
-On simulators, if WebDriverAgent capture fails, CoreSim attempts to capture the selected display.
+On simulators, failed WDA captures fall back to CoreSim using the same numeric display ID.
 If that capture also fails, the command returns an error without switching displays.
 
 When this setting is `null`, the CoreSim fallback uses its default display. If the default is
 ambiguous, as on Duo, set an explicit display ID to use the fallback.
+
+WDA MJPEG follows display changes and pauses if the display becomes unavailable.
+XCTest recordings retain their initial display; restart recording to change it.
+`mjpegFixOrientation` changes orientation, not display selection.
 
 W3C action coordinates are in points, relative to the selected display in the application's
 current orientation. Page source and element lookup are not affected, because the accessibility
