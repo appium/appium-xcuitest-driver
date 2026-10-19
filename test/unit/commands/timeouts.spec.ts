@@ -42,6 +42,19 @@ describe('timeouts commands', function () {
     });
   });
 
+  describe('setImplicitWait', function () {
+    it('preserves a null driver timeout and uses zero for the automation session', async function () {
+      const session = {isStarted: true, implicitWaitTimeoutMs: 1234};
+      (driver as any)._remote = {automationSession: session};
+      driver.setImplicitWait(null);
+      assert.strictEqual((await driver.getTimeouts()).implicit, null);
+      assert.strictEqual(session.implicitWaitTimeoutMs, 0);
+      driver.setImplicitWait(1234);
+      assert.strictEqual((await driver.getTimeouts()).implicit, 1234);
+      assert.strictEqual(session.implicitWaitTimeoutMs, 1234);
+    });
+  });
+
   describe('initial (post-construction) defaults', function () {
     // Regression test: GET /timeouts used to report BaseDriver's own stock defaults
     // (script: 30000, pageLoad: 300000) while pageLoadMs/asyncWaitMs (what actually

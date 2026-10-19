@@ -36,6 +36,9 @@ export const desiredCapConstraints = {
   autoWebview: {
     isBoolean: true,
   },
+  autoLaunch: {
+    isBoolean: true,
+  },
   autoAcceptAlerts: {
     isBoolean: true,
   },
