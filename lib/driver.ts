@@ -624,7 +624,7 @@ export class XCUITestDriver
    */
   override setImplicitWait(ms: TimeoutValue): void {
     super.setImplicitWait(ms);
-    // W3C default implicit wait for null
+    // the automation session needs a number: null (no limit in BaseDriver) gives 0
     this.syncAutomationSessionTimeout('implicitWaitTimeoutMs', ms ?? 0);
   }
 

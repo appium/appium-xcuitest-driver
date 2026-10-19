@@ -1,6 +1,6 @@
 import {TimeoutError as AsyncboxTimeoutError, withTimeout as asyncboxWithTimeout} from 'asyncbox';
 
-/** The longest script or page load timeout: the remote debugger also stops a script after 1 h */
+/** The longest script or page load timeout: the remote debugger stops a script after 1 h, and a longer page load is not practical */
 const MAX_TIMEOUT_MS = 60 * 60 * 1000;
 
 /** Limits a script or page load timeout to {@link MAX_TIMEOUT_MS}; W3C `null` (no limit) gives that limit. */

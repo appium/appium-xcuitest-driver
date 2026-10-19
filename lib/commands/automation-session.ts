@@ -39,7 +39,7 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   const session = await this.remote.startAutomationSession();
   session.pageLoadTimeoutMs = this.pageLoadMs;
   session.scriptTimeoutMs = getScriptTimeoutMs(this);
-  // W3C default implicit wait for null
+  // the automation session needs a number: null (no limit in BaseDriver) gives 0
   session.implicitWaitTimeoutMs = this.implicitWaitMs ?? 0;
 }
 
