@@ -65,9 +65,9 @@ the web view context on session initialization by setting the `autoWebview`
 ### Script timeouts
 
 In a web view context, `execute` waits for a returned Promise, and `executeAsync` waits for its
-callback. If a session script timeout is set, they end with `script timeout` after it. All scripts
-also end when the time budget of [`appium:webviewAtomWaitTimeout`](../reference/capabilities.md)
-ends. With `mobile: startAutomationSession`, `execute` does not use these limits.
+callback. If a session script timeout is set and ends before the budget below, they end with
+`script timeout` after it. All scripts also end when the time budget of
+[`appium:webviewAtomWaitTimeout`](../reference/capabilities.md) ends. With `mobile: startAutomationSession`, `execute` does not use these limits.
 
 
 ### Using a native WebKit automation session

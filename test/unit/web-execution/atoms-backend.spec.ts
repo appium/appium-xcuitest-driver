@@ -453,7 +453,7 @@ describe('AtomsBackend', function () {
       assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 120000);
     });
 
-    it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result (no script timeout by default)', async function () {
+    it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result (the budget by default)', async function () {
       const convertStub = sandbox.stub(driver, 'convertElementsForAtoms').returns(['converted']);
       const cacheStub = sandbox.stub(driver, 'cacheWebElements').returns('cached');
       const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves('raw');
