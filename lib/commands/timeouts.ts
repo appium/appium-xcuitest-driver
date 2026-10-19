@@ -1,3 +1,4 @@
+import type {TimeoutValue} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
@@ -62,9 +63,9 @@ export function setScriptTimeout(this: XCUITestDriver, ms: number): void {
  * session (if any) in sync - its implicit wait defaults to `0` independently of the rest of the
  * driver, so it would otherwise silently diverge from what the client configured.
  *
- * @param ms - Timeout in milliseconds
+ * @param ms - Timeout in milliseconds, or null for no limit in BaseDriver
  */
-export function setImplicitWait(this: XCUITestDriver, ms: number): void {
+export function setImplicitWait(this: XCUITestDriver, ms: TimeoutValue): void {
   BaseDriver.prototype.setImplicitWait.call(this, ms);
-  syncAutomationSessionTimeout(this, 'implicitWaitTimeoutMs', ms);
+  syncAutomationSessionTimeout(this, 'implicitWaitTimeoutMs', ms ?? 0);
 }
