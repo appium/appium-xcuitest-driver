@@ -67,15 +67,19 @@ describe('ScreenRecorder.interrupt', function () {
     });
     const stop = createSandbox().stub();
     stop.onFirstCall().rejects(new Error('kill failed'));
-    stop.onSecondCall().resolves();
+    stop.onSecondCall().rejects(new Error('kill failed'));
     const mainProcess = {isRunning: true, stop};
+    stop.onThirdCall().callsFake(async () => {
+      mainProcess.isRunning = false;
+    });
     (recorder as any).mainProcess = mainProcess;
 
     assert.strictEqual(await recorder.interrupt(true), false);
     assert.strictEqual((recorder as any).mainProcess, mainProcess);
 
     assert.strictEqual(await recorder.interrupt(true), true);
-    assert.strictEqual(stop.callCount, 2);
+    assert.strictEqual(stop.callCount, 3);
+    assert.deepStrictEqual(stop.args, [['SIGTERM'], ['SIGKILL'], ['SIGTERM']]);
     assert.strictEqual((recorder as any).mainProcess, null);
   });
 });
