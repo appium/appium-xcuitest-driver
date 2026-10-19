@@ -2,7 +2,7 @@ import {WDA_BASE_URL} from 'appium-webdriveragent';
 import type {WDASettings} from 'appium-webdriveragent';
 import {fs, tempDir, logger, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
-import {SubProcess} from 'teen_process';
+import {exec, SubProcess} from 'teen_process';
 
 import type {XCUITestDriver} from '../driver.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
@@ -132,6 +132,7 @@ export class ScreenRecorder {
   private readonly udid: string;
   private mainProcess: SubProcess | null;
   private timeoutHandler: NodeJS.Timeout | null;
+  private stopFailed = false;
 
   constructor(udid: string, log: any, videoPath: string, opts: ScreenRecorderOptions) {
     this.videoPath = videoPath;
@@ -182,21 +183,57 @@ export class ScreenRecorder {
     // Raw MJPEG has no timestamps; override ffmpeg's 25 fps default for every codec.
     args.push('-r', String(videoFps || DEFAULT_FPS));
     const useAutomaticCanvas = !videoFilters && !videoScale && !hardwareAcceleration;
+    const parsed = new URL(remoteUrl);
+    const streamUrl = `${parsed.protocol}//${parsed.hostname}:${remotePort}`;
+    let canvas: {width: number; height: number} | undefined;
     if (useAutomaticCanvas) {
-      // Preserve the first frame's filter geometry across input size changes.
-      // Let ffmpeg establish the canvas without a separate stream probe.
+      // pad must recalculate its offsets when frames change size, but its canvas
+      // must remain fixed. Probe with ffmpeg itself to support raw and multipart
+      // MJPEG without requiring ffprobe or an optional image library.
+      const {stdout} = await exec(
+        FFMPEG_BINARY,
+        [
+          '-v',
+          'error',
+          '-f',
+          'mjpeg',
+          '-probesize',
+          '32',
+          '-analyzeduration',
+          '0',
+          '-i',
+          streamUrl,
+          '-frames:v',
+          '1',
+          '-c:v',
+          'png',
+          '-f',
+          'image2pipe',
+          'pipe:1',
+        ],
+        {isBuffer: true, timeout: Math.min(timeoutMs, 10000), maxStdoutBufferSize: 32 * 1024 * 1024},
+      );
+      if (stdout.length < 24 || !stdout.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) {
+        throw new Error('Cannot determine the recording canvas from the first MJPEG frame');
+      }
+      canvas = {
+        width: Math.ceil(stdout.readUInt32BE(16) / 2) * 2,
+        height: Math.ceil(stdout.readUInt32BE(20) / 2) * 2,
+      };
+      if (!canvas.width || !canvas.height) {
+        throw new Error('The first MJPEG frame has invalid dimensions');
+      }
       args.push('-reinit_filter', '0');
     }
-    const parsed = new URL(remoteUrl);
-    args.push('-i', `${parsed.protocol}//${parsed.hostname}:${remotePort}`);
+    args.push('-i', streamUrl);
 
     if (videoFilters || videoScale) {
       args.push('-vf', videoFilters || `${scaleFilterHWAccel || 'scale'}=${videoScale}`);
-    } else if (useAutomaticCanvas) {
+    } else if (canvas) {
       args.push(
         '-vf',
-        'scale=ceil(iw/2)*2:ceil(ih/2)*2:force_original_aspect_ratio=decrease:force_divisible_by=2,' +
-          'pad=ceil(iw/2)*2:ceil(ih/2)*2:(ow-iw)/2:(oh-ih)/2,setsar=1',
+        `scale=${canvas.width}:${canvas.height}:force_original_aspect_ratio=decrease:force_divisible_by=2:eval=frame,` +
+          `pad=${canvas.width}:${canvas.height}:(ow-iw)/2:(oh-ih)/2:eval=frame,setsar=1`,
       );
     }
 
@@ -256,16 +293,30 @@ export class ScreenRecorder {
       this.timeoutHandler = null;
     }
 
-    if (this.mainProcess?.isRunning) {
-      const interruptPromise = this.mainProcess.stop(force ? 'SIGTERM' : 'SIGINT');
-      this.mainProcess = null;
+    const process = this.mainProcess;
+    if (process?.isRunning) {
       try {
-        await interruptPromise;
+        await process.stop(force ? 'SIGTERM' : 'SIGINT');
       } catch (e: any) {
+        // A disconnected MJPEG source can leave ffmpeg waiting to reconnect. Keep
+        // its handle so cleanup can retry; its MP4 trailer may not be written.
+        this.stopFailed = true;
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
         );
         result = false;
+        if (force && process.isRunning) {
+          try {
+            await process.stop('SIGKILL');
+            result = true;
+          } catch (killError: any) {
+            this.log.warn(`Cannot kill ${FFMPEG_BINARY}. Original error: ${killError.message}`);
+          }
+        }
+      } finally {
+        if (!process.isRunning && this.mainProcess === process) {
+          this.mainProcess = null;
+        }
       }
     }
 
@@ -273,7 +324,10 @@ export class ScreenRecorder {
   }
 
   async finish(): Promise<string> {
-    await this.interrupt();
+    const stopped = await this.interrupt();
+    if (!stopped || this.stopFailed) {
+      throw new Error(`Cannot finalize the screen recording because ${FFMPEG_BINARY} failed to stop gracefully`);
+    }
     return this.videoPath;
   }
 

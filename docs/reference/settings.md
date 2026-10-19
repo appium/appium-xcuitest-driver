@@ -111,9 +111,13 @@ Display IDs are assigned at runtime, so look them up rather than hardcoding them
 that no display has is an error. Setting it to `null` goes back to the main display. The value
 is reset for each new session.
 
-While this setting has a value, screenshot commands capture directly through WebDriverAgent
-rather than using cached MJPEG frames or the main-display simulator fallback. If the selected
-display goes away, screenshots and actions fail rather than falling back to the main display.
+While this setting has a value, screenshots skip the MJPEG stream and use WebDriverAgent first.
+On simulators, if WebDriverAgent capture fails, CoreSim resolves the selected numeric display ID
+and attempts to capture that display.
+If that capture also fails, the command returns an error without switching displays.
+
+When this setting is `null`, the CoreSim fallback uses its default display. If the default is
+ambiguous, as on Duo, set an explicit display ID to use the fallback.
 
 The WDA MJPEG stream follows changes to this setting. A newly started XCTest recording uses
 the selected display, but an already running XCTest recording keeps its original target.

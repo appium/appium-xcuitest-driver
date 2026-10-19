@@ -6,7 +6,7 @@ import {fs} from 'appium/support.js';
 import sinon from 'sinon';
 import * as teenProcess from 'teen_process';
 
-import {MJpegStream} from '../../../lib/commands/helpers/mjpeg.js';
+const probe = sinon.stub();
 
 let commandArgs: string[];
 class FakeProcess extends EventEmitter {
@@ -23,17 +23,21 @@ class FakeProcess extends EventEmitter {
     this.isRunning = false;
   }
 }
-mock.module('teen_process', {namedExports: {...teenProcess, SubProcess: FakeProcess}});
+mock.module('teen_process', {namedExports: {...teenProcess, SubProcess: FakeProcess, exec: probe}});
 const {ScreenRecorder} = await import('../../../lib/commands/recordscreen.js');
 
 describe('recording option compatibility', () => {
-  let probe: sinon.SinonStub;
   let recorder: InstanceType<typeof ScreenRecorder>;
   let warn: sinon.SinonStub;
 
   beforeEach(() => {
     sinon.stub(fs, 'which').resolves('/test/ffmpeg');
-    probe = sinon.stub(MJpegStream.prototype, 'start').resolves();
+    const png = Buffer.alloc(24);
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(png);
+    png.writeUInt32BE(200, 16);
+    png.writeUInt32BE(300, 20);
+    probe.reset();
+    probe.resolves({stdout: png});
     warn = sinon.stub();
   });
   afterEach(async () => {
@@ -73,13 +77,24 @@ describe('recording option compatibility', () => {
     assert.ok(!commandArgs.includes('-reinit_filter'));
   });
 
-  it('lets ffmpeg establish the canvas without opening a separate stream', async () => {
+  it('probes the initial canvas and recalculates padding for each frame', async () => {
     await start();
-    sinon.assert.notCalled(probe);
+    sinon.assert.calledOnce(probe);
+    assert.ok(commandArgs[commandArgs.indexOf('-vf') + 1].includes('pad=200:300:(ow-iw)/2:(oh-ih)/2:eval=frame'));
     sinon.assert.notCalled(warn);
     assert.equal(commandArgs[commandArgs.indexOf('-reinit_filter') + 1], '0');
     assert.ok(commandArgs.indexOf('-reinit_filter') < commandArgs.indexOf('-i'));
     assert.equal(commandArgs.filter((arg) => arg === '-vf').length, 1);
     assert.equal(commandArgs[commandArgs.indexOf('-r') + 1], '10');
+  });
+  it('rejects an invalid probe image before starting the recorder', async () => {
+    probe.resolves({stdout: Buffer.from('invalid')});
+    await assert.rejects(start(), /Cannot determine the recording canvas/);
+  });
+
+  it('propagates a bounded probe failure', async () => {
+    probe.rejects(new Error('probe timeout'));
+    await assert.rejects(start(), /probe timeout/);
+    assert.equal(probe.firstCall.args[2].timeout, 10000);
   });
 });
