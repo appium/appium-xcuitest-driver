@@ -422,6 +422,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     includeSafari: this.opts.includeSafariInWebviews,
     pageLoadMs: this.pageLoadMs,
     platformVersion: this.opts.platformVersion,
+    emulateUserGestureForInteractionAtoms: true,
     socketPath,
     remoteDebugProxy: this.opts.remoteDebugProxy,
     garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect) ? !!this.opts.safariGarbageCollect : false,
