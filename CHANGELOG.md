@@ -1,3 +1,9 @@
+## [12.19.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.19.0...v12.19.1) (2026-10-19)
+
+### Bug Fixes
+
+* preserve iOS 27 webview interaction history ([#3063](https://github.com/appium/appium-xcuitest-driver/issues/3063)) ([bf36e32](https://github.com/appium/appium-xcuitest-driver/commit/bf36e32e4bcc3b78d4b0f6696d7a21b8299135bc))
+
 ## [12.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.18.3...v12.19.0) (2026-10-18)
 
 ### Features
