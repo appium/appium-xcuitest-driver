@@ -15,7 +15,7 @@ full [Selenium](http://www.seleniumhq.org/) [WebDriver API](https://www.w3.org/T
 ### Requirements
 
 To interact with a web view XCUITest driver establishes a connection using a custom
-[remote debugger](https://github.com/appium/appium-remote-debugger).
+[remote debugger](https://github.com/appium/appium-ios/tree/main/packages/remote-debugger).
 This debugger can connect directly to any WebKit debugger socket exposed by the system.
 The protocol used for the communication there is a proprietary Apple's JSON RPC similar
 to Chrome's [Devtools Protocol](https://chromedevtools.github.io/devtools-protocol/).

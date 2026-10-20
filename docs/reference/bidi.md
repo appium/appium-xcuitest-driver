@@ -111,7 +111,7 @@ for more details.
 #### Event Type (CDDL)
 
 There are 3 types of supported network events, each of which has its own shape. Event shapes match
-[the NetworkEvent types used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/blob/main/src/lib/types.ts).
+[the NetworkEvent types used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios/blob/main/packages/remotexpc/src/lib/types.ts).
 
 ```cddl
 appium:xcuitest.networkMonitor = (
@@ -253,7 +253,7 @@ Events are only supported for real devices running iOS/tvOS 18 or later, and the
 The device streams two kinds of samples, discriminated by `event.kind`. The attribute set for
 each kind is queried from the device at connection time, so the exact fields present can vary
 slightly across OS versions. Refer to
-[the `Sysmontap` instrument used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/blob/main/src/services/ios/dvt/instruments/sysmontap.ts)
+[the `Sysmontap` instrument used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios/blob/main/packages/remotexpc/src/services/ios/dvt/instruments/sysmontap.ts)
 for the labelling logic.
 
 ```cddl

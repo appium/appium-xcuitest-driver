@@ -21,7 +21,7 @@ declare module '../driver.js' {
  *
  * Requires a real device on iOS/tvOS 18+ and appium-ios-remotexpc.
  *
- * @see https://github.com/appium/appium-ios-remotexpc
+ * @see https://github.com/appium/appium-ios/tree/main/packages/remotexpc
  *
  * If a monitor is already running, this is a no-op so the session keeps streaming.
  */

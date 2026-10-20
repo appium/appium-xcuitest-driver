@@ -2,7 +2,7 @@
 title: Manage WDA by Yourself
 ---
 
-The XCUITest driver uses [WebDriverAgent](https://github.com/appium/WebDriverAgent) (WDA) as the
+The XCUITest driver uses [WebDriverAgent](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent) (WDA) as the
 automation backend. This backend is based on Apple's XCTest framework and shares all the known
 problems that are present in XCTest. For some of them we have workarounds, but there are some that
 are hardly possible to workaround ([here is one example](https://github.com/facebookarchive/WebDriverAgent/issues/507)).

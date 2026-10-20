@@ -60,7 +60,7 @@ if automatic deletion failed for any reason.
 
 !!! note
 
-    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
     package to be installed, as well as a running RemoteXPC tunnel (which can be created using the
     [`tunnel-creation`](#tunnel-creation) script)
 
@@ -415,7 +415,7 @@ the `--devicectl` flag.
 
 !!! note
 
-    Device discovery over `usbmuxd` requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    Device discovery over `usbmuxd` requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
     package to be installed.
 
 #### Usage
@@ -465,7 +465,7 @@ and [tvOS automation](../guides/tvos.md) guides for more details.
 
 !!! note
 
-    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
     package to be installed.
 
 !!! note
@@ -514,15 +514,15 @@ paired using the [`pair-appletv`](#pair-appletv) script.
 
 !!! note
 
-    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
     package to be installed.
 
 !!! note
 
     This script must be run in `sudo` mode. This is because tunnel creation relies on TUN/TAP
-    interfaces (via [`appium-ios-tuntap`](https://github.com/appium/appium-ios-tuntap/)), and macOS
-    does not allow adding/removing TUN interfaces for non-root users. Xcode/devicectl do not
-    require such privileges, because they interact with trusted system services.
+    interfaces (via [`appium-ios-tuntap`](https://github.com/appium/appium-ios/tree/main/packages/tuntap)),
+    and macOS does not allow adding/removing TUN interfaces for non-root users. Xcode/devicectl do
+    not require such privileges, because they interact with trusted system services.
 
 #### Usage
 

@@ -70,7 +70,7 @@ Example (via Settings API):
 
 ### WDA implementation (WebDriverAgentLib)
 
-At a high level, [WebDriverAgent](https://github.com/appium/WebDriverAgent) exposes an HTTP MJPEG endpoint that continuously captures the screen, encodes each frame as JPEG, and streams frames to all connected clients using the `multipart/x-mixed-replace` response format. The capture rate, scaling, quality, and orientation of these frames are controlled by the MJPEG-related [settings](../reference/settings.md) and a few [environment variables](../reference/env-vars.md) that WebDriverAgent reads when the screenshots broadcaster is initialized.
+At a high level, [WebDriverAgent](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent) exposes an HTTP MJPEG endpoint that continuously captures the screen, encodes each frame as JPEG, and streams frames to all connected clients using the `multipart/x-mixed-replace` response format. The capture rate, scaling, quality, and orientation of these frames are controlled by the MJPEG-related [settings](../reference/settings.md) and a few [environment variables](../reference/env-vars.md) that WebDriverAgent reads when the screenshots broadcaster is initialized.
 
 ### Screenshot command and `mjpegScreenshotUrl`
 

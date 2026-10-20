@@ -3,7 +3,7 @@ title: Remote XPC Tunnels
 ---
 
 Certain features of the XCUITest driver rely on Remote XPC services and IPv6 tunneling. This
-functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/)
+functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
 library.
 
 !!! info

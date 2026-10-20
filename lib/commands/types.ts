@@ -327,7 +327,7 @@ export interface LockdownInfo {
 
 /**
  * Response of the `mobile: activeAppInfo` command.
- * @remarks Derived from https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m
+ * @remarks Derived from https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Commands/FBCustomCommands.m
  */
 export interface ActiveAppInfo {
   pid: number;
@@ -338,7 +338,7 @@ export interface ActiveAppInfo {
 
 /**
  * Returned within an {@linkcode ActiveAppInfo} object.
- * @remarks Derived from https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m
+ * @remarks Derived from https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Commands/FBCustomCommands.m
  */
 export interface ProcessArguments {
   env: StringRecord<string>;

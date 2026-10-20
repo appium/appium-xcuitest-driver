@@ -68,7 +68,7 @@ declare module '../driver.js' {
 
 const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
 // This value must be greater than the alerts check interval in WDA:
-// https://github.com/appium/WebDriverAgent/blob/8bc3135f021b529d916846477544f4b8ca890f59/WebDriverAgentLib/Utilities/FBAlertsMonitor.m#L17
+// https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Utilities/FBAlertsMonitor.m#L16
 const ATOM_INITIAL_WAIT_MS = 2100;
 const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 
