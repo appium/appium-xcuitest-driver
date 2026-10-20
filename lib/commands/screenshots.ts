@@ -49,17 +49,12 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return data;
   };
 
-  // The current MJPEG stream and simulator fallback do not select a display.
-  // CoreSim supports display selection, but requires a display port UUID rather
-  // than WDA's numeric display ID. Use WDA until that mapping is implemented.
   const {currentDisplayId} = await this.settings.getSettings();
-  if (currentDisplayId !== undefined && currentDisplayId !== null) {
-    return await getScreenshotFromWDA();
-  }
+  const hasSelectedDisplay = currentDisplayId !== undefined && currentDisplayId !== null;
 
   // Frames carry no display identity. Once selection changes, even resetting to
   // the main display cannot safely reuse this stream (old frames may be queued).
-  if (this.mjpegStream && !this._hasUpdatedDisplaySelection) {
+  if (this.mjpegStream && !hasSelectedDisplay && !this._hasUpdatedDisplaySelection) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);
     // Preserve legacy conversion unless orientation correction was explicitly enabled.
     const fixOrientation = this.settings.getSettings().mjpegFixOrientation === true;
@@ -73,23 +68,30 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     );
   }
 
+  let wdaError: unknown;
   try {
     return await getScreenshotFromWDA();
   } catch (err: any) {
+    wdaError = err;
     this.log.warn(`Error getting screenshot: ${err.message}`);
   }
 
-  // simulator attempt
   if (this.isSimulator()) {
-    this.log.info(`Falling back to 'simctl io screenshot' API`);
-    const payload = await (this.device as Simulator).getScreenshot();
+    this.log.info('Falling back to CoreSimulator screenshot capture');
+    const payload = await (this.device as Simulator).getScreenshot({
+      displayId: currentDisplayId ?? undefined,
+    });
     if (!payload || payload.length === 0) {
       throw new errors.UnableToCaptureScreen();
     }
     return payload.toString('base64');
   }
 
-  // Retry for real devices only. Fail fast on Simulator if simctl does not work as expected
+  if (hasSelectedDisplay) {
+    throw wdaError;
+  }
+
+  // Retry for real devices only.
   return (await retryInterval(2, 1000, getScreenshotFromWDA)) as string;
 }
 
