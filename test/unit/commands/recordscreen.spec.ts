@@ -111,7 +111,12 @@ describe('screen recording with changing frame geometry', () => {
             maxY = -1;
           for (let y = 0; y < info.height; y++) {
             for (let x = 0; x < info.width; x++) {
-              if (data[(y * info.width + x) * info.channels] > 200) {
+              const offset = (y * info.width + x) * info.channels;
+              assert.ok(
+                Math.abs(data[offset] - data[offset + 1]) < 30 && Math.abs(data[offset] - data[offset + 2]) < 30,
+                'Grayscale input and black padding must not contain colored bands',
+              );
+              if (data[offset] > 200) {
                 minX = Math.min(minX, x);
                 maxX = Math.max(maxX, x);
                 minY = Math.min(minY, y);
@@ -120,6 +125,8 @@ describe('screen recording with changing frame geometry', () => {
             }
           }
           assert.ok(maxX > minX && maxY > minY);
+          assert.ok(Math.abs((minX + maxX) / 2 - (info.width - 1) / 2) < 3, 'Content must stay centered horizontally');
+          assert.ok(Math.abs((minY + maxY) / 2 - (info.height - 1) / 2) < 3, 'Content must stay centered vertically');
           assert.ok(
             Math.abs((maxX - minX + 1) / (maxY - minY + 1) - 1) < 0.1,
             'The circle must remain round after changing the input aspect ratio',

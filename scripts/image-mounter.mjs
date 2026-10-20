@@ -244,4 +244,4 @@ EXAMPLES:
   await program.parseAsync(process.argv);
 }
 
-(async () => await main())();
+void main();

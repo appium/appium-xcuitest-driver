@@ -5,6 +5,7 @@ import {services} from 'appium-ios-device';
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
 import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 
+import type {ClosableService} from '../types.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 interface CreateNotificationClientOptions {
@@ -21,12 +22,12 @@ interface CreateNotificationClientOptions {
  * and iOS 18 and above (appium-ios-remotexpc NotificationProxyService).
  */
 export class NotificationClient {
-  private readonly service: RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy;
+  private readonly service: RemoteXPCNotificationProxyService | ClosableService;
   private readonly _isRemoteXPC: boolean;
   private readonly log: AppiumLogger;
 
   private constructor(
-    service: RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy,
+    service: RemoteXPCNotificationProxyService | ClosableService,
     log: AppiumLogger,
     isRemoteXPC: boolean,
   ) {

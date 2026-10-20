@@ -18,7 +18,7 @@ export class IOSDeviceLog extends LineConsumingLog {
   private readonly showLogs: boolean;
   private readonly remoteXPCFacade: RemoteXPCFacade | null;
   // Legacy service (appium-ios-device)
-  private legacyService: any | null = null;
+  private legacyService: any = null;
   // RemoteXPC syslog service
   private syslogService: SyslogService | null = null;
 

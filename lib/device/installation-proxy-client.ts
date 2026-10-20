@@ -6,7 +6,7 @@ import type {InstallationProxyService as IOSDeviceInstallationProxyService} from
 import type {InstallationProxyService as RemoteXPCInstallationProxyService} from 'appium-ios-remotexpc';
 
 import {log} from '../logger.js';
-import type {AppInfo, AppInfoMapping} from '../types.js';
+import type {AppInfo, AppInfoMapping, ClosableService} from '../types.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
@@ -53,7 +53,7 @@ export class InstallationProxyClient {
   private _lastLoggedProgress?: {percent?: number; status?: string};
 
   private constructor(
-    private readonly service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
+    private readonly service: RemoteXPCInstallationProxyService | ClosableService,
     private readonly _isRemoteXPC: boolean,
     private readonly _log: AppiumLogger = log,
   ) {}
