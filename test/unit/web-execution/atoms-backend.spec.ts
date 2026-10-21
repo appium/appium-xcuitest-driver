@@ -420,11 +420,40 @@ describe('AtomsBackend', function () {
       const result = await backend.executeScript('return 1;', ['arg']);
       assert.strictEqual(result, 'cached');
       assert.strictEqual(convertStub.calledOnceWithExactly(['arg']), true);
-      assert.strictEqual(executeAtomStub.calledOnceWithExactly('execute_script', ['return 1;', ['converted']]), true);
+      assert.strictEqual(
+        executeAtomStub.calledOnceWithExactly('execute_script', ['return 1;', ['converted']], false, {
+          isUserScript: true,
+        }),
+        true,
+      );
       assert.strictEqual(cacheStub.calledOnceWithExactly('raw'), true);
     });
 
-    it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result', async function () {
+    it('executeAsyncScript gives the session script timeout to the page atom', async function () {
+      sandbox.stub(driver, 'waitForAtom').resolves(null);
+      remoteStub.executeAtomAsync.resolves(null);
+      driver.scriptTimeoutMs = 20000;
+      await backend.executeAsyncScript('arguments[0]();', []);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 20000);
+    });
+
+    it('executeAsyncScript limits the timeout of the page atom to webviewAtomWaitTimeout', async function () {
+      sandbox.stub(driver, 'waitForAtom').resolves(null);
+      remoteStub.executeAtomAsync.resolves(null);
+      driver.scriptTimeoutMs = Number.MAX_SAFE_INTEGER;
+      await backend.executeAsyncScript('arguments[0]();', []);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 120000);
+    });
+
+    it('executeAsyncScript limits a W3C null script timeout (no limit) to webviewAtomWaitTimeout', async function () {
+      sandbox.stub(driver, 'waitForAtom').resolves(null);
+      remoteStub.executeAtomAsync.resolves(null);
+      driver.scriptTimeoutMs = null;
+      await backend.executeAsyncScript('arguments[0]();', []);
+      assert.strictEqual(remoteStub.executeAtomAsync.lastCall.args[1][2], 120000);
+    });
+
+    it('executeAsyncScript delegates to remote.executeAtomAsync and caches the result (the budget by default)', async function () {
       const convertStub = sandbox.stub(driver, 'convertElementsForAtoms').returns(['converted']);
       const cacheStub = sandbox.stub(driver, 'cacheWebElements').returns('cached');
       const waitForAtomStub = sandbox.stub(driver, 'waitForAtom').resolves('raw');
@@ -435,7 +464,7 @@ describe('AtomsBackend', function () {
       assert.strictEqual(
         remoteStub.executeAtomAsync.calledOnceWithExactly(
           'execute_async_script',
-          ['return 1;', ['converted'], 0],
+          ['return 1;', ['converted'], 120000],
           driver.curWebFrames,
         ),
         true,

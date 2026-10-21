@@ -97,7 +97,7 @@
     "@appium/oxc-config": "^2.0.0-beta.2",
     "@appium/semantic-release-config": "^2.0.0-beta.1",
     "@appium/tsconfig": "^2.0.0-beta.1",
-    "@appium/types": "^2.0.0-beta.3",
+    "@appium/types": "^2.0.0-beta.4",
     "@types/async-lock": "^1.4.2",
     "@types/node": "^26.0.0",
     "@types/portscanner": "^2.1.1",
@@ -108,7 +108,7 @@
     "webdriverio": "^9.4.1"
   },
   "peerDependencies": {
-    "appium": "^4.0.0-beta.4"
+    "appium": "^4.0.0-beta.5"
   },
   "optionalDependencies": {
     "appium-ios-remotexpc": "^5.25.0",

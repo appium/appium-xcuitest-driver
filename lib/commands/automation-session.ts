@@ -1,6 +1,7 @@
 import type {XCUITestDriver} from '../driver.js';
 import {WEBVIEW_BASE} from './context.js';
 import {requireSimulator, requireWebContext} from './helpers/index.js';
+import {getScriptTimeoutMs} from './web.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -24,8 +25,8 @@ declare module '../driver.js' {
  * Seeded with the driver's current page-load/script/implicit-wait timeouts - the session's own
  * defaults (in particular a `0` implicit wait) otherwise differ from what the client configured,
  * silently changing WebDriver timeout behavior on session start. Later timeout updates are kept
- * in sync too, by {@linkcode setPageLoadTimeout}/{@linkcode setScriptTimeout}/
- * {@linkcode setImplicitWait}.
+ * in sync too, by {@linkcode XCUITestDriver.setPageLoadTimeout},
+ * {@linkcode XCUITestDriver.setScriptTimeout} and {@linkcode XCUITestDriver.setImplicitWait}.
  *
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context
@@ -36,15 +37,10 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   requireSimulator(this, 'Starting an automation session');
   this._preAutomationSessionContext = this.curContext;
   const session = await this.remote.startAutomationSession();
-  if (this.pageLoadMs != null) {
-    session.pageLoadTimeoutMs = this.pageLoadMs;
-  }
-  if (this.asyncWaitMs != null) {
-    session.scriptTimeoutMs = this.asyncWaitMs;
-  }
-  if (this.implicitWaitMs != null) {
-    session.implicitWaitTimeoutMs = this.implicitWaitMs;
-  }
+  session.pageLoadTimeoutMs = this.pageLoadMs;
+  session.scriptTimeoutMs = getScriptTimeoutMs(this.scriptTimeoutMs, this.opts.webviewAtomWaitTimeout);
+  // the automation session needs a number: null (no limit in BaseDriver) gives 0
+  session.implicitWaitTimeoutMs = this.implicitWaitMs ?? 0;
 }
 
 /**

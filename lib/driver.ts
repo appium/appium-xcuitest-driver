@@ -9,6 +9,7 @@ import type {
   W3CDriverCaps,
   DriverCaps,
   DriverOpts,
+  TimeoutValue,
 } from '@appium/types';
 import {BaseSimulator, type Simulator} from 'appium-ios-simulator';
 import type {RemoteDebugger} from 'appium-remote-debugger';
@@ -52,6 +53,7 @@ import {
   getDriverInfo,
   handleMjpegOptions,
   installAUT,
+  limitTimeoutMs,
   normalizeCommandTimeouts,
   onDownloadApp,
   onPostConfigureApp,
@@ -87,7 +89,6 @@ import * as simctlCommands from './commands/simctl.js';
 import * as simulatorCommands from './commands/simulator.js';
 import * as sourceCommands from './commands/source.js';
 import * as systemMonitorCommands from './commands/system-monitor.js';
-import * as timeoutCommands from './commands/timeouts.js';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types.js';
 import * as voiceOverCommands from './commands/voiceover.js';
 import * as watchCommands from './commands/watch.js';
@@ -180,7 +181,6 @@ import './commands/record-audio.js';
 import './commands/recordscreen.js';
 import './commands/screenshots.js';
 import './commands/source.js';
-import './commands/timeouts.js';
 import './commands/web.js';
 import './commands/window.js';
 import './commands/web-native-bridge.js';
@@ -299,7 +299,6 @@ export class XCUITestDriver
   _preAutomationSessionContext: string | null = null;
 
   _webviewCalibrationCache: CalibrationCacheEntry | null;
-  asyncWaitMs: number | undefined;
   _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null = null;
   _perfRecorders: PerfRecorder[];
   webElementsCache: LRUCache<any, any>;
@@ -599,6 +598,46 @@ export class XCUITestDriver
 
   override canProxy(): boolean {
     return true;
+  }
+
+  /**
+   * Sets the page load timeout, and also our own `pageLoadMs` and the active automation session
+   * (if any), neither of which the base implementation knows about.
+   *
+   * @param ms - Timeout in milliseconds, or `null` for no limit
+   */
+  override setPageLoadTimeout(ms: TimeoutValue): void {
+    super.setPageLoadTimeout(ms);
+    this.pageLoadMs = limitTimeoutMs(ms);
+    if (this._remote) {
+      this.remote.pageLoadMs = this.pageLoadMs;
+    }
+    this.syncAutomationSessionTimeout('pageLoadTimeoutMs', this.pageLoadMs);
+  }
+
+  /**
+   * Sets the script timeout, and also the active automation session (if any).
+   *
+   * @param ms - Timeout in milliseconds, or `null` for no limit
+   */
+  override setScriptTimeout(ms: TimeoutValue): void {
+    super.setScriptTimeout(ms);
+    this.syncAutomationSessionTimeout(
+      'scriptTimeoutMs',
+      webCommands.getScriptTimeoutMs(this.scriptTimeoutMs, this.opts.webviewAtomWaitTimeout),
+    );
+  }
+
+  /**
+   * Sets the implicit wait timeout, and also the active automation session (if any): its implicit
+   * wait defaults to `0` independently of the rest of the driver.
+   *
+   * @param ms - Timeout in milliseconds, or `null` for no limit
+   */
+  override setImplicitWait(ms: TimeoutValue): void {
+    super.setImplicitWait(ms);
+    // the automation session needs a number: null (no limit in BaseDriver) gives 0
+    this.syncAutomationSessionTimeout('implicitWaitTimeoutMs', ms ?? 0);
   }
 
   override validateLocatorStrategy(strategy: string): void {
@@ -1169,10 +1208,11 @@ export class XCUITestDriver
     this._remote = null;
     this._conditionInducer = null;
     // Go through the setters so BaseDriver's own scriptTimeoutMs/pageLoadTimeoutMs/implicitWaitMs
-    // (what GET /timeouts reports) start out in sync with our pageLoadMs/asyncWaitMs defaults.
+    // (what GET /timeouts reports) start out in sync with our pageLoadMs default.
     this.setImplicitWait(0);
     this.setPageLoadTimeout(6000);
-    this.setScriptTimeout(0);
+    // unset: webviewAtomWaitTimeout limits scripts
+    this.setScriptTimeout(null);
 
     this.webElementsCache = new LRUCache({
       max: WEB_ELEMENTS_CACHE_SIZE,
@@ -1184,6 +1224,16 @@ export class XCUITestDriver
       alertMonitor: undefined,
       alertMonitorAbortController: undefined,
     };
+  }
+
+  /** Keeps an already-started automation session's timeout in sync with the driver's own. */
+  private syncAutomationSessionTimeout(
+    field: 'pageLoadTimeoutMs' | 'scriptTimeoutMs' | 'implicitWaitTimeoutMs',
+    ms: number,
+  ): void {
+    if (this._remote?.automationSession?.isStarted) {
+      this._remote.automationSession[field] = ms;
+    }
   }
 
   private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {
@@ -1486,11 +1536,6 @@ Object.assign(XCUITestDriver.prototype, {
   // source
   getPageSource: sourceCommands.getPageSource,
   mobileGetSource: sourceCommands.mobileGetSource,
-
-  // timeouts
-  setPageLoadTimeout: timeoutCommands.setPageLoadTimeout,
-  setScriptTimeout: timeoutCommands.setScriptTimeout,
-  setImplicitWait: timeoutCommands.setImplicitWait,
 
   // web
   setFrame: webCommands.setFrame,

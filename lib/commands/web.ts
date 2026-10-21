@@ -8,6 +8,7 @@ import {timing, util} from 'appium/support.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
+  limitTimeoutMs,
   requireAutomationSessionActive,
   requireSimulator,
   requireWebContext,
@@ -294,16 +295,21 @@ export function cacheWebElements(this: XCUITestDriver, response: unknown): unkno
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
+ * @param opts - `isUserScript`: a script of `execute`; the remote debugger also ends it after the session
+ * script timeout
  */
 export async function executeAtom<T = any>(
   this: XCUITestDriver,
   atom: AtomName,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
+  opts: {isUserScript?: boolean} = {},
 ): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const promise = this.remote.executeAtom(atom, args, frames);
-  return await this.waitForAtom(promise);
+  const atomOpts = opts.isUserScript
+    ? {timeoutMs: getScriptTimeoutMs(this.scriptTimeoutMs, this.opts.webviewAtomWaitTimeout)}
+    : {};
+  return await this.waitForAtom(this.remote.executeAtom(atom, args, frames, atomOpts));
 }
 
 /**
@@ -436,6 +442,29 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
 }
 
 /**
+ * Gives the time budget of every atom.
+ *
+ * @param webviewAtomWaitTimeout - The `webviewAtomWaitTimeout` capability
+ * @returns The capability when it is a positive number, else {@link ATOM_WAIT_TIMEOUT_MS}
+ */
+export function getAtomWaitTimeoutMs(webviewAtomWaitTimeout?: number): number {
+  return typeof webviewAtomWaitTimeout === 'number' && webviewAtomWaitTimeout > 0
+    ? webviewAtomWaitTimeout
+    : ATOM_WAIT_TIMEOUT_MS;
+}
+
+/**
+ * Gives the script timeout of a user script, at most the atom budget, so that no wait outlives the atom.
+ *
+ * @param scriptTimeoutMs - The script timeout of the session (`null`: no limit)
+ * @param webviewAtomWaitTimeout - The `webviewAtomWaitTimeout` capability
+ * @returns The script timeout to apply
+ */
+export function getScriptTimeoutMs(scriptTimeoutMs: number | null, webviewAtomWaitTimeout?: number): number {
+  return Math.min(limitTimeoutMs(scriptTimeoutMs), getAtomWaitTimeoutMs(webviewAtomWaitTimeout));
+}
+
+/**
  * Waits for an atom promise to resolve, monitoring for alerts during execution.
  *
  * @template T - Type of the atom execution result
@@ -447,10 +476,7 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
 export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Promise<T>): Promise<T> {
   const timer = new timing.Timer().start();
 
-  const atomWaitTimeoutMs =
-    typeof this.opts.webviewAtomWaitTimeout === 'number' && this.opts.webviewAtomWaitTimeout > 0
-      ? this.opts.webviewAtomWaitTimeout
-      : ATOM_WAIT_TIMEOUT_MS;
+  const atomWaitTimeoutMs = getAtomWaitTimeoutMs(this.opts.webviewAtomWaitTimeout);
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = withTimeout(
