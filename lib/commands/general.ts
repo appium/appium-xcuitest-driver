@@ -21,6 +21,9 @@ declare module '../driver.js' {
     removeApp(...args: Parameters<typeof removeApp>): ReturnType<typeof removeApp>;
     setUrl(...args: Parameters<typeof setUrl>): ReturnType<typeof setUrl>;
     mobilePressButton(...args: Parameters<typeof mobilePressButton>): ReturnType<typeof mobilePressButton>;
+    mobileGetPressableButtons(
+      ...args: Parameters<typeof mobileGetPressableButtons>
+    ): ReturnType<typeof mobileGetPressableButtons>;
     mobileSiriCommand(...args: Parameters<typeof mobileSiriCommand>): ReturnType<typeof mobileSiriCommand>;
   }
 }
