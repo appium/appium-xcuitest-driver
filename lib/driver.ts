@@ -1395,6 +1395,7 @@ Object.assign(XCUITestDriver.prototype, {
   removeApp: generalCommands.removeApp,
   setUrl: generalCommands.setUrl,
   mobilePressButton: generalCommands.mobilePressButton,
+  mobileGetPressableButtons: generalCommands.mobileGetPressableButtons,
   mobileSiriCommand: generalCommands.mobileSiriCommand,
 
   // app-strings

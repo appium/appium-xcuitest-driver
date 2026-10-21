@@ -640,6 +640,19 @@ bundleId | string | The bundle identifier of the active application | com.yolo.m
 name | string | The name of the active application, if present | Safari
 processArguments | map | The map containing actual process arguments. Check the description of the [appium:processArguments capability](./capabilities.md#webdriveragent) for more details on its format. Might be empty if no process arguments have been provided on the app startup. | {"args": ["--help"], "env": {"PATH": "/"}}
 
+### mobile: getPressableButtons
+
+Retrieves names of physical device buttons supported on the device under test. Any one of the
+values can then be passed to [`mobile: pressButton`](#mobile-pressbutton).
+
+#### Returned Result
+
+An object with the following keys:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+xctest | array | Sorted list of button names that have matching constants in XCTest (e.g. `XCUIDeviceButtonHome`) | ['action', 'home']
+
 ### mobile: pressButton
 
 Emulates a press action on the given physical device button. The iOS implementation is based on
@@ -647,6 +660,9 @@ Emulates a press action on the given physical device button. The iOS implementat
 while tvOS can use either [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton)
 or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
 A more universal API can also be used via [`mobile: performIoHidEvent`](#mobile-performiohidevent).
+
+Button values supported for the current device under test can be retrieved using
+[`mobile: getPressableButtons`](#mobile-getpressablebuttons).
 
 The following values are supported on iOS:
 

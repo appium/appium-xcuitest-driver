@@ -368,11 +368,33 @@ export interface AccessibilityAuditItem {
   element: string;
 }
 
+export interface PressableButtonsInfo {
+  /** Button names that have constants defined in XCTest (e.g. `XCUIDeviceButtonHome`) */
+  xctest: string[];
+}
+
 /**
  * Pressable button names; used by the {@linkcode XCUITest.mobilePressButton mobile: pressButton} command.
  */
 export type ButtonName = AnyCase<
-  'home' | 'volumeup' | 'volumedown' | 'up' | 'down' | 'left' | 'right' | 'menu' | 'playpause' | 'select'
+  | 'home'
+  | 'volumeup'
+  | 'volumedown'
+  | 'action'
+  | 'camera'
+  | 'up'
+  | 'down'
+  | 'left'
+  | 'right'
+  | 'menu'
+  | 'playpause'
+  | 'select'
+  | 'pageup'
+  | 'pagedown'
+  | 'guide'
+  | 'fourcolors'
+  | 'onetwothree'
+  | 'tvprovider'
 >;
 
 /**
