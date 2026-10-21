@@ -651,7 +651,7 @@ An object with the following keys:
 
 Name | Type | Description | Example
 --- | --- | --- | ---
-xctest | array | Sorted list of button names that have matching constants in XCTest (e.g. `XCUIDeviceButtonHome`) | ['action', 'home']
+xctest | array | Sorted list of supported button names that have matching constants in XCTest (in either [`XCUIDeviceButton`](https://developer.apple.com/documentation/xcuiautomation/xcuidevice/button) or [`XCUIRemoteButton`](https://developer.apple.com/documentation/xcuiautomation/xcuiremote/button)) | ['action', 'home']
 
 ### mobile: pressButton
 
