@@ -7,7 +7,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import type {ButtonName} from './types.js';
+import type {ButtonName, PressableButtonsInfo} from './types.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -18,6 +18,9 @@ declare module '../driver.js' {
     removeApp(...args: Parameters<typeof removeApp>): ReturnType<typeof removeApp>;
     setUrl(...args: Parameters<typeof setUrl>): ReturnType<typeof setUrl>;
     mobilePressButton(...args: Parameters<typeof mobilePressButton>): ReturnType<typeof mobilePressButton>;
+    mobileGetPressableButtons(
+      ...args: Parameters<typeof mobileGetPressableButtons>
+    ): ReturnType<typeof mobileGetPressableButtons>;
     mobileSiriCommand(...args: Parameters<typeof mobileSiriCommand>): ReturnType<typeof mobileSiriCommand>;
   }
 }
@@ -132,6 +135,16 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
   } else {
     await (this.device as Simulator).openUrl(url);
   }
+}
+
+/**
+ * Retrieves values for all pressable button names supported in this session,
+ * that can be passed to {@link mobilePressButton}.
+ *
+ * @returns Object containing one or more arrays of button names
+ */
+export async function mobileGetPressableButtons(this: XCUITestDriver): Promise<PressableButtonsInfo> {
+  return await this.proxyCommand('/wda/pressableButtons', 'GET');
 }
 
 /**
