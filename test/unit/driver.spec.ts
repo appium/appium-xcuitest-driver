@@ -4,7 +4,7 @@ import {describe, it, beforeEach, afterEach, mock} from 'node:test';
 
 import xcode from 'appium-xcode';
 import {WebDriverProxy} from 'appium/driver.js';
-import {createSandbox, type SinonSandbox, type SinonStubbedMember} from 'sinon';
+import sinon from 'sinon';
 
 import * as helpersIndexModule from '../../lib/commands/helpers/index.js';
 import {RealDevice} from '../../lib/device/real-device-management.js';
@@ -110,10 +110,10 @@ const caps = {
 };
 
 describe('XCUITestDriver', function () {
-  let sandbox: SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(function () {
@@ -216,7 +216,7 @@ describe('XCUITestDriver', function () {
   describe('driver commands', function () {
     describe('status', function () {
       let driver: InstanceType<typeof XCUITestDriver>;
-      let wdProxyCommandSpy: SinonStubbedMember<typeof WebDriverProxy.prototype.command>;
+      let wdProxyCommandSpy: sinon.SinonStubbedMember<typeof WebDriverProxy.prototype.command>;
 
       beforeEach(function () {
         driver = new XCUITestDriver({} as any);

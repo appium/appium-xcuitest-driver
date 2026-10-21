@@ -3,8 +3,7 @@ import http, {type Server} from 'node:http';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
 import sharp, {type Metadata} from 'sharp';
-import {createSandbox} from 'sinon';
-import type sinon from 'sinon';
+import sinon from 'sinon';
 
 import {
   allocateMjpegServerPort,
@@ -246,7 +245,7 @@ describe('mjpeg helpers', function () {
     let sandbox: sinon.SinonSandbox;
 
     beforeEach(function () {
-      sandbox = createSandbox();
+      sandbox = sinon.createSandbox();
     });
 
     afterEach(function () {
@@ -332,7 +331,7 @@ describe('mjpeg helpers', function () {
     let startStub: sinon.SinonStub;
 
     beforeEach(function () {
-      sandbox = createSandbox();
+      sandbox = sinon.createSandbox();
       startStub = sandbox.stub(MJpegStream.prototype, 'start').resolves();
     });
 

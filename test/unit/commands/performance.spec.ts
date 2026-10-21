@@ -3,16 +3,16 @@ import path from 'node:path';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs, tempDir} from 'appium/support.js';
-import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+import sinon from 'sinon';
 
 import {PerfRecorder} from '../../../lib/commands/performance.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('performance commands', function () {
-  let sandbox: SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(function () {
@@ -21,7 +21,7 @@ describe('performance commands', function () {
 
   describe('PerfRecorder.stop', function () {
     let recorder: PerfRecorder;
-    let processStopStub: SinonStub;
+    let processStopStub: sinon.SinonStub;
 
     beforeEach(function () {
       recorder = new PerfRecorder('/perf-root', '00008120-0000000000000000', {profileName: 'CPU Profiler'});
@@ -50,7 +50,7 @@ describe('performance commands', function () {
 
   describe('mobile: stopPerfRecord', function () {
     let driver: XCUITestDriver;
-    let recorderStopStub: SinonStub;
+    let recorderStopStub: sinon.SinonStub;
 
     beforeEach(async function () {
       driver = new XCUITestDriver({} as any);

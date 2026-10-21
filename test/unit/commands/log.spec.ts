@@ -2,19 +2,19 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+import sinon from 'sinon';
 import {WebSocket} from 'ws';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('logs broadcast', function () {
-  let sandbox: SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
   let driver: XCUITestDriver;
   let syslog: EventEmitter;
-  let addWebSocketHandlerStub: SinonStub;
+  let addWebSocketHandlerStub: sinon.SinonStub;
 
   function makeFakeSocket() {
-    const socket = new EventEmitter() as EventEmitter & {readyState: number; send: SinonStub};
+    const socket = new EventEmitter() as EventEmitter & {readyState: number; send: sinon.SinonStub};
     socket.readyState = WebSocket.OPEN;
     socket.send = sandbox.stub();
     return socket;
@@ -26,7 +26,7 @@ describe('logs broadcast', function () {
   }
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     driver = new XCUITestDriver({} as any);
     driver.sessionId = 'session-id';
     syslog = new EventEmitter();

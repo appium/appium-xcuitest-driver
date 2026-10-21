@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {createSandbox} from 'sinon';
+import sinon from 'sinon';
 
 import {limitTimeoutMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
 
@@ -35,10 +35,10 @@ describe('utils/async', function () {
   });
 
   describe('withTimeout', function () {
-    let sandbox: ReturnType<typeof createSandbox>;
+    let sandbox: ReturnType<typeof sinon.createSandbox>;
 
     beforeEach(function () {
-      sandbox = createSandbox();
+      sandbox = sinon.createSandbox();
     });
 
     afterEach(function () {
