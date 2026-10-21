@@ -159,6 +159,10 @@ The causes for the slowness of this operation are mentioned for the [Slow Page S
 
 In general, the common advice would be to avoid XPath locators where possible, and use locators
 that are natively supported by XCTest (such as `id` or `predicate`), which are also more performant.
+To migrate existing XPath locators to [class chain](../reference/locator-strategies.md#class-chain),
+you can use the third-party [xpath-to-class-chain](https://github.com/domovou69/xpath-to-class-chain)
+converter, which flags locators it could only convert approximately and skips those it cannot
+convert.
 If using XPath locators is the only option, then the following suggestions may help:
 
 - Reduce the size of the app hierarchy using the [`snapshotMaxDepth`](../reference/settings.md#snapshotmaxdepth)
