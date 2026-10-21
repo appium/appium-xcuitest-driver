@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs} from 'appium/support.js';
-import {createSandbox} from 'sinon';
+import sinon from 'sinon';
 
 import {isLocalHost} from '../../lib/commands/helpers/index.js';
 import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup.js';
@@ -11,11 +11,11 @@ const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgst
 
 describe('utils', function () {
   describe('clearSystemFiles', function () {
-    let sandbox: ReturnType<typeof createSandbox>;
+    let sandbox: ReturnType<typeof sinon.createSandbox>;
     let mockFs: sinon.SinonMock;
 
     beforeEach(function () {
-      sandbox = createSandbox();
+      sandbox = sinon.createSandbox();
       mockFs = sandbox.mock(fs);
     });
 

@@ -4,8 +4,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
 import {fs} from 'appium/support.js';
-import {createSandbox} from 'sinon';
-import type {SinonStub} from 'sinon';
+import sinon from 'sinon';
 
 import {AfcClient} from '../../lib/device/afc-client.js';
 import {installToRealDevice, pullFolder, RealDevice} from '../../lib/device/real-device-management.js';
@@ -35,7 +34,7 @@ describe('installToRealDevice', function () {
   let driver: XCUITestDriver;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     driver = new XCUITestDriver({} as any);
   });
 
@@ -45,8 +44,8 @@ describe('installToRealDevice', function () {
 
   it('nothing happen without app', async function () {
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
-    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as sinon.SinonStub;
     driver.opts = {udid} as any;
     driver._device = realDevice;
 
@@ -57,8 +56,8 @@ describe('installToRealDevice', function () {
 
   it('nothing happen without bundle id', async function () {
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
-    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as sinon.SinonStub;
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
@@ -72,8 +71,8 @@ describe('installToRealDevice', function () {
       skipUninstall: true,
     };
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
-    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as sinon.SinonStub;
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
@@ -88,8 +87,8 @@ describe('installToRealDevice', function () {
       skipUninstall: false,
     };
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
-    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as sinon.SinonStub;
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
@@ -105,8 +104,8 @@ describe('installToRealDevice', function () {
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
-    const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as sinon.SinonStub;
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
@@ -122,7 +121,7 @@ describe('installToRealDevice', function () {
       skipUninstall: true,
     };
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
     const installStub = sandbox
       .stub(realDevice, 'install')
       .onCall(0)
@@ -130,7 +129,7 @@ describe('installToRealDevice', function () {
         `{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`,
       )
       .onCall(1)
-      .resolves() as SinonStub;
+      .resolves() as sinon.SinonStub;
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
@@ -146,8 +145,8 @@ describe('installToRealDevice', function () {
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
     const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
-    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
-    const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as SinonStub;
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as sinon.SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as sinon.SinonStub;
     sandbox.stub(realDevice, 'isAppInstalled').resolves(true);
     driver._device = realDevice;
     driver.opts = {udid} as any;
@@ -167,7 +166,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
   let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(function () {
@@ -180,7 +179,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
   // assert routing, so we short-circuit it with a sentinel rejection from the
   // very first call it makes.
   const stubAfcSentinel = () =>
-    sandbox.stub(AfcClient, 'createForDevice').rejects(new Error('afc-sentinel')) as SinonStub;
+    sandbox.stub(AfcClient, 'createForDevice').rejects(new Error('afc-sentinel')) as sinon.SinonStub;
 
   const attachAvailableFacade = (realDevice: RealDevice) => {
     realDevice.attachRemoteXPCFacade({
@@ -196,8 +195,8 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     const closeStub = sandbox.stub().resolves();
     const createStub = sandbox
       .stub(ZipConduitClient, 'create')
-      .resolves({install: installStub, close: closeStub} as any) as SinonStub;
-    const afcStub = sandbox.stub(AfcClient, 'createForDevice') as SinonStub;
+      .resolves({install: installStub, close: closeStub} as any) as sinon.SinonStub;
+    const afcStub = sandbox.stub(AfcClient, 'createForDevice') as sinon.SinonStub;
 
     await realDevice.install(ipaPath, bundleId);
 
@@ -226,7 +225,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
   it('does not use zip_conduit for unpacked .app bundles', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
     stubStat(false);
-    const createStub = sandbox.stub(ZipConduitClient, 'create') as SinonStub;
+    const createStub = sandbox.stub(ZipConduitClient, 'create') as sinon.SinonStub;
     const afcStub = stubAfcSentinel();
 
     await assert.rejects(realDevice.install(appDir, bundleId), /afc-sentinel/);
@@ -237,7 +236,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
   it('does not use zip_conduit on iOS < 18', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '17.4'} as XCUITestDriverOpts);
     stubStat(true);
-    const createStub = sandbox.stub(ZipConduitClient, 'create') as SinonStub;
+    const createStub = sandbox.stub(ZipConduitClient, 'create') as sinon.SinonStub;
     const afcStub = stubAfcSentinel();
 
     await assert.rejects(realDevice.install(ipaPath, bundleId), /afc-sentinel/);
@@ -253,7 +252,7 @@ describe('RealDevice host utility fallback policy', function () {
   let originalPreferDevicectl: string | undefined;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     originalPreferDevicectl = process.env.APPIUM_XCUITEST_PREFER_DEVICECTL;
   });
 

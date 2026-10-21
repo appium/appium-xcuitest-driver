@@ -4,8 +4,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {IAppiumIpc, IpcData, IpcMessage} from '@appium/types';
 import {node} from 'appium/support.js';
-import {createSandbox} from 'sinon';
-import type sinon from 'sinon';
+import sinon from 'sinon';
 
 import {stop as stopWda} from '../../lib/commands/wda/stop.js';
 import {XCUITestDriver} from '../../lib/driver.js';
@@ -74,7 +73,7 @@ describe('SessionClaimHandler', function () {
   let mockIpc: MockIpc;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     mockIpc = new MockIpc();
     setSharedIpcForTesting(mockIpc as unknown as IAppiumIpc);
   });

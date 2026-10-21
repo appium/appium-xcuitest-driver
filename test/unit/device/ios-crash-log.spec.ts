@@ -4,16 +4,16 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {Simulator} from 'appium-ios-simulator';
 import {fs, logger, tempDir} from 'appium/support.js';
-import {createSandbox, type SinonSandbox} from 'sinon';
+import sinon from 'sinon';
 
 import {CrashReportsClient} from '../../../lib/device/crash-reports-client.js';
 import {IOSCrashLog} from '../../../lib/device/log/ios-crash-log.js';
 
 describe('IOSCrashLog', function () {
-  let sandbox: SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(function () {
