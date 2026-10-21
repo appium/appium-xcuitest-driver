@@ -2,8 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
-import {createSandbox} from 'sinon';
-import type sinon from 'sinon';
+import sinon from 'sinon';
 
 import {AutomationSessionBackend} from '../../../lib/web-execution/automation-session-backend.js';
 
@@ -17,7 +16,7 @@ describe('AutomationSessionBackend', function () {
   let backend: AutomationSessionBackend;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     session = {};
     backend = new AutomationSessionBackend(session as any);
   });
