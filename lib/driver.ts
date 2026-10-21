@@ -208,7 +208,7 @@ const DEFAULT_SETTINGS = {
   webScreenshotMode: 'native',
   shouldUseCompactResponses: true,
   elementResponseAttributes: 'type,label',
-  // Read https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Utilities/FBConfiguration.m for following settings' values
+  // Read https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Utilities/FBConfiguration.m for following settings' values
   mjpegServerScreenshotQuality: 25,
   mjpegServerFramerate: 10,
   screenshotQuality: 1,

@@ -36,7 +36,7 @@ This article focuses only on the last stage: the WebDriverAgent (WDA) server.
 
 ### How WDA Works
 
-The WDA source code is located in [the WebDriverAgent repository](https://github.com/appium/WebDriverAgent/tree/master).
+The WDA source code is located in [the WebDriverAgent repository](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent).
 It is published as the [`appium-webdriveragent`](https://www.npmjs.com/package/appium-webdriveragent)
 NPM package, and contains several helper Node.js modules, along with the WDA source code itself.
 This source code is compiled into an `.xctrunner` bundle, which is a special application type that

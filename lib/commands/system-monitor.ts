@@ -22,7 +22,7 @@ declare module '../driver.js' {
  *
  * Requires a real device on iOS/tvOS 18+ and appium-ios-remotexpc.
  *
- * @see https://github.com/appium/appium-ios-remotexpc
+ * @see https://github.com/appium/appium-ios/tree/main/packages/remotexpc
  *
  * @param intervalMs - Optional sampling interval in milliseconds, forwarded to `sysmontap.configure()`.
  * Uses the sysmontap default (500ms) when omitted.

@@ -178,4 +178,4 @@ driver.quit
     Appium/WebDriverAgent package use proper dependencies for the device with a single prebuilt
     WebDriverAgent package. To set this up, you should remove the package internal frameworks from
     `WebDriverAgentRunner-Runner.app` with `rm -rf WebDriverAgentRunner-Runner.app/Frameworks/XC*.framework`.
-    The WDA package itself is available from <https://github.com/appium/WebDriverAgent>.
+    The WDA package itself is available from <https://github.com/appium/appium-ios/tree/main/packages/webdriveragent>.
