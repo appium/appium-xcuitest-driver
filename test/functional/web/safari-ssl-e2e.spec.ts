@@ -75,9 +75,10 @@ describe('Safari SSL', function () {
 
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     const assertPageSource = async () => {
+      // one page source can take >10 s on a slow runner (page initialization)
       await waitForCondition(async () => (await driver.getPageSource()).includes('Arbitrary text'), {
-        waitMs: 10000,
-        intervalMs: 500,
+        waitMs: 30000,
+        intervalMs: 1000,
       });
     };
 
