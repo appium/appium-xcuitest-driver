@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it, before, afterEach, beforeEach} from 'node:test';
 
-// eslint-disable-next-line
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
