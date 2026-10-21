@@ -1,20 +1,20 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+import sinon from 'sinon';
 
 import {ScreenRecorder} from '../../../lib/commands/recordscreen.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('startRecordingScreen with forceRestart', function () {
-  let sandbox: SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
   let driver: XCUITestDriver;
   let previous: ScreenRecorder;
-  let interruptStub: SinonStub;
-  let cleanupStub: SinonStub;
+  let interruptStub: sinon.SinonStub;
+  let cleanupStub: sinon.SinonStub;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     driver = new XCUITestDriver({} as any);
     driver._device = {udid: '00008120-0000000000000000'} as any;
     sandbox.stub(driver, 'proxyCommand').resolves({});
@@ -44,7 +44,7 @@ describe('startRecordingScreen with forceRestart', function () {
     interruptStub.resolves(false);
     await assert.rejects(driver.startRecordingScreen({forceRestart: true}), /Unable to stop screen recording process/);
     assert.strictEqual(cleanupStub.called, false);
-    assert.strictEqual((ScreenRecorder.prototype.start as SinonStub).called, false);
+    assert.strictEqual((ScreenRecorder.prototype.start as sinon.SinonStub).called, false);
     assert.strictEqual(driver._recentScreenRecorder, previous);
   });
 
@@ -65,7 +65,7 @@ describe('ScreenRecorder.interrupt', function () {
       remotePort: 9100,
       remoteUrl: 'http://127.0.0.1:8100',
     });
-    const stop = createSandbox().stub();
+    const stop = sinon.createSandbox().stub();
     stop.onFirstCall().rejects(new Error('kill failed'));
     stop.onSecondCall().rejects(new Error('kill failed'));
     const mainProcess = {isRunning: true, stop};

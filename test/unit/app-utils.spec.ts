@@ -3,7 +3,7 @@ import path from 'node:path';
 import {describe, it, before} from 'node:test';
 
 import {fs, tempDir, zip} from 'appium/support.js';
-import {createSandbox} from 'sinon';
+import sinon from 'sinon';
 
 import {onDownloadApp, unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
 import {XCUITestDriver} from '../../lib/driver.js';
@@ -103,7 +103,7 @@ describe('app-utils', function () {
         return;
       }
 
-      const sandbox = createSandbox();
+      const sandbox = sinon.createSandbox();
       const tmpDir = await tempDir.openDir();
       let resultPath: string | undefined;
       try {
@@ -140,7 +140,7 @@ describe('app-utils', function () {
       [`attachment; filename="fallback.ipa"; filename*=UTF-8''My%20App.ipa`, 'My App.ipa'],
     ]) {
       it(`should name the downloaded .ipa after ${disposition}`, async function () {
-        const sandbox = createSandbox();
+        const sandbox = sinon.createSandbox();
         const tmpDir = await tempDir.openDir();
         let resultPath: string | undefined;
         try {

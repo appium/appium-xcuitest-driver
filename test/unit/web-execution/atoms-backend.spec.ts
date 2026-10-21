@@ -2,8 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
-import {createSandbox} from 'sinon';
-import type sinon from 'sinon';
+import sinon from 'sinon';
 
 import {viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -18,7 +17,7 @@ describe('AtomsBackend', function () {
   let remoteStub: Record<string, sinon.SinonStub>;
 
   beforeEach(function () {
-    sandbox = createSandbox();
+    sandbox = sinon.createSandbox();
     driver = new XCUITestDriver({} as any);
     driver.curContext = 'fake web context';
     backend = new AtomsBackend(driver);

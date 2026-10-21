@@ -3,7 +3,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
 import {fs, tempDir} from 'appium/support.js';
-import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
+import sinon from 'sinon';
 
 import {parseContainerPath} from '../../../lib/commands/file-movement.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -65,11 +65,11 @@ describe('file-movement', function () {
   describe('mobileDeleteFile', function () {
     const simRoot = '/Users/me/Library/Developer/CoreSimulator/Devices/UDID/data';
     let driver: XCUITestDriver;
-    let sandbox: SinonSandbox;
-    let rimrafStub: SinonStub;
+    let sandbox: sinon.SinonSandbox;
+    let rimrafStub: sinon.SinonStub;
 
     beforeEach(function () {
-      sandbox = createSandbox();
+      sandbox = sinon.createSandbox();
       driver = new XCUITestDriver({} as any);
       driver.isSimulator = () => true;
       driver._device = {getDir: () => simRoot} as any;
