@@ -1,3 +1,73 @@
+## [13.0.0-beta.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.0-beta.1...v13.0.0-beta.2) (2026-10-21)
+
+### ⚠ BREAKING CHANGES
+
+* Removed the asyncWaitMs driver property. Use scriptTimeoutMs (base driver) instead.
+* GET /timeouts reports script: null for a new session, not 0.
+* execute now uses the script timeout that the client sets (before: ignored). A client that sends 0, or a value shorter than its scripts, now gets script timeout.
+* Removed the undocumented XCUITestDriver.executeAtomAsync method. It had no internal callers and was not exposed as a command. Driver subclasses that call it should use this.remote.executeAtomAsync(atom, args, this.curWebFrames) followed by this.waitForAtom(promise) instead.
+* Removed the launchApp command and the POST /appium/app/launch route. Use mobile: launchApp instead.
+* Removed the closeApp command and the POST /appium/app/close route. Use mobile: terminateApp instead.
+* Removed the asyncScriptTimeout command and the POST /timeouts/async_script route. Use setScriptTimeout instead.
+* Removed the no-op getSafariIsIphone driver method.
+* Removed the no-op getSafariDeviceSize driver method.
+* Removed the no-op getSafariIsNotched driver method.
+* Removed the no-op getExtraTranslateWebCoordsOffset driver method.
+* Removed the no-op getExtraNativeWebTapOffset driver method.
+* Removed the deprecated hasElementId driver property.
+* Removed the nativeWebTapTabBarVisibility setting. It had no effect, and setting it is no longer accepted.
+* Removed the nativeWebTapSmartAppBannerVisibility setting. It had no effect, and setting it is no longer accepted.
+* Removed the safariTabBarPosition setting. It had no effect, and setting it is no longer accepted.
+
+### Features
+
+* add asAppUnderTest flag in mobile: launchApp command ([#3004](https://github.com/appium/appium-xcuitest-driver/issues/3004)) ([#3043](https://github.com/appium/appium-xcuitest-driver/issues/3043)) ([d8163af](https://github.com/appium/appium-xcuitest-driver/commit/d8163af92c500a2cb8fa619d26f82a47c9281def))
+* add execute method for retrieving pressable buttons ([#3069](https://github.com/appium/appium-xcuitest-driver/issues/3069)) ([bd109fc](https://github.com/appium/appium-xcuitest-driver/commit/bd109fc2a3ac6ac1c496f253e7f6d9d5ed8c8635))
+* add multi-display discovery and safe screenshot routing for Duo support ([#3013](https://github.com/appium/appium-xcuitest-driver/issues/3013)) ([#3025](https://github.com/appium/appium-xcuitest-driver/issues/3025)) ([cc15789](https://github.com/appium/appium-xcuitest-driver/commit/cc1578959e7b59ea502ced60ac436ed2e0461261))
+* add simulated Duo hinge angle command ([#3001](https://github.com/appium/appium-xcuitest-driver/issues/3001)) ([fdf6128](https://github.com/appium/appium-xcuitest-driver/commit/fdf6128617cdee58d7295b3482a189f13dd63120))
+* add timeoutMs argument to mobile: stopPerfRecord ([#3003](https://github.com/appium/appium-xcuitest-driver/issues/3003)) ([5071933](https://github.com/appium/appium-xcuitest-driver/commit/507193377271d2eae625f27cd12a2438aaa129f6))
+* capture selected simulator displays through CoreSim fallback on beta ([#3060](https://github.com/appium/appium-xcuitest-driver/issues/3060)) ([e8ba465](https://github.com/appium/appium-xcuitest-driver/commit/e8ba465ab712008f14f61096bf824ed8bbfd9ce7))
+* Remove deprecated APIs ([#3054](https://github.com/appium/appium-xcuitest-driver/issues/3054)) ([b781cc3](https://github.com/appium/appium-xcuitest-driver/commit/b781cc30aa924c8bbe6710f1a15462102ee813f6))
+* support launching WDA on Duo ([#3002](https://github.com/appium/appium-xcuitest-driver/issues/3002)) ([175ac5d](https://github.com/appium/appium-xcuitest-driver/commit/175ac5d25a6d4451c33c21a8106e90945ea3f113))
+
+### Bug Fixes
+
+* backport native web tap calibration fixes to beta ([#3057](https://github.com/appium/appium-xcuitest-driver/issues/3057)) ([492b3dd](https://github.com/appium/appium-xcuitest-driver/commit/492b3dd8a85f895cb797bbbb4e24dfed0c7f4c1e))
+* backport picker wheel value and maxAttempts forwarding to beta ([#3023](https://github.com/appium/appium-xcuitest-driver/issues/3023)) ([ec44a57](https://github.com/appium/appium-xcuitest-driver/commit/ec44a57284a2bd2eb221f7fbb012accdba08ba5a)), closes [#3017](https://github.com/appium/appium-xcuitest-driver/issues/3017)
+* broadcast syslog to every logs websocket client ([#3005](https://github.com/appium/appium-xcuitest-driver/issues/3005)) ([46ff47b](https://github.com/appium/appium-xcuitest-driver/commit/46ff47bb57dd1f0b2b2a20807a3fa84dd1137480))
+* capture the whole element in web element screenshots ([#3039](https://github.com/appium/appium-xcuitest-driver/issues/3039)) ([c2bda91](https://github.com/appium/appium-xcuitest-driver/commit/c2bda9157aecf6ebe50fcd57334566ee71e94048))
+* Drop obsolete sessions from the server list on IPC session claim ([#3024](https://github.com/appium/appium-xcuitest-driver/issues/3024)) ([7c4c075](https://github.com/appium/appium-xcuitest-driver/commit/7c4c075aa666850555a074caae14ba47096ead72))
+* grepFile error handling ([#2989](https://github.com/appium/appium-xcuitest-driver/issues/2989)) ([753d737](https://github.com/appium/appium-xcuitest-driver/commit/753d7374470b1fc4a1afbe9e809d6d4e5770e0e6))
+* handle screen recorder shutdown failures on beta ([#3059](https://github.com/appium/appium-xcuitest-driver/issues/3059)) ([4d12119](https://github.com/appium/appium-xcuitest-driver/commit/4d121191a70542c5dcb46384230456484eb093e4))
+* honor explicit MJPEG screenshot orientation correction ([#3008](https://github.com/appium/appium-xcuitest-driver/issues/3008)) ([4dbd5fd](https://github.com/appium/appium-xcuitest-driver/commit/4dbd5fd2594c78ea797b069a4b064e950c7e96be))
+* include native geometry in web calibration cache ([#3009](https://github.com/appium/appium-xcuitest-driver/issues/3009)) ([c3d0b47](https://github.com/appium/appium-xcuitest-driver/commit/c3d0b47ffff1a8591640af2eca4455052516a2d8))
+* make tunnel-creation exit on Ctrl+C ([#3035](https://github.com/appium/appium-xcuitest-driver/issues/3035)) ([349721a](https://github.com/appium/appium-xcuitest-driver/commit/349721a9e330c0f5cb7696b0b5ac56cd6b3bd483))
+* parse unquoted and RFC 5987 Content-Disposition filenames ([#3026](https://github.com/appium/appium-xcuitest-driver/issues/3026)) ([7f7ec27](https://github.com/appium/appium-xcuitest-driver/commit/7f7ec27c7a761bca89a01d4911f0257d91d2f4c1))
+* preserve app iframe selection after native tap calibration ([#3015](https://github.com/appium/appium-xcuitest-driver/issues/3015)) ([bf1d804](https://github.com/appium/appium-xcuitest-driver/commit/bf1d80431c83f191129cad7a35c8dc9ae924f0f0))
+* preserve iOS 27 webview interaction history ([#3064](https://github.com/appium/appium-xcuitest-driver/issues/3064)) ([57d0dbd](https://github.com/appium/appium-xcuitest-driver/commit/57d0dbd4204cd206e90dd32d9162a756226f3264))
+* preserve recording aspect ratio and input frame rate (beta backport) ([#3029](https://github.com/appium/appium-xcuitest-driver/issues/3029)) ([7e935fd](https://github.com/appium/appium-xcuitest-driver/commit/7e935fdceed6a2cbf26fbb001612805b30a69837)), closes [#3010](https://github.com/appium/appium-xcuitest-driver/issues/3010)
+* preserve recording padding when MJPEG frame geometry changes ([#3061](https://github.com/appium/appium-xcuitest-driver/issues/3061)) ([cb4e412](https://github.com/appium/appium-xcuitest-driver/commit/cb4e412b94aaaeb882e67d91cc9dcc634ef92a68))
+* refresh display geometry for viewport screenshots ([#3007](https://github.com/appium/appium-xcuitest-driver/issues/3007)) ([76fd082](https://github.com/appium/appium-xcuitest-driver/commit/76fd082bce0739c56e1d6166e042e69ac16c4edb))
+* resolve WDA downloads from the monorepo release ([#3050](https://github.com/appium/appium-xcuitest-driver/issues/3050)) ([#3051](https://github.com/appium/appium-xcuitest-driver/issues/3051)) ([05e00f1](https://github.com/appium/appium-xcuitest-driver/commit/05e00f16d50d8fb4017ffc276bfb6db0b93f6a15))
+* restore capability constraints removed from base driver ([#3028](https://github.com/appium/appium-xcuitest-driver/issues/3028)) ([3fdf731](https://github.com/appium/appium-xcuitest-driver/commit/3fdf7319961071f38f4c803a107b3f310c0bbfa1))
+* restore compatibility with beta capability and timeout types ([#3062](https://github.com/appium/appium-xcuitest-driver/issues/3062)) ([39aa02a](https://github.com/appium/appium-xcuitest-driver/commit/39aa02a7f6307578d3c9ceabf8e47b5d77b3b960))
+* stop dropping new crash reports in IOSCrashLog.getLogs ([#3031](https://github.com/appium/appium-xcuitest-driver/issues/3031)) ([fa2d1f8](https://github.com/appium/appium-xcuitest-driver/commit/fa2d1f8803ace3a2ea6486a5946eec292ab5ab08))
+* stop the running screen recording when forceRestart is set ([#3019](https://github.com/appium/appium-xcuitest-driver/issues/3019)) ([5b57556](https://github.com/appium/appium-xcuitest-driver/commit/5b57556e69d15d72035d59ecb680b2adee111111))
+* track Apple TV tunnels by pair record UDID ([#3034](https://github.com/appium/appium-xcuitest-driver/issues/3034)) ([5a00db7](https://github.com/appium/appium-xcuitest-driver/commit/5a00db7f334805d66aa9167aff38762cab9cc7d8))
+* use default sinon import for @types/sinon 22.0.1 compatibility ([#3068](https://github.com/appium/appium-xcuitest-driver/issues/3068)) ([47eee58](https://github.com/appium/appium-xcuitest-driver/commit/47eee58b4eba1ce4e5dea49af5561143cc468f6e))
+* wait for a promise that a script returns in a Safari web context ([#3041](https://github.com/appium/appium-xcuitest-driver/issues/3041)) ([f7b5524](https://github.com/appium/appium-xcuitest-driver/commit/f7b5524ab31e2a822ebcbc245aa6abd1a83a61f5))
+
+### Miscellaneous Chores
+
+* bump Appium monorepo packages to latest betas ([#3020](https://github.com/appium/appium-xcuitest-driver/issues/3020)) ([ac52334](https://github.com/appium/appium-xcuitest-driver/commit/ac52334d03229ad0c2f0e573daa917a7fbaa821a))
+* fix oxlint warnings ([#3055](https://github.com/appium/appium-xcuitest-driver/issues/3055)) ([d2943ad](https://github.com/appium/appium-xcuitest-driver/commit/d2943ad5be15caa0a410e66d4daa338dc410c394))
+* port some missing PRs to beta ([#3070](https://github.com/appium/appium-xcuitest-driver/issues/3070)) ([a8c93f0](https://github.com/appium/appium-xcuitest-driver/commit/a8c93f0e2480e34480a6418d894e21c1d5b51c4e))
+
+### Code Refactoring
+
+* attach commands via prototype to allow overrides in descendants ([#3047](https://github.com/appium/appium-xcuitest-driver/issues/3047)) ([533fcd5](https://github.com/appium/appium-xcuitest-driver/commit/533fcd5688b279074a983b28f8dcf6292058c628))
+* remove unused driver.executeAtomAsync ([#3065](https://github.com/appium/appium-xcuitest-driver/issues/3065)) ([f1729e6](https://github.com/appium/appium-xcuitest-driver/commit/f1729e66a4ec1fccc9dfb6d85713fad7fb00ab66))
+
 ## [13.0.0-beta.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.1...v13.0.0-beta.1) (2026-09-27)
 
 ### ⚠ BREAKING CHANGES
