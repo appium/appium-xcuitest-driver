@@ -3,7 +3,7 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {createSandbox} from 'sinon';
 
-import {withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
+import {limitTimeoutMs, withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
 
 describe('utils/async', function () {
   describe('TimeoutError', function () {
@@ -16,6 +16,21 @@ describe('utils/async', function () {
     it('should accept a custom message', function () {
       const err = new TimeoutError('custom deadline');
       assert.strictEqual(err.message, 'custom deadline');
+    });
+  });
+
+  describe('limitTimeoutMs', function () {
+    it('keeps a timeout up to 1 h', function () {
+      assert.strictEqual(limitTimeoutMs(30000), 30000);
+      assert.strictEqual(limitTimeoutMs(3600000), 3600000);
+    });
+
+    it('limits a longer timeout to 1 h', function () {
+      assert.strictEqual(limitTimeoutMs(Number.MAX_SAFE_INTEGER), 3600000);
+    });
+
+    it('gives 1 h for a W3C null (no limit)', function () {
+      assert.strictEqual(limitTimeoutMs(null), 3600000);
     });
   });
 
@@ -50,7 +65,8 @@ describe('utils/async', function () {
     });
 
     it('should reject with TimeoutError when the deadline elapses first', async function () {
-      const clock = sandbox.useFakeTimers();
+      // only these: with a fake nextTick, the test runner stops reporting the next tests
+      const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         const hanging = new Promise<string>(() => {});
         const out = withTimeout(hanging, 100, 'deadline exceeded');
@@ -72,7 +88,7 @@ describe('utils/async', function () {
     });
 
     it('should resolve when the inner promise wins the race', async function () {
-      const clock = sandbox.useFakeTimers();
+      const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         const inner = new Promise<number>((resolve) => {
           setTimeout(() => resolve(42), 50);
@@ -86,7 +102,7 @@ describe('utils/async', function () {
     });
 
     it('should clear the deadline timer when the inner promise wins', async function () {
-      const clock = sandbox.useFakeTimers();
+      const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
       try {
         const inner = new Promise<number>((resolve) => {
           setTimeout(() => resolve(1), 20);

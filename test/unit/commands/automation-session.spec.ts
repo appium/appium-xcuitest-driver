@@ -60,12 +60,32 @@ describe('automation-session commands', function () {
       const session = {} as any;
       driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
       driver.pageLoadMs = 12345;
-      driver.asyncWaitMs = 6789;
+      driver.scriptTimeoutMs = 6789;
       driver.implicitWaitMs = 42;
       await driver.mobileStartAutomationSession();
       assert.strictEqual(session.pageLoadTimeoutMs, 12345);
       assert.strictEqual(session.scriptTimeoutMs, 6789);
       assert.strictEqual(session.implicitWaitTimeoutMs, 42);
+    });
+
+    it('seeds the session with an implicit wait of 0 for a W3C null implicit wait', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
+      const session = {} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
+      driver.implicitWaitMs = null;
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(session.implicitWaitTimeoutMs, 0);
+    });
+
+    it('seeds the session with a script timeout of at most webviewAtomWaitTimeout', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
+      const session = {} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
+      driver.scriptTimeoutMs = Number.MAX_SAFE_INTEGER;
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(session.scriptTimeoutMs, 120000);
     });
   });
 
