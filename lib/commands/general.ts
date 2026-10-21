@@ -144,7 +144,7 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
  * @returns Object containing one or more arrays of button names
  */
 export async function mobileGetPressableButtons(this: XCUITestDriver): Promise<PressableButtonsInfo> {
-  return await this.proxyCommand('/wda/getPressableButtons', 'GET');
+  return await this.proxyCommand('/wda/pressableButtons', 'GET');
 }
 
 /**
