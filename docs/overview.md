@@ -42,25 +42,25 @@ Under the hood, the driver combines several different technologies to achieve it
 
 - Native testing
     - Based on Apple's [XCTest](https://developer.apple.com/documentation/xctest) framework
-    - Provided by the [`appium-webdriveragent`](https://github.com/appium/WebDriverAgent) library
+    - Provided by the [`appium-webdriveragent`](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent) library
       (a fork of [the original implementation by Facebook](https://github.com/facebookarchive/WebDriverAgent))
     - Uses the [W3C WebDriver protocol](https://w3c.github.io/webdriver) with several platform-specific extensions
 - Webview testing
     - Based on Safari's WebKit Remote Debugger Protocol (not officially documented)
-    - Provided by the [`appium-remote-debugger`](https://github.com/appium/appium-remote-debugger) library
+    - Provided by the [`appium-remote-debugger`](https://github.com/appium/appium-ios/tree/main/packages/remote-debugger) library
     - Interaction with webpages relies on Selenium-style "atoms", which are based on the original [Selenium atoms](https://github.com/SeleniumHQ/selenium/tree/trunk/javascript/atoms)
     - Uses the W3C WebDriver protocol
-    - Alternative support for Safari automation is also provided by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
+    - Alternative support for Safari automation is also provided by the [Appium Safari driver](https://appium.github.io/appium-safari-driver/)
 - Simulator communication
     - Based on the `xcrun simctl` and other `xcrun` command line utility calls
-    - Provided by the [`appium-ios-simulator`](https://github.com/appium/appium-ios-simulator) library
+    - Provided by the [`appium-ios-simulator`](https://github.com/appium/appium-ios/tree/main/packages/simulator) library
 - Real device communication
     - Legacy approach (to be eventually deprecated)
         - Based on re-implemented [`libimobiledevice`](https://github.com/libimobiledevice/libimobiledevice) system calls
         - Provided by the [`appium-ios-device`](https://github.com/appium/appium-ios-device) library
     - Modern approach (iOS/tvOS 18+ only)
         - Based on remote XPC services
-        - Provided by the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/) library
+        - Provided by the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) library
 
 ## End-to-End Architecture
 
@@ -119,7 +119,7 @@ flowchart TD
 
 1. The test sends a command via a client library (for example `findElement`, `click`, or `executeScript`).
 2. The Appium server forwards the command to this driver based on the active session.
-3. The XCUITest driver translates/proxies the command to [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent), and manages WDA lifecycle when needed.
+3. The XCUITest driver translates/proxies the command to [WebDriverAgent (WDA)](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent), and manages WDA lifecycle when needed.
 4. WDA uses [XCTest](https://developer.apple.com/documentation/xctest?language=objc) internals to drive the app UI on simulator or real device.
 5. The result comes back through the same chain to the client.
 
@@ -127,12 +127,12 @@ flowchart TD
 
 - Client library to Appium server: W3C WebDriver HTTP protocol.
 - Appium server to this driver: in-process driver command dispatch.
-- This driver to [WDA](https://github.com/appium/WebDriverAgent): HTTP proxying to the WDA REST API.
-- [WDA](https://github.com/appium/WebDriverAgent) to [XCTest](https://developer.apple.com/documentation/xctest?language=objc): native Apple automation stack.
+- This driver to [WDA](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent): HTTP proxying to the WDA REST API.
+- [WDA](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent) to [XCTest](https://developer.apple.com/documentation/xctest?language=objc): native Apple automation stack.
 - This driver to real devices: host-device communication uses `usbmux`-based transport, Remote XPC tunneling, and `xcrun devicectl` depending on iOS/tvOS version and environment setup.
 - This driver to simulators: host-simulator communication uses `xcrun simctl` (plus related CoreSimulator tooling).
 
 [^watchos]: Only the Simulator is supported - see [watchOS Automation](./guides/watchos.md)
-[^macos]: Supported by the [Appium Mac2 driver](https://github.com/appium/appium-mac2-driver)
-[^safari-mob]: Also supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
-[^safari-desktop]: Supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
+[^macos]: Supported by the [Appium Mac2 driver](https://appium.github.io/appium-mac2-driver/)
+[^safari-mob]: Also supported by the [Appium Safari driver](https://appium.github.io/appium-safari-driver/)
+[^safari-desktop]: Supported by the [Appium Safari driver](https://appium.github.io/appium-safari-driver/)

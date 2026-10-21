@@ -18,8 +18,8 @@ The XCTest framework also does not expose any _public_ APIs for input events gen
 there is a possibility to perform events generation via XCTest _private_ undocumented APIs.
 
 In particular, we are interested in the
-[`XCPointerEventPath`](https://github.com/appium/WebDriverAgent/blob/master/PrivateHeaders/XCTest/XCPointerEventPath.h)
-and [`XCSynthesizedEventRecord`](https://github.com/appium/WebDriverAgent/blob/master/PrivateHeaders/XCTest/XCSynthesizedEventRecord.h)
+[`XCPointerEventPath`](https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/PrivateHeaders/XCTest/XCPointerEventPath.h)
+and [`XCSynthesizedEventRecord`](https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/PrivateHeaders/XCTest/XCSynthesizedEventRecord.h)
 interfaces. These APIs allow to create chains of input events and supply them to the system kernel
 for execution.
 
@@ -61,7 +61,7 @@ paths. So, in order to generate two-finger symmetric swipe we need to supply the
 Unfortunately, there is no information on this topic at all (private API `¯\_(ツ)_/¯`). Consider
 visiting the following resources:
 
-* <https://github.com/appium/WebDriverAgent/tree/master/PrivateHeaders/XCTest>
-* <https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentTests/IntegrationTests/FBW3CTouchActionsIntegrationTests.m>
-* <https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentTests/IntegrationTests/FBW3CMultiTouchActionsIntegrationTests.m>
-* <https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Utilities/FBW3CActionsSynthesizer.m>
+* <https://github.com/appium/appium-ios/tree/main/packages/webdriveragent/PrivateHeaders/XCTest>
+* <https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentTests/IntegrationTests/FBW3CTouchActionsIntegrationTests.m>
+* <https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentTests/IntegrationTests/FBW3CMultiTouchActionsIntegrationTests.m>
+* <https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Utilities/FBW3CActionsSynthesizer.m>

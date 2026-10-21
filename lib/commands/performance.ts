@@ -20,7 +20,7 @@ const PERF_RECORD_FEAT_NAME = 'perf_record';
 const PERF_RECORD_SECURITY_MESSAGE =
   'Performance measurement requires relaxing security for simulator. ' +
   `Please set '--relaxed-security' or '--allow-insecure' with '${PERF_RECORD_FEAT_NAME}' ` +
-  'referencing https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md for more details.';
+  'referencing https://appium.github.io/appium-xcuitest-driver/latest/reference/security-flags/ for more details.';
 const DEFAULT_TIMEOUT_MS = 5 * 60 * 1000;
 const STOP_TIMEOUT_MS = 3 * 60 * 1000;
 const STARTUP_TIMEOUT_MS = 60 * 1000;

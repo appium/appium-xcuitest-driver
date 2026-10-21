@@ -161,7 +161,7 @@ Most of the supported driver attributes are simple compilations of standard XCTe
 example, `elementType` is translated to `type` by matching the corresponding [enum](https://developer.apple.com/documentation/xctest/xcuielementtype?language=objc)
 value to a string representation, while `name` is compiled from the original element's identifier
 and label, depending on what is present first. The full list of mapping rules between standard and
-XCUITest attribute values can be found in [WebDriverAgent sources](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m).
+XCUITest attribute values can be found in [WebDriverAgent sources](https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m).
 
 Still, some supported driver attributes, like `visible` or `accessible`, have no direct mapping in
 XCTest and are retrieved directly from the accessibility framework ~~using dark magic~~.
@@ -175,7 +175,7 @@ The final recommendation here would be:
 
 - If the problematic attribute is based on a public XCUIElement attribute, try to run a vanilla
   XCTest test with the same app, and compare the attribute value to the one you see in the XCUITest
-  driver. If XCTest returns a correct value, then feel free to raise an [issue](https://github.com/appium/WebDriverAgent/issues)
+  driver. If XCTest returns a correct value, then feel free to raise an [issue](https://github.com/appium/appium-ios/issues)
   to the Appium team. However, if the XCTest value is still incorrect, then the only place to
   complain would be the Apple support forum or an XCTest bug tracker.
 - If the problematic attribute is a "custom" driver attribute, like `visible` or `accessible`,

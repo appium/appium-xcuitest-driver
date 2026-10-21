@@ -39,7 +39,7 @@ value. Can be `null`.
 > Example: `hello`
 
 This is a complex attribute whose calculation algorithm depends on the actual element type. Check
-[WebDriverAgent sources](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m)
+[WebDriverAgent sources](https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m)
 to know more about how it is compiled (method `- (NSString *)wdValue`). Can be `null`.
 
 ## placeholderValue

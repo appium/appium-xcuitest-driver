@@ -71,7 +71,7 @@ export const optionalSimulatorCheck = new OptionalSimulatorCheck();
 
 export class OptionalApplesimutilsCommandCheck implements IDoctorCheck {
   static readonly README_LINK =
-    'https://github.com/appium/appium-xcuitest-driver/blob/master/docs/reference/execute-methods.md#mobile-setpermission';
+    'https://appium.github.io/appium-xcuitest-driver/latest/reference/execute-methods/#mobile-setpermission';
   log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
@@ -142,7 +142,7 @@ const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string |
 });
 
 export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
-  static readonly README_LINK = 'https://github.com/appium/appium-ios-remotexpc';
+  static readonly README_LINK = 'https://github.com/appium/appium-ios/tree/main/packages/remotexpc';
   log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
@@ -186,7 +186,7 @@ const TUNNEL_SCRIPT_TIMEOUT_MS = 5000;
 const API_READY_PATTERN = /:\d+\/remotexpc\/tunnels/;
 
 export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
-  static readonly README_LINK = 'https://github.com/appium/appium-ios-tuntap';
+  static readonly README_LINK = 'https://github.com/appium/appium-ios/tree/main/packages/tuntap';
   static readonly TUNNEL_CREATION_COMMAND = 'sudo appium driver run xcuitest tunnel-creation';
   log!: AppiumLogger;
 

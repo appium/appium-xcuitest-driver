@@ -30,7 +30,7 @@ For wireless devices, configuration is highly dependent on your tvOS version.
 ### Wireless tvOS 18 or Later
 
 Devices running tvOS 18 or later use Remote XPC services for pairing and communication. This
-functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/)
+functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
 library. You can also skip this Remote XPC approach and use the solutions described in the tvOS 17
 section, though they are limited and less reliable compared to Remote XPC.
 
@@ -66,7 +66,7 @@ section, though they are limited and less reliable compared to Remote XPC.
     connection attempts.
 
     For additional details on this procedure (discovery, cryptography, credential storage,
-    troubleshooting), refer to [the full pairing guide](https://github.com/appium/appium-ios-remotexpc/blob/main/docs/apple-tv-pairing-guide.md)
+    troubleshooting), refer to [the full pairing guide](https://github.com/appium/appium-ios/blob/main/packages/remotexpc/docs/apple-tv-pairing-guide.md)
     in the `appium-ios-remotexpc` project.
 
 4. Start a Remote XPC tunnel for your Apple TV, using another driver script (`sudo` required):

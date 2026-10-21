@@ -16,7 +16,7 @@ export interface NetworkMonitorEventParams {
 /**
  * BiDi event emitted for each DVT NetworkMonitor sample while `mobile: startNetworkMonitor` is active.
  *
- * @see https://github.com/appium/appium-ios-remotexpc
+ * @see https://github.com/appium/appium-ios/tree/main/packages/remotexpc
  */
 export interface NetworkMonitorBiDiEvent extends BiDiEvent<NetworkMonitorEventParams> {
   context: string;
@@ -34,7 +34,7 @@ export interface SystemMonitorEventParams {
 /**
  * BiDi event emitted for each labelled DVT sysmontap sample while `mobile: startSystemMonitor` is active.
  *
- * @see https://github.com/appium/appium-ios-remotexpc
+ * @see https://github.com/appium/appium-ios/tree/main/packages/remotexpc
  */
 export interface SystemMonitorBiDiEvent extends BiDiEvent<SystemMonitorEventParams> {
   context: string;

@@ -15,7 +15,7 @@ use cases, the latest versions of the above dependencies will work just fine.
 
 ??? info "Why not support all OS and Xcode versions?"
 
-    The XCUITest driver depends on the [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent)
+    The XCUITest driver depends on the [WebDriverAgent (WDA)](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent)
     framework, which in turn [relies on Apple's XCTest framework](../overview.md). Changes in the
     XCTest API are published in new Xcode and Apple device OS versions. These API changes may not
     only add new features that the driver must implement in order to support the latest devices, but
@@ -87,7 +87,7 @@ The following tables map device OS versions to their supported driver versions. 
 have lesser priority than for newer OS versions, and any major workarounds are unlikely.
 
 If you are downgrading an existing driver installation to adjust its Xcode/OS support range, ensure that
-the version of the [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent) server
+the version of the [WebDriverAgent (WDA)](https://github.com/appium/appium-ios/tree/main/packages/webdriveragent) server
 application (which the driver installs on the device under test) is also downgraded accordingly.
 
 ### iOS/iPadOS/tvOS

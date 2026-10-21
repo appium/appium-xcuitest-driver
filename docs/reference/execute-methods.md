@@ -160,7 +160,7 @@ The list of available context objects along with their properties:
 ### mobile: startAutomationSession
 
 Starts a WebKit `Automation`-domain session against the current Safari web view, using
-[appium-remote-debugger](https://github.com/appium/appium-remote-debugger)'s `AutomationSession`.
+[appium-remote-debugger](https://github.com/appium/appium-ios/tree/main/packages/remote-debugger)'s `AutomationSession`.
 The driver must already be switched to a Safari web context (see [mobile: getContexts](#mobile-getcontexts)
 and the [Hybrid Apps](../guides/hybrid.md) guide) before calling this method. This API
 throws if called from native context or from a non-Safari-based web view.
@@ -481,7 +481,7 @@ The resulting file in .trace format can be either returned directly as base64-en
 
 Installs a custom certificate onto the device.
 
-On **real devices** running iOS/tvOS 18+, [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required: profile installation goes through RemoteXPC only, and the driver throws if the package cannot be loaded or RemoteXPC setup fails.
+On **real devices** running iOS/tvOS 18+, [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) is required: profile installation goes through RemoteXPC only, and the driver throws if the package cannot be loaded or RemoteXPC setup fails.
 
 On **Simulator** only: if the Xcode/SDK version predates 11.4, Apple provides no official CLI path. In that situation (and as a Simulator fallback when simctl-based installation fails) this method wraps the certificate into a .mobileconfig, serves it from the internal HTTP server for mobile Safari to open, and drives the profile installation UI with WebDriverAgent.
 
@@ -499,7 +499,7 @@ The content of the generated .mobileconfig file as base64-encoded string. This c
 
 ### mobile: removeCertificate
 
-Removes an installed certificate profile on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required**.
+Removes an installed certificate profile on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) is required**.
 
 #### Arguments
 
@@ -513,7 +513,7 @@ Returns the string `Acknowledged` when the profile is removed successfully.
 
 ### mobile: listCertificates
 
-Lists installed certificate profiles on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required**.
+Lists installed certificate profiles on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) is required**.
 
 #### Returned Result
 
@@ -1129,7 +1129,7 @@ Base64-encoded content of the recorded media file or an empty string if no audio
 
 Starts streaming DVT networking instrument events from the device. Each sample is published on the WebDriver BiDi bus as **`appium:xcuitest.networkMonitor`** with a `params.event` object (discriminated by `event.type`: interface `0`, new connection `1`, per-flow stats `2`). This is **not** a Wireshark-style PCAP; see [BiDi: networkMonitor](./bidi.md#appiumxcuitestnetworkmonitor) for full examples and field meanings.
 
-Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) package installed, and a BiDi-capable client subscribed to that method.
 
 If a monitor is already running, the call does nothing so the existing stream continues.
 
@@ -1141,7 +1141,7 @@ Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tear
 
 Starts streaming DVT sysmontap samples (CPU usage, memory footprint, and other per-process/system metrics) from the device. Each labelled sample is published on the WebDriver BiDi bus as **`appium:xcuitest.systemMonitor`** with a `params.event` object (discriminated by `event.kind`: `"system"` for a device-wide snapshot, `"processes"` for a per-process snapshot array); see [BiDi: systemMonitor](./bidi.md#appiumxcuitestsystemmonitor) for full examples and field meanings.
 
-Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) package installed, and a BiDi-capable client subscribed to that method.
 
 If a monitor is already running, the call does nothing so the existing stream continues.
 
@@ -1159,7 +1159,7 @@ Stops DVT sysmontap streaming started with `mobile: startSystemMonitor` and tear
 
 Runs a native XCTest suite on the device under test.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package. `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported**. This extension does not run XCTest bundles on simulators.
+Supported only on **real devices** running **iOS/tvOS 18+** with the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) package. `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported**. This extension does not run XCTest bundles on simulators.
 
 #### Arguments
 
