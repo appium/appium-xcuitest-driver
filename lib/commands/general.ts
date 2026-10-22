@@ -7,7 +7,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import type {ButtonName} from './types.js';
+import type {ButtonName, PressableButtonsInfo} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
@@ -147,6 +147,16 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
   } else {
     await (this.device as Simulator).openUrl(url);
   }
+}
+
+/**
+ * Retrieves values for all pressable button names supported in this session,
+ * that can be passed to {@link mobilePressButton}.
+ *
+ * @returns Object containing one or more arrays of button names
+ */
+export async function mobileGetPressableButtons(this: XCUITestDriver): Promise<PressableButtonsInfo> {
+  return await this.proxyCommand('/wda/pressableButtons', 'GET');
 }
 
 /**

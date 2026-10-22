@@ -289,6 +289,9 @@ export const executeMethodMap = {
   'mobile: listDisplays': {
     command: 'mobileListDisplays',
   },
+  'mobile: getPressableButtons': {
+    command: 'mobileGetPressableButtons',
+  },
   'mobile: pressButton': {
     command: 'mobilePressButton',
     params: {

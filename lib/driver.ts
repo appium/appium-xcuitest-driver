@@ -527,6 +527,7 @@ export class XCUITestDriver
   mobileSetSimulatedHingeAngle = displayCommands.mobileSetSimulatedHingeAngle;
   mobileGetSimulatedHingeAngle = displayCommands.mobileGetSimulatedHingeAngle;
   mobilePressButton = generalCommands.mobilePressButton;
+  mobileGetPressableButtons = generalCommands.mobileGetPressableButtons;
   mobileSiriCommand = generalCommands.mobileSiriCommand;
 
   /*-------------+
