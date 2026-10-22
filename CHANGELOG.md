@@ -1,3 +1,9 @@
+## [12.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.19.1...v12.20.0) (2026-10-22)
+
+### Features
+
+* add execute method for retrieving pressable buttons ([#3071](https://github.com/appium/appium-xcuitest-driver/issues/3071)) ([10553a0](https://github.com/appium/appium-xcuitest-driver/commit/10553a02810736493aea868d5570b39637f74ec6))
+
 ## [12.19.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.19.0...v12.19.1) (2026-10-19)
 
 ### Bug Fixes
