@@ -103,6 +103,9 @@ The list of alert button names if the selected action is `getButtons`
 
 Sets the Simulator's pasteboard content to the given value. Does not work for real devices.
 
+Not supported on [watchOS](../guides/watchos.md): the watchOS Simulator runtime does not expose its
+pasteboard to the host, so the connection this command needs cannot be established.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -113,6 +116,9 @@ encoding | string | no | Deprecated and ignored; pasteboard content is always ha
 ### mobile: getPasteboard
 
 Gets the Simulator's pasteboard content. Does not work for real devices.
+
+Not supported on [watchOS](../guides/watchos.md), for the same reason as
+[mobile: setPasteboard](#mobile-setpasteboard).
 
 #### Arguments
 
@@ -559,6 +565,10 @@ Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this exte
 
 Reads the battery information from the device under test. This endpoint only returns reliable result on real devices.
 
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the first one
+whose watch target reads the battery through WatchKit; older agents are rejected with an upgrade hint.
+Watch simulators report `level: -1` and `state: 0` because they have no battery.
+
 #### Returned Result
 
 The returned object always includes at least the following entries:
@@ -894,9 +904,18 @@ Get the device's UI appearance style.
 An object, with the following entries:
 - style: The device's UI appearance value. This could be one of: `light`, `dark`, `unknown`, `unsupported`
 
+On [watchOS](../guides/watchos.md) this always reports `automatic`: neither the Simulator's `ui
+appearance` query (it answers `unsupported`) nor the watchOS agent build can read the current
+style, so the value carries no information there.
+
 ### mobile: setAppearance
 
 Set the device's UI appearance style.
+
+On [watchOS](../guides/watchos.md) the direct routes are unavailable - the Simulator refuses the
+appearance change and the watchOS agent build has no appearance endpoint - so the driver falls back
+to [mobile: siriCommand](#mobile-siricommand) ("Turn on/off dark mode"), which does change the
+appearance there. Expect the request to take a few seconds and to briefly show Siri's UI.
 
 #### Arguments
 
@@ -908,6 +927,9 @@ style | string | yes | Either `light` or `dark` | dark
 
 Get the device's "increase contrast" accessibility mode.
 This API only works on simulators. An exception is thrown if executed with real devices.
+
+Not supported on [watchOS](../guides/watchos.md), whose Simulator runtime reports the setting as
+unsupported.
 
 #### Returned Result
 
@@ -924,6 +946,9 @@ One of below:
 Enable or disable the device's "increase contrast" accessibility mode.
 This API only works on simulators. An exception is thrown if executed with real devices.
 
+Not supported on [watchOS](../guides/watchos.md): its Simulator runtime refuses contrast changes
+with "Operation not supported".
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -934,6 +959,9 @@ increaseContrast | string | yes | Either `enabled` or `disabled` (case insensiti
 
 Get the device's content size.
 This API only works on simulators. An exception is thrown if executed with real devices.
+
+Not supported on [watchOS](../guides/watchos.md), whose Simulator runtime reports the setting as
+unsupported.
 
 #### Returned Result
 
@@ -959,6 +987,9 @@ One of below:
 Set the device's content size.
 This API only works on simulators. An exception is thrown if executed with real devices.
 
+Not supported on [watchOS](../guides/watchos.md): its Simulator runtime refuses text-size changes
+with "Operation not supported".
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -982,6 +1013,11 @@ size | string | yes | One of the content sizes listed below in case-insensitive.
 
 Gets the content of the primary clipboard on the device under test.
 
+Not supported on [watchOS](../guides/watchos.md) in the default (WebDriverAgent pasteboard) mode:
+that build has no pasteboard endpoint, and the watchOS Simulator runtime does not expose its
+pasteboard to the host either, so [mobile: getPasteboard](#mobile-getpasteboard) is not an
+alternative there. The `xpc` mode is real device only.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -998,6 +1034,11 @@ An empty string is returned if the clipboard contains no data.
 
 Sets the primary clipboard's content on the device under test.
 
+Not supported on [watchOS](../guides/watchos.md) in the default (WebDriverAgent pasteboard) mode:
+that build has no pasteboard endpoint, and the watchOS Simulator runtime does not expose its
+pasteboard to the host either, so [mobile: setPasteboard](#mobile-setpasteboard) is not an
+alternative there. The `xpc` mode is real device only.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1009,6 +1050,9 @@ mode | string | no | If set to `xpc`, the clipboard content is set via the Remot
 ### mobile: siriCommand
 
 Presents the Siri UI, if it is not currently active, and accepts a string which is then processed as if it were recognized speech. Check the documentation on [activateWithVoiceRecognitionText](https://developer.apple.com/documentation/xctest/xcuisiriservice/2852140-activatewithvoicerecognitiontext?language=objc) XCTest method for more details.
+
+Also works on [watchOS](../guides/watchos.md) (verified on watchOS 26.5), where it is the only way
+to change the system appearance - see [mobile: setAppearance](#mobile-setappearance).
 
 #### Arguments
 
@@ -1261,6 +1305,9 @@ The command retrieves a fresh list without changing the selected display. After 
 unfolding, query the displays again rather than assuming the main display is the visible one.
 See [iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
 
+On [watchOS](../guides/watchos.md) the list always holds exactly one entry, since a watch has a
+single display.
+
 #### Returned Result
 
 An array of display entries, where each entry contains:
@@ -1435,6 +1482,9 @@ toVisible | boolean | no | If set to _true_ then asks to scroll to the first vis
 ### mobile: pinch
 
 Performs pinch gesture on the given element or on the application element.
+
+Not supported on [watchOS](../guides/watchos.md), whose display is single-touch. Use
+[mobile: swipe](#mobile-swipe) or [mobile: rotateDigitalCrown](#mobile-rotatedigitalcrown) instead.
 
 #### Arguments
 
@@ -1826,6 +1876,9 @@ toY | number | no | The y coordinate of ending drag point. Must be provided if `
 
 Performs [rotate](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate?language=objc) gesture on the given element.
 
+Not supported on [watchOS](../guides/watchos.md), whose display is single-touch. Use
+[mobile: rotateDigitalCrown](#mobile-rotatedigitalcrown) to rotate the Digital Crown instead.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1980,6 +2033,9 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
 
 Emulates force press on the given element/coordinates.
 An error is thrown if the target device does not support force press gesture.
+
+Not supported on [watchOS](../guides/watchos.md), whose display has no force sensor. Use
+[mobile: touchAndHold](#mobile-touchandhold) for a long press there.
 
 #### Arguments
 
@@ -2139,6 +2195,9 @@ Opens the given URL with the default or the given application.
 This functionality is only available since xcuitest driver version 4.17.
 Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
+Not supported on [watchOS](../guides/watchos.md): its Simulator runtime refuses both web and custom
+URL schemes with "Operation not supported".
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -2252,6 +2311,10 @@ App strings map, where keys are resource identifiers.
 
 Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot be hidden. On non-tablet devices the keyboard might not have an explicit button to hide it. In such case this API won't work and the only way to close the keyboard would be to simulate the same action an app user would do to close it. For example, swipe from top to bottom or tap the screen somewhere at the area not covered by the keyboard.
 
+On [watchOS](../guides/watchos.md) this always fails: the watch keyboard has no key the endpoint
+can find, so locate its `Done` button (`XCUIElementTypeButton`) and tap that instead - it both
+commits and closes the keyboard.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -2270,7 +2333,10 @@ Checks if the system on-screen keyboard is visible.
 
 Send keys to the given element or to the application under test.
 This API is only supported since Xcode 15/iOS 17.
-It is not supported on tvOS.
+It is not supported on tvOS or watchOS - watchOS has no `XCUIKeyboardKey` API, so the endpoint is
+absent from the watchOS agent build. Entering text on watchOS still works through
+`POST /session/:id/element/:uuid/value`, `POST /session/:id/wda/keys` or W3C key actions, or by
+tapping the keyboard's `XCUIElementTypeKey` elements.
 The API only works on iPad. On iOS calling it has no effect.
 
 #### Arguments
@@ -2350,6 +2416,9 @@ seconds | number | no | The amount of seconds to wait between putting the app to
 Performs accessibility audit of the current application according to the given type or multiple types.
 Wraps the XCTest's [performAccessibilityAuditWithAuditTypes](https://developer.apple.com/documentation/xctest/xcuiapplication/4190847-performaccessibilityauditwithaud?language=objc) API.
 Only available since Xcode 15/iOS 17.
+
+Supported on [watchOS](../guides/watchos.md) (verified on watchOS 26.5), where XCTest exposes the same
+audit API.
 
 #### Arguments
 

@@ -52,9 +52,11 @@ import {
   getDriverInfo,
   handleMjpegOptions,
   installAUT,
+  isPlatformSupported,
   normalizeCommandTimeouts,
   onDownloadApp,
   onPostConfigureApp,
+  platformSupportMessage,
   printUser,
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
@@ -226,6 +228,15 @@ const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
   ['DELETE', /cookie/],
   ['GET', /cookie/],
   ['POST', /cookie/],
+] as RouteMatcher[];
+
+// The watchOS WebDriverAgent build omits the orientation endpoints, so those routes are served by
+// the driver instead, which reports the unsupported capability rather than forwarding the request
+// and surfacing a raw 'unknown command' error - see lib/commands/display.ts.
+const NO_PROXY_WATCHOS_LIST: RouteMatcher[] = [
+  ['GET', /^\/session\/[^\/]+\/orientation$/],
+  ['POST', /^\/session\/[^\/]+\/orientation$/],
+  ...NO_PROXY_NATIVE_LIST,
 ] as RouteMatcher[];
 
 const NO_PROXY_WEB_LIST: RouteMatcher[] = [
@@ -522,6 +533,8 @@ export class XCUITestDriver
   getViewportRect = displayCommands.getViewportRect;
   getScreenInfo = displayCommands.getScreenInfo;
   mobileListDisplays = displayCommands.mobileListDisplays;
+  getOrientation = displayCommands.getOrientation;
+  setOrientation = displayCommands.setOrientation;
   getStatusBarHeight = displayCommands.getStatusBarHeight;
   getDevicePixelRatio = displayCommands.getDevicePixelRatio;
   mobileSetSimulatedHingeAngle = displayCommands.mobileSetSimulatedHingeAngle;
@@ -1055,6 +1068,8 @@ export class XCUITestDriver
   override getProxyAvoidList(): RouteMatcher[] {
     if (this.isWebview()) {
       return NO_PROXY_WEB_LIST;
+    } else if (isWatchOs(this.opts.platformName)) {
+      return NO_PROXY_WATCHOS_LIST;
     }
     return NO_PROXY_NATIVE_LIST;
   }
@@ -1613,6 +1628,15 @@ export class XCUITestDriver
   }
 
   private async setInitialOrientation(orientation: string): Promise<void> {
+    if (!isPlatformSupported('orientation', this.opts.platformName)) {
+      // The cap is still handed to the Simulator as a window orientation preference (see
+      // `startSim`); only the WebDriverAgent-side orientation control is missing there.
+      this.log.warn(
+        `Ignoring the initial orientation: ` +
+          platformSupportMessage('orientation', this.opts.platformName, 'Setting the device orientation'),
+      );
+      return;
+    }
     const dstOrientation = String(orientation).toUpperCase();
     if (!SUPPORTED_ORIENATIONS.includes(dstOrientation)) {
       this.log.debug(

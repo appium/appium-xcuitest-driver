@@ -25,6 +25,14 @@ export type {
   WebContextGuardDriver,
 } from './guards.js';
 
+export {
+  isPlatformSupported,
+  minWdaVersionFor,
+  platformSupportMessage,
+  requirePlatformSupport,
+} from './platform-support.js';
+export type {PlatformCapability} from './platform-support.js';
+
 export {encodeBase64OrUpload, getPIDsListeningOnPort, isLocalHost} from './network.js';
 export type {UploadOptions} from './network.js';
 
@@ -34,7 +42,7 @@ export type {MJpegStream} from './mjpeg.js';
 export {getDriverInfo, printUser} from './runtime.js';
 export type {DriverInfo} from './runtime.js';
 
-export {getAndCheckIosSdkVersion, getAndCheckXcodeVersion} from './xcode.js';
+export {getAndCheckXcodeVersion} from './xcode.js';
 
 export {removeAllSessionWebSocketHandlers, shouldSetInitialSafariUrl} from './session.js';
 export type {SafariUrlSessionOpts, SessionWebSocketHandlerHost} from './session.js';

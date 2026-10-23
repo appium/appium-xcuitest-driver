@@ -21,6 +21,9 @@ export const desiredCapConstraints = {
   bundleId: {
     isString: true,
   },
+  watchBundleId: {
+    isString: true,
+  },
   udid: {
     isString: true,
   },

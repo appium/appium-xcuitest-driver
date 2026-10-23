@@ -43,8 +43,82 @@ Digital Crown rotation and hand gestures are available through the
 
 ## Known Limitations
 
+Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with Xcode 26.6.
+
 * Only the Simulator is supported; real watchOS devices cannot be used as automation targets
-* Standard W3C gesture/touch actions (e.g. tap/swipe via the Actions API) do not work
+* `mobile: swipe` with an explicit `velocity`, and `mobile: scroll`, can take several minutes to
+  return on the watch Simulator: XCTest synthesizes those events very slowly there. The same gestures
+  without a `velocity`, and `mobile: dragfromtoforduration`, complete in about a second. Standard W3C
+  actions (`POST /session/:id/actions`) do work - a pointer sequence that taps an element makes that
+  element's action fire
+* Two-finger gestures are rejected: [`mobile: pinch`](../reference/execute-methods.md#mobile-pinch) and
+  [`mobile: rotateElement`](../reference/execute-methods.md#mobile-rotateelement) are not registered by
+  the watchOS WebDriverAgent build, and [`mobile: forcePress`](../reference/execute-methods.md#mobile-forcepress)
+  has no hardware behind it because watches have no force sensor. The XCTest primitives behind them do
+  run without error on watchOS 26.5, but no watch UI can show a pinch or a rotation, so they stay off
+  until their effect is proven. Use
+  [`mobile: touchAndHold`](../reference/execute-methods.md#mobile-touchandhold) for a long press and
+  [`mobile: rotateDigitalCrown`](../reference/execute-methods.md#mobile-rotatedigitalcrown) to turn the crown
+* Device orientation cannot be read or changed: `GET`/`POST /session/:id/orientation` is rejected. The
+  watch Simulator has no notion of app or device orientation; rotate its window in the Simulator UI
+  (`Device` > `Rotate Digital Crown`) if a different layout is needed
+* Text entry works, but the keyboard only commits when told to: `POST /session/:id/element/:uuid/value`,
+  `POST /session/:id/wda/keys` and W3C key actions all place text in the focused field, yet a SwiftUI
+  `TextField` keeps showing its previous value until the keyboard's `Done` button is tapped. Tapping
+  the on-screen `XCUIElementTypeKey` elements works as well, and
+  `DELETE /session/:id/element/:uuid/clear` empties a field. The named-key API is the exception:
+  [`mobile: keys`](../reference/execute-methods.md#mobile-keys) is rejected because watchOS has no
+  `XCUIKeyboardKey`, and [`mobile: hideKeyboard`](../reference/execute-methods.md#mobile-hidekeyboard)
+  finds no key to press - tap the keyboard's `Done` button to close it
+* There is no clipboard or pasteboard access.
+  [`mobile: setClipboard`](../reference/execute-methods.md#mobile-setclipboard)/
+  [`mobile: getClipboard`](../reference/execute-methods.md#mobile-getclipboard) have no pasteboard
+  endpoint in the watchOS build, and the watchOS Simulator runtime does not expose its pasteboard to
+  the host either, so [`mobile: setPasteboard`](../reference/execute-methods.md#mobile-setpasteboard)/
+  [`mobile: getPasteboard`](../reference/execute-methods.md#mobile-getpasteboard) are rejected too
+* URLs cannot be opened: [`mobile: deepLink`](../reference/execute-methods.md#mobile-deeplink) and
+  `POST /session/:id/url` are rejected, because the watch Simulator refuses both web and custom
+  schemes with "Operation not supported"
+* Text size and contrast cannot be read or changed:
+  [`mobile: setContentSize`](../reference/execute-methods.md#mobile-setcontentsize) and
+  [`mobile: setIncreaseContrast`](../reference/execute-methods.md#mobile-setincreasecontrast) are
+  rejected, and the matching getters report `unsupported`
+* [`mobile: getAppearance`](../reference/execute-methods.md#mobile-getappearance) always answers
+  `automatic`, since nothing on watchOS can read the current style back.
+  [`mobile: setAppearance`](../reference/execute-methods.md#mobile-setappearance) does apply the
+  change by falling back to [`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand);
+  confirm an appearance change with a screenshot rather than by reading it back
+* [`mobile: batteryInfo`](../reference/execute-methods.md#mobile-batteryinfo) needs a watchOS
+  WebDriverAgent build of **16.18.0 or newer**, which is the first one that reads the battery through
+  WatchKit. With an older agent the call is rejected with a message asking for the upgrade. A watch
+  Simulator reports `level: -1` and `state: 0` (both unknown), because simulators have no battery.
+* The VoiceOver extensions require watchOS 27 or later, which has no Simulator runtime to run them on
+  yet, so they are rejected by the version check
+
+[`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand),
+[`mobile: listDisplays`](../reference/execute-methods.md#mobile-listdisplays) (which returns exactly
+one entry, a watch having a single display) and
+[`mobile: performAccessibilityAudit`](../reference/execute-methods.md#mobile-performaccessibilityaudit)
+all work on watchOS, even though the endpoints behind them look iOS-specific.
+
+The `appium:orientation` capability is accepted but **ignored with a warning** on watchOS: the app-level
+orientation cannot be controlled there. The value is still handed to the Simulator as a window
+orientation preference while the Simulator is started, so a session with that cap starts normally
+instead of failing during startup.
+
+Apart from the items above, the core surface works on watchOS: element lookup and other
+`findElement` calls, source retrieval, screenshots, app lifecycle
+(`mobile: launchApp`/`terminateApp`/`activateApp`/`queryAppState`),
+[`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton),
+[`mobile: deviceScreenInfo`](../reference/execute-methods.md#mobile-devicescreeninfo),
+[`mobile: activeAppInfo`](../reference/execute-methods.md#mobile-activeappinfo),
+[`mobile: performIoHidEvent`](../reference/execute-methods.md#mobile-performiohidevent), alerts and
+XCTest screen recording (`mobile: startScreenRecording`/`stopScreenRecording`). Each entry in the
+[execute methods reference](../reference/execute-methods.md) states its own watchOS behaviour where
+that differs from iOS.
+
+Rejected commands raise `NotImplementedError` naming the command, the platform and the reason, rather
+than forwarding the request and surfacing a raw `unknown command` error from WebDriverAgent.
 
 ## Related Tickets
 

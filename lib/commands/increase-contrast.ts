@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {requireSimulator} from './helpers/index.js';
+import {requirePlatformSupport, requireSimulator} from './helpers/index.js';
 import type {IncreaseContrastAction, IncreaseContrastResult} from './types.js';
 
 const INCREASE_CONTRAST_CONFIG = ['enabled', 'disabled'] as const;
@@ -24,6 +24,7 @@ export async function mobileSetIncreaseContrast(
     );
   }
 
+  requirePlatformSupport(this, 'simulatorUiSettings', 'mobile: setIncreaseContrast');
   await requireSimulator(this, 'Setting increase contrast').setIncreaseContrast(increaseContrast);
 }
 

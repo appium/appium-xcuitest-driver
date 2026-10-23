@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {requireSimulator} from './helpers/index.js';
+import {requirePlatformSupport, requireSimulator} from './helpers/index.js';
 import type {ContentSizeAction, ContentSizeResult} from './types.js';
 
 const CONTENT_SIZE = [
@@ -37,6 +37,7 @@ export async function mobileSetContentSize(this: XCUITestDriver, size: ContentSi
     throw new errors.InvalidArgumentError(`The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`);
   }
 
+  requirePlatformSupport(this, 'simulatorUiSettings', 'mobile: setContentSize');
   await requireSimulator(this, 'Setting content size').setContentSize(size);
 }
 

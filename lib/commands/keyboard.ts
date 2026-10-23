@@ -1,4 +1,5 @@
 import type {XCUITestDriver} from '../driver.js';
+import {requirePlatformSupport} from './helpers/index.js';
 import type {KeyboardKey} from './types.js';
 
 /**
@@ -47,7 +48,7 @@ export async function isKeyboardShown(this: XCUITestDriver): Promise<boolean> {
 
 /**
  * Send keys to the given element or to the application under test.
- * This API is not supported on tvOS
+ * This API is not supported on tvOS or watchOS
  *
  * @since Xcode 15/iOS 17
  * @param keys - Array of keys to type.
@@ -63,6 +64,7 @@ export async function mobileKeys(
   keys: (KeyboardKey | string)[],
   elementId: string | null = null,
 ): Promise<void> {
+  requirePlatformSupport(this, 'keyboardInput', 'mobile: keys');
   const url = `/wda/element/${elementId || 0}/keyboardInput`;
   await this.proxyCommand(url, 'POST', {keys});
 }

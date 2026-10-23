@@ -1,5 +1,5 @@
 import type {XCUITestDriver} from '../driver.js';
-import {requireSimulator} from './helpers/index.js';
+import {requirePlatformSupport, requireSimulator} from './helpers/index.js';
 
 /**
  * Sets the Simulator's pasteboard content to the given value.
@@ -15,6 +15,7 @@ export async function mobileSetPasteboard(
   content: string,
   encoding: BufferEncoding = 'utf8',
 ): Promise<void> {
+  requirePlatformSupport(this, 'pasteboardSimulator', 'mobile: setPasteboard');
   const simulator = requireSimulator(this, 'Setting pasteboard content');
   if (typeof content !== 'string') {
     // can be empty string
@@ -34,6 +35,7 @@ export async function mobileSetPasteboard(
  * @returns The pasteboard content string
  */
 export async function mobileGetPasteboard(this: XCUITestDriver, encoding: BufferEncoding = 'utf8'): Promise<string> {
+  requirePlatformSupport(this, 'pasteboardSimulator', 'mobile: getPasteboard');
   warnIfNonUtf8Encoding(this, encoding);
   return await requireSimulator(this, 'Getting pasteboard content').getPasteboard();
 }

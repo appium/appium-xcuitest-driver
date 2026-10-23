@@ -1,5 +1,17 @@
+import {errors} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
+import {requirePlatformSupport} from './helpers/index.js';
 import type {Viewport, ScreenInfo, DisplayInfo, WDADisplayInfo} from './types.js';
+
+/**
+ * The orientations accepted by {@linkcode setOrientation}.
+ */
+const SUPPORTED_ORIENTATIONS = ['LANDSCAPE', 'PORTRAIT'];
+
+function isSupportedOrientation(orientation: string): orientation is (typeof SUPPORTED_ORIENTATIONS)[number] {
+  return (SUPPORTED_ORIENTATIONS as readonly string[]).includes(orientation);
+}
 
 /**
  * Retrieves the viewport dimensions.
@@ -53,6 +65,46 @@ export async function mobileListDisplays(this: XCUITestDriver): Promise<DisplayI
     },
     isDefault: isMain,
   }));
+}
+
+/**
+ * Reads the current device orientation.
+ *
+ * The watchOS Simulator has no notion of device orientation and the corresponding endpoint
+ * is absent from the watchOS WebDriverAgent build, so the command is rejected there instead
+ * of proxying.
+ *
+ * @returns The orientation as reported by WebDriverAgent, for example `PORTRAIT` or
+ * `LANDSCAPE-LEFT`
+ */
+export async function getOrientation(this: XCUITestDriver): Promise<string> {
+  requirePlatformSupport(this, 'orientation', 'Getting the device orientation');
+
+  return await this.proxyCommand<never, string>('/orientation', 'GET');
+}
+
+/**
+ * Sets the current device orientation.
+ *
+ * The watchOS Simulator has no notion of device orientation and the corresponding endpoint
+ * is absent from the watchOS WebDriverAgent build, so the command is rejected there instead
+ * of proxying.
+ *
+ * @param orientation - Either `LANDSCAPE` or `PORTRAIT`; matching is case-insensitive.
+ * @throws {errors.InvalidArgumentError} If the orientation is unknown
+ */
+export async function setOrientation(this: XCUITestDriver, orientation: string): Promise<void> {
+  requirePlatformSupport(this, 'orientation', 'Setting the device orientation');
+
+  const dstOrientation = String(orientation).toUpperCase();
+  if (!isSupportedOrientation(dstOrientation)) {
+    throw new errors.InvalidArgumentError(
+      `The '${orientation}' orientation is unknown. ` + `Only ${JSON.stringify(SUPPORTED_ORIENTATIONS)} are supported.`,
+    );
+  }
+  await this.proxyCommand<{orientation: string}, void>('/orientation', 'POST', {
+    orientation: dstOrientation,
+  });
 }
 
 /**

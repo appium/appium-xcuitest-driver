@@ -1,5 +1,6 @@
 import {BatteryInfoClient, type AdvancedBatteryInfo} from '../device/battery-info-client.js';
 import type {XCUITestDriver} from '../driver.js';
+import {requirePlatformSupport} from './helpers/index.js';
 import type {BatteryInfo} from './types.js';
 
 /**
@@ -12,6 +13,8 @@ import type {BatteryInfo} from './types.js';
 export async function mobileGetBatteryInfo(
   this: XCUITestDriver,
 ): Promise<BatteryInfo & {advanced: AdvancedBatteryInfo}> {
+  requirePlatformSupport(this, 'batteryInfo', 'Battery info');
+
   let batteryInfoFromShimService: AdvancedBatteryInfo = {};
   if (await this.remoteXPCFacade.determineAvailability()) {
     try {

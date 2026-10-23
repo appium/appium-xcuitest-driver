@@ -7,6 +7,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
+import {requirePlatformSupport} from './helpers/index.js';
 import type {ButtonName, PressableButtonsInfo} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
@@ -142,6 +143,7 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
     return;
   }
 
+  requirePlatformSupport(this, 'deepLink', 'Opening a URL');
   if (this.isRealDevice()) {
     await this.proxyCommand('/url', 'POST', {url});
   } else {

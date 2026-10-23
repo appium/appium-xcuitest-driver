@@ -23,6 +23,7 @@ import {installToRealDevice, type RealDevice} from '../../device/real-device-man
 import {installToSimulator} from '../../device/simulator-management.js';
 import type {XCUITestDriver} from '../../driver.js';
 import {log} from '../../logger.js';
+import type {WatchAppBundleCandidate, WatchAppInfo, WatchAppSessionOpts} from '../../types.js';
 import {isEmpty, isPlainObject, isTvOs, isWatchOs} from '../../utils/index.js';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from '../constants.js';
 import type {AutInstallationState, AutInstallationStateOptions} from '../types.js';
@@ -358,6 +359,13 @@ export async function onPostConfigureApp(
   const isPackageReadyForInstall = isLocalApp || (this.isRealDevice() && isLocalIpa);
   if (isPackageReadyForInstall) {
     await this.appInfosCache.put(opts.appPath);
+    const watchAppBundlePath = await selectWatchAppBundle(this, opts.appPath);
+    if (watchAppBundlePath) {
+      // The selected bundle lives inside the package provided by the user, which the driver must
+      // never modify, while the base driver expects any application it has rewritten to be
+      // disposable. Only archives are moved out of their temporary root by unzipApp.
+      return {appPath: await copyAppBundle(watchAppBundlePath)};
+    }
   }
   // Only local .app bundles (real device/Simulator)
   // and .ipa packages for real devices should not be cached
@@ -380,6 +388,236 @@ function getBundlePlatformPrefix(platformName: string | null | undefined): strin
     return 'Watch';
   }
   return 'iPhone';
+}
+
+/**
+ * The name of the folder where watchOS applications are packaged inside their
+ * companion iOS application bundle.
+ */
+const WATCH_APPS_FOLDER = 'Watch';
+
+/**
+ * The maximum number of nested application bundles searched inside a `Watch` folder.
+ * `Watch/Bar.app` and `Watch/Bar.app/Watch/Barkit.app` are supported, deeper bundles are not.
+ */
+const MAX_WATCH_BUNDLE_SCAN_DEPTH = 2;
+
+/**
+ * Rewrites the application bundle used by a watchOS session to point at the watch application
+ * itself.
+ *
+ * WatchOS applications are usually distributed inside their companion iOS application
+ * (`Payload/Foo.app/Watch/FooWatch.app`), which makes the outer bundle incompatible with the
+ * watchOS Simulator. For watchOS sessions nested watch applications are discovered and selected,
+ * so that the rest of the startup flow (platform verification, installation, `appium:bundleId`
+ * resolution) only ever sees the watch application.
+ *
+ * @param driver The driver that owns the session
+ * @param appPath Full path to the application bundle picked for the session
+ * @returns The full path to the watch application to use, or `null` if `appPath` needs no
+ * rewriting (the session is not a watchOS one, the bundle already is a watch application,
+ * or no nested watch application has been found)
+ * @throws If multiple nested watch applications have been found and the session caps do not
+ * select one of them
+ */
+async function selectWatchAppBundle(driver: XCUITestDriver, appPath: string): Promise<string | null> {
+  if (!isWatchOs(driver.opts.platformName) || !(await isAppBundle(appPath))) {
+    return null;
+  }
+
+  let outerAppInfo: WatchAppInfo;
+  try {
+    outerAppInfo = await driver.appInfosCache.extractWatchAppInfo(appPath);
+  } catch (e: any) {
+    driver.log.debug(e.message);
+    return null;
+  }
+
+  const prefix = getBundlePlatformPrefix(driver.opts.platformName);
+  if (outerAppInfo.platforms.some((platform) => platform.startsWith(prefix))) {
+    driver.log.debug(`'${appPath}' is already a ${prefix} application bundle`);
+    return null;
+  }
+
+  const watchAppBundles = await findWatchAppBundles(driver, appPath);
+  if (isEmpty(watchAppBundles)) {
+    if (!isEmpty(outerAppInfo.companionWatchBundleId)) {
+      driver.log.info(
+        `'${path.basename(appPath)}' declares '${outerAppInfo.companionWatchBundleId}' as the watch ` +
+          `application it owns, but no such bundle is packaged in its '${WATCH_APPS_FOLDER}' folder`,
+      );
+    }
+    return null;
+  }
+
+  const selected = chooseWatchAppBundle(driver, appPath, watchAppBundles, outerAppInfo.companionWatchBundleId);
+  const {bundleId: bundleIdCap} = driver.opts;
+  if (bundleIdCap && !isWatchAppBundleReferencedBy(selected, bundleIdCap)) {
+    throw new Error(
+      `The 'appium:bundleId' capability ('${bundleIdCap}') does not reference the ` +
+        `'${selected.bundleId}' watchOS application resolved from '${path.basename(appPath)}'. Set ` +
+        `'appium:bundleId' to '${selected.bundleId}' to test the watch application, or remove it to let ` +
+        `the driver detect the bundle identifier automatically.`,
+    );
+  }
+  driver.log.info(`The '${selected.relativePath}' watchOS application has been selected for this session`);
+  if (!selected.isStandalone && !isEmpty(selected.companionAppBundleId)) {
+    driver.log.warn(
+      `Only the '${selected.bundleId}' watchOS application is going to be installed. It declares ` +
+        `'${selected.companionAppBundleId}' as its companion iOS application, which cannot be installed ` +
+        `on the watch itself and must be provisioned separately, for example in a dedicated iOS session, ` +
+        `if the watch application needs it.`,
+    );
+  }
+  return selected.fullPath;
+}
+
+/**
+ * Collects the watch application bundles packaged in the standard `Watch` folder of the given
+ * application bundle.
+ *
+ * @param driver The driver that owns the session
+ * @param appPath Full path to the outer application bundle root
+ * @returns The discovered watch application bundles, ordered by their nesting depth
+ */
+async function findWatchAppBundles(driver: XCUITestDriver, appPath: string): Promise<WatchAppBundleCandidate[]> {
+  const watchAppsRoot = path.join(appPath, WATCH_APPS_FOLDER);
+  if (!(await fs.exists(watchAppsRoot))) {
+    return [];
+  }
+
+  const prefix = getBundlePlatformPrefix(driver.opts.platformName);
+  const result: WatchAppBundleCandidate[] = [];
+  for (const matchedPath of await findApps(watchAppsRoot, SUPPORTED_EXTENSIONS)) {
+    if (countAppBundleComponents(matchedPath) > MAX_WATCH_BUNDLE_SCAN_DEPTH) {
+      driver.log.debug(
+        `'${matchedPath}' is nested deeper than ${MAX_WATCH_BUNDLE_SCAN_DEPTH} application ` + `bundles. Skipping it`,
+      );
+      continue;
+    }
+    const fullPath = path.join(watchAppsRoot, matchedPath);
+    if (!(await isAppBundle(fullPath))) {
+      driver.log.debug(`'${matchedPath}' is not an application bundle. Skipping it`);
+      continue;
+    }
+    let appInfo: WatchAppInfo;
+    try {
+      appInfo = await driver.appInfosCache.extractWatchAppInfo(fullPath);
+    } catch (e: any) {
+      driver.log.info(e.message);
+      continue;
+    }
+    if (!appInfo.platforms.some((platform) => platform.startsWith(prefix))) {
+      driver.log.info(
+        `'${matchedPath}' does not support ${prefix} devices in the list of its supported ` +
+          `platforms (${appInfo.platforms.join(',')}). Skipping it`,
+      );
+      continue;
+    }
+    result.push({
+      bundleId: appInfo.bundleId,
+      companionAppBundleId: appInfo.companionAppBundleId,
+      fullPath,
+      isStandalone: appInfo.isStandalone,
+      relativePath: path.join(WATCH_APPS_FOLDER, matchedPath),
+    });
+  }
+  return result;
+}
+
+/**
+ * @param candidate A discovered watch application bundle
+ * @param value A bundle identifier or a path referencing a watch application bundle
+ * @returns Whether `value` references the given watch application bundle
+ */
+function isWatchAppBundleReferencedBy(candidate: WatchAppBundleCandidate, value: string): boolean {
+  return (
+    candidate.bundleId === value ||
+    candidate.relativePath === value ||
+    candidate.relativePath === path.join(WATCH_APPS_FOLDER, value)
+  );
+}
+
+/**
+ * Reduces the discovered watch application bundles to the single one the session must use.
+ *
+ * `appium:watchBundleId` wins over `appium:bundleId`, which in turn wins over the
+ * `WKWatch1To1CompanionKey` reference of the outer application. Bundles may be referenced either
+ * by their identifier or by their path relative to the outer application bundle.
+ *
+ * @param driver The driver that owns the session
+ * @param appPath Full path to the outer application bundle root
+ * @param candidates The discovered watch application bundles
+ * @param companionWatchBundleId The watch application the outer application claims to own
+ * @returns The bundle the session must use
+ * @throws If the candidates cannot be reduced to a single one
+ */
+function chooseWatchAppBundle(
+  driver: XCUITestDriver,
+  appPath: string,
+  candidates: WatchAppBundleCandidate[],
+  companionWatchBundleId?: string,
+): WatchAppBundleCandidate {
+  const {bundleId: bundleIdCap, watchBundleId}: WatchAppSessionOpts = driver.opts;
+  const describeCandidates = (items: WatchAppBundleCandidate[]) =>
+    items.map((item) => `'${item.bundleId}' (${path.join(path.basename(appPath), item.relativePath)})`).join(', ');
+  const matching = (value: string) => candidates.filter((candidate) => isWatchAppBundleReferencedBy(candidate, value));
+
+  if (watchBundleId) {
+    const matches = matching(watchBundleId);
+    if (matches.length === 1) {
+      return matches[0];
+    }
+    throw new Error(
+      isEmpty(matches)
+        ? `The 'appium:watchBundleId' capability has been set to '${watchBundleId}', which matches none of ` +
+            `the watchOS application bundles of '${path.basename(appPath)}': ${describeCandidates(candidates)}. ` +
+            `Use the bundle identifier or the path of one of them.`
+        : `The 'appium:watchBundleId' capability has been set to '${watchBundleId}', which matches multiple ` +
+            `watchOS application bundles: ${describeCandidates(matches)}. Use the bundle identifier or the ` +
+            `exact relative path to select only one of them.`,
+    );
+  }
+
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
+
+  if (bundleIdCap) {
+    const matches = matching(bundleIdCap);
+    if (matches.length === 1) {
+      driver.log.info(
+        `Selecting the watchOS application that matches the 'appium:bundleId' capability ` + `('${bundleIdCap}')`,
+      );
+      return matches[0];
+    }
+  }
+
+  if (companionWatchBundleId) {
+    const matches = matching(companionWatchBundleId);
+    if (matches.length === 1) {
+      driver.log.info(
+        `Selecting '${companionWatchBundleId}', the watchOS application the ` +
+          `'${path.basename(appPath)}' application declares in its 'WKWatch1To1CompanionKey' key`,
+      );
+      return matches[0];
+    }
+  }
+
+  throw new Error(
+    `Found ${util.pluralize('watchOS application bundle', candidates.length, true)} in ` +
+      `'${path.basename(appPath)}': ${describeCandidates(candidates)}. Set the ` +
+      `'appium:watchBundleId' capability to one of the paths above, or 'appium:bundleId' to one of the ` +
+      `identifiers above, to select the watch application to test.`,
+  );
+}
+
+/**
+ * @param relativePath Path relative to a `Watch` folder
+ * @returns The number of application bundle components in the given path
+ */
+function countAppBundleComponents(relativePath: string): number {
+  return relativePath.split(path.sep).filter((component) => component.toLowerCase().endsWith(APP_EXT)).length;
 }
 
 /**
@@ -636,6 +874,69 @@ async function isolateApp(appPath: string): Promise<string> {
 }
 
 /**
+ * Creates a disposable copy of an application bundle in a temporary folder.
+ *
+ * @param appPath Full path to the application bundle to copy
+ * @returns Full path to the copied bundle
+ */
+async function copyAppBundle(appPath: string): Promise<string> {
+  const tmpRoot = await tempDir.openDir();
+  const copiedPath = path.join(tmpRoot, path.basename(appPath));
+  // `ditto` is the canonical way of copying macOS application bundles: unlike a plain recursive
+  // copy it keeps symlinks and bundle metadata intact
+  await exec('ditto', [appPath, copiedPath]);
+  return copiedPath;
+}
+
+/**
+ * Selects the watch application bundle to use from the contents of an extracted archive.
+ *
+ * Nested bundles are reported as `Payload/Foo.app/Watch/FooWatch.app`, so each match is resolved
+ * to the outermost application bundle owning it before the actual selection happens. This keeps
+ * the disambiguation rules identical to the ones used for bundles present on the file system.
+ *
+ * @param driver The driver that owns the session
+ * @param rootDir Full path to the extracted archive root
+ * @param matchedPaths Paths of the bundles found in the archive, relative to `rootDir`
+ * @returns The full path to the watch application to use, or `null` if the archive contains none
+ * @throws If multiple nested watch applications have been found and the session caps do not
+ * select one of them
+ */
+async function selectWatchAppBundleFromArchive(
+  driver: XCUITestDriver,
+  rootDir: string,
+  matchedPaths: string[],
+): Promise<string | null> {
+  const visitedAppPaths = new Set<string>();
+  for (const matchedPath of matchedPaths) {
+    const outerAppPath = path.join(rootDir, findOwningAppBundlePath(matchedPath));
+    if (visitedAppPaths.has(outerAppPath)) {
+      continue;
+    }
+    visitedAppPaths.add(outerAppPath);
+    const watchAppBundlePath = await selectWatchAppBundle(driver, outerAppPath);
+    if (watchAppBundlePath) {
+      return watchAppBundlePath;
+    }
+  }
+  return null;
+}
+
+/**
+ * @param matchedPath Path to an application bundle relative to an extracted archive root
+ * @returns The path, relative to the same root, of the outermost application bundle owning the
+ * given bundle, which is the bundle itself unless it is packaged in the `Watch` folder of another bundle
+ */
+function findOwningAppBundlePath(matchedPath: string): string {
+  const components = matchedPath.split(path.sep);
+  const watchFolderIndex = components.lastIndexOf(WATCH_APPS_FOLDER);
+  const ownerIndex = watchFolderIndex - 1;
+  return ownerIndex >= 0 && components[ownerIndex].toLowerCase().endsWith(APP_EXT)
+    ? components.slice(0, ownerIndex + 1).join(path.sep)
+    : matchedPath;
+}
+
+/**
  * Unzip the given archive and find a matching .app bundle in it
  *
  * @param appPathOrZipStream The path to the archive.
@@ -722,6 +1023,13 @@ async function unzipApp(
     );
   }
   try {
+    if (isWatchOs(driver.opts.platformName)) {
+      const watchAppBundlePath = await selectWatchAppBundleFromArchive(driver, rootDir, matchedPaths);
+      if (watchAppBundlePath) {
+        driver.log.debug(`Selecting the watchOS application at '${watchAppBundlePath}'`);
+        return await isolateApp(watchAppBundlePath);
+      }
+    }
     for (const matchedPath of matchedPaths) {
       const fullPath = path.join(rootDir, matchedPath);
       if (

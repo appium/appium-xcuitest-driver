@@ -4,7 +4,7 @@ import {util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
 import {hasWebElementId, isPlainObject} from '../utils/index.js';
-import {requireSimulator} from './helpers/index.js';
+import {requirePlatformSupport, requireSimulator} from './helpers/index.js';
 import type {Direction} from './types.js';
 
 const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
@@ -251,6 +251,8 @@ export async function mobilePinch(
   velocity: number,
   elementId?: Element | string,
 ): Promise<void> {
+  requirePlatformSupport(this, 'multiTouchGestures', 'Pinch gesture');
+
   const params = {
     scale: requireFloat(scale, 'scale'),
     velocity: requireFloat(velocity, 'velocity'),
@@ -504,6 +506,8 @@ export async function mobileForcePress(
   pressure?: number,
   elementId?: Element | string,
 ): Promise<void> {
+  requirePlatformSupport(this, 'forceTouch', 'Force press');
+
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/forceTouch` : `/wda/forceTouch`;
   return await this.proxyCommand(endpoint, 'POST', {x, y, duration, pressure});
 }
@@ -586,6 +590,8 @@ export async function mobileRotateElement(
   velocity: number,
   elementId?: Element | string,
 ): Promise<void> {
+  requirePlatformSupport(this, 'multiTouchGestures', 'Element rotation gesture');
+
   const params = {
     rotation: requireFloat(rotation, 'rotation'),
     velocity: requireFloat(velocity, 'velocity'),

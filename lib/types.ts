@@ -1,4 +1,6 @@
-import type {Position} from '@appium/types';
+import type {DriverCaps, Position} from '@appium/types';
+
+import type {XCUITestDriverConstraints} from './desired-caps.js';
 
 export interface Page {
   id: number | string;
@@ -143,3 +145,51 @@ export interface AppInfo {
  * Mapping of bundle identifiers to application information
  */
 export type AppInfoMapping = Record<string, AppInfo>;
+
+/**
+ * WatchOS packaging metadata read from an application bundle manifest.
+ */
+export interface WatchAppInfo {
+  /** The value of `CFBundleIdentifier`, or an empty string if the manifest does not define it */
+  bundleId: string;
+  /** Platforms declared in `CFBundleSupportedPlatforms` */
+  platforms: string[];
+  /**
+   * The `WKCompanionAppBundleIdentifier` value: the identifier of the iOS application
+   * that must be present on the paired phone for this watch application to work.
+   */
+  companionAppBundleId?: string;
+  /**
+   * The `WKWatch1To1CompanionKey` value: the identifier of the watch application
+   * owned by this iOS application.
+   */
+  companionWatchBundleId?: string;
+  /**
+   * Whether the bundle is packaged as a standalone watch application, which can be
+   * installed without any companion iOS application
+   * (`WKWatchOnly` or the `1KitProvisioningComponent` packaging style).
+   */
+  isStandalone: boolean;
+}
+
+/**
+ * A watch application bundle discovered while looking for the bundle to use in a
+ * watchOS session, together with the information needed to disambiguate it.
+ */
+export interface WatchAppBundleCandidate {
+  /** The value of `CFBundleIdentifier` of the watch application */
+  bundleId: string;
+  /** Full path to the watch application bundle */
+  fullPath: string;
+  /** Path to the watch application bundle relative to its enclosing outer application bundle */
+  relativePath: string;
+  /** The `WKCompanionAppBundleIdentifier` value of the watch application, if any */
+  companionAppBundleId?: string;
+  /** Whether the watch application is packaged as a standalone one */
+  isStandalone: boolean;
+}
+
+/**
+ * Session capabilities consulted while picking the watch application to test.
+ */
+export type WatchAppSessionOpts = Pick<DriverCaps<XCUITestDriverConstraints>, 'bundleId' | 'watchBundleId'>;

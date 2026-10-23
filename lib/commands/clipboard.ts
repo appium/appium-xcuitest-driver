@@ -1,6 +1,6 @@
 import {PasteboardClient} from '../device/pasteboard-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import {requireRealDevice} from './helpers/index.js';
+import {requirePlatformSupport, requireRealDevice} from './helpers/index.js';
 
 /**
  * Sets the primary clipboard's content on the device under test.
@@ -23,6 +23,12 @@ export async function setClipboard(
     await pasteboardClient.setPasteboard(content, contentType);
     return;
   }
+  requirePlatformSupport(
+    this,
+    'pasteboardWda',
+    "Clipboard access via WebDriverAgent ('mobile: setClipboard' without mode: 'xpc')",
+  );
+
   await this.proxyCommand('/wda/setPasteboard', 'POST', {
     content,
     contentType,
@@ -45,6 +51,12 @@ export async function getClipboard(this: XCUITestDriver, contentType?: string, m
     const pasteboardClient = new PasteboardClient(this.device.udid, this.remoteXPCFacade);
     return (await pasteboardClient.getPasteboard(contentType)) ?? '';
   }
+  requirePlatformSupport(
+    this,
+    'pasteboardWda',
+    "Clipboard access via WebDriverAgent ('mobile: getClipboard' without mode: 'xpc')",
+  );
+
   return await this.proxyCommand<any, string>('/wda/getPasteboard', 'POST', {
     contentType,
   });

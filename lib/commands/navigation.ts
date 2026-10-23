@@ -2,6 +2,7 @@ import type {Element} from '@appium/types';
 
 import type {XCUITestDriver} from '../driver.js';
 import {isTvOs} from '../utils/index.js';
+import {requirePlatformSupport} from './helpers/index.js';
 
 /**
  * Navigate back in the browser history or native app navigation.
@@ -37,6 +38,7 @@ export async function forward(this: XCUITestDriver): Promise<void> {
  * @since 4.17
  */
 export async function mobileDeepLink(this: XCUITestDriver, url: string, bundleId?: string): Promise<void> {
+  requirePlatformSupport(this, 'deepLink', 'mobile: deepLink');
   return await this.proxyCommand('/url', 'POST', {
     url,
     bundleId,

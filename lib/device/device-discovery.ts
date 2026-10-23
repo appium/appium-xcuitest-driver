@@ -1,7 +1,9 @@
 import type {AppiumLogger} from '@appium/types';
 import {getSimulator, type Simulator} from 'appium-ios-simulator';
 
-import {getAndCheckIosSdkVersion} from '../commands/helpers/index.js';
+// Imported from the helper module rather than the helpers barrel: the barrel is re-exported by
+// driver.ts, which this module already imports types from.
+import {getAndCheckMaxSdkVersion} from '../commands/helpers/xcode.js';
 import {UDID_AUTO} from '../constants.js';
 import type {XCUITestDriverOpts} from '../driver.js';
 import {normalizePlatformName, normalizePlatformVersion} from '../utils/index.js';
@@ -82,15 +84,18 @@ export class DeviceDiscovery {
   }
 
   private async setupSimulatorPlatformVersion(): Promise<void> {
-    const iosSdkVersion = await getAndCheckIosSdkVersion();
-    this.iosSdkVersion = iosSdkVersion;
-    this.log.info(`iOS SDK Version set to '${iosSdkVersion}'`);
-    if (!this.sessionOpts.platformVersion && iosSdkVersion) {
+    const platform = normalizePlatformName(this.sessionOpts.platformName);
+    const sdkVersion = await getAndCheckMaxSdkVersion(platform);
+    // `iosSdkVersion` is the name WebDriverAgent expects for the SDK version used to locate the
+    // xctestrun file, so the session platform's SDK is stored under it for every platform.
+    this.iosSdkVersion = sdkVersion;
+    this.log.info(`${platform} SDK Version set to '${sdkVersion}'`);
+    if (!this.sessionOpts.platformVersion && sdkVersion) {
       this.log.info(
-        `No platformVersion specified. Using the latest version Xcode supports: '${iosSdkVersion}'. ` +
+        `No platformVersion specified. Using the latest ${platform} version Xcode supports: '${sdkVersion}'. ` +
           `This may cause problems if a simulator does not exist for this platform version.`,
       );
-      this.platformVersion = normalizePlatformVersion(iosSdkVersion);
+      this.platformVersion = normalizePlatformVersion(sdkVersion);
     }
   }
 
@@ -132,7 +137,8 @@ export class DeviceDiscovery {
       const device = await this.config.getExistingSimulator(this.resolvedSessionOpts);
       if (!device) {
         throw this.log.errorWithException(
-          `Cannot detect udid for ${this.sessionOpts.deviceName} Simulator running iOS ${this.platformVersion}`,
+          `Cannot detect udid for ${this.sessionOpts.deviceName} ` +
+            `Simulator running ${normalizePlatformName(this.sessionOpts.platformName)} ${this.platformVersion}`,
         );
       }
       await this.ensurePlatformVersion(device);
