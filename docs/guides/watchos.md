@@ -136,10 +136,13 @@ Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with 
   [`mobile: setIncreaseContrast`](../reference/execute-methods.md#mobile-setincreasecontrast) are
   rejected, and the matching getters report `unsupported`
 * [`mobile: getAppearance`](../reference/execute-methods.md#mobile-getappearance) always answers
-  `automatic`, since nothing on watchOS can read the current style back.
+  `unknown` on watchOS. Neither of the two sources the driver can ask knows the current style: the
+  Simulator runtime reports `unsupported` for the watch appearance preference, and the agent's own
+  `GET /wda/device/info` keeps answering `automatic` after the appearance has been changed.
   [`mobile: setAppearance`](../reference/execute-methods.md#mobile-setappearance) does apply the
-  change by falling back to [`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand);
-  confirm an appearance change with a screenshot rather than by reading it back
+  change - a screenshot taken before and after differs - by falling back to
+  [`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand), so confirm an
+  appearance change with a screenshot rather than by reading it back
 * [`mobile: batteryInfo`](../reference/execute-methods.md#mobile-batteryinfo) needs a watchOS
   WebDriverAgent build of **16.18.0 or newer**, which is the first one that reads the battery through
   WatchKit. With an older agent the call is rejected with a message asking for the upgrade. A watch
