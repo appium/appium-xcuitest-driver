@@ -103,6 +103,17 @@ Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with 
   found it. That button is a sibling of `XCUIElementTypeKey`/`XCUIElementTypeKeyboard` in the element
   tree, so to tap it yourself, look for the app-wide button rather than a key inside the keyboard, for
   example with `-ios predicate string` on `name == 'Done' AND type == 'XCUIElementTypeButton'`
+* Alerts cannot be inspected or accepted: `GET /alert/text`, `GET /wda/alert/buttons`,
+  `POST /session/:id/alert/accept` and `POST /session/:id/alert/dismiss` report "no such alert",
+  and so do the driver helpers that wrap them. watchOS does not type an alert as
+  `XCUIElementTypeAlert` - a SwiftUI `alert` renders inside the app's own tree as a table of cells
+  with a button each - so there is no alert element for the agent to find. Drive an alert by looking
+  up its buttons as ordinary elements and tapping them, for example
+  `-ios predicate string` on `name == 'OK' AND type == 'XCUIElementTypeButton'`; that fires the
+  alert's handler, and is how `appium: autoAcceptAlerts` has to be worked around. From WebDriverAgent
+  16.19.1 the endpoints report the absence honestly: earlier watchOS builds matched an empty
+  placeholder element that the system application keeps in its tree at all times, and therefore
+  answered with an empty alert body, or fired `autoAcceptAlerts` continuously
 * There is no clipboard or pasteboard access.
   [`mobile: setClipboard`](../reference/execute-methods.md#mobile-setclipboard)/
   [`mobile: getClipboard`](../reference/execute-methods.md#mobile-getclipboard) have no pasteboard
@@ -145,7 +156,7 @@ Apart from the items above, the core surface works on watchOS: element lookup an
 [`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton),
 [`mobile: deviceScreenInfo`](../reference/execute-methods.md#mobile-devicescreeninfo),
 [`mobile: activeAppInfo`](../reference/execute-methods.md#mobile-activeappinfo),
-[`mobile: performIoHidEvent`](../reference/execute-methods.md#mobile-performiohidevent), alerts and
+[`mobile: performIoHidEvent`](../reference/execute-methods.md#mobile-performiohidevent) and
 XCTest screen recording (`mobile: startScreenRecording`/`stopScreenRecording`). Each entry in the
 [execute methods reference](../reference/execute-methods.md) states its own watchOS behaviour where
 that differs from iOS.
