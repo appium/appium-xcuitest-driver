@@ -91,12 +91,18 @@ Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with 
   (`Device` > `Rotate Digital Crown`) if a different layout is needed
 * Text entry works, but the keyboard only commits when told to: `POST /session/:id/element/:uuid/value`,
   `POST /session/:id/wda/keys` and W3C key actions all place text in the focused field, yet a SwiftUI
-  `TextField` keeps showing its previous value until the keyboard's `Done` button is tapped. Tapping
+  `TextField` keeps its value uncommitted until the keyboard's `Done` button is tapped. Tapping
   the on-screen `XCUIElementTypeKey` elements works as well, and
   `DELETE /session/:id/element/:uuid/clear` empties a field. The named-key API is the exception:
   [`mobile: keys`](../reference/execute-methods.md#mobile-keys) is rejected because watchOS has no
-  `XCUIKeyboardKey`, and [`mobile: hideKeyboard`](../reference/execute-methods.md#mobile-hidekeyboard)
-  finds no key to press - tap the keyboard's `Done` button to close it
+  `XCUIKeyboardKey`.
+  [`mobile: hideKeyboard`](../reference/execute-methods.md#mobile-hidekeyboard) does close the keyboard
+  from WebDriverAgent 16.19.0 onwards; it asks the agent for both `done` and `Done`, because the
+  control that closes the watch keyboard is the accessory bar's `Done` button rather than the iOS
+  keyboard's `done` key, and older agents only looked inside the keyboard element and therefore never
+  found it. That button is a sibling of `XCUIElementTypeKey`/`XCUIElementTypeKeyboard` in the element
+  tree, so to tap it yourself, look for the app-wide button rather than a key inside the keyboard, for
+  example with `-ios predicate string` on `name == 'Done' AND type == 'XCUIElementTypeButton'`
 * There is no clipboard or pasteboard access.
   [`mobile: setClipboard`](../reference/execute-methods.md#mobile-setclipboard)/
   [`mobile: getClipboard`](../reference/execute-methods.md#mobile-getclipboard) have no pasteboard

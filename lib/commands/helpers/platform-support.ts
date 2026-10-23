@@ -12,6 +12,7 @@ export type PlatformCapability =
   | 'batteryInfo'
   | 'deepLink'
   | 'forceTouch'
+  | 'hideKeyboard'
   | 'keyboardInput'
   | 'multiTouchGestures'
   | 'orientation'
@@ -78,6 +79,20 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
     reason: 'watchOS displays have no force sensor',
     alternative: "use 'mobile: touchAndHold' for a long press",
+  },
+  hideKeyboard: {
+    unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
+    // The control that closes the watch keyboard is the accessory bar's `Done` button, which
+    // watchOS reports as a *sibling* of XCUIElementTypeKeyboard. Agent builds up to 16.18.0 only
+    // looked inside the keyboard element, so every dismissal there failed with 'Did not know how
+    // to dismiss the keyboard', whatever key names were passed.
+    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.19.0'},
+    reason:
+      'keyboard dismissal needs a watchOS WebDriverAgent build that also looks outside the ' +
+      'keyboard element for its accessory bar, which versions older than 16.19.0 do not',
+    alternative:
+      "upgrade WebDriverAgent to version 16.19.0 or newer, or tap the 'Done' button of the " +
+      "keyboard's accessory bar directly",
   },
   keyboardInput: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],

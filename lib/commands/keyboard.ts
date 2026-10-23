@@ -1,4 +1,5 @@
 import type {XCUITestDriver} from '../driver.js';
+import {isWatchOs} from '../utils/index.js';
 import {requirePlatformSupport} from './helpers/index.js';
 import type {KeyboardKey} from './types.js';
 
@@ -27,8 +28,14 @@ export async function hideKeyboard(
  * @param keys - Array of key names to use for dismissing the keyboard
  */
 export async function mobileHideKeyboard(this: XCUITestDriver, keys: string[] = []): Promise<void> {
+  requirePlatformSupport(this, 'hideKeyboard', 'mobile: hideKeyboard');
+  // The name WebDriverAgent looks for by default is the iOS keyboard's `done` key. The control
+  // that closes the watch keyboard is named `Done` and sits in the accessory bar above it, so
+  // watchOS sessions ask for both spellings; the watchOS agent build widens its search to the
+  // whole application when the keyboard itself holds no match, which is what finds that bar.
+  const defaults = isWatchOs(this.opts.platformName) ? ['done', 'Done'] : ['done'];
   await this.proxyCommand('/wda/keyboard/dismiss', 'POST', {
-    keyNames: keys.includes('done') ? keys : [...keys, 'done'],
+    keyNames: [...keys, ...defaults.filter((name) => !keys.includes(name))],
   });
 }
 

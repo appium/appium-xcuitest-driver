@@ -310,6 +310,45 @@ describe('platform support gates', function () {
     it('should still proxy mobile: keys on iOS', async function () {
       await assertProxiedOnIos((driver) => driver.mobileKeys(['a']), '/wda/element/0/keyboardInput');
     });
+
+    it('should reject keyboard dismissal on watchOS with an agent older than the accessory-bar fix', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.18.0'}};
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await assert.rejects(driver.mobileHideKeyboard(), (err: unknown) => {
+        assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
+        assert.match(
+          err.message,
+          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build that also looks outside the keyboard element for its accessory bar, which versions older than 16\.19\.0 do not; upgrade WebDriverAgent to version 16\.19\.0 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
+        );
+        return true;
+      });
+      sinon.assert.notCalled(proxy);
+    });
+
+    // The control that closes the watch keyboard is `Done`, not the iOS keyboard's `done`.
+    it('should ask for both key spellings on watchOS', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.19.0'}};
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves(true);
+      await driver.mobileHideKeyboard();
+      sinon.assert.calledWith(proxy, '/wda/keyboard/dismiss', 'POST', {keyNames: ['done', 'Done']});
+    });
+
+    it('should keep caller-supplied key names first on watchOS', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.19.0'}};
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves(true);
+      await driver.mobileHideKeyboard(['Cancel']);
+      sinon.assert.calledWith(proxy, '/wda/keyboard/dismiss', 'POST', {keyNames: ['Cancel', 'done', 'Done']});
+    });
+
+    it('should not widen the default key names on iOS', async function () {
+      const driver = makeDriver(IOS);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves(true);
+      await driver.mobileHideKeyboard();
+      sinon.assert.calledWith(proxy, '/wda/keyboard/dismiss', 'POST', {keyNames: ['done']});
+    });
   });
 
   describe('deep links', function () {
