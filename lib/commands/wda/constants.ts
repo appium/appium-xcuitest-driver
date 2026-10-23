@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import {WDA_RUNNER_APP} from 'appium-webdriveragent';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 
 export const SHARED_RESOURCES_GUARD = new AsyncLock();
 
