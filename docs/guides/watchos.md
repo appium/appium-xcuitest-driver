@@ -110,10 +110,13 @@ Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with 
   with a button each - so there is no alert element for the agent to find. Drive an alert by looking
   up its buttons as ordinary elements and tapping them, for example
   `-ios predicate string` on `name == 'OK' AND type == 'XCUIElementTypeButton'`; that fires the
-  alert's handler, and is how `appium: autoAcceptAlerts` has to be worked around. From WebDriverAgent
-  16.19.1 the endpoints report the absence honestly: earlier watchOS builds matched an empty
-  placeholder element that the system application keeps in its tree at all times, and therefore
-  answered with an empty alert body, or fired `autoAcceptAlerts` continuously
+  alert's handler. [`appium:autoAcceptAlerts`](../reference/capabilities.md) and
+  `appium:autoDismissAlerts` cannot work there either - the agent decides what to act on from the
+  same detection - so on watchOS they are dropped at session start with a warning instead of being
+  accepted and doing nothing. From WebDriverAgent 16.19.1 the endpoints report the absence honestly:
+  earlier watchOS builds matched an empty placeholder element that the system application keeps in
+  its tree at all times, and answered with an empty alert body or fired a failed alert action every
+  two seconds
 * There is no clipboard or pasteboard access.
   [`mobile: setClipboard`](../reference/execute-methods.md#mobile-setclipboard)/
   [`mobile: getClipboard`](../reference/execute-methods.md#mobile-getclipboard) have no pasteboard

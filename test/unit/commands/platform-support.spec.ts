@@ -6,6 +6,7 @@ import {errors} from 'appium/driver.js';
 import sinon from 'sinon';
 
 import type {Direction} from '../../../lib/commands/types.js';
+import {startWdaSession} from '../../../lib/commands/wda/startup.js';
 import {RemoteXPCFacade} from '../../../lib/device/remote-xpc/facade.js';
 import type {XCUITestDriverOpts} from '../../../lib/driver.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -42,10 +43,26 @@ describe('platform support gates', function () {
   beforeEach(function () {
     sandbox = sinon.createSandbox();
   });
-
   afterEach(function () {
     sandbox.restore();
   });
+
+  /**
+   * Runs the session-creation request for `platformName` and returns the capabilities the driver
+   * handed to WebDriverAgent.
+   */
+  async function captureWdaSessionCaps(
+    platformName: string,
+    opts: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const driver = makeDriver(platformName);
+    Object.assign(driver.opts, opts);
+    const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+    await startWdaSession.call(driver, 'com.test.app');
+    sinon.assert.calledWith(proxy, '/session', 'POST');
+    const body = proxy.firstCall.args[2] as {capabilities: {firstMatch: [Record<string, unknown>]}};
+    return body.capabilities.firstMatch[0];
+  }
 
   /**
    * Asserts that `command` is rejected on watchOS with a NotImplementedError naming the
@@ -458,5 +475,50 @@ describe('platform support gates', function () {
         sinon.assert.calledWith(proxy, endpoint);
       });
     }
+  });
+
+  describe('alert commands', function () {
+    // WatchOS has no element typed XCUIElementTypeAlert, so the agent can never act on one. The
+    // routes are deliberately NOT gated: WebDriverAgent answers `no such alert`, which is the
+    // spec-correct status for "there is no alert open", while NotImplementedError would claim the
+    // platform cannot answer the question at all.
+    it('should proxy the alert routes on watchOS instead of gating them', async function () {
+      const driver = makeDriver(WATCH);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
+      await driver.postAcceptAlert();
+      await driver.postDismissAlert();
+      await driver.getAlertButtons();
+      sinon.assert.calledWith(proxy, '/alert/accept', 'POST');
+      sinon.assert.calledWith(proxy, '/alert/dismiss', 'POST');
+      sinon.assert.calledWith(proxy, '/wda/alert/buttons', 'GET');
+    });
+
+    it('should not ask the agent to auto-handle alerts on watchOS', async function () {
+      const caps = await captureWdaSessionCaps(WATCH, {autoAcceptAlerts: true});
+      assert.equal(caps.defaultAlertAction, undefined);
+    });
+
+    it('should name the reason the alert caps are dropped on watchOS', async function () {
+      const driver = makeDriver(WATCH);
+      driver.opts.autoAcceptAlerts = true;
+      sandbox.stub(driver, 'proxyCommand').resolves({});
+      const warn = sandbox.spy(driver.log, 'warn');
+      await startWdaSession.call(driver, 'com.test.app');
+      sinon.assert.calledOnce(warn);
+      assert.match(
+        String(warn.firstCall.args.join(' ')),
+        /Automatic alert handling is not supported on watchOS: watchOS never types an alert/,
+      );
+    });
+
+    it('should still forward the alert action on iOS', async function () {
+      const caps = await captureWdaSessionCaps(IOS, {autoAcceptAlerts: true});
+      assert.equal(caps.defaultAlertAction, 'accept');
+    });
+
+    it('should forward a dismiss action on iOS', async function () {
+      const caps = await captureWdaSessionCaps(IOS, {autoDismissAlerts: true});
+      assert.equal(caps.defaultAlertAction, 'dismiss');
+    });
   });
 });

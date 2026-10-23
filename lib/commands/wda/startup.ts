@@ -10,6 +10,7 @@ import {installToSimulator} from '../../device/simulator-management.js';
 import type {XCUITestDriver} from '../../driver.js';
 import {toApiLevelRequirementText, isPlainObject, supportsApiLevel17} from '../../utils/index.js';
 import {isLocalHost} from '../helpers/index.js';
+import {isPlatformSupported, platformSupportMessage} from '../helpers/platform-support.js';
 import {markSystemFilesForCleanup} from './cleanup.js';
 import {
   CAP_NAMES_NO_XCODEBUILD_REQUIRED,
@@ -402,10 +403,20 @@ async function createWdaSession(driver: XCUITestDriver, bundleId?: string, proce
       driver.opts.forceSimulatorSoftwareKeyboardPresence ??
       (driver.opts.connectHardwareKeyboard === true ? false : true),
   };
-  if (driver.opts.autoAcceptAlerts) {
-    wdaCaps.defaultAlertAction = 'accept';
-  } else if (driver.opts.autoDismissAlerts) {
-    wdaCaps.defaultAlertAction = 'dismiss';
+  if (driver.opts.autoAcceptAlerts || driver.opts.autoDismissAlerts) {
+    // The agent-side monitor drives `defaultAlertAction` from its alert detection, and watchOS
+    // never types an alert as XCUIElementTypeAlert, so the monitor there can never find anything
+    // to act on. Skip the cap rather than let it silently do nothing (older watchOS agent builds
+    // additionally matched an empty placeholder element and logged a failed action every two
+    // seconds for the whole session).
+    if (isPlatformSupported('alertHandling', driver.opts.platformName)) {
+      wdaCaps.defaultAlertAction = driver.opts.autoAcceptAlerts ? 'accept' : 'dismiss';
+    } else {
+      driver.log.warn(
+        `Ignoring 'autoAcceptAlerts'/'autoDismissAlerts': ` +
+          platformSupportMessage('alertHandling', driver.opts.platformName, 'Automatic alert handling'),
+      );
+    }
   }
   if (driver.opts.initialDeeplinkUrl) {
     driver.log.info(`The deeplink URL will be set to ${driver.opts.initialDeeplinkUrl}`);

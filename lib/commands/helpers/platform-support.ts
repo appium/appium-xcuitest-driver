@@ -9,6 +9,7 @@ import type {XCUITestDriver} from '../../driver.js';
  * driver supports.
  */
 export type PlatformCapability =
+  | 'alertHandling'
   | 'batteryInfo'
   | 'deepLink'
   | 'forceTouch'
@@ -57,6 +58,19 @@ interface PlatformSupportEntry {
  * `docs/guides/tvos.md` and are intentionally not gated here.
  */
 const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry>> = {
+  alertHandling: {
+    unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
+    // Neither the alert routes nor the alert monitor can work there: watchOS has no element typed
+    // XCUIElementTypeAlert for them to act on. A SwiftUI alert renders inside its own app's tree as
+    // a table of cells with a button each, which is reachable through ordinary element lookup but
+    // is not an alert as far as the agent is concerned.
+    reason:
+      'watchOS never types an alert as XCUIElementTypeAlert, so there is no alert element for the ' +
+      'agent to inspect or act on',
+    alternative:
+      "locate the alert's buttons as ordinary elements and tap them, for example with " +
+      "'-ios predicate string' on \"name == 'OK' AND type == 'XCUIElementTypeButton'\"",
+  },
   batteryInfo: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
     // watchOS reads the battery through WatchKit; see the `batteryInfo` route in
