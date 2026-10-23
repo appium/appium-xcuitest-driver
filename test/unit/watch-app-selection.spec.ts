@@ -143,6 +143,53 @@ describe('watch app selection', function () {
       }
     });
 
+    // The paths printed by the ambiguity error are what a user copies back into
+    // `appium:watchBundleId`, so the two must agree by construction, not by coincidence.
+    it('should accept every path form it prints in the ambiguity error', async function () {
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/One.app', {
+          CFBundleIdentifier: 'com.acme.foo.one',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Two.app', {
+          CFBundleIdentifier: 'com.acme.foo.two',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+
+        const listingDriver = makeDriver(PLATFORM_NAME_WATCHOS);
+        let listingError: Error | null = null;
+        try {
+          listingError = await expectRejection(resolveAppPath(listingDriver.driver, outerAppPath));
+        } finally {
+          listingDriver.sandbox.restore();
+        }
+        assert.ok(listingError, 'expected the selection to fail');
+        const printedPaths = [...listingError.message.matchAll(/\(([^)]+\.app)\)/g)].map((match) => match[1]);
+        assert.deepEqual(printedPaths.slice().sort(), ['Foo.app/Watch/One.app', 'Foo.app/Watch/Two.app']);
+
+        for (const printedPath of printedPaths) {
+          const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: printedPath});
+          try {
+            const resultAppPath = await resolveAppPath(driver, outerAppPath);
+            assert.strictEqual(
+              path.basename(String(resultAppPath)),
+              path.posix.basename(printedPath),
+              `the driver rejected a path it had just printed: '${printedPath}'`,
+            );
+          } finally {
+            sandbox.restore();
+          }
+        }
+      } finally {
+        await fs.rimraf(tmpDir);
+      }
+    });
+
     it('should pick the bundle named by watchBundleId', async function () {
       const tmpDir = await tempDir.openDir();
       try {

@@ -37,7 +37,9 @@ reads the packaging keys Xcode writes (`WKCompanionAppBundleIdentifier`, `WKWatc
 the standalone flags `WKWatchOnly`/`1KitProvisioningComponent`).
 
 Where that finds more than one watch application, say which one to run with
-`appium:watchBundleId`, which takes either a bundle identifier or a path relative to the outer bundle:
+`appium:watchBundleId`. It takes a bundle identifier, or a path to the watch bundle in any of the
+forms the driver itself prints when it reports the ambiguity - relative to the outer bundle,
+relative to its `Watch` folder, or the absolute path:
 
 ```json
 {
@@ -48,6 +50,9 @@ Where that finds more than one watch application, say which one to run with
     "appium:watchBundleId": "com.mycompany.myapp.watchkitapp"
 }
 ```
+
+Equivalent values for the same bundle: `MyIosApp.app/Watch/MyWatchApp.app`,
+`Watch/MyWatchApp.app`, `MyWatchApp.app`.
 
 A single discovered watch application is used without the capability. Several of them make the session
 fail, and the error lists the identifiers and paths it found.

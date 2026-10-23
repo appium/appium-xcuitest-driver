@@ -452,7 +452,7 @@ async function selectWatchAppBundle(driver: XCUITestDriver, appPath: string): Pr
 
   const selected = chooseWatchAppBundle(driver, appPath, watchAppBundles, outerAppInfo.companionWatchBundleId);
   const {bundleId: bundleIdCap} = driver.opts;
-  if (bundleIdCap && !isWatchAppBundleReferencedBy(selected, bundleIdCap)) {
+  if (bundleIdCap && !isWatchAppBundleReferencedBy(selected, bundleIdCap, appPath)) {
     throw new Error(
       `The 'appium:bundleId' capability ('${bundleIdCap}') does not reference the ` +
         `'${selected.bundleId}' watchOS application resolved from '${path.basename(appPath)}'. Set ` +
@@ -528,13 +528,26 @@ async function findWatchAppBundles(driver: XCUITestDriver, appPath: string): Pro
 /**
  * @param candidate A discovered watch application bundle
  * @param value A bundle identifier or a path referencing a watch application bundle
+ * @param appPath Full path to the outer application bundle root
  * @returns Whether `value` references the given watch application bundle
+ * @remarks Paths are accepted in every form the selection errors print them, plus the absolute
+ * path a caller may have taken from a directory listing: `Watch/Bar.app`, `Bar.app`,
+ * `Foo.app/Watch/Bar.app`, and `/anywhere/Foo.app/Watch/Bar.app`.
  */
-function isWatchAppBundleReferencedBy(candidate: WatchAppBundleCandidate, value: string): boolean {
+function isWatchAppBundleReferencedBy(candidate: WatchAppBundleCandidate, value: string, appPath: string): boolean {
+  if (candidate.bundleId === value) {
+    return true;
+  }
+  const reference = value
+    .split(path.sep)
+    .join(path.posix.sep)
+    .replace(/^\.?\//, '');
+  const relativePath = candidate.relativePath.split(path.sep).join(path.posix.sep);
   return (
-    candidate.bundleId === value ||
-    candidate.relativePath === value ||
-    candidate.relativePath === path.join(WATCH_APPS_FOLDER, value)
+    reference === relativePath ||
+    reference === path.posix.basename(relativePath) ||
+    reference === `${path.basename(appPath)}/${relativePath}` ||
+    reference.endsWith(`/${relativePath}`)
   );
 }
 
@@ -561,7 +574,8 @@ function chooseWatchAppBundle(
   const {bundleId: bundleIdCap, watchBundleId}: WatchAppSessionOpts = driver.opts;
   const describeCandidates = (items: WatchAppBundleCandidate[]) =>
     items.map((item) => `'${item.bundleId}' (${path.join(path.basename(appPath), item.relativePath)})`).join(', ');
-  const matching = (value: string) => candidates.filter((candidate) => isWatchAppBundleReferencedBy(candidate, value));
+  const matching = (value: string) =>
+    candidates.filter((candidate) => isWatchAppBundleReferencedBy(candidate, value, appPath));
 
   if (watchBundleId) {
     const matches = matching(watchBundleId);
