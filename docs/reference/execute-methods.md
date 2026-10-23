@@ -88,6 +88,10 @@ bundleId | string | yes | Bundle identifier of the app to simulate the warning f
 
 Tries to apply the given action to the currently visible alert.
 
+Not supported on [watchOS](../guides/watchos.md): watchOS never types an alert as
+`XCUIElementTypeAlert`, so there is no alert element for the agent to act on and every action fails
+with "no such alert". Locate the alert's buttons as ordinary elements and tap those instead.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
