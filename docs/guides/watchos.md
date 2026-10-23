@@ -28,6 +28,33 @@ session right away. Make sure to provide the simulator's `deviceName` and `platf
 }
 ```
 
+## Applications
+
+A watch application is installed and launched like any other: point `appium:app` at the `.app` bundle
+(or an `.ipa` containing it) and the driver works out the bundle identifier. An application that ships
+inside an iOS bundle is picked up too - the driver looks under the outer bundle's `Watch` folder and
+reads the packaging keys Xcode writes (`WKCompanionAppBundleIdentifier`, `WKWatch1To1CompanionKey`, and
+the standalone flags `WKWatchOnly`/`1KitProvisioningComponent`).
+
+Where that finds more than one watch application, say which one to run with
+`appium:watchBundleId`, which takes either a bundle identifier or a path relative to the outer bundle:
+
+```json
+{
+    "platformName": "watchOS",
+    "appium:automationName": "XCUITest",
+    "appium:udid": "<apple-watch-simulator-udid>",
+    "appium:app": "/path/to/MyIosApp.app",
+    "appium:watchBundleId": "com.mycompany.myapp.watchkitapp"
+}
+```
+
+A single discovered watch application is used without the capability. Several of them make the session
+fail, and the error lists the identifiers and paths it found.
+
+No Watch/iPhone Simulator pairing is needed: the watch application runs against the watch Simulator on
+its own.
+
 ## Session Actions
 
 watchOS apps are automated the same way as regular iOS/iPadOS apps - the standard
