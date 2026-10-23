@@ -239,6 +239,21 @@ Changes the system-wide "Auto-Correction" option (_Settings -> General -> Keyboa
 
 Changes the system-wide "Predictive Text" option (_Settings -> General -> Keyboard_).
 
+## keyboardWaitTimeout
+
+| Type | Default |
+| -- | -- |
+| `float` | `0` |
+
+The number of seconds to wait for a hittable key before typing on iOS. `0` (the default) disables
+the wait, and `null` sets the value back to `0`. The text is typed immediately.
+
+A positive value waits up to that many seconds for a key that is on screen and hittable, then types
+the whole string once. The string is still typed once if no such key appears before the timeout.
+
+A boolean, a negative number, or a non-finite number is rejected. The wait applies when typing into
+an element and when sending keys.
+
 ## limitXPathContextScope
 
 | Type | Default |
