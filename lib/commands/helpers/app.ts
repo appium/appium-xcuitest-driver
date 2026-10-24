@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import {spawn} from 'node:child_process';
+import {cp} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
@@ -1005,8 +1006,18 @@ async function copyAppBundle(appPath: string): Promise<string> {
   const tmpRoot = await tempDir.openDir();
   const copiedPath = path.join(tmpRoot, path.basename(appPath));
   // `ditto` is the canonical way of copying macOS application bundles: unlike a plain recursive
-  // copy it keeps symlinks and bundle metadata intact
-  await exec('ditto', [appPath, copiedPath]);
+  // copy it keeps symlinks and bundle metadata intact. It is a macOS-only tool, and `fs.which`
+  // rejects rather than returning null when an executable is absent, hence the explicit catch.
+  const dittoPath = await fs.which('ditto').catch(() => null);
+  if (dittoPath) {
+    await exec(dittoPath, [appPath, copiedPath]);
+    return copiedPath;
+  }
+  // The driver also runs on Linux and Windows hosts, where no `ditto` exists. `verbatimSymlinks`
+  // is required, not cosmetic: without it `fs.cp` rewrites each link target, measured to turn
+  // `Versions/Current -> A` into an absolute path back into the *source* bundle, so the copy would
+  // no longer be self-contained and the installed app would break when that temp dir is cleaned.
+  await cp(appPath, copiedPath, {recursive: true, verbatimSymlinks: true});
   return copiedPath;
 }
 

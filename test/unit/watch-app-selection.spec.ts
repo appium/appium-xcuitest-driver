@@ -512,6 +512,69 @@ describe('watch app selection', function () {
         await fs.rimraf(tmpDir);
       }
     });
+
+    // The driver is installed on Linux and Windows hosts too, where no `ditto` exists. Copying the
+    // selected bundle must not depend on that macOS tool.
+    it('should copy the selected bundle on a host without ditto', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      // `fs.which` rejects when an executable is missing, which is how a Linux host reports it.
+      sandbox.stub(fs, 'which').rejects(new Error('not found: ditto'));
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+
+        const resultAppPath = String(await resolveAppPath(driver, outerAppPath));
+        assert.strictEqual(path.basename(resultAppPath), 'Bar.app');
+        assert.strictEqual(await fs.exists(path.join(resultAppPath, 'Info.plist')), true);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // A copied bundle has to stay self-contained: `fs.cp` rewrites relative link targets into
+    // absolute paths back into the source bundle unless `verbatimSymlinks` is set, which would make
+    // the installed application depend on a temporary directory the driver later deletes.
+    it('should keep bundle symlinks pointing inside the copied bundle', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      sandbox.stub(fs, 'which').rejects(new Error('not found: ditto'));
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        const nestedAppPath = await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const frameworkDir = path.join(nestedAppPath, 'Frameworks', 'Bar.framework');
+        await fs.mkdirp(path.join(frameworkDir, 'Versions', 'A'));
+        await fs.writeFile(path.join(frameworkDir, 'Versions', 'A', 'Bar'), 'binary', 'utf8');
+        await fs.symlink('A', path.join(frameworkDir, 'Versions', 'Current'), 'dir');
+        await fs.symlink('Versions/Current/Bar', path.join(frameworkDir, 'Bar'), 'file');
+
+        const resultAppPath = String(await resolveAppPath(driver, outerAppPath));
+        // Deleting the user's package must not break the copy the session installs.
+        await fs.rimraf(tmpDir);
+
+        const copiedLink = path.join(resultAppPath, 'Frameworks', 'Bar.framework', 'Versions', 'Current');
+        assert.strictEqual(await fs.readlink(copiedLink), 'A');
+        assert.strictEqual(
+          String(await fs.readFile(path.join(resultAppPath, 'Frameworks', 'Bar.framework', 'Bar'), 'utf8')),
+          'binary',
+        );
+      } finally {
+        sandbox.restore();
+      }
+    });
   });
 
   describe('AppInfosCache.extractWatchAppInfo', function () {

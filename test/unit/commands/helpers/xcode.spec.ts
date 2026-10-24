@@ -4,6 +4,12 @@ import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 import * as appiumXcodeModule from 'appium-xcode';
 import * as teenProcessModule from 'teen_process';
 
+// `appium-xcode` has a real `export default`, so its namespace object carries a `default` key.
+// Spreading that into `namedExports` makes Node 22's module mocker emit `export let default = …`,
+// which is a syntax error (`default` is reserved); Node 24 tolerates it. The key is dropped here
+// because the helper only ever calls the named exports.
+const appiumXcodeNamed = Object.fromEntries(Object.entries(appiumXcodeModule).filter(([key]) => key !== 'default'));
+
 // The helper module is only imported after these mocks are registered, so its `exec` and
 // `appium-xcode` bindings observe the fakes (see driver.spec.ts for the binding rules).
 const IOS_SDK_VERSION = '18.4';
@@ -21,7 +27,7 @@ let appiumXcodeFailures: {ios?: string; tvos?: string} = {};
 
 mock.module('appium-xcode', {
   namedExports: {
-    ...appiumXcodeModule,
+    ...appiumXcodeNamed,
     getMaxIOSSDK: async () => {
       if (appiumXcodeFailures.ios) {
         throw new Error(appiumXcodeFailures.ios);
