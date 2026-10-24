@@ -1,4 +1,8 @@
+import type {Simulator} from 'appium-ios-simulator';
+import {errors} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
+import {getDuoSimulator} from './helpers/duo.js';
 import type {Viewport, ScreenInfo, DisplayInfo, WDADisplayInfo} from './types.js';
 
 /**
@@ -79,20 +83,70 @@ export async function getDevicePixelRatio(this: XCUITestDriver): Promise<number>
  * Reads the current hinge angle in degrees, including changes made outside WDA.
  * Requires a WDA build with GET /wda/device/hingeAngle support.
  * WDA checks platform, hinge and CoreMotion availability and waits up to five seconds for a valid reading.
- * Physical Duo behavior is unverified. A reading may reflect an intermediate angle during folding.
+ * A reading may reflect an intermediate angle during folding.
  */
 export async function mobileGetSimulatedHingeAngle(this: XCUITestDriver): Promise<number> {
   return await this.proxyCommand('/wda/device/hingeAngle', 'GET');
 }
 
 /**
- * Requests a simulated hinge angle on an iOS device with an available hinge.
- * Requires a WDA build with /wda/device/hingeAngle support; WDA validates the angle and checks availability at runtime.
- * Tested only on the Duo simulator. Physical Duo behavior is unverified.
+ * Requests a simulated hinge angle through the host CoreSimulator HID service.
+ * Requires a hinge-capable iOS Simulator; WDA supplies the capability check and angle reading.
  * The transition completes asynchronously. Select currentDisplayId separately.
  *
  * @param angle - Degrees from 0 (closed) to 180 (fully open), inclusive.
  */
 export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: number): Promise<void> {
-  await this.proxyCommand('/wda/device/hingeAngle', 'POST', {angle});
+  if (!Number.isFinite(angle) || angle < 0 || angle > 180) {
+    throw new errors.InvalidArgumentError('angle must be a finite number between 0 and 180 degrees');
+  }
+  const simulator = await getDuoSimulator(this);
+  if (!simulator) {
+    throw new errors.UnsupportedOperationError('Setting the hinge angle requires a hinge-capable iOS Simulator');
+  }
+  await simulator.setSimulatedHingeAngle(angle);
+}
+
+const ORIENTATIONS = {
+  PORTRAIT: 'portrait',
+  LANDSCAPE: 'landscape-left',
+  UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT: 'landscape-right',
+  UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN: 'portrait-upside-down',
+} as const;
+
+async function rotateDuo(
+  driver: XCUITestDriver,
+  orientation: Parameters<Simulator['setHidOrientation']>[0],
+): Promise<boolean> {
+  const simulator = await getDuoSimulator(driver);
+  if (!simulator) {
+    return false;
+  }
+  const displays = await driver.mobileListDisplays();
+  const {currentDisplayId} = driver.settings.getSettings();
+  const display =
+    currentDisplayId == null
+      ? displays.find(({isDefault}) => isDefault)
+      : displays.find(({id}) => id === currentDisplayId);
+  if (!display) {
+    throw new errors.InvalidArgumentError(`Display '${currentDisplayId}' is unavailable`);
+  }
+  const raw = {portrait: 1, 'portrait-upside-down': 2, 'landscape-left': 3, 'landscape-right': 4}[orientation];
+  await driver.proxyCommand('/wda/deviceOrientation', 'POST', {orientation: raw});
+  await simulator.setHidOrientation(orientation, display.isDefault);
+  return true;
+}
+
+/** Update XCTest, submit Duo's host control, then verify the resulting app scene. */
+export async function setOrientation(this: XCUITestDriver, orientation: string): Promise<void> {
+  const target = ORIENTATIONS[orientation.toUpperCase() as keyof typeof ORIENTATIONS];
+  const verifyOnly = target ? await rotateDuo(this, target) : false;
+  await this.proxyCommand('/orientation', 'POST', {orientation, ...(verifyOnly ? {verifyOnly} : {})});
+}
+
+export async function setRotation(this: XCUITestDriver, x: number, y: number, z: number): Promise<void> {
+  const targets = {0: 'portrait', 90: 'landscape-right', 180: 'portrait-upside-down', 270: 'landscape-left'} as const;
+  const target = targets[z as keyof typeof targets];
+  const verifyOnly = x === 0 && y === 0 && target ? await rotateDuo(this, target) : false;
+  await this.proxyCommand('/rotation', 'POST', {x, y, z, ...(verifyOnly ? {verifyOnly} : {})});
 }

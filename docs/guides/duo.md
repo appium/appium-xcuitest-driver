@@ -26,15 +26,13 @@ display when closing it. Restart XCTest recording to change its display.
 The simulated hinge angle can be read and changed through the
 [`mobile: getSimulatedHingeAngle`](../reference/execute-methods.md#mobile-getsimulatedhingeangle) and
 [`mobile: setSimulatedHingeAngle`](../reference/execute-methods.md#mobile-setsimulatedhingeangle)
-extensions.
-
-## Known Limitations
-
-* Duo automation has been verified only on the simulator. Feedback from real-device testing is
-  welcome.
+extensions. Simulator Home, lock/unlock, rotation, and hinge changes use the Mac-side
+`@appium/coresim` HID service through `appium-ios-simulator`. Hinge readings remain
+in WDA. Physical devices use XCTest for button and orientation commands; simulated
+hinge changes are unsupported.
 
 ## Related Tickets
 
 * [Duo WDA startup support](https://github.com/appium/appium-xcuitest-driver/pull/3000)
 * [Simulated hinge angle commands](https://github.com/appium/appium-xcuitest-driver/pull/3001)
-* [WDA hinge angle support and real-device feedback](https://github.com/appium/WebDriverAgent/pull/1287)
+* [WDA hinge angle support](https://github.com/appium/WebDriverAgent/pull/1287)
