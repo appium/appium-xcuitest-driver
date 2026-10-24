@@ -138,7 +138,13 @@ async function rotateDuo(
 
 const ROTATION_Z = {portrait: 0, 'portrait-upside-down': 180, 'landscape-left': 270, 'landscape-right': 90} as const;
 
-/** Wait for the app scene; HID submission alone does not confirm rotation. */
+/**
+ * Poll WDA for the requested app-scene rotation after sending Duo simulator HID through CoreSim.
+ * This route bypasses WDA's rotation setter and its internal animation-stability wait and
+ * orientation verification. CoreSim confirms HID submission only and provides no equivalent
+ * rotation-completion check, so poll GET /rotation until the reported angle matches.
+ * Matching the angle does not guarantee that the rotation animation has finished.
+ */
 async function waitForDuoRotation(driver: XCUITestDriver, z: number): Promise<void> {
   const deadline = Date.now() + 5000;
   do {
