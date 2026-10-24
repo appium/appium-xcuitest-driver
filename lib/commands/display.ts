@@ -1,3 +1,5 @@
+import {setTimeout as delay} from 'node:timers/promises';
+
 import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 
@@ -135,16 +137,37 @@ async function rotateDuo(
   return true;
 }
 
-/** Submit Duo's host control, then verify the app scene without updating XCTest's cached orientation. */
+const ROTATION_Z = {portrait: 0, 'portrait-upside-down': 180, 'landscape-left': 270, 'landscape-right': 90} as const;
+
+/** Wait for the app scene; HID submission alone does not confirm rotation. */
+async function waitForDuoRotation(driver: XCUITestDriver, z: number): Promise<void> {
+  const deadline = Date.now() + 5000;
+  do {
+    const rotation = (await driver.proxyCommand('/rotation', 'GET')) as {x: number; y: number; z: number} | null;
+    if (rotation?.x === 0 && rotation?.y === 0 && rotation?.z === z) {
+      return;
+    }
+    await delay(100);
+  } while (Date.now() < deadline);
+  throw new errors.InvalidElementStateError(`The app did not rotate to ${z} degrees within 5000 ms`);
+}
+
+/** Submit Duo's host control, then read the app scene without changing XCTest's orientation. */
 export async function setOrientation(this: XCUITestDriver, orientation: string): Promise<void> {
   const target = ORIENTATIONS[orientation.toUpperCase() as keyof typeof ORIENTATIONS];
-  const verifyOnly = target ? await rotateDuo(this, target) : false;
-  await this.proxyCommand('/orientation', 'POST', {orientation, ...(verifyOnly ? {verifyOnly} : {})});
+  if (target && (await rotateDuo(this, target))) {
+    await waitForDuoRotation(this, ROTATION_Z[target]);
+    return;
+  }
+  await this.proxyCommand('/orientation', 'POST', {orientation});
 }
 
 export async function setRotation(this: XCUITestDriver, x: number, y: number, z: number): Promise<void> {
   const targets = {0: 'portrait', 90: 'landscape-right', 180: 'portrait-upside-down', 270: 'landscape-left'} as const;
   const target = targets[z as keyof typeof targets];
-  const verifyOnly = x === 0 && y === 0 && target ? await rotateDuo(this, target) : false;
-  await this.proxyCommand('/rotation', 'POST', {x, y, z, ...(verifyOnly ? {verifyOnly} : {})});
+  if (x === 0 && y === 0 && target && (await rotateDuo(this, target))) {
+    await waitForDuoRotation(this, z);
+    return;
+  }
+  await this.proxyCommand('/rotation', 'POST', {x, y, z});
 }

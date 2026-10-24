@@ -82,18 +82,34 @@ describe('host simulator HID routing', () => {
       {id: 99, isDefault: false},
     ] as any);
     sinon.stub(driver.settings, 'getSettings').returns({currentDisplayId: 99} as any);
+    proxy
+      .withArgs('/rotation', 'GET')
+      .onCall(0)
+      .resolves({x: 0, y: 0, z: 0})
+      .onCall(1)
+      .resolves({x: 0, y: 0, z: 270})
+      .onCall(2)
+      .resolves({x: 0, y: 0, z: 90});
     await driver.setOrientation('LANDSCAPE');
     sinon.assert.calledWithExactly(device.setHidOrientation, 'landscape-left', false);
-    sinon.assert.calledWithExactly(proxy, '/orientation', 'POST', {orientation: 'LANDSCAPE', verifyOnly: true});
+    sinon.assert.calledWithExactly(proxy, '/rotation', 'GET');
     assert.ok(device.setHidOrientation.firstCall.calledBefore(proxy.lastCall));
     await driver.setRotation(0, 0, 90);
     sinon.assert.calledWithExactly(device.setHidOrientation, 'landscape-right', false);
-    sinon.assert.calledWithExactly(proxy, '/rotation', 'POST', {x: 0, y: 0, z: 90, verifyOnly: true});
+    assert.ok(proxy.args.every(([, method]) => method === 'GET'));
     assert.ok(proxy.args.every(([path]) => path !== '/wda/deviceOrientation'));
     assert.deepEqual(
       proxy.args.map(([path]) => path),
-      ['/wda/device/hingeAngle', '/orientation', '/wda/device/hingeAngle', '/rotation'],
+      ['/wda/device/hingeAngle', '/rotation', '/rotation', '/wda/device/hingeAngle', '/rotation'],
     );
+  });
+  it('fails if the app does not rotate and propagates read errors', async () => {
+    const {driver, proxy} = setup();
+    sinon.stub(driver, 'mobileListDisplays').resolves([{id: 1, isDefault: true}] as any);
+    proxy.withArgs('/rotation', 'GET').resolves({x: 0, y: 0, z: 90});
+    await assert.rejects(driver.setOrientation('PORTRAIT'), /did not rotate/);
+    proxy.withArgs('/rotation', 'GET').rejects(new Error('WDA disconnected'));
+    await assert.rejects(driver.setOrientation('PORTRAIT'), /WDA disconnected/);
   });
   it('rejects an unavailable display before injecting orientation', async () => {
     const {driver, device} = setup();
