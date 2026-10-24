@@ -2316,12 +2316,13 @@ App strings map, where keys are resource identifiers.
 
 Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot be hidden. On non-tablet devices the keyboard might not have an explicit button to hide it. In such case this API won't work and the only way to close the keyboard would be to simulate the same action an app user would do to close it. For example, swipe from top to bottom or tap the screen somewhere at the area not covered by the keyboard.
 
-On [watchOS](../guides/watchos.md) this works with WebDriverAgent 16.19.0 or newer, which also looks
-outside the keyboard element there: the control that closes the watch keyboard is the accessory bar's
-`Done` button, a sibling of `XCUIElementTypeKeyboard` rather than a key inside it, and the driver adds
-that name to `keys` on the platform. Older agent builds cannot reach it and are rejected with a
-`NotImplementedError`; tap the `Done` button yourself if you cannot upgrade - it both commits and
-closes the keyboard.
+On [watchOS](../guides/watchos.md) this works with WebDriverAgent 16.19.2 or newer. There the control
+that closes the keyboard is the accessory bar's `Done` button, a sibling of `XCUIElementTypeKeyboard`
+rather than a key inside it, so the driver adds that name to `keys` and the agent has to search
+beyond the keyboard element - 16.19.0 and 16.19.1 did so app-wide and could tap an application's own
+`Done` button instead, and 16.19.2 restricted the search to the process that owns the keyboard. Older
+agent builds are rejected with a `NotImplementedError`; tap the `Done` button yourself if you cannot
+upgrade - it both commits and closes the keyboard.
 
 #### Arguments
 

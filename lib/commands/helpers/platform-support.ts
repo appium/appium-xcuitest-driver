@@ -99,13 +99,16 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
     // The control that closes the watch keyboard is the accessory bar's `Done` button, which
     // watchOS reports as a *sibling* of XCUIElementTypeKeyboard. Agent builds up to 16.18.0 only
     // looked inside the keyboard element, so every dismissal there failed with 'Did not know how
-    // to dismiss the keyboard', whatever key names were passed.
-    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.19.0'},
+    // to dismiss the keyboard', whatever key names were passed. 16.19.0 learned to search outside
+    // it, but app-wide, and `Done` is a name watch apps use freely - such a build can tap the
+    // application's own control instead of the keyboard's. 16.19.2 only accepts matches from
+    // another process, which is where the keyboard's service lives.
+    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.19.2'},
     reason:
-      'keyboard dismissal needs a watchOS WebDriverAgent build that also looks outside the ' +
-      'keyboard element for its accessory bar, which versions older than 16.19.0 do not',
+      'keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory ' +
+      'bar is scoped to the keyboard-owning process, which versions older than 16.19.2 do not',
     alternative:
-      "upgrade WebDriverAgent to version 16.19.0 or newer, or tap the 'Done' button of the " +
+      "upgrade WebDriverAgent to version 16.19.2 or newer, or tap the 'Done' button of the " +
       "keyboard's accessory bar directly",
   },
   keyboardInput: {

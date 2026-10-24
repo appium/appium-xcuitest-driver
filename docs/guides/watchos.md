@@ -105,12 +105,15 @@ Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with 
   [`mobile: keys`](../reference/execute-methods.md#mobile-keys) is rejected because watchOS has no
   `XCUIKeyboardKey`.
   [`mobile: hideKeyboard`](../reference/execute-methods.md#mobile-hidekeyboard) does close the keyboard
-  from WebDriverAgent 16.19.0 onwards; it asks the agent for both `done` and `Done`, because the
+  from WebDriverAgent 16.19.2 onwards; it asks the agent for both `done` and `Done`, because the
   control that closes the watch keyboard is the accessory bar's `Done` button rather than the iOS
   keyboard's `done` key, and older agents only looked inside the keyboard element and therefore never
-  found it. That button is a sibling of `XCUIElementTypeKey`/`XCUIElementTypeKeyboard` in the element
-  tree, so to tap it yourself, look for the app-wide button rather than a key inside the keyboard, for
-  example with `-ios predicate string` on `name == 'Done' AND type == 'XCUIElementTypeButton'`
+  found it. 16.19.0 and 16.19.1 searched the whole application instead, which could land on an
+  application's own `Done` button and run its action; 16.19.2 only taps matches belonging to the
+  text-input service that owns the bar. That button is a sibling of `XCUIElementTypeKey` and
+  `XCUIElementTypeKeyboard` in the element tree, so to tap it yourself, look for the app-wide button
+  rather than a key inside the keyboard, for example with `-ios predicate string` on
+  `name == 'Done' AND type == 'XCUIElementTypeButton'`
 * Alerts cannot be inspected or accepted: `GET /alert/text`, `GET /wda/alert/buttons`,
   `POST /session/:id/alert/accept` and `POST /session/:id/alert/dismiss` report "no such alert",
   and so do the driver helpers that wrap them. watchOS does not type an alert as

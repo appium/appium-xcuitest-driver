@@ -336,17 +336,29 @@ describe('platform support gates', function () {
         assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
         assert.match(
           err.message,
-          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build that also looks outside the keyboard element for its accessory bar, which versions older than 16\.19\.0 do not; upgrade WebDriverAgent to version 16\.19\.0 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
+          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory bar is scoped to the keyboard-owning process, which versions older than 16\.19\.2 do not; upgrade WebDriverAgent to version 16\.19\.2 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
         );
         return true;
       });
       sinon.assert.notCalled(proxy);
     });
 
+    // 16.19.0 and 16.19.1 do find the accessory bar, but by searching the whole application tree,
+    // which can land on the application's own `Done` button instead of the keyboard's.
+    for (const version of ['16.19.0', '16.19.1']) {
+      it(`should reject keyboard dismissal on watchOS with agent ${version}`, async function () {
+        const driver = makeDriver(WATCH);
+        driver.cachedWdaStatus = {build: {version}};
+        const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+        await assert.rejects(driver.mobileHideKeyboard(), errors.NotImplementedError);
+        sinon.assert.notCalled(proxy);
+      });
+    }
+
     // The control that closes the watch keyboard is `Done`, not the iOS keyboard's `done`.
     it('should ask for both key spellings on watchOS', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: '16.19.0'}};
+      driver.cachedWdaStatus = {build: {version: '16.19.2'}};
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves(true);
       await driver.mobileHideKeyboard();
       sinon.assert.calledWith(proxy, '/wda/keyboard/dismiss', 'POST', {keyNames: ['done', 'Done']});
@@ -354,7 +366,7 @@ describe('platform support gates', function () {
 
     it('should keep caller-supplied key names first on watchOS', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: '16.19.0'}};
+      driver.cachedWdaStatus = {build: {version: '16.19.2'}};
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves(true);
       await driver.mobileHideKeyboard(['Cancel']);
       sinon.assert.calledWith(proxy, '/wda/keyboard/dismiss', 'POST', {keyNames: ['Cancel', 'done', 'Done']});
