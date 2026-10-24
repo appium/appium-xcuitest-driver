@@ -1349,7 +1349,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to swipe on. Application element will be used instead if this argument is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
 direction | Either 'up', 'down', 'left' or 'right' | yes | The direction in which to swipe | up
-velocity | number | no | This argument is optional and is only supported since Appium server version 1.19 and Xcode SDK version 11.4+. The value is measured in pixels per second and same values could behave differently on different devices depending on their display density. Higher values make swipe gesture faster (which usually scrolls larger areas if we apply it to a list) and lower values slow it down. Only values greater than zero have effect. | 250
+velocity | number | no | This argument is optional and is only supported since Appium server version 1.19 and Xcode SDK version 11.4+. The value is measured in pixels per second and same values could behave differently on different devices depending on their display density. Higher values make swipe gesture faster (which usually scrolls larger areas if we apply it to a list) and lower values slow it down. Only values greater than zero have effect. On [watchOS](../guides/watchos.md) this argument is rejected: there, XCTest's velocity-carrying swipe stalls inside event synthesis for over a minute and then terminates the WebDriverAgent runner, which costs the whole session. Repeat without `velocity` - the plain swipe works, and `mobile: dragFromToForDuration` is the fast coordinate-based alternative | 250
 
 #### Examples
 

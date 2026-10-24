@@ -76,16 +76,25 @@ Digital Crown rotation and hand gestures are available through the
 [`mobile: rotateDigitalCrown`](../reference/execute-methods.md#mobile-rotatedigitalcrown) and
 [`mobile: performHandGesture`](../reference/execute-methods.md#mobile-performhandgesture) extensions.
 
+Element lookup works with `xpath`, `accessibility id`, `class name`, `-ios predicate string` and
+`-ios class chain`. One caveat when porting selectors from an iOS suite: a class chain cannot match on
+`identifier`, because WebDriverAgent's attribute list has `name` (which carries the accessibility
+identifier) but no `identifier` - that is true on iOS too, so `**/XCUIElementTypeAny[\`identifier ==
+"x"\`]` fails everywhere, and on a watch it is usually the first thing a ported selector trips over.
+Match on `name` instead.
+
 ## Known Limitations
 
 Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with Xcode 26.6.
 
 * Only the Simulator is supported; real watchOS devices cannot be used as automation targets
-* `mobile: swipe` with an explicit `velocity`, and `mobile: scroll`, can take several minutes to
-  return on the watch Simulator: XCTest synthesizes those events very slowly there. The same gestures
-  without a `velocity`, and `mobile: dragfromtoforduration`, complete in about a second. Standard W3C
-  actions (`POST /session/:id/actions`) do work - a pointer sequence that taps an element makes that
-  element's action fire
+* [`mobile: swipe`](../reference/execute-methods.md#mobile-swipe) rejects a `velocity` argument. There
+  XCTest's velocity-carrying swipe stalls inside event synthesis - measured at 78 s before it took the
+  WebDriverAgent runner down, which ends the session rather than just that command - so the agent
+  refuses the argument instead of attempting it. The same gesture without `velocity` completes, and
+  `mobile: dragfromtoforduration` is the fast coordinate-based alternative. Standard W3C actions
+  (`POST /session/:id/actions`) do work - a pointer sequence that taps an element makes that element's
+  action fire
 * Two-finger gestures are rejected: [`mobile: pinch`](../reference/execute-methods.md#mobile-pinch) and
   [`mobile: rotateElement`](../reference/execute-methods.md#mobile-rotateelement) are not registered by
   the watchOS WebDriverAgent build, and [`mobile: forcePress`](../reference/execute-methods.md#mobile-forcepress)
@@ -179,7 +188,10 @@ XCTest screen recording (`mobile: startScreenRecording`/`stopScreenRecording`). 
 that differs from iOS.
 
 Rejected commands raise `NotImplementedError` naming the command, the platform and the reason, rather
-than forwarding the request and surfacing a raw `unknown command` error from WebDriverAgent.
+than forwarding the request and surfacing a raw `unknown command` error from WebDriverAgent. The one
+exception is a `mobile: swipe` `velocity` argument: the command itself is supported on watchOS and only
+that argument is not, so the agent answers `invalid argument` (HTTP 400) with the reason instead of the
+whole command being gated off.
 
 ## Related Tickets
 
