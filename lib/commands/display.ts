@@ -4,7 +4,7 @@ import type {SupportsDuo} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {getDuoSimulator} from './helpers/duo.js';
+import {getDuoSimulator, withDuoArgumentErrors} from './helpers/duo.js';
 import type {Viewport, ScreenInfo, DisplayInfo, WDADisplayInfo} from './types.js';
 
 /**
@@ -100,14 +100,11 @@ export async function mobileGetSimulatedHingeAngle(this: XCUITestDriver): Promis
  * @param angle - Degrees from 0 (closed) to 180 (fully open), inclusive.
  */
 export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: number): Promise<void> {
-  if (!Number.isFinite(angle) || angle < 0 || angle > 180) {
-    throw new errors.InvalidArgumentError('angle must be a finite number between 0 and 180 degrees');
-  }
   const simulator = await getDuoSimulator(this);
   if (!simulator) {
     throw new errors.UnsupportedOperationError('Setting the hinge angle requires an iPhone Duo Simulator on Xcode 27+');
   }
-  await simulator.setSimulatedHingeAngle(angle);
+  await withDuoArgumentErrors(() => simulator.setSimulatedHingeAngle(angle));
 }
 
 const ORIENTATIONS = {
@@ -134,7 +131,8 @@ async function rotateDuo(
   if (!display) {
     throw new errors.InvalidArgumentError(`Display '${currentDisplayId}' is unavailable`);
   }
-  await simulator.setHidOrientation(orientation, display.isDefault);
+  await withDuoArgumentErrors(() => simulator.setHidOrientation(orientation, display.isDefault));
+  await waitForDuoRotation(driver, ROTATION_Z[orientation]);
   return true;
 }
 
@@ -157,7 +155,6 @@ async function waitForDuoRotation(driver: XCUITestDriver, z: number): Promise<vo
 export async function setOrientation(this: XCUITestDriver, orientation: string): Promise<void> {
   const target = ORIENTATIONS[orientation.toUpperCase() as keyof typeof ORIENTATIONS];
   if (target && (await rotateDuo(this, target))) {
-    await waitForDuoRotation(this, ROTATION_Z[target]);
     return;
   }
   await this.proxyCommand('/orientation', 'POST', {orientation});
@@ -167,7 +164,6 @@ export async function setRotation(this: XCUITestDriver, x: number, y: number, z:
   const targets = {0: 'portrait', 90: 'landscape-right', 180: 'portrait-upside-down', 270: 'landscape-left'} as const;
   const target = targets[z as keyof typeof targets];
   if (x === 0 && y === 0 && target && (await rotateDuo(this, target))) {
-    await waitForDuoRotation(this, z);
     return;
   }
   await this.proxyCommand('/rotation', 'POST', {x, y, z});

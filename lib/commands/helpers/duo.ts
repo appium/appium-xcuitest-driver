@@ -1,4 +1,5 @@
 import type {Simulator, SupportsDuo} from 'appium-ios-simulator';
+import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../../driver.js';
 
@@ -15,4 +16,16 @@ export async function getDuoSimulator(driver: XCUITestDriver): Promise<(Simulato
     return undefined;
   }
   return simulator as Simulator & SupportsDuo;
+}
+
+/** Translate native argument validation at the simulator command boundary. */
+export async function withDuoArgumentErrors(command: () => Promise<void>): Promise<void> {
+  try {
+    await command();
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new errors.InvalidArgumentError(err.message);
+    }
+    throw err;
+  }
 }

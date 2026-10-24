@@ -42,14 +42,35 @@ describe('host simulator HID routing', () => {
     sinon.assert.notCalled(proxy);
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
   });
-  it('validates angles before dispatch', async () => {
+  it('delegates angle validation and translates native TypeErrors', async () => {
     const {driver, device, proxy} = setup();
-    for (const angle of [-1, 181, NaN, Infinity, '90', null, undefined]) {
-      await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), errors.InvalidArgumentError);
-    }
-    await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
+    const message = 'angle is outside the supported range';
+    device.setSimulatedHingeAngle.rejects(new TypeError(message));
+    await assert.rejects(driver.mobileSetSimulatedHingeAngle(181), {
+      name: 'InvalidArgumentError',
+      message,
+    });
+    sinon.assert.calledWithExactly(device.setSimulatedHingeAngle, 181);
     sinon.assert.notCalled(proxy);
+    device.setSimulatedHingeAngle.resetHistory();
+    await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
+  });
+  it('translates orientation argument errors without masking transport or WDA errors', async () => {
+    const {driver, device, proxy} = setup();
+    const displays = sinon.stub(driver, 'mobileListDisplays').resolves([{id: 1, isDefault: true}] as any);
+    device.setHidOrientation.rejects(new TypeError('isMainDisplay must be a boolean'));
+    await assert.rejects(driver.setOrientation('PORTRAIT'), errors.InvalidArgumentError);
+    sinon.assert.notCalled(proxy);
+    const transportError = new Error('HID service missing');
+    device.setHidOrientation.rejects(transportError);
+    await assert.rejects(driver.setOrientation('PORTRAIT'), (err) => err === transportError);
+    const readError = new TypeError('Invalid WDA response');
+    device.setHidOrientation.resolves();
+    proxy.rejects(readError);
+    await assert.rejects(driver.setOrientation('PORTRAIT'), (err) => err === readError);
+    displays.rejects(readError);
+    await assert.rejects(driver.setOrientation('PORTRAIT'), (err) => err === readError);
   });
   it('preserves ordinary simulator and physical Home routes', async () => {
     for (const simulator of [true, false]) {
