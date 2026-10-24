@@ -16,8 +16,10 @@ const WATCH_APP_ID = 'com.apple.NanoSettings';
  * CI job downloads a prebuilt watchOS agent release asset (`functional-test.yml` runs
  * `appium driver run xcuitest download-wda --platform=watchOS`) rather than building a branch, so a
  * test gated on an unpublished agent build would fail the whole matrix. Behaviours that need a newer
- * agent - refusing a `mobile: swipe` `velocity`, dismissing the keyboard through the watch
- * accessory bar - are covered by the repeatable scripts described in the plan document.
+ * agent - refusing a `mobile: swipe` `velocity`, dismissing the keyboard through the watch accessory
+ * bar, and answering `no such alert` instead of an empty alert body for the permanent childless
+ * `XCUIElementTypeAlert` watchOS keeps in the system application - are covered by the agent's own
+ * integration suite and by the repeatable scripts described in the plan document.
  */
 describe('watchOS', function () {
   let baseCaps: Record<string, any>;
@@ -158,21 +160,5 @@ describe('watchOS', function () {
 
     await driver.execute('mobile: activateApp', {bundleId: WATCH_APP_ID});
     assert.ok(await (await driver.$('~General')).isDisplayed());
-  });
-
-  it('should report no alert rather than an always-open one', async function () {
-    const driver = await initSession(baseCaps);
-    // watchOS keeps a permanent childless element typed XCUIElementTypeAlert in the system
-    // application; agent builds before 16.19.1 matched it and answered with an empty alert body.
-    // The driver deliberately leaves the alert routes ungated, so the honest answer is W3C's own
-    // "no such alert", which wdio renders with its canonical message.
-    await assert.rejects(
-      () => driver.getAlertText(),
-      (err: Error) => {
-        assert.match(err.message, /modal dialog when one was not open/);
-        return true;
-      },
-      'a watch session with no alert open must not report one',
-    );
   });
 });
