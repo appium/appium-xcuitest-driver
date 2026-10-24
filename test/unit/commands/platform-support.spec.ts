@@ -145,6 +145,40 @@ describe('platform support gates', function () {
       sinon.assert.calledWith(proxy, '/wda/batteryInfo', 'GET');
     });
 
+    // A pre-release of the floor build ships *before* the release that adds the route, so it must
+    // not clear the floor; a pre-release of a *later* release must still clear it, otherwise the
+    // comparison would simply reject every pre-release. A version that is not valid semver at all
+    // still falls back to coercion, so a `v`-prefixed build number is understood.
+    it('should reject a pre-release of the version that adds the route', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.18.0-beta.4'}};
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await assert.rejects(driver.mobileGetBatteryInfo(), /versions older than 16\.18\.0 do not contain/);
+      sinon.assert.notCalled(proxy);
+    });
+
+    it('should accept a pre-release of a newer version', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.19.0-beta.1'}};
+      const facade = sandbox.createStubInstance(RemoteXPCFacade);
+      facade.determineAvailability.resolves(false);
+      sandbox.stub(driver, 'remoteXPCFacade').get(() => facade);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({level: -1, state: 0});
+      await driver.mobileGetBatteryInfo();
+      sinon.assert.calledWith(proxy, '/wda/batteryInfo', 'GET');
+    });
+
+    it('should understand a version that is not valid semver', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: 'v16.18.0'}};
+      const facade = sandbox.createStubInstance(RemoteXPCFacade);
+      facade.determineAvailability.resolves(false);
+      sandbox.stub(driver, 'remoteXPCFacade').get(() => facade);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({level: -1, state: 0});
+      await driver.mobileGetBatteryInfo();
+      sinon.assert.calledWith(proxy, '/wda/batteryInfo', 'GET');
+    });
+
     it('should still read the agent on iOS', async function () {
       const driver = makeDriver(IOS);
       const facade = sandbox.createStubInstance(RemoteXPCFacade);
@@ -164,17 +198,11 @@ describe('platform support gates', function () {
       );
     });
 
-    it('should reject setting the orientation on watchOS', async function () {
+    it('should reject setting the orientation on watchOS and name the alternative', async function () {
       await assertRejectedOnWatch(
         (driver) => driver.setOrientation('LANDSCAPE'),
-        /^Setting the device orientation is not supported on watchOS/,
+        /^Setting the device orientation is not supported on watchOS: the watchOS Simulator does not support app or device orientation, so the orientation endpoint is absent from the watchOS WebDriverAgent build; rotate the watch Simulator window in the Simulator UI \('Device > Rotate Digital Crown'\) if a different layout is needed$/,
       );
-    });
-
-    it('should suggest rotating the Simulator window', async function () {
-      const driver = makeDriver(WATCH);
-      sandbox.stub(driver, 'proxyCommand').resolves({});
-      await assert.rejects(driver.setOrientation('LANDSCAPE'), /Rotate Digital Crown/);
     });
 
     it('should still proxy on iOS', async function () {
@@ -458,6 +486,30 @@ describe('platform support gates', function () {
       await driver.performActions(ACTION_SEQUENCE);
       sinon.assert.calledWith(proxy, '/actions', 'POST', {actions: ACTION_SEQUENCE});
     });
+
+    // The web-element check is an input problem, so it is answered before the platform gate: the
+    // caller has to be told to switch context, not that watchOS cannot synthesize gestures.
+    it('should reject web element origins on watchOS before the synthesis gate', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.17.4'}};
+      sandbox.stub(driver, 'isWebContext').returns(false);
+      driver.webElementsCache.set('0', {});
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      const actions = [
+        {
+          type: 'pointer',
+          id: 'finger1',
+          parameters: {pointerType: 'touch'},
+          actions: [{type: 'pointerMove', x: 0, y: 0, origin: {ELEMENT: '0'}}],
+        },
+      ] as unknown as ActionSequence[];
+      await assert.rejects(driver.performActions(actions), (err: unknown) => {
+        assert.ok(err instanceof errors.InvalidArgumentError, `expected InvalidArgumentError, got ${String(err)}`);
+        assert.match(err.message, /contains one or more web elements/);
+        return true;
+      });
+      sinon.assert.notCalled(proxy);
+    });
   });
 
   describe('multi-touch and force gestures', function () {
@@ -486,6 +538,33 @@ describe('platform support gates', function () {
       await assertProxiedOnIos((driver) => driver.mobilePinch(0.5, 1.1), '/wda/pinch');
       await assertProxiedOnIos((driver) => driver.mobileRotateElement(Math.PI / 2, Math.PI / 4), '/wda/rotate');
       await assertProxiedOnIos((driver) => driver.mobileForcePress(10, 10, 1, 1), '/wda/forceTouch');
+    });
+
+    // A malformed argument is malformed on every platform, so the gate must not be able to mask it:
+    // on iOS these same calls answer `invalid argument`, and watchOS has to agree.
+    it('should still validate gesture arguments before the platform gate', async function () {
+      const driver = makeDriver(WATCH);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await assert.rejects(
+        driver.mobileTouchAndHold('abc' as never, 10, 10),
+        /"duration" parameter should be a valid number/,
+      );
+      await assert.rejects(driver.mobilePinch('abc' as never, 1.1), /"scale" parameter should be a valid number/);
+      await assert.rejects(
+        driver.mobileRotateElement('abc' as never, 1.1),
+        /"rotation" parameter should be a valid number/,
+      );
+      // Both drag shapes are validated before the gate as well, not just the numeric arguments:
+      // the shape errors are plain input errors on iOS too.
+      await assert.rejects(
+        driver.mobileDragFromToWithVelocity(1, 1, 100, '0'),
+        /"toElementId" parameter is mandatory/,
+      );
+      await assert.rejects(
+        driver.mobileDragFromToWithVelocity(1, 1, 100),
+        /fromX, fromY, toX, and toY must all be provided/,
+      );
+      sinon.assert.notCalled(proxy);
     });
   });
 

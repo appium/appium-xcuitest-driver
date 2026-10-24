@@ -15,6 +15,10 @@ const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
  *
  * Unlike the other guards in this file this one is version-qualified: the watchOS agent only gained
  * the whole gesture family in 16.18.0, so a build that is new enough must not be refused.
+ *
+ * @remarks Callers must invoke this *after* validating their own arguments. A malformed request is
+ * malformed on every platform and has to keep answering `invalid argument` everywhere, rather than
+ * trading its real problem for a platform message on the one platform that is gated.
  */
 function requireGestureSynthesis(driver: XCUITestDriver, action: string): void {
   requirePlatformSupport(driver, 'gestureSynthesis', action);
@@ -99,8 +103,8 @@ export async function performActions(this: XCUITestDriver, actions: ActionSequen
  * @throws {errors.InvalidArgumentError} If actions still contain web elements
  */
 export async function performActionsViaWDA(driver: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
-  requireGestureSynthesis(driver, 'W3C actions');
   assertNoWebElements(driver, actions);
+  requireGestureSynthesis(driver, 'W3C actions');
   // This is mandatory, since WDA only supports TOUCH pointer type
   // and Selenium API uses MOUSE as the default one
   const preprocessedActions = actions
@@ -279,12 +283,11 @@ export async function mobilePinch(
   velocity: number,
   elementId?: Element | string,
 ): Promise<void> {
-  requirePlatformSupport(this, 'multiTouchGestures', 'Pinch gesture');
-
   const params = {
     scale: requireFloat(scale, 'scale'),
     velocity: requireFloat(velocity, 'velocity'),
   };
+  requirePlatformSupport(this, 'multiTouchGestures', 'Pinch gesture');
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/pinch` : '/wda/pinch';
   await this.proxyCommand(endpoint, 'POST', params);
 }
@@ -354,12 +357,9 @@ export async function mobileTouchAndHold(
   elementId?: Element | string,
 ): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/touchAndHold` : '/wda/touchAndHold';
+  const params = {duration: requireFloat(duration, 'duration'), x, y};
   requireGestureSynthesis(this, 'mobile: touchAndHold');
-  await this.proxyCommand(endpoint, 'POST', {
-    duration: requireFloat(duration, 'duration'),
-    x,
-    y,
-  });
+  await this.proxyCommand(endpoint, 'POST', params);
 }
 
 /**
@@ -469,7 +469,6 @@ export async function mobileDragFromToWithVelocity(
     holdDuration: requireFloat(holdDuration, 'holdDuration'),
     velocity: requireFloat(velocity, 'velocity'),
   };
-  requireGestureSynthesis(this, 'mobile: dragFromToWithVelocity');
   fromElementId = fromElementId ? util.unwrapElement(fromElementId) : undefined;
   if (fromElementId) {
     toElementId = toElementId ? util.unwrapElement(toElementId) : undefined;
@@ -477,18 +476,23 @@ export async function mobileDragFromToWithVelocity(
       throw new errors.InvalidArgumentError(`"toElementId" parameter is mandatory for "dragFromToWithVelocity" call`);
     }
     params.toElement = toElementId;
-    return await this.proxyCommand(`/wda/element/${fromElementId}/pressAndDragWithVelocity`, 'POST', params);
+  } else {
+    if (fromX === undefined || fromY === undefined || toX === undefined || toY === undefined) {
+      throw new errors.InvalidArgumentError(
+        'When fromElementId is not provided, fromX, fromY, toX, and toY must all be provided',
+      );
+    }
+    params.fromX = requireFloat(fromX, 'fromX');
+    params.fromY = requireFloat(fromY, 'fromY');
+    params.toX = requireFloat(toX, 'toX');
+    params.toY = requireFloat(toY, 'toY');
   }
-  if (fromX === undefined || fromY === undefined || toX === undefined || toY === undefined) {
-    throw new errors.InvalidArgumentError(
-      'When fromElementId is not provided, fromX, fromY, toX, and toY must all be provided',
-    );
-  }
-  params.fromX = requireFloat(fromX, 'fromX');
-  params.fromY = requireFloat(fromY, 'fromY');
-  params.toX = requireFloat(toX, 'toX');
-  params.toY = requireFloat(toY, 'toY');
-  return await this.proxyCommand('/wda/pressAndDragWithVelocity', 'POST', params);
+  requireGestureSynthesis(this, 'mobile: dragFromToWithVelocity');
+  return fromElementId
+    ? // Drag element
+      await this.proxyCommand(`/wda/element/${fromElementId}/pressAndDragWithVelocity`, 'POST', params)
+    : // Drag coordinates
+      await this.proxyCommand('/wda/pressAndDragWithVelocity', 'POST', params);
 }
 
 /**
@@ -626,12 +630,11 @@ export async function mobileRotateElement(
   velocity: number,
   elementId?: Element | string,
 ): Promise<void> {
-  requirePlatformSupport(this, 'multiTouchGestures', 'Element rotation gesture');
-
   const params = {
     rotation: requireFloat(rotation, 'rotation'),
     velocity: requireFloat(velocity, 'velocity'),
   };
+  requirePlatformSupport(this, 'multiTouchGestures', 'Element rotation gesture');
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/rotate` : '/wda/rotate';
   await this.proxyCommand(endpoint, 'POST', params);
 }

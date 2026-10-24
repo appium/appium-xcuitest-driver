@@ -216,7 +216,12 @@ export function isPlatformSupported(
   if (!since || !wdaVersion) {
     return false;
   }
-  const parsed = semver.coerce(wdaVersion);
+  // `semver.coerce` alone would read a pre-release like `16.18.0-beta.4` as `16.18.0` and let it
+  // through a `16.18.0` floor, even though that build ships *before* the release that adds the
+  // routes. Parse properly so pre-releases rank below their own release, and only fall back to
+  // coercion for strings that are not valid semver at all (for example a locally-built WDA that
+  // reports a `v`-prefixed or otherwise non-semver build number, or none at all).
+  const parsed = semver.parse(wdaVersion) ?? semver.coerce(wdaVersion);
   return Boolean(parsed && semver.gte(parsed, since));
 }
 
