@@ -423,15 +423,40 @@ describe('platform support gates', function () {
 
   describe('W3C actions', function () {
     // watchOS synthesizes W3C actions; verified end-to-end on watchOS 26.5 by tapping an element
-    // with a pointer sequence and observing its action fire.
-    it('should proxy the actions route on both platforms', async function () {
-      for (const platformName of [IOS, WATCH]) {
-        const driver = makeDriver(platformName);
-        sandbox.stub(driver, 'isWebContext').returns(false);
-        const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
-        await driver.performActions(ACTION_SEQUENCE);
-        sinon.assert.calledWith(proxy, '/actions', 'POST', {actions: ACTION_SEQUENCE});
-      }
+    // with a pointer sequence and observing its action fire. The route string is present in older
+    // watch agent builds, but the category answering it is not, so those builds must be refused by
+    // the driver - see the `gestureSynthesis` entry of the support matrix.
+    it('should proxy the actions route on iOS', async function () {
+      const driver = makeDriver(IOS);
+      sandbox.stub(driver, 'isWebContext').returns(false);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await driver.performActions(ACTION_SEQUENCE);
+      sinon.assert.calledWith(proxy, '/actions', 'POST', {actions: ACTION_SEQUENCE});
+    });
+
+    it('should reject W3C actions on watchOS with an agent older than the synthesis fix', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.17.4'}};
+      sandbox.stub(driver, 'isWebContext').returns(false);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await assert.rejects(driver.performActions(ACTION_SEQUENCE), (err: unknown) => {
+        assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
+        assert.match(
+          err.message,
+          /^W3C actions is not supported on watchOS: synthesized gestures need a watchOS WebDriverAgent build whose event builders no longer need UIKit's UIInterfaceOrientation, which versions older than 16\.18\.0 do not contain; upgrade WebDriverAgent to version 16\.18\.0 or newer, or use POST \/element\/:uuid\/click, which every watchOS build serves$/,
+        );
+        return true;
+      });
+      sinon.assert.notCalled(proxy);
+    });
+
+    it('should proxy the actions route on watchOS once the agent is new enough', async function () {
+      const driver = makeDriver(WATCH);
+      driver.cachedWdaStatus = {build: {version: '16.19.2'}};
+      sandbox.stub(driver, 'isWebContext').returns(false);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await driver.performActions(ACTION_SEQUENCE);
+      sinon.assert.calledWith(proxy, '/actions', 'POST', {actions: ACTION_SEQUENCE});
     });
   });
 
@@ -470,23 +495,106 @@ describe('platform support gates', function () {
       ['mobile: swipe', (driver) => driver.mobileSwipe(direction), '/wda/swipe'],
       ['mobile: tap', (driver) => driver.mobileTap(10, 10), '/wda/tap'],
       ['mobile: doubleTap', (driver) => driver.mobileDoubleTap(undefined, 10, 10), '/wda/doubleTap'],
+      ['mobile: twoFingerTap', (driver) => driver.mobileTwoFingerTap(), '/wda/twoFingerTap'],
       ['mobile: touchAndHold', (driver) => driver.mobileTouchAndHold(1, 10, 10), '/wda/touchAndHold'],
       ['mobile: scroll', (driver) => driver.mobileScroll(undefined, direction), '/wda/scroll'],
+      ['mobile: scrollToElement', (driver) => driver.mobileScrollToElement('0'), '/wda/element/0/scrollTo'],
       [
-        'mobile: dragfromtoforduration',
+        'mobile: dragFromToForDuration',
         (driver) => driver.mobileDragFromToForDuration(1, 1, 1, 2, 2),
         '/wda/dragfromtoforduration',
       ],
+      [
+        'mobile: dragFromToWithVelocity',
+        (driver) => driver.mobileDragFromToWithVelocity(1, 1, 100, undefined, undefined, 1, 1, 2, 2),
+        '/wda/pressAndDragWithVelocity',
+      ],
+      ['mobile: tapWithNumberOfTaps', (driver) => driver.mobileTapWithNumberOfTaps(), '/wda/tapWithNumberOfTaps'],
     ];
 
+    // The gestures above are only registered by a watchOS agent from 16.18.0 onwards, so each case
+    // is checked both ways: refused with the newest published build, proxied with a build that has
+    // them. Refusing them against a capable agent would break the platform for nobody's benefit.
     for (const [name, command, endpoint] of cases) {
-      it(`${name} should not be gated on watchOS`, async function () {
+      it(`${name} should be proxied on watchOS with an agent that registers it`, async function () {
         const driver = makeDriver(WATCH);
+        driver.cachedWdaStatus = {build: {version: '16.19.2'}};
         const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
         await command(driver);
         sinon.assert.calledWith(proxy, endpoint);
       });
+
+      it(`${name} should be rejected on watchOS with an agent that omits the route`, async function () {
+        const driver = makeDriver(WATCH);
+        driver.cachedWdaStatus = {build: {version: '16.17.4'}};
+        const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+        await assert.rejects(command(driver), (err: unknown) => {
+          assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
+          assert.match(
+            err.message,
+            new RegExp(
+              `^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} is not supported on watchOS: synthesized gestures`,
+            ),
+          );
+          return true;
+        });
+        sinon.assert.notCalled(proxy);
+      });
+
+      it(`${name} should stay ungated on iOS`, async function () {
+        await assertProxiedOnIos(command, endpoint);
+      });
     }
+
+    // No agent version can serve the picker wheel: the XCTest category behind it is iOS-only, so the
+    // gate must not be version-qualified the way the gesture family above is.
+    it('should reject mobile: selectPickerWheelValue on watchOS whatever the agent version', async function () {
+      for (const version of ['16.17.4', '16.19.2']) {
+        const driver = makeDriver(WATCH);
+        driver.cachedWdaStatus = {build: {version}};
+        const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+        await assert.rejects(driver.mobileSelectPickerWheelValue('0', 'next'), (err: unknown) => {
+          assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
+          assert.match(
+            err.message,
+            /^mobile: selectPickerWheelValue is not supported on watchOS: watchOS has no picker-wheel API/,
+          );
+          return true;
+        });
+        sinon.assert.notCalled(proxy);
+      }
+    });
+
+    it('should still proxy the picker wheel on iOS', async function () {
+      await assertProxiedOnIos(
+        (driver) => driver.mobileSelectPickerWheelValue('0', 'next'),
+        '/wda/pickerwheel/0/select',
+      );
+    });
+
+    // The velocity-carrying swipe stalls inside event synthesis on watchOS and takes the runner down,
+    // which ends the session; the driver refuses the argument itself so that no agent build, old or
+    // new, can be asked to attempt it. Every other velocity-carrying gesture is unaffected.
+    it('should reject a swipe velocity on watchOS whatever the agent version', async function () {
+      for (const version of ['16.17.4', '16.19.2']) {
+        const driver = makeDriver(WATCH);
+        driver.cachedWdaStatus = {build: {version}};
+        const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+        await assert.rejects(driver.mobileSwipe(direction, 2), (err: unknown) => {
+          assert.ok(err instanceof errors.InvalidArgumentError, `expected InvalidArgumentError, got ${String(err)}`);
+          assert.match(err.message, /The 'velocity' parameter is not supported on watchOS/);
+          return true;
+        });
+        sinon.assert.notCalled(proxy);
+      }
+    });
+
+    it('should keep the swipe velocity on iOS', async function () {
+      const driver = makeDriver(IOS);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await driver.mobileSwipe(direction, 2);
+      sinon.assert.calledWith(proxy, '/wda/swipe', 'POST', {direction, velocity: 2});
+    });
   });
 
   describe('alert commands', function () {

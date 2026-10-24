@@ -3,11 +3,22 @@ import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {hasWebElementId, isPlainObject} from '../utils/index.js';
+import {hasWebElementId, isPlainObject, isWatchOs} from '../utils/index.js';
 import {requirePlatformSupport, requireSimulator} from './helpers/index.js';
 import type {Direction} from './types.js';
 
 const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
+
+/**
+ * Rejects a synthesized-gesture command on a platform whose connected WebDriverAgent cannot serve
+ * it, so the user gets the reason instead of a raw `unknown command` out of the agent.
+ *
+ * Unlike the other guards in this file this one is version-qualified: the watchOS agent only gained
+ * the whole gesture family in 16.18.0, so a build that is new enough must not be refused.
+ */
+function requireGestureSynthesis(driver: XCUITestDriver, action: string): void {
+  requirePlatformSupport(driver, 'gestureSynthesis', action);
+}
 
 interface WdaScrollParams {
   name?: string;
@@ -88,6 +99,7 @@ export async function performActions(this: XCUITestDriver, actions: ActionSequen
  * @throws {errors.InvalidArgumentError} If actions still contain web elements
  */
 export async function performActionsViaWDA(driver: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
+  requireGestureSynthesis(driver, 'W3C actions');
   assertNoWebElements(driver, actions);
   // This is mandatory, since WDA only supports TOUCH pointer type
   // and Selenium API uses MOUSE as the default one
@@ -142,6 +154,7 @@ export async function mobileScrollToElement(this: XCUITestDriver, elementId: Ele
   if (!elementId) {
     throw new errors.InvalidArgumentError('Element id must be provided');
   }
+  requireGestureSynthesis(this, 'mobile: scrollToElement');
   return await this.proxyCommand(`/wda/element/${util.unwrapElement(elementId)}/scrollTo`, 'POST', {});
 }
 
@@ -204,6 +217,7 @@ export async function mobileScroll(
     );
   }
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/scroll` : '/wda/scroll';
+  requireGestureSynthesis(this, 'mobile: scroll');
   return await this.proxyCommand(endpoint, 'POST', params);
 }
 
@@ -226,9 +240,23 @@ export async function mobileSwipe(
   }
   const params: {direction: Direction; velocity?: number} = {direction};
   if (velocity != null) {
+    // No watchOS agent build has a working velocity-carrying swipe: XCTest's
+    // `-swipeUpWithVelocity:` and friends stall inside event synthesis - measured at 78 s before the
+    // runner was restarted - which ends the whole session rather than just this command. Agent
+    // 16.19.2 onwards refuses the argument itself; refusing it here too covers every older build and
+    // keeps the failure a plain invalid-argument error instead of a lost runner.
+    if (isWatchOs(this.opts.platformName)) {
+      throw new errors.InvalidArgumentError(
+        "The 'velocity' parameter is not supported on watchOS: the velocity-carrying swipe stalls " +
+          'inside event synthesis and terminates the WebDriverAgent runner, which ends the session. ' +
+          "Repeat the request without 'velocity' to perform a plain swipe, or use " +
+          "'mobile: dragFromToForDuration' for a coordinate-based gesture.",
+      );
+    }
     params.velocity = velocity;
   }
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/swipe` : '/wda/swipe';
+  requireGestureSynthesis(this, 'mobile: swipe');
   await this.proxyCommand(endpoint, 'POST', params);
 }
 
@@ -280,6 +308,7 @@ export async function mobileDoubleTap(
   y?: number,
 ): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/doubleTap` : '/wda/doubleTap';
+  requireGestureSynthesis(this, 'mobile: doubleTap');
   await this.proxyCommand(endpoint, 'POST', {x, y});
 }
 
@@ -297,6 +326,7 @@ export async function mobileDoubleTap(
  */
 export async function mobileTwoFingerTap(this: XCUITestDriver, elementId?: Element | string): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/twoFingerTap` : '/wda/twoFingerTap';
+  requireGestureSynthesis(this, 'mobile: twoFingerTap');
   await this.proxyCommand(endpoint, 'POST');
 }
 
@@ -324,6 +354,7 @@ export async function mobileTouchAndHold(
   elementId?: Element | string,
 ): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/touchAndHold` : '/wda/touchAndHold';
+  requireGestureSynthesis(this, 'mobile: touchAndHold');
   await this.proxyCommand(endpoint, 'POST', {
     duration: requireFloat(duration, 'duration'),
     x,
@@ -345,6 +376,7 @@ export async function mobileTap(
   elementId?: string | Element,
 ): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/tap` : '/wda/tap';
+  requireGestureSynthesis(this, 'mobile: tap');
   await this.proxyCommand(endpoint, 'POST', {x, y});
 }
 
@@ -387,6 +419,7 @@ export async function mobileDragFromToForDuration(
     toX: requireFloat(toX, 'toX'),
     toY: requireFloat(toY, 'toY'),
   };
+  requireGestureSynthesis(this, 'mobile: dragFromToForDuration');
   return elementId
     ? // Drag element
       await this.proxyCommand(`/wda/element/${util.unwrapElement(elementId)}/dragfromtoforduration`, 'POST', params)
@@ -436,6 +469,7 @@ export async function mobileDragFromToWithVelocity(
     holdDuration: requireFloat(holdDuration, 'holdDuration'),
     velocity: requireFloat(velocity, 'velocity'),
   };
+  requireGestureSynthesis(this, 'mobile: dragFromToWithVelocity');
   fromElementId = fromElementId ? util.unwrapElement(fromElementId) : undefined;
   if (fromElementId) {
     toElementId = toElementId ? util.unwrapElement(toElementId) : undefined;
@@ -481,6 +515,7 @@ export async function mobileTapWithNumberOfTaps(
   const endpoint = elementId
     ? `/wda/element/${util.unwrapElement(elementId)}/tapWithNumberOfTaps`
     : '/wda/tapWithNumberOfTaps';
+  requireGestureSynthesis(this, 'mobile: tapWithNumberOfTaps');
   return await this.proxyCommand(endpoint, 'POST', {
     numberOfTaps,
     numberOfTouches,
@@ -561,6 +596,7 @@ export async function mobileSelectPickerWheelValue(
   if (maxAttempts != null) {
     params.maxAttempts = maxAttempts;
   }
+  requirePlatformSupport(this, 'pickerWheel', 'mobile: selectPickerWheelValue');
   return await this.proxyCommand(`/wda/pickerwheel/${util.unwrapElement(elementId)}/select`, 'POST', params);
 }
 

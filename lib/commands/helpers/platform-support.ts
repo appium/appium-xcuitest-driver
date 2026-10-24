@@ -13,12 +13,14 @@ export type PlatformCapability =
   | 'batteryInfo'
   | 'deepLink'
   | 'forceTouch'
+  | 'gestureSynthesis'
   | 'hideKeyboard'
   | 'keyboardInput'
   | 'multiTouchGestures'
   | 'orientation'
   | 'pasteboardSimulator'
   | 'pasteboardWda'
+  | 'pickerWheel'
   | 'simulatorUiSettings';
 
 interface PlatformSupportEntry {
@@ -94,6 +96,23 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
     reason: 'watchOS displays have no force sensor',
     alternative: "use 'mobile: touchAndHold' for a long press",
   },
+  gestureSynthesis: {
+    unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
+    // Every synthesized gesture - tap, doubleTap, swipe, touchAndHold, scroll, drag and W3C actions -
+    // is absent from a watchOS agent older than 16.18.0: the event builders take a UIKit
+    // `UIInterfaceOrientation`, a type watchOS marks unavailable, so the whole synthesis layer was
+    // compiled out of that build and only POST /element/:uuid/click remained. 16.18.0 collapses the
+    // enum to its raw portrait value on a watch, whose panel never rotates. W3C actions are the
+    // trickiest of the family: the `/actions` route string *is* present in older watch builds, but
+    // the category answering it is not, so the request comes back as an unrecognized-selector 500.
+    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.18.0'},
+    reason:
+      'synthesized gestures need a watchOS WebDriverAgent build whose event builders no longer need ' +
+      "UIKit's UIInterfaceOrientation, which versions older than 16.18.0 do not contain",
+    alternative:
+      'upgrade WebDriverAgent to version 16.18.0 or newer, or use POST /element/:uuid/click, which ' +
+      'every watchOS build serves',
+  },
   hideKeyboard: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
     // The control that closes the watch keyboard is the accessory bar's `Done` button, which
@@ -149,6 +168,16 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
     reason:
       'the pasteboard endpoint is absent from the watchOS WebDriverAgent build, which has no ' +
       'UIPasteboard, and the Simulator-side pasteboard commands are unavailable there too',
+  },
+  pickerWheel: {
+    unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
+    // No agent version can gain this: XCUIElement's picker-wheel category, and with it
+    // -adjustToPickerWheelValue:, is declared under `#if TARGET_OS_IOS` in the watchOS SDK headers,
+    // so the selector does not exist there. The route stays out of the watch build for the same reason.
+    reason:
+      'watchOS has no picker-wheel API; the XCTest category behind it is compiled for iOS only, so ' +
+      'no watchOS WebDriverAgent build can serve that endpoint',
+    alternative: "use 'mobile: swipe' on the scrolling list, or 'mobile: rotateDigitalCrown'",
   },
   simulatorUiSettings: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
