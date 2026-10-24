@@ -232,6 +232,10 @@ part of it is not: a `mobile: swipe` `velocity` argument raises `InvalidArgument
 gesture sent to an agent older than 16.18.0 raises `NotImplementedError` naming the version to upgrade
 to.
 
+Argument validation happens before any of that. A malformed argument is malformed on every platform, so
+`mobile: touchAndHold` with a non-numeric `duration`, or a W3C action whose origin is a web element, gets
+the same `invalid argument` reply here that it gets on iOS rather than a message about watchOS.
+
 ## Related Tickets
 
 * <https://github.com/appium/WebDriverAgent/pull/1209>
