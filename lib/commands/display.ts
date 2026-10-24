@@ -1,6 +1,6 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
-import type {Simulator} from 'appium-ios-simulator';
+import type {SupportsDuo} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
@@ -93,7 +93,8 @@ export async function mobileGetSimulatedHingeAngle(this: XCUITestDriver): Promis
 
 /**
  * Requests a simulated hinge angle through the host CoreSimulator HID service.
- * Requires a hinge-capable iOS Simulator; WDA supplies the capability check and angle reading.
+ * Requires an iPhone Duo Simulator on Xcode 27+; CoreSimulator identifies the device type.
+ * WDA supplies hinge angle readings.
  * The transition completes asynchronously. Select currentDisplayId separately.
  *
  * @param angle - Degrees from 0 (closed) to 180 (fully open), inclusive.
@@ -104,7 +105,7 @@ export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: 
   }
   const simulator = await getDuoSimulator(this);
   if (!simulator) {
-    throw new errors.UnsupportedOperationError('Setting the hinge angle requires a hinge-capable iOS Simulator');
+    throw new errors.UnsupportedOperationError('Setting the hinge angle requires an iPhone Duo Simulator on Xcode 27+');
   }
   await simulator.setSimulatedHingeAngle(angle);
 }
@@ -118,7 +119,7 @@ const ORIENTATIONS = {
 
 async function rotateDuo(
   driver: XCUITestDriver,
-  orientation: Parameters<Simulator['setHidOrientation']>[0],
+  orientation: Parameters<SupportsDuo['setHidOrientation']>[0],
 ): Promise<boolean> {
   const simulator = await getDuoSimulator(driver);
   if (!simulator) {

@@ -2180,8 +2180,9 @@ The current hinge angle as a number in degrees, for example `90.5`.
 ### mobile: setSimulatedHingeAngle
 
 Requests a simulated hinge angle change through the Mac-side CoreSimulator HID service.
-Requires a hinge-capable iOS Simulator and a WebDriverAgent build with hinge angle
-reading support. The driver validates the angle and uses WDA to check hinge availability.
+Requires an iPhone Duo Simulator on Xcode 27+ and a WebDriverAgent build with hinge
+angle reading support. The driver validates the angle and identifies Duo by its
+CoreSimulator device type, independently of hinge readings.
 Physical devices, tvOS, watchOS, and simulators without a hinge are unsupported.
 
 Successful completion does not guarantee that the requested angle was applied.

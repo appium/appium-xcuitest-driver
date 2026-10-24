@@ -12,6 +12,7 @@ describe('host simulator HID routing', () => {
     const driver = new XCUITestDriver({} as any);
     sinon.stub(driver, 'isSimulator').returns(isSimulator);
     const device = {
+      isDuo: sinon.stub().resolves(true),
       setSimulatedHingeAngle: sinon.stub().resolves(),
       pressHidButton: sinon.stub().resolves(),
       setHidOrientation: sinon.stub().resolves(),
@@ -27,7 +28,7 @@ describe('host simulator HID routing', () => {
       sinon.assert.calledWithExactly(proxy, '/wda/device/hingeAngle', 'GET');
     }
   });
-  it('checks hinge availability then sends fractional angles to the host', async () => {
+  it('checks Duo device type then sends fractional angles to the host', async () => {
     const {driver, device, proxy} = setup();
     for (const angle of [0, 90.5, 180]) {
       await driver.execute('mobile: setSimulatedHingeAngle', [{angle}]);
@@ -53,11 +54,22 @@ describe('host simulator HID routing', () => {
   it('preserves ordinary simulator and physical Home routes', async () => {
     for (const simulator of [true, false]) {
       const {driver, proxy, device} = setup(simulator);
-      proxy.withArgs('/wda/device/hingeAngle', 'GET').rejects(new errors.UnsupportedOperationError());
+      device.isDuo.resolves(false);
       await driver.mobilePressButton('home');
       sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name: 'home', duration: undefined});
       sinon.assert.notCalled(device.pressHidButton);
     }
+  });
+  it('does not treat hinge availability as Duo identity or call unavailable controls', async () => {
+    const {driver, device, proxy} = setup();
+    device.isDuo.resolves(false);
+    await driver.mobilePressButton('home');
+    sinon.assert.notCalled(device.pressHidButton);
+    assert.ok(proxy.args.every(([path]) => path !== '/wda/device/hingeAngle'));
+    device.isDuo.resolves(true);
+    (device as any).setHidOrientation = undefined;
+    await driver.mobilePressButton('home');
+    sinon.assert.notCalled(device.pressHidButton);
   });
   it('routes Duo Home through the host while preserving other XCTest buttons', async () => {
     const {driver, device, proxy} = setup();
@@ -67,11 +79,11 @@ describe('host simulator HID routing', () => {
     sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name: 'volumeUp', duration: undefined});
   });
   it('does not hide probe or host transport errors', async () => {
-    const {driver, proxy, device} = setup();
-    proxy.rejects(new Error('WDA disconnected'));
-    await assert.rejects(driver.mobilePressButton('home'), /WDA disconnected/);
+    const {driver, device} = setup();
+    device.isDuo.rejects(new Error('Device lookup failed'));
+    await assert.rejects(driver.mobilePressButton('home'), /Device lookup failed/);
     sinon.assert.notCalled(device.pressHidButton);
-    proxy.resolves(90);
+    device.isDuo.resolves(true);
     device.setSimulatedHingeAngle.rejects(new Error('HID service missing'));
     await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), /HID service missing/);
   });
@@ -100,7 +112,7 @@ describe('host simulator HID routing', () => {
     assert.ok(proxy.args.every(([path]) => path !== '/wda/deviceOrientation'));
     assert.deepEqual(
       proxy.args.map(([path]) => path),
-      ['/wda/device/hingeAngle', '/rotation', '/rotation', '/wda/device/hingeAngle', '/rotation'],
+      ['/rotation', '/rotation', '/rotation'],
     );
   });
   it('fails if the app does not rotate and propagates read errors', async () => {
