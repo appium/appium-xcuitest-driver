@@ -166,7 +166,7 @@ Series 12 (46mm) on watchOS 27.0 with Xcode 27.1 for the VoiceOver extensions be
       belonging to the application under test: `Done` is a common application button name, and matching the
       app's own control leaves the keyboard open and runs that application's action. Measured on watchOS
       26.5 and 27.0 the accessory bar belongs to `com.apple.QuickboardViewService`, a process of its own
-      apart from the application under test, so excluding the app's matches still reaches the bar
+      apart from the application under test, so excluding the app's matches still reaches the bar.
     * Tapping that button yourself works and is an alternative to
       [`mobile: hideKeyboard`](../reference/execute-methods.md#mobile-hidekeyboard): look for the app-wide
       button rather than a key inside the keyboard, for example with `-ios predicate string` on
