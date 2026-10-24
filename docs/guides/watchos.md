@@ -89,19 +89,40 @@ Verified against Apple Watch Series 11 (46mm) and Ultra 3 (49mm) Simulators on w
 Series 12 (46mm) on watchOS 27.0 with Xcode 27.1 for the VoiceOver extensions below.
 
 * Only the Simulator is supported; real watchOS devices cannot be used as automation targets
-* [`mobile: swipe`](../reference/execute-methods.md#mobile-swipe) rejects a `velocity` argument. There
-  XCTest's velocity-carrying swipe stalls inside event synthesis - measured at 78 s before it took the
-  WebDriverAgent runner down, which ends the session rather than just that command - so the agent
-  refuses the argument instead of attempting it. The same gesture without `velocity` completes, and
-  `mobile: dragfromtoforduration` is the fast coordinate-based alternative. Standard W3C actions
-  (`POST /session/:id/actions`) do work - a pointer sequence that taps an element makes that element's
-  action fire
-* [`mobile: dragFromToWithVelocity`](../reference/execute-methods.md#mobile-dragfromtowithvelocity) *is*
-  supported, in both its forms: with `fromElementId` it reaches XCTest's
+* Synthesized gestures need a watchOS WebDriverAgent build of **16.18.0 or newer**: the agent's event
+  builders take UIKit's `UIInterfaceOrientation`, a type watchOS marks unavailable, so the whole
+  synthesis layer was compiled out of earlier watch builds and only
+  `POST /session/:id/element/:uuid/click` remained. That family is [`mobile: tap`](../reference/execute-methods.md#mobile-tap),
+  [`mobile: doubleTap`](../reference/execute-methods.md#mobile-doubletap),
+  [`mobile: twoFingerTap`](../reference/execute-methods.md#mobile-twofingertap),
+  [`mobile: touchAndHold`](../reference/execute-methods.md#mobile-touchandhold),
+  [`mobile: scroll`](../reference/execute-methods.md#mobile-scroll),
+  [`mobile: scrollToElement`](../reference/execute-methods.md#mobile-scrolltoelement),
+  [`mobile: dragFromToForDuration`](../reference/execute-methods.md#mobile-dragfromtoforduration),
+  [`mobile: dragFromToWithVelocity`](../reference/execute-methods.md#mobile-dragfromtowithvelocity),
+  [`mobile: tapWithNumberOfTaps`](../reference/execute-methods.md#mobile-tapwithnumberoftaps) and standard
+  W3C actions (`POST /session/:id/actions`). With an older agent each is rejected with a message naming
+  the version to upgrade to, rather than the raw error the agent would have returned; on W3C actions
+  that raw error was an unrecognized-selector 500, because the `/actions` route string *is* present in
+  those builds while the category answering it is not. Once the agent is new enough they all work - a
+  W3C pointer sequence that taps an element makes that element's action fire
+* [`mobile: swipe`](../reference/execute-methods.md#mobile-swipe) is supported, but its optional
+  `velocity` argument is refused at any agent version. There, XCTest's velocity-carrying swipe stalls
+  inside event synthesis - measured at 78 s before it took the WebDriverAgent runner down, which ends
+  the session rather than just that command - so no build is ever asked to attempt one. The same
+  gesture without `velocity` completes, and
+  [`mobile: dragFromToForDuration`](../reference/execute-methods.md#mobile-dragfromtoforduration) is the
+  fast coordinate-based alternative
+* [`mobile: selectPickerWheelValue`](../reference/execute-methods.md#mobile-selectpickerwheelvalue) is
+  unsupported at any agent version: the picker-wheel API behind it,
+  `-adjustToPickerWheelValue:`, is declared for iOS only in the SDK, so the selector does not exist on
+  watchOS. Scroll a list with [`mobile: swipe`](../reference/execute-methods.md#mobile-swipe), or turn
+  the crown with [`mobile: rotateDigitalCrown`](../reference/execute-methods.md#mobile-rotatedigitalcrown)
+* A velocity is refused by *swipes* only. [`mobile: dragFromToWithVelocity`](../reference/execute-methods.md#mobile-dragfromtowithvelocity)
+  takes one and works, in both its forms: with `fromElementId` it reaches XCTest's
   `-pressForDuration:thenDragToElement:withVelocity:thenHoldForDuration:`, and with coordinates it goes
   through the agent's own event builder. Both were measured on watchOS 26.5 - the element form answers
-  in about a second and leaves the agent serving - so the rule above is specific to the velocity-carrying
-  *swipes*, not to every gesture that takes a velocity.
+  in about a second and leaves the agent serving
 * Two-finger gestures are rejected: [`mobile: pinch`](../reference/execute-methods.md#mobile-pinch) and
   [`mobile: rotateElement`](../reference/execute-methods.md#mobile-rotateelement) are not registered by
   the watchOS WebDriverAgent build, and [`mobile: forcePress`](../reference/execute-methods.md#mobile-forcepress)
@@ -205,10 +226,11 @@ XCTest screen recording (`mobile: startScreenRecording`/`stopScreenRecording`). 
 that differs from iOS.
 
 Rejected commands raise `NotImplementedError` naming the command, the platform and the reason, rather
-than forwarding the request and surfacing a raw `unknown command` error from WebDriverAgent. The one
-exception is a `mobile: swipe` `velocity` argument: the command itself is supported on watchOS and only
-that argument is not, so the agent answers `invalid argument` (HTTP 400) with the reason instead of the
-whole command being gated off.
+than forwarding the request and surfacing a raw `unknown command` error from WebDriverAgent. Two cases
+are settled before that decision is reached, because the command itself is supported on watchOS and only
+part of it is not: a `mobile: swipe` `velocity` argument raises `InvalidArgumentError`, and a synthesized
+gesture sent to an agent older than 16.18.0 raises `NotImplementedError` naming the version to upgrade
+to.
 
 ## Related Tickets
 

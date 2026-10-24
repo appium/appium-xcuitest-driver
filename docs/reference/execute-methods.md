@@ -59,6 +59,11 @@ Performs selection of the next or previous picker wheel value. This might
 be useful if these values are populated dynamically, so you don't know which
 one to select or value selection suing `sendKeys` API does not work because of an XCTest bug. The method throws an exception if it fails to change the current picker value.
 
+Not supported on [watchOS](../guides/watchos.md): the picker-wheel API behind it is compiled for
+iOS only, so no watchOS WebDriverAgent build can serve that endpoint at any version. Use
+[`mobile: swipe`](#mobile-swipe) on the scrolling list, or
+[`mobile: rotateDigitalCrown`](#mobile-rotatedigitalcrown).
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1343,6 +1348,11 @@ useful for such cases like album pagination, switching views, etc. More advanced
 cases may require to call [mobile: dragFromToForDuration](#mobile-dragfromtoforduration),
 where one can supply coordinates and duration.
 
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the first one
+whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent from the agent
+build and the call is rejected with a message naming the required version. Its optional `velocity`
+argument stays unsupported on watchOS whatever the agent version - see that argument below.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1430,6 +1440,10 @@ the scrolling should be performed. Although, there is one known limitation there
 it is necessary to perform too many scroll gestures on parent container to reach the
 necessary child element (tens of them) then the method call may fail.
 _Important_: The implementation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might *not* always work as expected.
+
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
 
 #### Arguments
 
@@ -1564,6 +1578,10 @@ velocity | number | yes | The velocity of the pinch in scale factor per second (
 
 Performs double tap gesture on the given element or on the screen.
 
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1622,6 +1640,10 @@ y | number | no | Vertical coordinate offset. | 100
 ### mobile: touchAndHold
 
 Performs long press gesture on the given element or on the screen.
+
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
 
 #### Arguments
 
@@ -1692,6 +1714,10 @@ y | number | no | Vertical coordinate offset. | 100
 
 Performs two finger tap gesture on the given element or on the application element.
 
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1753,6 +1779,10 @@ elementId ("element" prior to Appium v 1.22) | string | no | The internal elemen
 
 Performs tap gesture by coordinates on the given element or on the screen.
 
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1765,6 +1795,10 @@ y | number | yes | Vertical coordinate offset. | 100
 
 Performs drag and drop gesture by coordinates. This can be done either on an element or
 on the screen
+
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
 
 #### Arguments
 
@@ -1857,6 +1891,10 @@ toY | number | yes | The y coordinate of ending drag point | 200
 ### mobile: dragFromToWithVelocity
 
 Initiates a press-and-hold gesture, drags to another coordinate or an element with a velocity you specify, and holds for a duration you specify.
+
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
 
 #### Arguments
 
@@ -1961,6 +1999,10 @@ velocity | number | yes | The velocity of the rotation gesture in radians per se
 
 Sends one or more taps with one or more touch points since Appium 1.17.1.
 
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -2058,6 +2100,10 @@ Scrolls the current viewport to the given element. It is expected the destinatio
 This API uses native XCTest calls, so it performs scrolling pretty fast. The same native call is
 implicitly performed by a vanilla `click` API if the destination element is out of the current viewport. An exception is thrown if the scrolling action cannot be performed.
 This extension is available since the driver version 4.7.0.
+
+On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
+first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
+from the agent build and the call is rejected with a message naming the required version.
 
 #### Arguments
 
