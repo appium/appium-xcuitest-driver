@@ -158,8 +158,11 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
       'the watchOS Simulator runtime refuses text-size and contrast changes; it reports both ' +
       'settings as unsupported',
   },
-  // VoiceOver is deliberately absent: its own version gate already rejects watchOS below 27 with
-  // `watchOS 27.0` wording, and no watchOS 27 runtime exists to verify the endpoint against yet.
+  // VoiceOver is deliberately absent: on watchOS 27 and newer the routes do work, so it is not a
+  // platform limitation. Its own gate rejects watchOS below 27 with `watchOS 27.0` wording, and the
+  // agent applies a second, independent check of its own - it reaches VoiceOver through an
+  // undocumented selector that is only present when the agent was built against the watchOS 27 SDK.
+  // Both conditions are measured; see docs/guides/watchos.md.
 };
 
 /**
