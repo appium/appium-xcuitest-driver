@@ -83,14 +83,17 @@ describe('host simulator HID routing', () => {
     ] as any);
     sinon.stub(driver.settings, 'getSettings').returns({currentDisplayId: 99} as any);
     await driver.setOrientation('LANDSCAPE');
-    sinon.assert.calledWithExactly(proxy, '/wda/deviceOrientation', 'POST', {orientation: 3});
-    assert.ok(proxy.getCall(1).calledBefore(device.setHidOrientation.firstCall));
     sinon.assert.calledWithExactly(device.setHidOrientation, 'landscape-left', false);
     sinon.assert.calledWithExactly(proxy, '/orientation', 'POST', {orientation: 'LANDSCAPE', verifyOnly: true});
     assert.ok(device.setHidOrientation.firstCall.calledBefore(proxy.lastCall));
     await driver.setRotation(0, 0, 90);
     sinon.assert.calledWithExactly(device.setHidOrientation, 'landscape-right', false);
     sinon.assert.calledWithExactly(proxy, '/rotation', 'POST', {x: 0, y: 0, z: 90, verifyOnly: true});
+    assert.ok(proxy.args.every(([path]) => path !== '/wda/deviceOrientation'));
+    assert.deepEqual(
+      proxy.args.map(([path]) => path),
+      ['/wda/device/hingeAngle', '/orientation', '/wda/device/hingeAngle', '/rotation'],
+    );
   });
   it('rejects an unavailable display before injecting orientation', async () => {
     const {driver, device} = setup();

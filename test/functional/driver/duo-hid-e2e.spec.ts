@@ -42,6 +42,7 @@ it(
     driver.proxyCommand = (async (path: string, method: string, data?: unknown) =>
       (await request(`/session/${sessionId}${path}`, method, data)).value) as typeof driver.proxyCommand;
     const originalAngle = await driver.mobileGetSimulatedHingeAngle();
+    const originalDeviceOrientation = await driver.proxyCommand('/wda/deviceOrientation', 'GET');
     async function waitFor(check: () => Promise<boolean>): Promise<void> {
       const until = Date.now() + 5000;
       do {
@@ -60,10 +61,16 @@ it(
           angle === 0 ? isDefault : !isDefault,
         );
         assert.ok(display);
-        await driver.proxyCommand('/appium/settings', 'POST', {settings: {currentDisplayId: display.id}});
+        await driver.proxyCommand('/appium/settings', 'POST', {
+          settings: {currentDisplayId: display.id, defaultActiveApplication: DUO_TEST_BUNDLE_ID},
+        });
         const currentSettings = driver.settings.getSettings();
         driver.settings.getSettings = () => ({...currentSettings, currentDisplayId: display.id});
         await driver.proxyCommand('/wda/apps/activate', 'POST', {bundleId: DUO_TEST_BUNDLE_ID});
+        await waitFor(
+          async () =>
+            Number(await driver.proxyCommand('/wda/apps/state', 'POST', {bundleId: DUO_TEST_BUNDLE_ID})) === 4,
+        );
         for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
           await driver.setOrientation(orientation);
           assert.equal(await driver.proxyCommand('/orientation', 'GET'), orientation);
@@ -72,6 +79,7 @@ it(
           await driver.setRotation(0, 0, z);
           assert.deepEqual(await driver.proxyCommand('/rotation', 'GET'), {x: 0, y: 0, z});
         }
+        assert.equal(await driver.proxyCommand('/wda/deviceOrientation', 'GET'), originalDeviceOrientation);
         await driver.mobilePressButton('home');
         await waitFor(
           async () => Number(await driver.proxyCommand('/wda/apps/state', 'POST', {bundleId: DUO_TEST_BUNDLE_ID})) < 4,

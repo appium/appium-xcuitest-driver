@@ -131,13 +131,11 @@ async function rotateDuo(
   if (!display) {
     throw new errors.InvalidArgumentError(`Display '${currentDisplayId}' is unavailable`);
   }
-  const raw = {portrait: 1, 'portrait-upside-down': 2, 'landscape-left': 3, 'landscape-right': 4}[orientation];
-  await driver.proxyCommand('/wda/deviceOrientation', 'POST', {orientation: raw});
   await simulator.setHidOrientation(orientation, display.isDefault);
   return true;
 }
 
-/** Update XCTest, submit Duo's host control, then verify the resulting app scene. */
+/** Submit Duo's host control, then verify the app scene without updating XCTest's cached orientation. */
 export async function setOrientation(this: XCUITestDriver, orientation: string): Promise<void> {
   const target = ORIENTATIONS[orientation.toUpperCase() as keyof typeof ORIENTATIONS];
   const verifyOnly = target ? await rotateDuo(this, target) : false;
