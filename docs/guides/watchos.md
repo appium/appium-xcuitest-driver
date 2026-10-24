@@ -162,8 +162,18 @@ Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with 
   WebDriverAgent build of **16.18.0 or newer**, which is the first one that reads the battery through
   WatchKit. With an older agent the call is rejected with a message asking for the upgrade. A watch
   Simulator reports `level: -1` and `state: 0` (both unknown), because simulators have no battery.
-* The VoiceOver extensions require watchOS 27 or later, which has no Simulator runtime to run them on
-  yet, so they are rejected by the version check
+* The VoiceOver extensions ([`mobile: enableVoiceOver`](../reference/execute-methods.md#mobile-enablevoiceover)
+  and friends) need two things to line up, and each fails with its own message. The session's runtime
+  must be watchOS 27 or newer - below that the driver's version check rejects the call and names
+  `watchOS 27`, not an iOS number. The agent must also have been *built* against the watchOS 27 SDK:
+  it reaches VoiceOver through an undocumented `-[XCUIDevice voiceOverService]`, and where that
+  selector is absent the agent answers "The current OS runtime does not support VoiceOver control"
+  even on a watchOS 27 Simulator - which is what the published watchOS agent archives do, because
+  they are built against an older SDK for compatibility. With both satisfied, `enable`/`disable`
+  round-trip through `mobile: isVoiceOverEnabled`, and
+  [`mobile: voiceOverMove`](../reference/execute-methods.md#mobile-voiceovermove) alongside
+  `voiceOverCurrentSpeech` return real utterances. Only `forward` and `backward` exist there;
+  `in`/`out` are iOS-only and the agent names the supported set in the error
 
 [`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand),
 [`mobile: listDisplays`](../reference/execute-methods.md#mobile-listdisplays) (which returns exactly
