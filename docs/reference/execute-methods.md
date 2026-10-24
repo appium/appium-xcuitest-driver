@@ -574,8 +574,9 @@ Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this exte
 
 Reads the battery information from the device under test. This endpoint only returns reliable result on real devices.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the first one
-whose watch target reads the battery through WatchKit; older agents are rejected with an upgrade hint.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer, the first whose watch target reads the battery through WatchKit; older
+agents are rejected with an upgrade hint.
 Watch simulators report `level: -1` and `state: 0` because they have no battery.
 
 #### Returned Result
@@ -1348,10 +1349,12 @@ useful for such cases like album pagination, switching views, etc. More advanced
 cases may require to call [mobile: dragFromToForDuration](#mobile-dragfromtoforduration),
 where one can supply coordinates and duration.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the first one
-whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent from the agent
-build and the call is rejected with a message naming the required version. Its optional `velocity`
-argument stays unsupported on watchOS whatever the agent version - see that argument below.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to. Its optional `velocity` argument stays unsupported on watchOS whatever the agent
+version - see that argument below.
 
 #### Arguments
 
@@ -1441,9 +1444,11 @@ it is necessary to perform too many scroll gestures on parent container to reach
 necessary child element (tens of them) then the method call may fail.
 _Important_: The implementation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might *not* always work as expected.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1578,9 +1583,11 @@ velocity | number | yes | The velocity of the pinch in scale factor per second (
 
 Performs double tap gesture on the given element or on the screen.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1641,9 +1648,11 @@ y | number | no | Vertical coordinate offset. | 100
 
 Performs long press gesture on the given element or on the screen.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1714,9 +1723,11 @@ y | number | no | Vertical coordinate offset. | 100
 
 Performs two finger tap gesture on the given element or on the application element.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1779,9 +1790,11 @@ elementId ("element" prior to Appium v 1.22) | string | no | The internal elemen
 
 Performs tap gesture by coordinates on the given element or on the screen.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1796,9 +1809,11 @@ y | number | yes | Vertical coordinate offset. | 100
 Performs drag and drop gesture by coordinates. This can be done either on an element or
 on the screen
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1892,9 +1907,11 @@ toY | number | yes | The y coordinate of ending drag point | 200
 
 Initiates a press-and-hold gesture, drags to another coordinate or an element with a velocity you specify, and holds for a duration you specify.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -1999,9 +2016,11 @@ velocity | number | yes | The velocity of the rotation gesture in radians per se
 
 Sends one or more taps with one or more touch points since Appium 1.17.1.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -2101,9 +2120,11 @@ This API uses native XCTest calls, so it performs scrolling pretty fast. The sam
 implicitly performed by a vanilla `click` API if the destination element is out of the current viewport. An exception is thrown if the scrolling action cannot be performed.
 This extension is available since the driver version 4.7.0.
 
-On [watchOS](../guides/watchos.md) this needs a WebDriverAgent build of 16.18.0 or newer, the
-first one whose gesture synthesis compiles for watchOS; with an older agent the endpoint is absent
-from the agent build and the call is rejected with a message naming the required version.
+On [watchOS](../guides/watchos.md) this needs the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer: the agent's event builders take UIKit's `UIInterfaceOrientation`, a type
+watchOS marks unavailable, so gesture synthesis is compiled out of earlier watch builds. With an older
+agent the endpoint is absent from the agent build and the call is rejected with a message naming the
+version to upgrade to.
 
 #### Arguments
 
@@ -2362,13 +2383,13 @@ App strings map, where keys are resource identifiers.
 
 Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot be hidden. On non-tablet devices the keyboard might not have an explicit button to hide it. In such case this API won't work and the only way to close the keyboard would be to simulate the same action an app user would do to close it. For example, swipe from top to bottom or tap the screen somewhere at the area not covered by the keyboard.
 
-On [watchOS](../guides/watchos.md) this works with WebDriverAgent 16.19.2 or newer. There the control
-that closes the keyboard is the accessory bar's `Done` button, a sibling of `XCUIElementTypeKeyboard`
-rather than a key inside it, so the driver adds that name to `keys` and the agent has to search
-beyond the keyboard element - 16.19.0 and 16.19.1 did so app-wide and could tap an application's own
-`Done` button instead, and 16.19.2 restricted the search to the process that owns the keyboard. Older
-agent builds are rejected with a `NotImplementedError`; tap the `Done` button yourself if you cannot
-upgrade - it both commits and closes the keyboard.
+On [watchOS](../guides/watchos.md) this works with the `appium-webdriveragent` package at its latest
+release, 16.19.2 or newer. There the control that closes the keyboard is the accessory bar's `Done`
+button, which watchOS reports as a *sibling* of `XCUIElementTypeKeyboard` rather than a key inside it,
+so the agent's search for that button has to be scoped to the process owning the keyboard: a search
+that is not scoped can land on an application's own `Done` button and run its action instead. Older
+agent builds are rejected with a `NotImplementedError`. Tapping that `Done` button directly stays
+available on any build - it both commits and closes the keyboard.
 
 #### Arguments
 
@@ -2389,9 +2410,16 @@ Checks if the system on-screen keyboard is visible.
 Send keys to the given element or to the application under test.
 This API is only supported since Xcode 15/iOS 17.
 It is not supported on tvOS or watchOS - watchOS has no `XCUIKeyboardKey` API, so the endpoint is
-absent from the watchOS agent build. Entering text on watchOS still works through
-`POST /session/:id/element/:uuid/value`, `POST /session/:id/wda/keys` or W3C key actions, or by
-tapping the keyboard's `XCUIElementTypeKey` elements.
+absent from the watchOS agent build. Entering text on watchOS works through W3C key actions
+(`POST /session/:id/actions` with a `key` input source), or by tapping the keyboard's
+`XCUIElementTypeKey` elements. Each key identifies its character through `label` (`Q`, `W`,
+`delete`), so a selector such as `-ios predicate string` on "label == 'Q' AND type ==
+'XCUIElementTypeKey'" matches it. Resolve every key immediately before tapping it: a synthesised
+keystroke makes an already-found key element answer `stale element reference`, so a list of keys
+gathered up front taps once and then fails. None of the typing routes are options there:
+`POST /session/:id/element/:uuid/value`, its bulk form `POST /session/:id/element/value` and the
+deprecated `POST /session/:id/keys` all answer with success and enter nothing, because the agent's
+typing path is compiled out for watchOS.
 The API only works on iPad. On iOS calling it has no effect.
 
 #### Arguments
