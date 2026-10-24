@@ -350,10 +350,7 @@ describe('platform support gates', function () {
     it('should suggest the text-entry routes that do work', async function () {
       const driver = makeDriver(WATCH);
       sandbox.stub(driver, 'proxyCommand').resolves({});
-      await assert.rejects(
-        driver.mobileKeys(['a']),
-        /W3C key actions.*XCUIElementTypeKey elements.*label/s,
-      );
+      await assert.rejects(driver.mobileKeys(['a']), /W3C key actions.*XCUIElementTypeKey elements.*label/s);
     });
 
     it('should still proxy mobile: keys on iOS', async function () {
@@ -561,10 +558,7 @@ describe('platform support gates', function () {
       );
       // Both drag shapes are validated before the gate as well, not just the numeric arguments:
       // the shape errors are plain input errors on iOS too.
-      await assert.rejects(
-        driver.mobileDragFromToWithVelocity(1, 1, 100, '0'),
-        /"toElementId" parameter is mandatory/,
-      );
+      await assert.rejects(driver.mobileDragFromToWithVelocity(1, 1, 100, '0'), /"toElementId" parameter is mandatory/);
       await assert.rejects(
         driver.mobileDragFromToWithVelocity(1, 1, 100),
         /fromX, fromY, toX, and toY must all be provided/,

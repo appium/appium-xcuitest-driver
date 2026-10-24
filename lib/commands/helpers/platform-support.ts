@@ -147,7 +147,7 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
       'bar is scoped to the keyboard-owning process, which ' +
       `versions older than ${WATCHOS_CAPABLE_WDA_VERSION} do not`,
     alternative:
-      "upgrade the appium-webdriveragent package to its latest release, which is " +
+      'upgrade the appium-webdriveragent package to its latest release, which is ' +
       `${WATCHOS_CAPABLE_WDA_VERSION} or newer, ` +
       "or tap the 'Done' button of the keyboard's accessory bar directly",
   },
