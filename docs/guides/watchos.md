@@ -55,7 +55,10 @@ Equivalent values for the same bundle: `MyIosApp.app/Watch/MyWatchApp.app`,
 `Watch/MyWatchApp.app`, `MyWatchApp.app`.
 
 A single discovered watch application is used without the capability. Several of them make the session
-fail, and the error lists the identifiers and paths it found.
+fail, and the error lists the identifiers and paths it found. Both `appium:watchBundleId` and
+`appium:bundleId` name the application under test, so they are never applied to the packages listed in
+`appium:otherApps`: such a package is resolved from its own contents and used as provided when it holds
+exactly one watch application.
 
 No Watch/iPhone Simulator pairing is needed: the watch application runs against the watch Simulator on
 its own.

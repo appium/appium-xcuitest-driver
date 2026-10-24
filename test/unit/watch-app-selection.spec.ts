@@ -7,7 +7,7 @@ import {fs, plist, tempDir, zip} from 'appium/support.js';
 import {createSandbox, type SinonSpy, type SinonSandbox} from 'sinon';
 
 import {AppInfosCache} from '../../lib/app-infos-cache.js';
-import {onPostConfigureApp} from '../../lib/commands/helpers/app.js';
+import {onPostConfigureApp, type WatchAppSelectionScope} from '../../lib/commands/helpers/app.js';
 import {PLATFORM_NAME_IOS, PLATFORM_NAME_WATCHOS} from '../../lib/constants.js';
 import {XCUITestDriver, type XCUITestDriverOpts} from '../../lib/driver.js';
 import {log} from '../../lib/logger.js';
@@ -62,13 +62,18 @@ async function writeAppBundle(basePath: string, bundleName: string, manifest: St
 /**
  * Invokes the `configureApp` post-processing callback the way the base driver does.
  *
+ * @param scope What role the package plays in the session
  * @returns The application path the session must use, or `null` if the original one is kept
  */
-async function resolveAppPath(driver: XCUITestDriver, appPath: string): Promise<string | null> {
+async function resolveAppPath(
+  driver: XCUITestDriver,
+  appPath: string,
+  scope: WatchAppSelectionScope = 'app-under-test',
+): Promise<string | null> {
   const opts: PostProcessOptions = {appPath, isUrl: false, originalAppLink: appPath};
-  const result = await onPostConfigureApp.call(driver, opts);
-  // `false` means "keep the app as is"; only a rewritten result carries a new path.
-  const appPath_ = result === false ? null : result.appPath;
+  const result = await onPostConfigureApp.call(driver, scope, opts);
+  // No result means "keep the app as is"; only a rewritten one carries a new path.
+  const appPath_ = result?.appPath;
   if (appPath_ && appPath_ !== appPath) {
     selectedAppPaths.push(appPath_);
   }
@@ -385,8 +390,8 @@ describe('watch app selection', function () {
       }
     });
 
-    it('should keep watchOS sessions without nested bundles unchanged', async function () {
-      const {driver, warn, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+    it('should fail if the application under test carries no watch app', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
       const tmpDir = await tempDir.openDir();
       try {
         const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
@@ -395,8 +400,61 @@ describe('watch app selection', function () {
         });
         await fs.mkdirp(path.join(outerAppPath, 'Watch'));
 
-        assert.strictEqual(await resolveAppPath(driver, outerAppPath), null);
+        const err = await expectRejection(resolveAppPath(driver, outerAppPath));
+        assert.ok(err, 'expected the session to fail');
+        assert.match(err.message, /'Foo\.app'.*contains no watchOS application bundle/s);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should keep an iOS-only companion package of a watchOS session unchanged', async function () {
+      const {driver, warn, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: 'com.acme.watch'});
+      const tmpDir = await tempDir.openDir();
+      try {
+        const companionAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await fs.mkdirp(path.join(companionAppPath, 'Watch'));
+
+        assert.strictEqual(await resolveAppPath(driver, companionAppPath, 'other-application'), null);
         assert.strictEqual(warn.callCount, 0);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should not let the caps of the application under test select another package', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {
+        watchBundleId: 'com.acme.watch',
+        bundleId: 'com.acme.watch',
+      });
+      const tmpDir = await tempDir.openDir();
+      try {
+        const otherAppPath = await writeAppBundle(tmpDir, 'Bar.app', {
+          CFBundleIdentifier: 'com.acme.bar',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        // Two watch bundles, so the package cannot be resolved on its own, and the session caps
+        // name an application that has nothing to do with it.
+        await writeAppBundle(otherAppPath, 'Watch/One.app', {
+          CFBundleIdentifier: 'com.acme.bar.one',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(otherAppPath, 'Watch/Two.app', {
+          CFBundleIdentifier: 'com.acme.bar.two',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+
+        const err = await expectRejection(resolveAppPath(driver, otherAppPath, 'other-application'));
+        assert.ok(err, 'expected the selection to fail');
+        // 'appium:watchBundleId' names a bundle of another package: consulting it here would
+        // report "matches none of" instead of the ambiguity this package really has.
+        assert.doesNotMatch(err.message, /matches none of|does not reference/);
+        assert.match(err.message, /Only one of them can be installed at a time/);
       } finally {
         sandbox.restore();
         await fs.rimraf(tmpDir);

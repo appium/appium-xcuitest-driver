@@ -3,11 +3,13 @@ export {
   SAFARI_BUNDLE_ID,
   buildSafariPreferences,
   checkAutInstallationState,
+  configureAppOptions,
   findApps,
   installAUT,
   onDownloadApp,
   onPostConfigureApp,
 } from './app.js';
+export type {WatchAppSelectionScope} from './app.js';
 
 export {TimeoutError, withTimeout} from './async.js';
 

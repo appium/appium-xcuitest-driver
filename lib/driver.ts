@@ -31,7 +31,6 @@ import * as biometricCommands from './commands/biometric.js';
 import * as certificateCommands from './commands/certificate.js';
 import * as clipboardCommands from './commands/clipboard.js';
 import * as conditionCommands from './commands/condition.js';
-import {SUPPORTED_EXTENSIONS} from './commands/constants.js';
 import * as contentSizeCommands from './commands/content-size.js';
 import * as contextCommands from './commands/context.js';
 import {notifyBiDiContextChange} from './commands/context.js';
@@ -48,14 +47,13 @@ import {
   DEFAULT_TIMEOUT_KEY,
   SAFARI_BUNDLE_ID,
   checkAppPresent,
+  configureAppOptions,
   getAndCheckXcodeVersion,
   getDriverInfo,
   handleMjpegOptions,
   installAUT,
   isPlatformSupported,
   normalizeCommandTimeouts,
-  onDownloadApp,
-  onPostConfigureApp,
   platformSupportMessage,
   printUser,
   removeAllSessionWebSocketHandlers,
@@ -1600,11 +1598,7 @@ export class XCUITestDriver
 
     this.opts.app = await this.helpers.configureApp(
       this.opts.app as string,
-      {
-        onPostProcess: onPostConfigureApp.bind(this),
-        onDownload: onDownloadApp.bind(this),
-        supportedExtensions: SUPPORTED_EXTENSIONS,
-      } as any,
+      configureAppOptions(this, 'app-under-test'),
     );
   }
 

@@ -118,7 +118,7 @@ describe('app-utils', function () {
 
         const driver = new XCUITestDriver({} as any);
         sandbox.stub(driver, 'isRealDevice').returns(true);
-        resultPath = await onDownloadApp.call(driver, {
+        resultPath = await onDownloadApp.call(driver, 'app-under-test', {
           url: 'http://example.com/build.zip',
           headers: {'content-disposition': 'attachment; filename="build.zip"'},
           stream: fs.createReadStream(zipPath),

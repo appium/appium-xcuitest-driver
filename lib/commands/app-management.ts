@@ -7,9 +7,8 @@ import {fs, util} from 'appium/support.js';
 import {InstallationProxyClient} from '../device/installation-proxy-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {AppInfoMapping} from '../types.js';
-import {SUPPORTED_EXTENSIONS} from './constants.js';
 import type {AppState} from './enum.js';
-import {checkAutInstallationState, onDownloadApp, onPostConfigureApp, requireRealDevice} from './helpers/index.js';
+import {checkAutInstallationState, configureAppOptions, requireRealDevice} from './helpers/index.js';
 
 /**
  * Installs the given application to the device under test.
@@ -28,11 +27,11 @@ export async function mobileInstallApp(
   timeoutMs?: number,
   checkVersion?: boolean,
 ): Promise<void> {
-  const srcAppPath = await this.helpers.configureApp(app, {
-    onPostProcess: onPostConfigureApp.bind(this),
-    onDownload: onDownloadApp.bind(this),
-    supportedExtensions: SUPPORTED_EXTENSIONS,
-  } as any);
+  const srcAppPath = await this.helpers.configureApp(
+    app,
+    // An app installed mid-session is not the one named by the session's `appium:watchBundleId`
+    configureAppOptions(this, 'other-application'),
+  );
   this.log.info(
     `Installing '${srcAppPath}' to the ${this.isRealDevice() ? 'real device' : 'Simulator'} ` +
       `with UDID '${this.device.udid}'`,
