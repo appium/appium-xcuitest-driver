@@ -85,7 +85,8 @@ Match on `name` instead.
 
 ## Known Limitations
 
-Verified against an Apple Watch Series 11 (46mm) Simulator on watchOS 26.5 with Xcode 26.6.
+Verified against Apple Watch Series 11 (46mm) and Ultra 3 (49mm) Simulators on watchOS 26.5 with Xcode 26.6, plus
+Series 12 (46mm) on watchOS 27.0 with Xcode 27.1 for the VoiceOver extensions below.
 
 * Only the Simulator is supported; real watchOS devices cannot be used as automation targets
 * [`mobile: swipe`](../reference/execute-methods.md#mobile-swipe) rejects a `velocity` argument. There
