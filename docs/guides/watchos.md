@@ -96,6 +96,12 @@ Series 12 (46mm) on watchOS 27.0 with Xcode 27.1 for the VoiceOver extensions be
   `mobile: dragfromtoforduration` is the fast coordinate-based alternative. Standard W3C actions
   (`POST /session/:id/actions`) do work - a pointer sequence that taps an element makes that element's
   action fire
+* [`mobile: dragFromToWithVelocity`](../reference/execute-methods.md#mobile-dragfromtowithvelocity) *is*
+  supported, in both its forms: with `fromElementId` it reaches XCTest's
+  `-pressForDuration:thenDragToElement:withVelocity:thenHoldForDuration:`, and with coordinates it goes
+  through the agent's own event builder. Both were measured on watchOS 26.5 - the element form answers
+  in about a second and leaves the agent serving - so the rule above is specific to the velocity-carrying
+  *swipes*, not to every gesture that takes a velocity.
 * Two-finger gestures are rejected: [`mobile: pinch`](../reference/execute-methods.md#mobile-pinch) and
   [`mobile: rotateElement`](../reference/execute-methods.md#mobile-rotateelement) are not registered by
   the watchOS WebDriverAgent build, and [`mobile: forcePress`](../reference/execute-methods.md#mobile-forcepress)
