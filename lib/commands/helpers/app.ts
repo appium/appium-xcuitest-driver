@@ -1015,8 +1015,8 @@ async function copyAppBundle(appPath: string): Promise<string> {
   }
   // The driver also runs on Linux and Windows hosts, where no `ditto` exists. `verbatimSymlinks`
   // is required, not cosmetic: without it `fs.cp` rewrites each link target, measured to turn
-  // `Versions/Current -> A` into an absolute path back into the *source* bundle, so the copy would
-  // no longer be self-contained and the installed app would break when that temp dir is cleaned.
+  // `Versions/Current -> A` into an absolute path into the *source* bundle. The copy would then
+  // still read the user's original package, which defeats the point of making a disposable one.
   await cp(appPath, copiedPath, {recursive: true, verbatimSymlinks: true});
   return copiedPath;
 }
