@@ -168,12 +168,14 @@ export function buildSafariPreferences(opts: SafariPreferencesOpts & StringRecor
  */
 export async function findApps(appPath: string, appExtensions: string[]): Promise<string[]> {
   const globPattern = `**/*.+(${appExtensions.map((ext) => ext.replace(/^\./, '')).join('|')})`;
-  const sortedBundleItems = (
-    await fs.glob(globPattern, {
-      cwd: appPath,
-    })
-  ).sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
-  return sortedBundleItems;
+  const matched = await fs.glob(globPattern, {
+    cwd: appPath,
+  });
+  // Shallower bundles win, and bundles at the same depth are ordered by path: the glob result
+  // order is filesystem-dependent, and callers pick the first compatible match.
+  return matched.sort(
+    (a, b) => a.split(path.sep).length - b.split(path.sep).length || a.localeCompare(b, 'en', {sensitivity: 'base'}),
+  );
 }
 
 /**
@@ -378,8 +380,13 @@ export async function onPostConfigureApp(
     if (!cachedPath) {
       return undefined;
     }
-    this.log.info(`Using '${cachedPath}' which was cached from '${opts.appPath || 'unknown'}'`);
-    return {appPath: cachedPath};
+    // Only watchOS sessions validate the entry: what a previous session extracted from this
+    // package depends on its capabilities for them, while for every other platform the extraction
+    // is a function of the package alone.
+    if (!isWatchOs(this.opts.platformName) || (await isCachedWatchAppReusable(this, scope, cachedPath))) {
+      this.log.info(`Using '${cachedPath}' which was cached from '${opts.appPath || 'unknown'}'`);
+      return {appPath: cachedPath};
+    }
   }
 
   if (!opts.appPath) {
@@ -394,12 +401,16 @@ export async function onPostConfigureApp(
     const resolution = await resolveWatchAppBundle(this, opts.appPath, scope);
     if (resolution.kind === 'selected') {
       // The selected bundle lives inside the package provided by the user, which the driver must
-      // never modify, while the base driver expects any application it has rewritten to be
-      // disposable. Only archives are moved out of their temporary root by unzipApp.
+      // never modify. Only archives are moved out of their temporary root by `unzipApp`.
       return {appPath: await copyAppBundle(resolution.fullPath)};
     }
     if (resolution.kind === 'missing') {
       throw missingWatchAppBundleError(resolution.appPath, resolution.companionWatchBundleId);
+    }
+    if (resolution.kind === 'unmatched') {
+      // The user provided this single bundle, so it is the only owner that could hold the
+      // requested watch application.
+      throw unmatchedWatchAppBundleError(this, resolution.owners);
     }
   }
   // Only local .app bundles (real device/Simulator)
@@ -456,12 +467,38 @@ const MAX_WATCH_BUNDLE_SCAN_DEPTH = 2;
  *
  * `missing` is distinct from `not-applicable` because only the former means the package can never
  * drive a watchOS session: `not-applicable` also covers sessions that are not watchOS ones and
- * bundles that already are watch applications.
+ * bundles that already are watch applications. `unmatched` means this particular bundle owns watch
+ * applications, just not the one `appium:watchBundleId` names - another bundle of the same archive
+ * may own it, so only the caller that has asked every owner may report it.
  */
 type WatchAppBundleResolution =
   | {kind: 'not-applicable'}
   | {kind: 'missing'; appPath: string; companionWatchBundleId?: string}
+  | {kind: 'unmatched'; owners: UnmatchedWatchAppOwner[]}
   | {kind: 'selected'; fullPath: string};
+
+/** An outer application that owns watch applications, none of them the one requested. */
+type UnmatchedWatchAppOwner = {appPath: string; candidates: WatchAppBundleCandidate[]};
+
+/**
+ * @param driver The driver that owns the session
+ * @param owners Every outer application that was asked, and what each of them owns
+ * @returns The error explaining that no watch application of the package matches the capability
+ */
+function unmatchedWatchAppBundleError(driver: XCUITestDriver, owners: UnmatchedWatchAppOwner[]): Error {
+  const described = owners
+    .flatMap(({appPath, candidates}) =>
+      candidates.map(
+        ({bundleId, relativePath}) => `'${bundleId}' (${path.join(path.basename(appPath), relativePath)})`,
+      ),
+    )
+    .join(', ');
+  return new Error(
+    `The 'appium:watchBundleId' capability has been set to '${driver.opts.watchBundleId}', which ` +
+      `matches none of the watchOS application bundles this package provides: ${described}. ` +
+      `Use the bundle identifier or the path of one of them.`,
+  );
+}
 
 /**
  * @param appPath Full path to the outer application bundle that carries no watch application
@@ -481,6 +518,77 @@ function missingWatchAppBundleError(appPath: string, companionWatchBundleId?: st
           : `, although it declares '${companionWatchBundleId}' as the watch application it owns`
       }. Provide a package that contains the watch application to test.`,
   );
+}
+
+/**
+ * The `CFBundleSupportedPlatforms` prefix shared by `watchOS` and `watchSimulator`.
+ * Deliberately not derived from the session platform: this asks what a bundle *is*.
+ */
+const WATCH_APP_PLATFORM_PREFIX = 'Watch';
+
+/**
+ * Decides whether a cached extraction of a package may serve a watchOS session.
+ *
+ * The base driver keys its application cache on the path of the provided package, yet for a
+ * watchOS session the application a package yields also depends on the session: the cache holds
+ * whichever nested bundle the session that unpacked the package *first* happened to select. Serving
+ * that entry to a later session would install an application it never asked for, and an entry left
+ * behind by an iOS session holds the outer iOS bundle, which cannot run on the watch.
+ *
+ * @param driver The driver that owns the session
+ * @param scope What role the package plays in the session
+ * @param cachedPath Full path of the cached application
+ * @returns Whether the cached application is the one this session needs
+ * @remarks Packages installed alongside the application under test are only checked for their
+ * platform: the session capabilities never steer them, so no ambiguity can arise from them.
+ */
+async function isCachedWatchAppReusable(
+  driver: XCUITestDriver,
+  scope: WatchAppSelectionScope,
+  cachedPath: string,
+): Promise<boolean> {
+  let info: WatchAppInfo;
+  try {
+    info = await driver.appInfosCache.extractWatchAppInfo(cachedPath);
+  } catch (e: any) {
+    driver.log.debug(`Cannot inspect the cached application at '${cachedPath}': ${e.message}`);
+    return false;
+  }
+
+  if (!info.platforms.some((platform) => platform.startsWith(WATCH_APP_PLATFORM_PREFIX))) {
+    driver.log.info(
+      `Ignoring the cached '${cachedPath}': it holds the '${info.bundleId}' application, which is ` +
+        `not a watchOS application bundle. Extracting the package again`,
+    );
+    return false;
+  }
+
+  if (scope !== 'app-under-test') {
+    return true;
+  }
+
+  const {bundleId: bundleIdCap, watchBundleId} = driver.opts;
+  const requested = watchBundleId ?? bundleIdCap;
+  if (isEmpty(requested)) {
+    return true;
+  }
+  // The cached bundle is a standalone one, so the outer application it came from is no longer
+  // known; the path forms that reference it by name still resolve.
+  const candidate: WatchAppBundleCandidate = {
+    bundleId: info.bundleId,
+    companionAppBundleId: info.companionAppBundleId,
+    fullPath: cachedPath,
+    isStandalone: info.isStandalone,
+    relativePath: path.basename(cachedPath),
+  };
+  if (isWatchAppBundleReferencedBy(candidate, requested as string, path.dirname(cachedPath), Boolean(watchBundleId))) {
+    return true;
+  }
+  driver.log.info(
+    `Ignoring the cached '${cachedPath}': it holds the '${info.bundleId}' watchOS application, ` +
+      `while this session selects '${requested}'. Extracting the package again`,
+  );
+  return false;
 }
 
 /**
@@ -536,6 +644,16 @@ async function resolveWatchAppBundle(
       : // A package installed alongside the application under test may legitimately be an iOS-only
         // one, for example the companion of the watch application under test.
         {kind: 'not-applicable'};
+  }
+
+  // `appium:watchBundleId` is authoritative: an outer application that owns none of it is not the
+  // owner the session is asking for. In an archive several outer applications may sit side by side,
+  // so this is reported to the caller that has asked all of them rather than being fatal here.
+  if (sessionCapsApply && !isEmpty(driver.opts.watchBundleId)) {
+    const requested = driver.opts.watchBundleId as string;
+    if (!watchAppBundles.some((candidate) => isWatchAppBundleReferencedBy(candidate, requested, appPath, true))) {
+      return {kind: 'unmatched', owners: [{appPath, candidates: watchAppBundles}]};
+    }
   }
 
   const selected = chooseWatchAppBundle(
@@ -690,18 +808,16 @@ function chooseWatchAppBundle(
     const matches = candidates.filter((candidate) =>
       isWatchAppBundleReferencedBy(candidate, watchBundleId, appPath, true),
     );
-    if (matches.length === 1) {
-      return matches[0];
+    if (matches.length > 1) {
+      throw new Error(
+        `The 'appium:watchBundleId' capability has been set to '${watchBundleId}', which matches ` +
+          `multiple watchOS application bundles: ${describeCandidates(matches)}. Use the bundle ` +
+          `identifier or the exact relative path to select only one of them.`,
+      );
     }
-    throw new Error(
-      isEmpty(matches)
-        ? `The 'appium:watchBundleId' capability has been set to '${watchBundleId}', which matches none of ` +
-            `the watchOS application bundles of '${path.basename(appPath)}': ${describeCandidates(candidates)}. ` +
-            `Use the bundle identifier or the path of one of them.`
-        : `The 'appium:watchBundleId' capability has been set to '${watchBundleId}', which matches multiple ` +
-            `watchOS application bundles: ${describeCandidates(matches)}. Use the bundle identifier or the ` +
-            `exact relative path to select only one of them.`,
-    );
+    // Callers only reach this with a capability that references at least one of the candidates;
+    // one that references none is reported across every owner of the package.
+    return matches[0];
   }
 
   if (candidates.length === 1) {
@@ -1044,6 +1160,7 @@ async function resolveWatchAppBundleFromArchive(
   scope: WatchAppSelectionScope,
 ): Promise<WatchAppBundleResolution | {kind: 'none'}> {
   const visitedAppPaths = new Set<string>();
+  const owners: UnmatchedWatchAppOwner[] = [];
   let missing: WatchAppBundleResolution | undefined;
   for (const matchedPath of matchedPaths) {
     const outerAppPath = path.join(rootDir, findOwningAppBundlePath(matchedPath));
@@ -1055,7 +1172,16 @@ async function resolveWatchAppBundleFromArchive(
     if (resolution.kind === 'selected') {
       return resolution;
     }
+    // An outer application that owns other watch applications is simply not the one the session
+    // names; the archive may hold the requested bundle further along, so keep looking.
+    if (resolution.kind === 'unmatched') {
+      owners.push(...resolution.owners);
+      continue;
+    }
     missing ??= resolution.kind === 'missing' ? resolution : undefined;
+  }
+  if (!isEmpty(owners)) {
+    return {kind: 'unmatched', owners};
   }
   return missing ?? {kind: 'none'};
 }
@@ -1175,6 +1301,12 @@ async function unzipApp(
         // the generic loop below would pick an incompatible bundle and report an architecture
         // mismatch instead of the missing watch payload.
         throw missingWatchAppBundleError(resolution.appPath, resolution.companionWatchBundleId);
+      }
+      if (resolution.kind === 'unmatched') {
+        // Every owner of the archive has been asked; none of them holds the requested bundle. The
+        // generic loop below would pick an incompatible iOS bundle and report an architecture
+        // mismatch instead of naming the watch applications that are actually available.
+        throw unmatchedWatchAppBundleError(driver, resolution.owners);
       }
     }
     for (const matchedPath of matchedPaths) {

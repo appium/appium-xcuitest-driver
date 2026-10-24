@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import {cp} from 'node:fs/promises';
 import path from 'node:path';
 import {afterEach, describe, it} from 'node:test';
 
-import type {PostProcessOptions, StringRecord} from '@appium/types';
+import type {CachedAppInfo, PostProcessOptions, StringRecord} from '@appium/types';
 import {fs, plist, tempDir, zip} from 'appium/support.js';
 import {createSandbox, type SinonSpy, type SinonSandbox} from 'sinon';
 
@@ -80,6 +81,55 @@ async function resolveAppPath(
   return appPath_ ?? null;
 }
 
+/**
+ * Invokes the post-processing callback for a package the base driver has a cache entry for.
+ *
+ * @param cachedPath Full path of the previously extracted application, holding its own Info.plist
+ * @returns The application path the session must use, or `null` if the original one is kept
+ */
+async function resolveCachedAppPath(
+  driver: XCUITestDriver,
+  archivePath: string,
+  cachedPath: string,
+): Promise<string | null> {
+  const cachedAppInfo: CachedAppInfo = {
+    packageHash: await fs.hash(archivePath),
+    integrity: {folder: (await fs.glob('**/*', {cwd: cachedPath})).length},
+    fullPath: cachedPath,
+    timestamp: Date.now(),
+  };
+  const opts: PostProcessOptions = {appPath: archivePath, isUrl: false, originalAppLink: archivePath, cachedAppInfo};
+  const result = await onPostConfigureApp.call(driver, 'app-under-test', opts);
+  const appPath = result?.appPath;
+  if (appPath && appPath !== archivePath) {
+    selectedAppPaths.push(appPath);
+  }
+  return appPath ?? null;
+}
+
+/** Temporary folders holding simulated cache entries, removed after each test. */
+const cacheDirs: string[] = [];
+
+afterEach(async function () {
+  for (const cacheDir of cacheDirs) {
+    await fs.rimraf(cacheDir);
+  }
+  cacheDirs.length = 0;
+});
+
+/**
+ * Copies an application bundle to a folder of its own, the way the base driver keeps the
+ * application it extracted from a package at a path that has nothing to do with that package.
+ *
+ * @returns Full path to the copy
+ */
+async function copyBundleToCache(bundlePath: string): Promise<string> {
+  const cacheDir = await tempDir.openDir();
+  cacheDirs.push(cacheDir);
+  const cachedPath = path.join(cacheDir, path.basename(bundlePath));
+  await cp(bundlePath, cachedPath, {recursive: true});
+  return cachedPath;
+}
 /**
  * @returns The error thrown by the given promise, or `null` if it resolves
  */
@@ -573,6 +623,198 @@ describe('watch app selection', function () {
         );
       } finally {
         sandbox.restore();
+      }
+    });
+
+    // The base driver keys its application cache on the path of the package, so two sessions
+    // pointing at the same archive share one entry - whichever bundle the first of them unpacked.
+    it('should not reuse a cached watch app another capability selected', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: 'com.acme.foo.two'});
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        const outerAppPath = await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        const cachedPath = await copyBundleToCache(
+          await writeAppBundle(tmpDir, 'previous/One.app', {
+            CFBundleIdentifier: 'com.acme.foo.one',
+            CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+          }),
+        );
+        await writeAppBundle(outerAppPath, 'Watch/One.app', {
+          CFBundleIdentifier: 'com.acme.foo.one',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Two.app', {
+          CFBundleIdentifier: 'com.acme.foo.two',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveCachedAppPath(driver, zipPath, cachedPath));
+        assert.strictEqual(path.basename(resultAppPath), 'Two.app');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should not install an iOS application cached by another session', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        const outerAppPath = await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        // An iOS session unpacked this same archive before, so the cache holds the outer bundle.
+        const cachedPath = await copyBundleToCache(outerAppPath);
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveCachedAppPath(driver, zipPath, cachedPath));
+        assert.strictEqual(path.basename(resultAppPath), 'Bar.app');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // A cache entry a watchOS session selected has to survive into the next watchOS session that
+    // asks for the same application; otherwise every session would unpack the archive again.
+    it('should reuse a cached watch app this session selects', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: 'Bar.app'});
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        const outerAppPath = await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const cachedPath = await copyBundleToCache(path.join(outerAppPath, 'Watch', 'Bar.app'));
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        assert.strictEqual(await resolveCachedAppPath(driver, zipPath, cachedPath), cachedPath);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // Several iOS applications may share an archive; the one owning the requested watch
+    // application is not necessarily the first the scan reaches.
+    it('should keep scanning the archive for the owner of the requested watch app', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: 'com.acme.bar.watchapp'});
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        const fooAppPath = await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(fooAppPath, 'Watch/FooWatch.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const barAppPath = await writeAppBundle(stageDir, 'Payload/Bar.app', {
+          CFBundleIdentifier: 'com.acme.bar',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(barAppPath, 'Watch/BarWatch.app', {
+          CFBundleIdentifier: 'com.acme.bar.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveAppPath(driver, zipPath));
+        assert.strictEqual(path.basename(resultAppPath), 'BarWatch.app');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should name every watch app of the package when none matches', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: 'com.acme.missing'});
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        const fooAppPath = await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(fooAppPath, 'Watch/FooWatch.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const barAppPath = await writeAppBundle(stageDir, 'Payload/Bar.app', {
+          CFBundleIdentifier: 'com.acme.bar',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(barAppPath, 'Watch/BarWatch.app', {
+          CFBundleIdentifier: 'com.acme.bar.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const err = await expectRejection(resolveAppPath(driver, zipPath));
+        assert.ok(err, 'expected the selection to fail');
+        assert.match(err.message, /com\.acme\.foo\.watchapp/);
+        assert.match(err.message, /com\.acme\.bar\.watchapp/);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // The same archive scanned twice has to yield the same application: the generic selection
+    // takes the first compatible bundle, and the order a filesystem reports is not guaranteed.
+    it('should pick the same watch app of an archive on repeated scans', async function () {
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        for (const name of ['Zeta', 'Alpha']) {
+          const appPath = await writeAppBundle(stageDir, `Payload/${name}.app`, {
+            CFBundleIdentifier: `com.acme.${name.toLowerCase()}`,
+            CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+          });
+          await writeAppBundle(appPath, 'Watch/Watch.app', {
+            CFBundleIdentifier: `com.acme.${name.toLowerCase()}.watchapp`,
+            CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+          });
+        }
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const picked: string[] = [];
+        for (let i = 0; i < 2; i = i + 1) {
+          const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+          try {
+            picked.push(String(await resolveAppPath(driver, zipPath)));
+          } finally {
+            sandbox.restore();
+          }
+        }
+        const cache = new AppInfosCache(log);
+        assert.strictEqual(await cache.extractBundleId(picked[0]), 'com.acme.alpha.watchapp');
+        assert.strictEqual(await cache.extractBundleId(picked[1]), 'com.acme.alpha.watchapp');
+      } finally {
+        await fs.rimraf(tmpDir);
       }
     });
   });
