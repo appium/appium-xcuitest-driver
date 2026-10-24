@@ -13,8 +13,10 @@ const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
  * Rejects a synthesized-gesture command on a platform whose connected WebDriverAgent cannot serve
  * it, so the user gets the reason instead of a raw `unknown command` out of the agent.
  *
- * Unlike the other guards in this file this one is version-qualified: the watchOS agent only gained
- * the whole gesture family in 16.18.0, so a build that is new enough must not be refused.
+ * Unlike the other guards in this file this one is version-qualified: only the agent build that
+ * carries the watch targets serves the gesture family on a watch (see
+ * `WATCHOS_CAPABLE_WDA_VERSION` in `helpers/platform-support.ts`), so a build that is new enough
+ * must not be refused.
  *
  * @remarks Callers must invoke this *after* validating their own arguments. A malformed request is
  * malformed on every platform and has to keep answering `invalid argument` everywhere, rather than
@@ -243,12 +245,15 @@ export async function mobileSwipe(
     throw new errors.InvalidArgumentError(`'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`);
   }
   const params: {direction: Direction; velocity?: number} = {direction};
-  if (velocity != null) {
+  // Only a positive velocity asks for the velocity-carrying swipe. The agent's own dispatcher
+  // routes `velocity <= 0` to the plain `swipeUp`-style call, so dropping a non-positive value
+  // here keeps that exact behaviour on iOS and tvOS instead of forwarding a value nothing reads.
+  if (velocity != null && velocity > 0) {
     // No watchOS agent build has a working velocity-carrying swipe: XCTest's
     // `-swipeUpWithVelocity:` and friends stall inside event synthesis - measured at 78 s before the
-    // runner was restarted - which ends the whole session rather than just this command. Agent
-    // 16.19.2 onwards refuses the argument itself; refusing it here too covers every older build and
-    // keeps the failure a plain invalid-argument error instead of a lost runner.
+    // runner was restarted - which ends the whole session rather than just this command. The agent
+    // refuses the argument itself; refusing it here too covers every older build and keeps the
+    // failure a plain invalid-argument error instead of a lost runner.
     if (isWatchOs(this.opts.platformName)) {
       throw new errors.InvalidArgumentError(
         "The 'velocity' parameter is not supported on watchOS: the velocity-carrying swipe stalls " +

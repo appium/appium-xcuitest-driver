@@ -120,7 +120,7 @@ describe('platform support gates', function () {
         assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
         assert.match(
           err.message,
-          /^Battery info is not supported on watchOS: battery info needs a watchOS WebDriverAgent build that reads it through WatchKit, which versions older than 16\.18\.0 do not contain; upgrade WebDriverAgent to version 16\.18\.0 or newer$/,
+          /^Battery info is not supported on watchOS: battery info needs a watchOS WebDriverAgent build that reads it through WatchKit, which versions older than 16\.19\.2 do not contain; upgrade the appium-webdriveragent package to its latest release, which is 16\.19\.2 or newer$/,
         );
         return true;
       });
@@ -136,7 +136,7 @@ describe('platform support gates', function () {
 
     it('should be proxied on watchOS once the agent is new enough', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: '16.18.0'}};
+      driver.cachedWdaStatus = {build: {version: '16.19.2'}};
       const facade = sandbox.createStubInstance(RemoteXPCFacade);
       facade.determineAvailability.resolves(false);
       sandbox.stub(driver, 'remoteXPCFacade').get(() => facade);
@@ -151,15 +151,15 @@ describe('platform support gates', function () {
     // still falls back to coercion, so a `v`-prefixed build number is understood.
     it('should reject a pre-release of the version that adds the route', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: '16.18.0-beta.4'}};
+      driver.cachedWdaStatus = {build: {version: '16.19.2-beta.4'}};
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
-      await assert.rejects(driver.mobileGetBatteryInfo(), /versions older than 16\.18\.0 do not contain/);
+      await assert.rejects(driver.mobileGetBatteryInfo(), /versions older than 16\.19\.2 do not contain/);
       sinon.assert.notCalled(proxy);
     });
 
     it('should accept a pre-release of a newer version', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: '16.19.0-beta.1'}};
+      driver.cachedWdaStatus = {build: {version: '16.20.0-beta.1'}};
       const facade = sandbox.createStubInstance(RemoteXPCFacade);
       facade.determineAvailability.resolves(false);
       sandbox.stub(driver, 'remoteXPCFacade').get(() => facade);
@@ -170,7 +170,7 @@ describe('platform support gates', function () {
 
     it('should understand a version that is not valid semver', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: 'v16.18.0'}};
+      driver.cachedWdaStatus = {build: {version: 'v16.19.2'}};
       const facade = sandbox.createStubInstance(RemoteXPCFacade);
       facade.determineAvailability.resolves(false);
       sandbox.stub(driver, 'remoteXPCFacade').get(() => facade);
@@ -337,8 +337,9 @@ describe('platform support gates', function () {
   });
 
   describe('text entry', function () {
-    // Verified on watchOS 26.5: element value, /wda/keys and W3C key actions all land text in the
-    // focused field, so only the named-key route may be gated.
+    // Measured on watchOS 26.5: W3C key actions and taps on the on-screen keys both land text,
+    // while `POST /element/:id/value`, its bulk form and the deprecated `POST /session/:id/keys`
+    // answer 200 without entering anything. So only the named-key route may be gated.
     it('should reject mobile: keys on watchOS', async function () {
       await assertRejectedOnWatch(
         (driver) => driver.mobileKeys(['a']),
@@ -346,10 +347,13 @@ describe('platform support gates', function () {
       );
     });
 
-    it('should suggest the key routes that do work', async function () {
+    it('should suggest the text-entry routes that do work', async function () {
       const driver = makeDriver(WATCH);
       sandbox.stub(driver, 'proxyCommand').resolves({});
-      await assert.rejects(driver.mobileKeys(['a']), /POST \/element\/:id\/value.*POST \/wda\/keys/s);
+      await assert.rejects(
+        driver.mobileKeys(['a']),
+        /W3C key actions.*XCUIElementTypeKey elements.*label/s,
+      );
     });
 
     it('should still proxy mobile: keys on iOS', async function () {
@@ -358,21 +362,22 @@ describe('platform support gates', function () {
 
     it('should reject keyboard dismissal on watchOS with an agent older than the accessory-bar fix', async function () {
       const driver = makeDriver(WATCH);
-      driver.cachedWdaStatus = {build: {version: '16.18.0'}};
+      driver.cachedWdaStatus = {build: {version: '16.17.4'}};
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
       await assert.rejects(driver.mobileHideKeyboard(), (err: unknown) => {
         assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
         assert.match(
           err.message,
-          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory bar is scoped to the keyboard-owning process, which versions older than 16\.19\.2 do not; upgrade WebDriverAgent to version 16\.19\.2 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
+          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory bar is scoped to the keyboard-owning process, which versions older than 16\.19\.2 do not; upgrade the appium-webdriveragent package to its latest release, which is 16\.19\.2 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
         );
         return true;
       });
       sinon.assert.notCalled(proxy);
     });
 
-    // 16.19.0 and 16.19.1 do find the accessory bar, but by searching the whole application tree,
-    // which can land on the application's own `Done` button instead of the keyboard's.
+    // The builds this work passed through on the way here search the whole application tree, which
+    // can land on the application's own `Done` button instead of the keyboard's. None of them was
+    // ever published, but they are reachable by building from source, so the floor must exclude them.
     for (const version of ['16.19.0', '16.19.1']) {
       it(`should reject keyboard dismissal on watchOS with agent ${version}`, async function () {
         const driver = makeDriver(WATCH);
@@ -471,7 +476,7 @@ describe('platform support gates', function () {
         assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
         assert.match(
           err.message,
-          /^W3C actions is not supported on watchOS: synthesized gestures need a watchOS WebDriverAgent build whose event builders no longer need UIKit's UIInterfaceOrientation, which versions older than 16\.18\.0 do not contain; upgrade WebDriverAgent to version 16\.18\.0 or newer, or use POST \/element\/:uuid\/click, which every watchOS build serves$/,
+          /^W3C actions is not supported on watchOS: synthesized gestures need a watchOS WebDriverAgent build whose event builders no longer need UIKit's UIInterfaceOrientation, which versions older than 16\.19\.2 do not contain; upgrade the appium-webdriveragent package to its latest release, which is 16\.19\.2 or newer, or use POST \/element\/:uuid\/click, which every watchOS build serves$/,
         );
         return true;
       });
@@ -591,9 +596,9 @@ describe('platform support gates', function () {
       ['mobile: tapWithNumberOfTaps', (driver) => driver.mobileTapWithNumberOfTaps(), '/wda/tapWithNumberOfTaps'],
     ];
 
-    // The gestures above are only registered by a watchOS agent from 16.18.0 onwards, so each case
-    // is checked both ways: refused with the newest published build, proxied with a build that has
-    // them. Refusing them against a capable agent would break the platform for nobody's benefit.
+    // Only the agent build that carries the watch targets registers the gestures above, so each
+    // case is checked both ways: refused with the newest published build, proxied with a build that
+    // has them. Refusing them against a capable agent would break the platform for nobody's benefit.
     for (const [name, command, endpoint] of cases) {
       it(`${name} should be proxied on watchOS with an agent that registers it`, async function () {
         const driver = makeDriver(WATCH);
@@ -673,6 +678,28 @@ describe('platform support gates', function () {
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
       await driver.mobileSwipe(direction, 2);
       sinon.assert.calledWith(proxy, '/wda/swipe', 'POST', {direction, velocity: 2});
+    });
+
+    // A velocity of zero or less never selects the velocity-carrying XCTest call - the agent's
+    // dispatcher only does that for a positive value - so on watchOS those requests ask for exactly
+    // the plain swipe that is measured to work, and must not be turned into an error.
+    for (const velocity of [0, -1]) {
+      it(`should treat a swipe velocity of ${velocity} as a plain swipe on watchOS`, async function () {
+        const driver = makeDriver(WATCH);
+        driver.cachedWdaStatus = {build: {version: '16.19.2'}};
+        const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+        await driver.mobileSwipe(direction, velocity);
+        sinon.assert.calledWith(proxy, '/wda/swipe', 'POST', {direction});
+      });
+    }
+
+    // The same request on iOS must keep working exactly as before, which means the agent is not
+    // sent a value it would ignore anyway.
+    it('should drop a non-positive swipe velocity on iOS', async function () {
+      const driver = makeDriver(IOS);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves({});
+      await driver.mobileSwipe(direction, 0);
+      sinon.assert.calledWith(proxy, '/wda/swipe', 'POST', {direction});
     });
   });
 

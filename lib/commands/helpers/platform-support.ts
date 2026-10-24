@@ -48,6 +48,19 @@ interface PlatformSupportEntry {
 }
 
 /**
+ * Lowest `appium-webdriveragent` version whose sources carry the watchOS agent. Everything gated
+ * below ships in that one release, so the entries deliberately share this number rather than each
+ * naming a version of its own: the intermediate versions this work passed through on the way here
+ * (16.18.0, 16.19.0, 16.19.1) were never published, so no agent anyone can install reports them.
+ *
+ * The number is what the agent repository's package.json carries on the branch that introduces the
+ * watch targets. Release tooling recomputes from it plus the commit types, so the version that
+ * actually reaches npm will be this or higher - which still clears this floor. If that release ever
+ * lands at a lower number than expected, or the work is split across releases, update this constant.
+ */
+const WATCHOS_CAPABLE_WDA_VERSION = '16.19.2';
+
+/**
  * Only lists capabilities that have been verified to be unavailable on a platform, either by
  * calling them against a live session or by reading the `#if` guards in
  * `packages/webdriveragent/WebDriverAgentLib`. A capability is listed when the request cannot
@@ -75,13 +88,15 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
   },
   batteryInfo: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
-    // watchOS reads the battery through WatchKit; see the `batteryInfo` route in
-    // WebDriverAgent's FBCustomCommands, added in appium-webdriveragent 16.18.0.
-    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.18.0'},
+    // watchOS reads the battery through WatchKit; see the `batteryInfo` route in WebDriverAgent's
+    // FBCustomCommands, which only exists in the build that carries the watch targets.
+    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: WATCHOS_CAPABLE_WDA_VERSION},
     reason:
-      'battery info needs a watchOS WebDriverAgent build that reads it through WatchKit, ' +
-      'which versions older than 16.18.0 do not contain',
-    alternative: 'upgrade WebDriverAgent to version 16.18.0 or newer',
+      'battery info needs a watchOS WebDriverAgent build that reads it through WatchKit, which ' +
+      `versions older than ${WATCHOS_CAPABLE_WDA_VERSION} do not contain`,
+    alternative:
+      'upgrade the appium-webdriveragent package to its latest release, which is ' +
+      `${WATCHOS_CAPABLE_WDA_VERSION} or newer`,
   },
   deepLink: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
@@ -99,36 +114,42 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
   gestureSynthesis: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
     // Every synthesized gesture - tap, doubleTap, swipe, touchAndHold, scroll, drag and W3C actions -
-    // is absent from a watchOS agent older than 16.18.0: the event builders take a UIKit
-    // `UIInterfaceOrientation`, a type watchOS marks unavailable, so the whole synthesis layer was
-    // compiled out of that build and only POST /element/:uuid/click remained. 16.18.0 collapses the
-    // enum to its raw portrait value on a watch, whose panel never rotates. W3C actions are the
-    // trickiest of the family: the `/actions` route string *is* present in older watch builds, but
-    // the category answering it is not, so the request comes back as an unrecognized-selector 500.
-    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.18.0'},
+    // is absent from a watch agent that predates the watch targets: the event builders take a UIKit
+    // `UIInterfaceOrientation`, a type watchOS marks unavailable, so the whole synthesis layer is
+    // compiled out of such a build and only POST /element/:uuid/click remains. The build that adds
+    // the watch targets collapses that enum to its raw portrait value, on a panel that never
+    // rotates. W3C actions are the trickiest of the family: the `/actions` route string *is* present
+    // in older watch builds, but the category answering it is not, so the request comes back as an
+    // unrecognized-selector 500 rather than a clean 404.
+    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: WATCHOS_CAPABLE_WDA_VERSION},
     reason:
       'synthesized gestures need a watchOS WebDriverAgent build whose event builders no longer need ' +
-      "UIKit's UIInterfaceOrientation, which versions older than 16.18.0 do not contain",
+      "UIKit's UIInterfaceOrientation, which " +
+      `versions older than ${WATCHOS_CAPABLE_WDA_VERSION} do not contain`,
     alternative:
-      'upgrade WebDriverAgent to version 16.18.0 or newer, or use POST /element/:uuid/click, which ' +
-      'every watchOS build serves',
+      'upgrade the appium-webdriveragent package to its latest release, which is ' +
+      `${WATCHOS_CAPABLE_WDA_VERSION} or newer, ` +
+      'or use POST /element/:uuid/click, which every watchOS build serves',
   },
   hideKeyboard: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
     // The control that closes the watch keyboard is the accessory bar's `Done` button, which
-    // watchOS reports as a *sibling* of XCUIElementTypeKeyboard. Agent builds up to 16.18.0 only
-    // looked inside the keyboard element, so every dismissal there failed with 'Did not know how
-    // to dismiss the keyboard', whatever key names were passed. 16.19.0 learned to search outside
-    // it, but app-wide, and `Done` is a name watch apps use freely - such a build can tap the
-    // application's own control instead of the keyboard's. 16.19.2 only accepts matches from
-    // another process, which is where the keyboard's service lives.
-    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: '16.19.2'},
+    // watchOS reports as a *sibling* of XCUIElementTypeKeyboard rather than a child of it. A search
+    // confined to the keyboard element therefore finds nothing and reports 'Did not know how to
+    // dismiss the keyboard', whatever key names the caller passes. Widening that search to the whole
+    // application is not enough either: `Done` is a name watch apps use freely, so such a build can
+    // tap the application's own control instead of the keyboard's. The build that adds the watch
+    // targets only accepts matches owned by another process, which is where the keyboard's service
+    // lives - measured on watchOS 26.5, where the accessory bar belongs to the text input process.
+    sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: WATCHOS_CAPABLE_WDA_VERSION},
     reason:
       'keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory ' +
-      'bar is scoped to the keyboard-owning process, which versions older than 16.19.2 do not',
+      'bar is scoped to the keyboard-owning process, which ' +
+      `versions older than ${WATCHOS_CAPABLE_WDA_VERSION} do not`,
     alternative:
-      "upgrade WebDriverAgent to version 16.19.2 or newer, or tap the 'Done' button of the " +
-      "keyboard's accessory bar directly",
+      "upgrade the appium-webdriveragent package to its latest release, which is " +
+      `${WATCHOS_CAPABLE_WDA_VERSION} or newer, ` +
+      "or tap the 'Done' button of the keyboard's accessory bar directly",
   },
   keyboardInput: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
@@ -137,9 +158,18 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
     reason:
       'the named-key keyboard endpoint is absent from the watchOS WebDriverAgent build, because ' +
       'watchOS has no XCUIKeyboardKey API',
+    // Measured on watchOS 26.5. W3C key actions do land text, and tapping the keyboard's
+    // XCUIElementTypeKey elements does too - a key answers `label` ('Q', 'W', 'delete'), and
+    // re-resolving it by predicate before every tap is required because synthesising a keystroke
+    // makes the cached element stale. Every other way of putting text in a field is a trap there:
+    // POST /element/:id/value, its bulk form and the deprecated POST /session/:id/keys (which
+    // reaches the agent's /wda/keys - that route *is* registered on watchOS) all answer 200 and
+    // enter nothing, because the agent's typing path is compiled out for the platform. Pointing a
+    // caller at one of those would report success for text that never appears.
     alternative:
-      "use 'POST /element/:id/value', 'POST /wda/keys' or W3C key actions, which do enter text " +
-      "there, or tap the keyboard's XCUIElementTypeKey elements",
+      "use W3C key actions (POST /session/:id/actions with a 'key' input source), which do enter " +
+      "text there, or tap the keyboard's XCUIElementTypeKey elements, resolving each by label " +
+      'again before every tap because a key goes stale once a keystroke is synthesized',
   },
   multiTouchGestures: {
     unsupportedPlatforms: [PLATFORM_NAME_WATCHOS],
