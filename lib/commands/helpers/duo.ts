@@ -1,0 +1,18 @@
+import type {Simulator, SupportsDuo} from 'appium-ios-simulator';
+
+import type {XCUITestDriver} from '../../driver.js';
+
+/** Select Duo controls by device type, not hinge or multiple-display capability. */
+export async function getDuoSimulator(driver: XCUITestDriver): Promise<(Simulator & SupportsDuo) | undefined> {
+  if (!driver.isSimulator() || ['tvos', 'watchos'].includes(String(driver.opts.platformName).toLowerCase())) {
+    return undefined;
+  }
+  const simulator = driver.device as Simulator;
+  if (typeof simulator.isDuo !== 'function' || !(await simulator.isDuo())) {
+    return undefined;
+  }
+  if (typeof simulator.setSimulatedHingeAngle !== 'function' || typeof simulator.setHidOrientation !== 'function') {
+    return undefined;
+  }
+  return simulator as Simulator & SupportsDuo;
+}

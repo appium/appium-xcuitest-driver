@@ -3,6 +3,8 @@ import {errors} from 'appium/driver.js';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 
+import {getDuoSimulator} from './helpers/duo.js';
+
 dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
@@ -182,6 +184,12 @@ export async function mobilePressButton(
   }
   if (durationSeconds != null && typeof durationSeconds !== 'number') {
     throw new errors.InvalidArgumentError('durationSeconds should be a number');
+  }
+  if (name.toLowerCase() === 'home') {
+    const simulator = await getDuoSimulator(this);
+    if (simulator) {
+      return await simulator.pressHidButton(12, 64);
+    }
   }
   return await this.proxyCommand('/wda/pressButton', 'POST', {name, duration: durationSeconds});
 }

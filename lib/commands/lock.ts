@@ -1,6 +1,9 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
+import {errors} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
+import {getDuoSimulator} from './helpers/duo.js';
 
 /**
  * Lock the device (and optionally unlock the device after a certain amount of time)
@@ -9,7 +12,7 @@ import type {XCUITestDriver} from '../driver.js';
  * @defaultValue 0
  */
 export async function lock(this: XCUITestDriver, seconds?: number | string): Promise<void> {
-  await this.proxyCommand('/wda/lock', 'POST');
+  await setLocked(this, true);
   if (isNaN(Number(seconds))) {
     return;
   }
@@ -20,14 +23,14 @@ export async function lock(this: XCUITestDriver, seconds?: number | string): Pro
   }
 
   await delay(floatSeconds * 1000);
-  await this.proxyCommand('/wda/unlock', 'POST');
+  await this.unlock();
 }
 
 /**
  * Unlock the device
  */
 export async function unlock(this: XCUITestDriver): Promise<void> {
-  await this.proxyCommand('/wda/unlock', 'POST');
+  await setLocked(this, false);
 }
 
 /**
@@ -37,4 +40,30 @@ export async function unlock(this: XCUITestDriver): Promise<void> {
  */
 export async function isLocked(this: XCUITestDriver): Promise<boolean> {
   return await this.proxyCommand<any, boolean>('/wda/locked', 'GET');
+}
+
+async function setLocked(driver: XCUITestDriver, locked: boolean): Promise<void> {
+  const simulator = await getDuoSimulator(driver);
+  if (!simulator) {
+    await driver.proxyCommand(locked ? '/wda/lock' : '/wda/unlock', 'POST');
+    return;
+  }
+  if ((await driver.isLocked()) === locked) {
+    return;
+  }
+  await simulator.pressHidButton(12, locked ? 48 : 64);
+  // A sleeping device may need a second Home press after waking.
+  let retriedHome = false;
+  const started = Date.now();
+  while (Date.now() - started < 5000) {
+    if ((await driver.isLocked()) === locked) {
+      return;
+    }
+    if (!locked && !retriedHome && Date.now() - started >= 1000) {
+      await simulator.pressHidButton(12, 64);
+      retriedHome = true;
+    }
+    await delay(100);
+  }
+  throw new errors.UnknownError(`Timed out waiting for the simulator to ${locked ? 'lock' : 'unlock'}`);
 }
