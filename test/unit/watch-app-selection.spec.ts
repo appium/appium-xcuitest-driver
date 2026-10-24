@@ -9,12 +9,13 @@ import {createSandbox, type SinonSpy, type SinonSandbox} from 'sinon';
 
 import {AppInfosCache} from '../../lib/app-infos-cache.js';
 import {onPostConfigureApp, type WatchAppSelectionScope} from '../../lib/commands/helpers/app.js';
-import {PLATFORM_NAME_IOS, PLATFORM_NAME_WATCHOS} from '../../lib/constants.js';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS, PLATFORM_NAME_WATCHOS} from '../../lib/constants.js';
 import {XCUITestDriver, type XCUITestDriverOpts} from '../../lib/driver.js';
 import {log} from '../../lib/logger.js';
 
 const IOS_SIMULATOR_PLATFORM = 'iPhoneSimulator';
 const WATCH_SIMULATOR_PLATFORM = 'WatchSimulator';
+const TV_SIMULATOR_PLATFORM = 'AppleTVSimulator';
 
 /** The `platformName` capability as derived from the driver constraints. */
 type PlatformName = NonNullable<XCUITestDriverOpts['platformName']>;
@@ -782,9 +783,10 @@ describe('watch app selection', function () {
       }
     });
 
-    // The same archive scanned twice has to yield the same application: the generic selection
-    // takes the first compatible bundle, and the order a filesystem reports is not guaranteed.
-    it('should pick the same watch app of an archive on repeated scans', async function () {
+    // An archive holding the watch application of *two* iOS applications has no single answer:
+    // `docs/reference/capabilities.md` promises the session fails with every candidate rather than
+    // installing whichever owner the scan happened to reach first.
+    it('should name the watch apps of every outer application when none is selected', async function () {
       const tmpDir = await tempDir.openDir();
       try {
         const stageDir = path.join(tmpDir, 'stage');
@@ -801,19 +803,309 @@ describe('watch app selection', function () {
         const zipPath = path.join(tmpDir, 'build.zip');
         await zip.toArchive(zipPath, {cwd: stageDir});
 
-        const picked: string[] = [];
-        for (let i = 0; i < 2; i = i + 1) {
-          const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+        const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+        try {
+          const err = await expectRejection(resolveAppPath(driver, zipPath));
+          assert.ok(err, 'expected the selection to fail');
+          assert.match(err.message, /'com\.acme\.alpha\.watchapp' \(Alpha\.app\/Watch\/Watch\.app\)/);
+          assert.match(err.message, /'com\.acme\.zeta\.watchapp' \(Zeta\.app\/Watch\/Watch\.app\)/);
+          assert.match(err.message, /Set the 'appium:watchBundleId' capability/);
+        } finally {
+          sandbox.restore();
+        }
+
+        // A path that matches both owners is just as unselected as no capability at all.
+        const pathDriver = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId: 'Watch.app'});
+        try {
+          const err = await expectRejection(resolveAppPath(pathDriver.driver, zipPath));
+          assert.ok(err, 'expected the selection to fail');
+          assert.match(err.message, /matches multiple watchOS application bundles/);
+          assert.match(err.message, /Alpha\.app\/Watch\/Watch\.app/);
+          assert.match(err.message, /Zeta\.app\/Watch\/Watch\.app/);
+        } finally {
+          pathDriver.sandbox.restore();
+        }
+
+        // Naming one of them is an answer, and the scan must still find it in its owner.
+        for (const [watchBundleId, owner] of [
+          ['com.acme.alpha.watchapp', 'Alpha'],
+          ['com.acme.zeta.watchapp', 'Zeta'],
+        ]) {
+          const selectedDriver = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId});
           try {
-            picked.push(String(await resolveAppPath(driver, zipPath)));
+            const resultAppPath = String(await resolveAppPath(selectedDriver.driver, zipPath));
+            assert.strictEqual(path.basename(resultAppPath), 'Watch.app');
+            assert.strictEqual(
+              await new AppInfosCache(log).extractBundleId(resultAppPath),
+              `com.acme.${owner.toLowerCase()}.watchapp`,
+            );
+          } finally {
+            selectedDriver.sandbox.restore();
+          }
+        }
+      } finally {
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // A standalone watch application packaged next to an iOS application that carries no `Watch`
+    // folder at all is the payload this session wants; the missing verdict of that iOS application
+    // must not be allowed to claim the package holds no watch application.
+    it('should prefer a standalone watch app of the archive over another app without a Watch folder', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        // The iOS application sorts before the watch application, so a scan that only knows the
+        // archive holds *a* watch application somewhere would still hand the session the iOS one.
+        await writeAppBundle(stageDir, 'Payload/Alpha.app', {
+          CFBundleIdentifier: 'com.acme.alpha',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(stageDir, 'Payload/Zulu.app', {
+          CFBundleIdentifier: 'com.acme.zulu.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+          '1KitProvisioningComponent': 'com.apple.reviewkit',
+        });
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveAppPath(driver, zipPath));
+        assert.strictEqual(path.basename(resultAppPath), 'Zulu.app');
+        assert.strictEqual(await new AppInfosCache(log).extractBundleId(resultAppPath), 'com.acme.zulu.watchapp');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // The cache key is the package the session was given, so an entry a watchOS session left behind
+    // is also offered to an iOS session pointing at the same package. Serving it would install a
+    // bundle whose `CFBundleSupportedPlatforms` the session cannot use.
+    it('should not install a watch app cached by another platform session', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_IOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        const outerAppPath = await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        const watchAppPath = await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        // A watchOS session unpacked this same archive before, so the cache holds its watch bundle.
+        const cachedPath = await copyBundleToCache(watchAppPath);
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveCachedAppPath(driver, zipPath, cachedPath));
+        assert.notStrictEqual(resultAppPath, cachedPath, 'the watch bundle was served to an iOS session');
+        assert.strictEqual(path.basename(resultAppPath), 'Foo.app');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should extract again when the cached bundle serves another platform', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_TVOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        await writeAppBundle(stageDir, 'Payload/Tv.app', {
+          CFBundleIdentifier: 'com.acme.tv',
+          CFBundleSupportedPlatforms: [TV_SIMULATOR_PLATFORM],
+        });
+        // An iOS session unpacked this same archive before, so the cache holds its iPhone bundle.
+        const cachedPath = await copyBundleToCache(
+          await writeAppBundle(tmpDir, 'previous/Phone.app', {
+            CFBundleIdentifier: 'com.acme.phone',
+            CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+          }),
+        );
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveCachedAppPath(driver, zipPath, cachedPath));
+        assert.notStrictEqual(resultAppPath, cachedPath, 'an iPhone bundle was served to a tvOS session');
+        assert.strictEqual(path.basename(resultAppPath), 'Tv.app');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // An entry whose manifest cannot be read may be anything a previous session left behind.
+    it('should extract again when the cached bundle cannot be inspected', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_IOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const stageDir = path.join(tmpDir, 'stage');
+        await writeAppBundle(stageDir, 'Payload/Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        const cachedPath = await copyBundleToCache(
+          await writeAppBundle(tmpDir, 'previous/Corrupt.app', {
+            CFBundleIdentifier: 'com.acme.corrupt',
+            CFBundleSupportedPlatforms: IOS_SIMULATOR_PLATFORM,
+          }),
+        );
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: stageDir});
+
+        const resultAppPath = String(await resolveCachedAppPath(driver, zipPath, cachedPath));
+        assert.notStrictEqual(resultAppPath, cachedPath, 'an unreadable bundle was served to the session');
+        assert.strictEqual(path.basename(resultAppPath), 'Foo.app');
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // A local `.app` package has no package hash, so the base driver never reuses its cache entry:
+    // every session got a copy at a random path, and storing that path deleted the copy the previous
+    // session was installing. Same package and same selection now return the same copy.
+    it('should hand the same copy to repeated sessions of the same local package', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+
+        const firstAppPath = String(await resolveAppPath(driver, outerAppPath));
+        const secondAppPath = String(await resolveAppPath(driver, outerAppPath));
+        assert.strictEqual(secondAppPath, firstAppPath);
+        assert.strictEqual(await fs.exists(path.join(secondAppPath, 'Info.plist')), true);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should copy another application of the same package to another place', async function () {
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        for (const name of ['One', 'Two']) {
+          await writeAppBundle(outerAppPath, `Watch/${name}.app`, {
+            CFBundleIdentifier: `com.acme.foo.${name.toLowerCase()}`,
+            CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+          });
+        }
+
+        const paths = new Set<string>();
+        for (const watchBundleId of ['com.acme.foo.one', 'com.acme.foo.two']) {
+          const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS, {watchBundleId});
+          try {
+            const resultAppPath = String(await resolveAppPath(driver, outerAppPath));
+            assert.strictEqual(
+              path.basename(resultAppPath),
+              watchBundleId.endsWith('one') ? 'One.app' : 'Two.app',
+              `unexpected copy for '${watchBundleId}'`,
+            );
+            // The location says which selection it belongs to, so a copy made for one application can
+            // never be mistaken for the copy of another.
+            const marker = JSON.parse(
+              String(await fs.readFile(path.join(path.dirname(resultAppPath), 'appium-copy-source.json'), 'utf8')),
+            );
+            assert.strictEqual(marker.bundleId, watchBundleId);
+            paths.add(resultAppPath);
           } finally {
             sandbox.restore();
           }
         }
-        const cache = new AppInfosCache(log);
-        assert.strictEqual(await cache.extractBundleId(picked[0]), 'com.acme.alpha.watchapp');
-        assert.strictEqual(await cache.extractBundleId(picked[1]), 'com.acme.alpha.watchapp');
+        assert.strictEqual(paths.size, 2, 'two selections of one package shared a single copy');
       } finally {
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    // The copy may only be reused while it is still the application the session asked for: a rebuilt
+    // package has to be copied again, and so has a foreign artifact sitting at that path.
+    it('should copy again when the source application is rebuilt', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        const nestedAppPath = await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const firstAppPath = String(await resolveAppPath(driver, outerAppPath));
+
+        await fs.writeFile(
+          path.join(nestedAppPath, 'Info.plist'),
+          plist.createPlist({
+            CFBundleIdentifier: 'com.acme.foo.watchapp',
+            CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+            CFBundleVersion: '2.0.0-rebuilt',
+          }),
+          'utf8',
+        );
+
+        const secondAppPath = String(await resolveAppPath(driver, outerAppPath));
+        assert.notStrictEqual(secondAppPath, firstAppPath, 'the copy of the previous build was reused');
+        assert.strictEqual(
+          await new AppInfosCache(log).extractBundleVersion(secondAppPath),
+          '2.0.0-rebuilt',
+          'the session was handed an application other than the current one',
+        );
+        // Every copy records what it was made of, which is what lets the next session tell a copy of
+        // this application from a copy of something else sitting at the same place.
+        const marker = JSON.parse(
+          String(await fs.readFile(path.join(path.dirname(secondAppPath), 'appium-copy-source.json'), 'utf8')),
+        );
+        assert.strictEqual(marker.bundleId, 'com.acme.foo.watchapp');
+        assert.strictEqual(marker.sourceLink, outerAppPath);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+      }
+    });
+
+    it('should replace a foreign artifact found at the copy location', async function () {
+      const {driver, sandbox} = makeDriver(PLATFORM_NAME_WATCHOS);
+      const tmpDir = await tempDir.openDir();
+      try {
+        const outerAppPath = await writeAppBundle(tmpDir, 'Foo.app', {
+          CFBundleIdentifier: 'com.acme.foo',
+          CFBundleSupportedPlatforms: [IOS_SIMULATOR_PLATFORM],
+        });
+        await writeAppBundle(outerAppPath, 'Watch/Bar.app', {
+          CFBundleIdentifier: 'com.acme.foo.watchapp',
+          CFBundleSupportedPlatforms: [WATCH_SIMULATOR_PLATFORM],
+        });
+        const firstAppPath = String(await resolveAppPath(driver, outerAppPath));
+
+        // Something else now lives where this copy belongs: an incomplete bundle and a marker
+        // nothing this driver wrote.
+        await fs.writeFile(path.join(path.dirname(firstAppPath), 'appium-copy-source.json'), 'garbage', 'utf8');
+        await fs.writeFile(path.join(firstAppPath, 'Info.plist'), 'not a plist', 'utf8');
+
+        const secondAppPath = String(await resolveAppPath(driver, outerAppPath));
+        assert.strictEqual(secondAppPath, firstAppPath);
+        assert.strictEqual(
+          await new AppInfosCache(log).extractBundleId(secondAppPath),
+          'com.acme.foo.watchapp',
+          'the foreign artifact was installed as is',
+        );
+      } finally {
+        sandbox.restore();
         await fs.rimraf(tmpDir);
       }
     });

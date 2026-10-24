@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import {spawn} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {cp} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -380,10 +381,11 @@ export async function onPostConfigureApp(
     if (!cachedPath) {
       return undefined;
     }
-    // Only watchOS sessions validate the entry: what a previous session extracted from this
-    // package depends on its capabilities for them, while for every other platform the extraction
-    // is a function of the package alone.
-    if (!isWatchOs(this.opts.platformName) || (await isCachedWatchAppReusable(this, scope, cachedPath))) {
+    // Every session validates the entry, not only watchOS ones: the base driver keys its cache on
+    // the package the session was given, so an entry a watchOS session produced by extracting a
+    // nested watch application is also offered to an iOS or tvOS session pointing `appium:app` at
+    // the same package, which would then install a bundle of another platform.
+    if (await isCachedAppReusable(this, scope, cachedPath)) {
       this.log.info(`Using '${cachedPath}' which was cached from '${opts.appPath || 'unknown'}'`);
       return {appPath: cachedPath};
     }
@@ -402,7 +404,7 @@ export async function onPostConfigureApp(
     if (resolution.kind === 'selected') {
       // The selected bundle lives inside the package provided by the user, which the driver must
       // never modify. Only archives are moved out of their temporary root by `unzipApp`.
-      return {appPath: await copyAppBundle(resolution.fullPath)};
+      return {appPath: await copyAppBundle(this, resolution.candidate, opts.originalAppLink ?? opts.appPath)};
     }
     if (resolution.kind === 'missing') {
       throw missingWatchAppBundleError(resolution.appPath, resolution.companionWatchBundleId);
@@ -467,15 +469,26 @@ const MAX_WATCH_BUNDLE_SCAN_DEPTH = 2;
  *
  * `missing` is distinct from `not-applicable` because only the former means the package can never
  * drive a watchOS session: `not-applicable` also covers sessions that are not watchOS ones and
- * bundles that already are watch applications. `unmatched` means this particular bundle owns watch
- * applications, just not the one `appium:watchBundleId` names - another bundle of the same archive
- * may own it, so only the caller that has asked every owner may report it.
+ * bundles whose manifest cannot be read. `watch-app` means the bundle itself already is the watch
+ * application this session wants. `unmatched` means this particular bundle owns watch applications,
+ * just not the one `appium:watchBundleId` names - another bundle of the same archive may own it, so
+ * only the caller that has asked every owner may report it.
  */
 type WatchAppBundleResolution =
   | {kind: 'not-applicable'}
+  | {kind: 'watch-app'; candidate: WatchAppBundleCandidate}
   | {kind: 'missing'; appPath: string; companionWatchBundleId?: string}
   | {kind: 'unmatched'; owners: UnmatchedWatchAppOwner[]}
-  | {kind: 'selected'; fullPath: string};
+  | {kind: 'selected'; candidate: WatchAppBundleCandidate};
+
+/**
+ * What scanning an archive adds to the verdict about a single bundle: no application of the archive
+ * wanted a watch application at all, so the archive holds one directly and needs no rewriting.
+ * @remarks An archive never reports `watch-app`: a bundle that already is this session's application
+ * is one of the bundles the archive offers, so the scan counts it as a selection and lets the
+ * ambiguity rules below apply to it like to any other.
+ */
+type ArchiveWatchAppBundleResolution = Exclude<WatchAppBundleResolution, {kind: 'watch-app'}> | {kind: 'none'};
 
 /** An outer application that owns watch applications, none of them the one requested. */
 type UnmatchedWatchAppOwner = {appPath: string; candidates: WatchAppBundleCandidate[]};
@@ -486,18 +499,60 @@ type UnmatchedWatchAppOwner = {appPath: string; candidates: WatchAppBundleCandid
  * @returns The error explaining that no watch application of the package matches the capability
  */
 function unmatchedWatchAppBundleError(driver: XCUITestDriver, owners: UnmatchedWatchAppOwner[]): Error {
-  const described = owners
+  return new Error(
+    `The 'appium:watchBundleId' capability has been set to '${driver.opts.watchBundleId}', which ` +
+      `matches none of the watchOS application bundles this package provides: ` +
+      `${describeWatchAppBundleCandidates(owners)}. Use the bundle identifier or the path of one of them.`,
+  );
+}
+
+/**
+ * The error for a package holding more than one watch application the session could use.
+ *
+ * @param driver The driver that owns the session
+ * @param owners The applications each offering one usable watch application
+ * @param sessionCapsApply Whether the session capabilities may disambiguate them
+ * @returns The error listing every candidate, as `docs/reference/capabilities.md` promises
+ */
+function multipleWatchAppsError(
+  driver: XCUITestDriver,
+  owners: UnmatchedWatchAppOwner[],
+  sessionCapsApply: boolean,
+): Error {
+  const described = describeWatchAppBundleCandidates(owners);
+  const {watchBundleId} = driver.opts;
+  if (!isEmpty(watchBundleId)) {
+    return new Error(
+      `The 'appium:watchBundleId' capability has been set to '${watchBundleId}', which matches ` +
+        `multiple watchOS application bundles: ${described}. Use the bundle identifier or the exact ` +
+        `relative path to select only one of them.`,
+    );
+  }
+  return new Error(
+    `Found ${util.pluralize('watchOS application bundle', owners.length, true)} in the applications ` +
+      `this package provides: ${described}. ` +
+      (sessionCapsApply
+        ? `Set the 'appium:watchBundleId' capability to one of the paths above, or 'appium:bundleId' ` +
+          `to one of the identifiers above, to select the watch application to test.`
+        : `Only one of them can be installed at a time. Provide the application under test as ` +
+          `'appium:app', where 'appium:watchBundleId' selects between these, or install the ` +
+          `watch application bundle of your choice directly.`),
+  );
+}
+
+/**
+ * @param owners Outer applications and the watch applications each of them owns
+ * @returns Every candidate described the way the selection errors print it, so that a path copied
+ * out of a message is one `appium:watchBundleId` accepts
+ */
+function describeWatchAppBundleCandidates(owners: UnmatchedWatchAppOwner[]): string {
+  return owners
     .flatMap(({appPath, candidates}) =>
       candidates.map(
         ({bundleId, relativePath}) => `'${bundleId}' (${path.join(path.basename(appPath), relativePath)})`,
       ),
     )
     .join(', ');
-  return new Error(
-    `The 'appium:watchBundleId' capability has been set to '${driver.opts.watchBundleId}', which ` +
-      `matches none of the watchOS application bundles this package provides: ${described}. ` +
-      `Use the bundle identifier or the path of one of them.`,
-  );
 }
 
 /**
@@ -521,19 +576,16 @@ function missingWatchAppBundleError(appPath: string, companionWatchBundleId?: st
 }
 
 /**
- * The `CFBundleSupportedPlatforms` prefix shared by `watchOS` and `watchSimulator`.
- * Deliberately not derived from the session platform: this asks what a bundle *is*.
- */
-const WATCH_APP_PLATFORM_PREFIX = 'Watch';
-
-/**
- * Decides whether a cached extraction of a package may serve a watchOS session.
+ * Decides whether a cached extraction of a package may serve this session.
  *
- * The base driver keys its application cache on the path of the provided package, yet for a
- * watchOS session the application a package yields also depends on the session: the cache holds
- * whichever nested bundle the session that unpacked the package *first* happened to select. Serving
- * that entry to a later session would install an application it never asked for, and an entry left
- * behind by an iOS session holds the outer iOS bundle, which cannot run on the watch.
+ * The base driver keys its application cache on the path of the provided package, yet what a
+ * package yields also depends on the session: a watchOS session hands back a nested watch
+ * application, so the entry holds whichever bundle the session that unpacked the package *first*
+ * happened to select, and an entry left behind by a watchOS session hands an iOS or tvOS session a
+ * bundle whose `CFBundleSupportedPlatforms` it cannot satisfy - on a Simulator that surfaces as
+ * `Simulator architecture is not supported by the com.acme.foo.watchapp application`, and on a real
+ * device the driver would install a Simulator watch bundle. Every session therefore asks the cached
+ * bundle what it is instead of trusting the key it is stored under.
  *
  * @param driver The driver that owns the session
  * @param scope What role the package plays in the session
@@ -542,7 +594,7 @@ const WATCH_APP_PLATFORM_PREFIX = 'Watch';
  * @remarks Packages installed alongside the application under test are only checked for their
  * platform: the session capabilities never steer them, so no ambiguity can arise from them.
  */
-async function isCachedWatchAppReusable(
+async function isCachedAppReusable(
   driver: XCUITestDriver,
   scope: WatchAppSelectionScope,
   cachedPath: string,
@@ -551,19 +603,23 @@ async function isCachedWatchAppReusable(
   try {
     info = await driver.appInfosCache.extractWatchAppInfo(cachedPath);
   } catch (e: any) {
+    // An entry whose manifest cannot be read may be anything a previous session left behind, and
+    // the only safe answer is to unpack the package again for this session.
     driver.log.debug(`Cannot inspect the cached application at '${cachedPath}': ${e.message}`);
     return false;
   }
 
-  if (!info.platforms.some((platform) => platform.startsWith(WATCH_APP_PLATFORM_PREFIX))) {
+  const prefix = getBundlePlatformPrefix(driver.opts.platformName);
+  if (!info.platforms.some((platform) => platform.startsWith(prefix))) {
     driver.log.info(
-      `Ignoring the cached '${cachedPath}': it holds the '${info.bundleId}' application, which is ` +
-        `not a watchOS application bundle. Extracting the package again`,
+      `Ignoring the cached '${cachedPath}': the '${info.bundleId}' application it holds does not ` +
+        `support ${prefix} devices in the list of its supported platforms ` +
+        `(${info.platforms.join(',')}). Extracting the package again`,
     );
     return false;
   }
 
-  if (scope !== 'app-under-test') {
+  if (scope !== 'app-under-test' || !isWatchOs(driver.opts.platformName)) {
     return true;
   }
 
@@ -623,9 +679,24 @@ async function resolveWatchAppBundle(
   }
 
   const prefix = getBundlePlatformPrefix(driver.opts.platformName);
-  if (outerAppInfo.platforms.some((platform) => platform.startsWith(prefix))) {
+  // `isStandalone` also settles the question: a standalone watch application carries its own
+  // `1KitProvisioningComponent`, and a manifest may list the platform under a name this prefix does
+  // not cover. Either way the bundle is what the session wants, so there is nothing to extract - and
+  // the caller is told which bundle that is, rather than being left to the order a filesystem
+  // reports the package contents in.
+  if (outerAppInfo.platforms.some((platform) => platform.startsWith(prefix)) || outerAppInfo.isStandalone) {
     driver.log.debug(`'${appPath}' is already a ${prefix} application bundle`);
-    return {kind: 'not-applicable'};
+    return {
+      kind: 'watch-app',
+      candidate: {
+        bundleId: outerAppInfo.bundleId,
+        companionAppBundleId: outerAppInfo.companionAppBundleId,
+        fullPath: appPath,
+        // The bundle owns itself, so the only way of naming it is its own name.
+        isStandalone: outerAppInfo.isStandalone,
+        relativePath: '',
+      },
+    };
   }
 
   // Session capabilities name the application under test, so they never apply to a package
@@ -681,7 +752,7 @@ async function resolveWatchAppBundle(
         `if the watch application needs it.`,
     );
   }
-  return {kind: 'selected', fullPath: selected.fullPath};
+  return {kind: 'selected', candidate: selected};
 }
 
 /**
@@ -767,9 +838,13 @@ function isWatchAppBundleReferencedBy(
     .split(path.sep)
     .join(path.posix.sep)
     .replace(/^\.?\//, '');
+  // The name of the bundle is taken from its own path: a bundle that owns itself is described by an
+  // empty path relative to its owner, and its file name is then the only form left.
+  const candidateName = path.posix.basename(candidate.fullPath.split(path.sep).join(path.posix.sep));
   const relativePath = candidate.relativePath.split(path.sep).join(path.posix.sep);
   return (
     reference === relativePath ||
+    reference === candidateName ||
     reference === path.posix.basename(relativePath) ||
     reference === `${path.basename(appPath)}/${relativePath}` ||
     reference.endsWith(`/${relativePath}`)
@@ -1113,28 +1188,159 @@ async function isolateApp(appPath: string): Promise<string> {
 }
 
 /**
- * Creates a disposable copy of an application bundle in a temporary folder.
- *
- * @param appPath Full path to the application bundle to copy
- * @returns Full path to the copied bundle
+ * The folder under the system temporary folder where the disposable copies of local packages live.
+ * A fixed root, rather than one random folder per session, is what lets a later session recognise
+ * the copy an earlier one made of the same bundle and reuse it.
  */
-async function copyAppBundle(appPath: string): Promise<string> {
-  const tmpRoot = await tempDir.openDir();
-  const copiedPath = path.join(tmpRoot, path.basename(appPath));
+const COPIED_BUNDLES_FOLDER = 'appium-xcuitest-driver-copied-bundles';
+
+/**
+ * The file next to a copied bundle recording what that copy was made of.
+ */
+const COPIED_BUNDLE_MARKER_FILE = 'appium-copy-source.json';
+
+/**
+ * Creates a disposable copy of the watch application bundle a session has selected.
+ *
+ * The copy is what the session installs: the package the user provided must never be modified, and
+ * the selected bundle lives inside it. Its destination is derived from the bundle identifier and the
+ * identity of the source package instead of being a fresh random folder, because the base driver
+ * caches the path this returns under the key of the *provided* package and deletes whatever a
+ * previous session was handed before storing the new one. With random destinations two sessions
+ * using the same package each delete the other's copy - which for a local `.app` folder is *every*
+ * session, since a folder has no package hash and so can never be reused by that cache. Same inputs
+ * now produce the same path, so the driver sees its own path coming back and keeps it, and a copy
+ * that is already complete is not copied again.
+ *
+ * @param driver The driver that owns the session
+ * @param candidate The selected watch application bundle
+ * @param sourceLink The link the session was given for the package this bundle came from
+ * @returns Full path to the copied bundle
+ * @remarks Two sessions selecting *different* watch applications of one package still resolve to
+ * different folders, so the second one's store-then-delete sequence still removes the copy the first
+ * is installing. That deletion happens inside the base driver, outside the reach of this hook; what
+ * is fixed here is that it now takes two different selections to happen at all.
+ */
+async function copyAppBundle(
+  driver: XCUITestDriver,
+  candidate: WatchAppBundleCandidate,
+  sourceLink: string,
+): Promise<string> {
+  const sourceIdentity = await toCopiedBundleIdentity(driver, sourceLink, candidate.fullPath);
+  const signature = createHash('sha256').update(`${candidate.bundleId}\n${sourceIdentity}`).digest('hex');
+  const copiedRoot = path.join(process.env.APPIUM_TMP_DIR || os.tmpdir(), COPIED_BUNDLES_FOLDER, signature);
+  const copiedPath = path.join(copiedRoot, path.basename(candidate.fullPath));
+  if (await isCopiedAppBundleCurrent(driver, copiedRoot, copiedPath, candidate.bundleId, sourceIdentity)) {
+    driver.log.debug(
+      `Reusing the '${candidate.bundleId}' application copy at '${copiedPath}', which was made of ` + `'${sourceLink}'`,
+    );
+    return copiedPath;
+  }
+
+  // Anything already at that path is a copy of something else, a hand-made folder, or a bundle left
+  // by a driver whose marker this one cannot read, so it goes away before the new copy is written.
+  await fs.rimraf(copiedRoot);
+  // The marker is written only once the bundle copy is complete, which is what makes it the signal
+  // another session may read: one that arrives mid-copy finds no marker and copies the bundle itself
+  // rather than installing a half-finished one.
+  //
   // `ditto` is the canonical way of copying macOS application bundles: unlike a plain recursive
   // copy it keeps symlinks and bundle metadata intact. It is a macOS-only tool, and `fs.which`
   // rejects rather than returning null when an executable is absent, hence the explicit catch.
   const dittoPath = await fs.which('ditto').catch(() => null);
   if (dittoPath) {
-    await exec(dittoPath, [appPath, copiedPath]);
-    return copiedPath;
+    await exec(dittoPath, [candidate.fullPath, copiedPath]);
+  } else {
+    // The driver also runs on Linux and Windows hosts, where no `ditto` exists. `verbatimSymlinks`
+    // is required, not cosmetic: without it `fs.cp` rewrites each link target, measured to turn
+    // `Versions/Current -> A` into an absolute path into the *source* bundle. The copy would then
+    // still read the user's original package, which defeats the point of making a disposable one.
+    await cp(candidate.fullPath, copiedPath, {recursive: true, verbatimSymlinks: true});
   }
-  // The driver also runs on Linux and Windows hosts, where no `ditto` exists. `verbatimSymlinks`
-  // is required, not cosmetic: without it `fs.cp` rewrites each link target, measured to turn
-  // `Versions/Current -> A` into an absolute path into the *source* bundle. The copy would then
-  // still read the user's original package, which defeats the point of making a disposable one.
-  await cp(appPath, copiedPath, {recursive: true, verbatimSymlinks: true});
+  await fs.writeFile(
+    path.join(copiedRoot, COPIED_BUNDLE_MARKER_FILE),
+    JSON.stringify({bundleId: candidate.bundleId, sourceLink, sourceIdentity}),
+    'utf8',
+  );
   return copiedPath;
+}
+
+/**
+ * @param driver The driver that owns the session
+ * @param copiedRoot The folder expected to hold the copy and its marker
+ * @param copiedPath The expected path of the copied bundle
+ * @param bundleId The application the copy must be
+ * @param sourceIdentity The package the copy must have been made of
+ * @returns Whether `copiedPath` is that application, copied from that package
+ * @remarks Anything else sitting at that path - a copy of another package, a hand-made folder, a
+ * bundle left behind by a driver that used a different marker format - is replaced, not installed.
+ */
+async function isCopiedAppBundleCurrent(
+  driver: XCUITestDriver,
+  copiedRoot: string,
+  copiedPath: string,
+  bundleId: string,
+  sourceIdentity: string,
+): Promise<boolean> {
+  if (!(await fs.exists(copiedPath))) {
+    return false;
+  }
+  let marker: unknown;
+  try {
+    marker = JSON.parse(await fs.readFile(path.join(copiedRoot, COPIED_BUNDLE_MARKER_FILE), 'utf8'));
+  } catch (e: any) {
+    driver.log.debug(`'${copiedPath}' has no readable copy marker (${e.message}), so it is copied again`);
+    return false;
+  }
+  const {bundleId: copiedBundleId, sourceIdentity: copiedSourceIdentity} = isPlainObject(marker)
+    ? marker
+    : {bundleId: undefined, sourceIdentity: undefined};
+  if (copiedBundleId !== bundleId) {
+    driver.log.debug(
+      `'${copiedPath}' holds the '${String(copiedBundleId)}' application rather than ` +
+        `'${bundleId}', so it is copied again`,
+    );
+    return false;
+  }
+  if (copiedSourceIdentity !== sourceIdentity) {
+    driver.log.debug(`'${copiedPath}' was copied from an older version of the package, so it is copied again`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * @param driver The driver that owns the session
+ * @param sourceLink The link the session was given for the package (`appium:app`, or the path a
+ * download was written to)
+ * @param bundlePath Full path to the bundle selected out of that package
+ * @returns A fingerprint of the application the copy is about to be, cheap enough for every session
+ * @remarks A rebuilt application is what has to invalidate a copy. An incremental build rewrites the
+ * manifest of the bundle it built and may leave the package folder timestamp alone, while installing
+ * a fresh build into the package moves the folder and not the nested manifest - so both are asked.
+ * Hashing a whole watch application per session was not worth it: one rebuild moves one of these.
+ */
+async function toCopiedBundleIdentity(driver: XCUITestDriver, sourceLink: string, bundlePath: string): Promise<string> {
+  // `appium:app` may be relative, and two sessions naming the same package differently must not end
+  // up with two copies of it.
+  const sourcePath = path.resolve(sourceLink);
+  const [sourceStat, manifestStat] = await Promise.all([
+    fs.stat(sourcePath).catch(() => null),
+    fs.stat(path.join(bundlePath, 'Info.plist')).catch(() => null),
+  ]);
+  let sourceIdentity: string;
+  if (!sourceStat) {
+    // Nothing on the local file system to inspect - the link is a URL, or the package was removed
+    // while this session was being created. The link is all there is to share.
+    sourceIdentity = `link:${sourcePath}`;
+  } else if (sourceStat.isFile()) {
+    sourceIdentity = `file:${await fs.hash(sourcePath)}`;
+  } else {
+    sourceIdentity = `folder:${sourcePath}:${sourceStat.mtimeMs}`;
+  }
+  const bundleIdentity = manifestStat ? `${manifestStat.mtimeMs}+${manifestStat.size}` : 'no-manifest';
+  driver.log.debug(`The '${path.basename(bundlePath)}' copy is keyed on '${sourceIdentity} + ${bundleIdentity}'`);
+  return `${sourceIdentity}\n${bundleIdentity}`;
 }
 
 /**
@@ -1149,19 +1355,25 @@ async function copyAppBundle(appPath: string): Promise<string> {
  * @param matchedPaths Paths of the bundles found in the archive, relative to `rootDir`
  * @param scope What role the archive plays in the session
  * @returns The selected watch application, the outermost application that should have carried one,
- * or `none` if no application in the archive wanted a watch application at all - which means the
- * archive holds a watch application directly and needs no rewriting
+ * the applications between which the session has to choose, or `none` if no application in the
+ * archive wanted a watch application at all - which means the archive holds one directly and needs
+ * no rewriting
  * @throws If the nested watch applications cannot be reduced to exactly one
+ * @remarks Every application of the archive is asked even after one of them has offered a usable
+ * watch application: an archive holding `Payload/Alpha.app/Watch/Watch.app` next to
+ * `Payload/Zeta.app/Watch/Watch.app` must name both rather than install whichever `findApps`
+ * reported first.
  */
 async function resolveWatchAppBundleFromArchive(
   driver: XCUITestDriver,
   rootDir: string,
   matchedPaths: string[],
   scope: WatchAppSelectionScope,
-): Promise<WatchAppBundleResolution | {kind: 'none'}> {
+): Promise<ArchiveWatchAppBundleResolution> {
   const visitedAppPaths = new Set<string>();
   const owners: UnmatchedWatchAppOwner[] = [];
-  let missing: WatchAppBundleResolution | undefined;
+  const selections: UnmatchedWatchAppOwner[] = [];
+  let missing: Extract<WatchAppBundleResolution, {kind: 'missing'}> | undefined;
   for (const matchedPath of matchedPaths) {
     const outerAppPath = path.join(rootDir, findOwningAppBundlePath(matchedPath));
     if (visitedAppPaths.has(outerAppPath)) {
@@ -1169,16 +1381,31 @@ async function resolveWatchAppBundleFromArchive(
     }
     visitedAppPaths.add(outerAppPath);
     const resolution = await resolveWatchAppBundle(driver, outerAppPath, scope);
-    if (resolution.kind === 'selected') {
-      return resolution;
+    switch (resolution.kind) {
+      case 'selected':
+        selections.push({appPath: outerAppPath, candidates: [resolution.candidate]});
+        break;
+      case 'watch-app':
+        // The archive carries this session's application bundle as one of its own items, so there is
+        // nothing to extract out of it - but it is still one of the bundles the session could be
+        // given, and the archive may hold another owner further along.
+        selections.push({appPath: outerAppPath, candidates: [resolution.candidate]});
+        break;
+      // An outer application that owns other watch applications is simply not the one the session
+      // names; the archive may hold the requested bundle further along, so keep looking.
+      case 'unmatched':
+        owners.push(...resolution.owners);
+        break;
+      default:
+        missing ??= resolution.kind === 'missing' ? resolution : undefined;
+        break;
     }
-    // An outer application that owns other watch applications is simply not the one the session
-    // names; the archive may hold the requested bundle further along, so keep looking.
-    if (resolution.kind === 'unmatched') {
-      owners.push(...resolution.owners);
-      continue;
-    }
-    missing ??= resolution.kind === 'missing' ? resolution : undefined;
+  }
+  if (selections.length > 1) {
+    throw multipleWatchAppsError(driver, selections, scope === 'app-under-test');
+  }
+  if (selections.length === 1) {
+    return {kind: 'selected', candidate: selections[0].candidates[0]};
   }
   if (!isEmpty(owners)) {
     return {kind: 'unmatched', owners};
@@ -1293,8 +1520,8 @@ async function unzipApp(
     if (isWatchOs(driver.opts.platformName)) {
       const resolution = await resolveWatchAppBundleFromArchive(driver, rootDir, matchedPaths, scope);
       if (resolution.kind === 'selected') {
-        driver.log.debug(`Selecting the watchOS application at '${resolution.fullPath}'`);
-        return await isolateApp(resolution.fullPath);
+        driver.log.debug(`Selecting the watchOS application at '${resolution.candidate.fullPath}'`);
+        return await isolateApp(resolution.candidate.fullPath);
       }
       if (resolution.kind === 'missing' && scope === 'app-under-test') {
         // No outer application of this archive carries the watch application the session needs, so
@@ -1309,6 +1536,8 @@ async function unzipApp(
         throw unmatchedWatchAppBundleError(driver, resolution.owners);
       }
     }
+    // Reaching here for a watchOS session means `none`: the archive holds this session's application
+    // bundle as one of its own items, so the bundle is installed as is.
     for (const matchedPath of matchedPaths) {
       const fullPath = path.join(rootDir, matchedPath);
       if (
