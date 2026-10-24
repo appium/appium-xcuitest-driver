@@ -908,9 +908,10 @@ Get the device's UI appearance style.
 An object, with the following entries:
 - style: The device's UI appearance value. This could be one of: `light`, `dark`, `unknown`, `unsupported`
 
-On [watchOS](../guides/watchos.md) this always reports `automatic`: neither the Simulator's `ui
-appearance` query (it answers `unsupported`) nor the watchOS agent build can read the current
-style, so the value carries no information there.
+On [watchOS](../guides/watchos.md) this always reports `unknown`: neither the Simulator's `ui
+appearance` query (it answers `unsupported` for a watch Simulator) nor the agent's
+`GET /wda/device/info` (which keeps answering `automatic`, before and after a change) can read the
+current style, so the value carries no information there.
 
 ### mobile: setAppearance
 
