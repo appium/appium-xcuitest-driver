@@ -365,7 +365,7 @@ describe('platform support gates', function () {
         assert.ok(err instanceof errors.NotImplementedError, `expected NotImplementedError, got ${String(err)}`);
         assert.match(
           err.message,
-          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory bar is scoped to the keyboard-owning process, which versions older than 16\.19\.2 do not; upgrade the appium-webdriveragent package to its latest release, which is 16\.19\.2 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
+          /^mobile: hideKeyboard is not supported on watchOS: keyboard dismissal needs a watchOS WebDriverAgent build that rejects an accessory-bar match owned by the application under test, which versions older than 16\.19\.2 do not; upgrade the appium-webdriveragent package to its latest release, which is 16\.19\.2 or newer, or tap the 'Done' button of the keyboard's accessory bar directly$/,
         );
         return true;
       });

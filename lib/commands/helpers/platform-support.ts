@@ -138,13 +138,16 @@ const PLATFORM_SUPPORT: Readonly<Record<PlatformCapability, PlatformSupportEntry
     // confined to the keyboard element therefore finds nothing and reports 'Did not know how to
     // dismiss the keyboard', whatever key names the caller passes. Widening that search to the whole
     // application is not enough either: `Done` is a name watch apps use freely, so such a build can
-    // tap the application's own control instead of the keyboard's. The build that adds the watch
-    // targets only accepts matches owned by another process, which is where the keyboard's service
-    // lives - measured on watchOS 26.5, where the accessory bar belongs to the text input process.
+    // tap the application's own control instead of the keyboard's - leaving the keyboard open and
+    // running unrelated application logic. The build that adds the watch targets therefore rejects
+    // any match owned by the application under test. Measured on watchOS 26.5 and 27.0, the bar and
+    // the keyboard element share one process (`com.apple.QuickboardViewService`) and the application
+    // has its own, so excluding the application is what reaches the bar; it is also the criterion
+    // the hazard actually names, since a future runtime could host the bar elsewhere.
     sinceWdaVersion: {[PLATFORM_NAME_WATCHOS]: WATCHOS_CAPABLE_WDA_VERSION},
     reason:
-      'keyboard dismissal needs a watchOS WebDriverAgent build whose search for the accessory ' +
-      'bar is scoped to the keyboard-owning process, which ' +
+      'keyboard dismissal needs a watchOS WebDriverAgent build that rejects an accessory-bar match ' +
+      'owned by the application under test, which ' +
       `versions older than ${WATCHOS_CAPABLE_WDA_VERSION} do not`,
     alternative:
       'upgrade the appium-webdriveragent package to its latest release, which is ' +

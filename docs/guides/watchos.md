@@ -162,9 +162,11 @@ Series 12 (46mm) on watchOS 27.0 with Xcode 27.1 for the VoiceOver extensions be
       agent for both `done` and `Done`, because the control that closes the watch keyboard is the
       accessory bar's `Done` button rather than the iOS keyboard's `done` key, and that button is a
       sibling of `XCUIElementTypeKey` and `XCUIElementTypeKeyboard` in the element tree rather than a
-      child of the keyboard, so the search has to leave the keyboard element. It must stay scoped to the
-      text-input service that owns the accessory bar as well: `Done` is a common application button name,
-      and an application-wide search can land on the app's own `Done` button and run its action
+      child of the keyboard, so the search has to leave the keyboard element. It must also reject a `Done`
+      belonging to the application under test: `Done` is a common application button name, and matching the
+      app's own control leaves the keyboard open and runs that application's action. Measured on watchOS
+      26.5 and 27.0 the accessory bar belongs to `com.apple.QuickboardViewService`, a process of its own
+      apart from the application under test, so excluding the app's matches still reaches the bar
     * Tapping that button yourself works and is an alternative to
       [`mobile: hideKeyboard`](../reference/execute-methods.md#mobile-hidekeyboard): look for the app-wide
       button rather than a key inside the keyboard, for example with `-ios predicate string` on

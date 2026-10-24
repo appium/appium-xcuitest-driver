@@ -2386,8 +2386,9 @@ Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot
 On [watchOS](../guides/watchos.md) this works with the `appium-webdriveragent` package at its latest
 release, 16.19.2 or newer. There the control that closes the keyboard is the accessory bar's `Done`
 button, which watchOS reports as a *sibling* of `XCUIElementTypeKeyboard` rather than a key inside it,
-so the agent's search for that button has to be scoped to the process owning the keyboard: a search
-that is not scoped can land on an application's own `Done` button and run its action instead. Older
+so the agent's search for that button has to leave the keyboard element, and has to reject a `Done`
+owned by the application under test - tapping one of those leaves the keyboard open and runs the
+application's own action instead. Older
 agent builds are rejected with a `NotImplementedError`. Tapping that `Done` button directly stays
 available on any build - it both commits and closes the keyboard.
 
