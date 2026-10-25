@@ -55,12 +55,14 @@ describe('host simulator HID routing', () => {
     await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
   });
-  it('preserves ordinary simulator and physical Home routes', async () => {
+  it('preserves ordinary simulator and physical button routes', async () => {
     for (const simulator of [true, false]) {
       const {driver, proxy, device} = setup(simulator);
       device.isDuo.resolves(false);
-      await driver.mobilePressButton('home');
-      sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name: 'home', duration: undefined});
+      for (const name of ['home', 'volumeUp', 'volumeDown'] as const) {
+        await driver.mobilePressButton(name);
+        sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name, duration: undefined});
+      }
       sinon.assert.notCalled(device.pressHidButton);
     }
   });
@@ -75,12 +77,25 @@ describe('host simulator HID routing', () => {
     await driver.mobilePressButton('home');
     sinon.assert.notCalled(device.pressHidButton);
   });
-  it('routes Duo Home through the host while preserving other XCTest buttons', async () => {
+  it('routes Duo Home and volume buttons through the host case-insensitively', async () => {
     const {driver, device, proxy} = setup();
-    await driver.mobilePressButton('home');
-    sinon.assert.calledWithExactly(device.pressHidButton, 12, 64);
-    await driver.mobilePressButton('volumeUp');
-    sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name: 'volumeUp', duration: undefined});
+    for (const [name, usage] of [
+      ['HOME', 64],
+      ['volumeUp', 233],
+      ['VOLUMEDOWN', 234],
+    ] as const) {
+      await driver.mobilePressButton(name, 2);
+      sinon.assert.calledWithExactly(device.pressHidButton, 12, usage);
+    }
+    sinon.assert.notCalled(proxy);
+  });
+  it('preserves the WDA route for other Duo buttons', async () => {
+    const {driver, device, proxy} = setup();
+    for (const name of ['action', 'camera'] as const) {
+      await driver.mobilePressButton(name);
+      sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name, duration: undefined});
+    }
+    sinon.assert.notCalled(device.pressHidButton);
   });
   it('does not hide probe or host transport errors', async () => {
     const {driver, device} = setup();

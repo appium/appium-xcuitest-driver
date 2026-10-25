@@ -13,6 +13,11 @@ import type {XCUITestDriver} from '../driver.js';
 import type {ButtonName, PressableButtonsInfo} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
+const DUO_BUTTON_USAGES = new Map<string, HIDUsageConsumerEvent>([
+  ['home', HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu],
+  ['volumeup', HIDUsageConsumerEvent.kHIDUsage_Csmr_VolumeIncrement],
+  ['volumedown', HIDUsageConsumerEvent.kHIDUsage_Csmr_VolumeDecrement],
+]);
 
 /**
  * Trigger a touch/fingerprint match or match failure.
@@ -167,7 +172,8 @@ export async function mobileGetPressableButtons(this: XCUITestDriver): Promise<P
  *
  * This executes different methods based on the platform:
  *
- * - iOS: [`pressButton:`](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton)
+ * - Duo simulator Home and volume buttons: host CoreSimulator HID.
+ * - Other iOS buttons/devices: [`pressButton:`](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton)
  * - tvOS: [`pressButton:`](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton) or [`pressButton:forDuration:`](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton)
  *
  * Use {@linkcode mobilePerformIoHidEvent} to call a more universal API to perform a button press with duration on any supported device.
@@ -186,10 +192,12 @@ export async function mobilePressButton(
   if (durationSeconds != null && typeof durationSeconds !== 'number') {
     throw new errors.InvalidArgumentError('durationSeconds should be a number');
   }
-  if (name.toLowerCase() === 'home') {
+  const usage = DUO_BUTTON_USAGES.get(name.toLowerCase());
+  if (usage !== undefined) {
     const simulator = await getDuoSimulator(this);
     if (simulator) {
-      return await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu);
+      // Preserve iOS pressButton semantics: durationSeconds is a tvOS-only option.
+      return await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, usage);
     }
   }
   return await this.proxyCommand('/wda/pressButton', 'POST', {name, duration: durationSeconds});

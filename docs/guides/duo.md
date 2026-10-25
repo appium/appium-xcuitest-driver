@@ -26,7 +26,7 @@ display when closing it. Restart XCTest recording to change its display.
 The simulated hinge angle can be read and changed through the
 [`mobile: getSimulatedHingeAngle`](../reference/execute-methods.md#mobile-getsimulatedhingeangle) and
 [`mobile: setSimulatedHingeAngle`](../reference/execute-methods.md#mobile-setsimulatedhingeangle)
-extensions. Simulator Home, lock/unlock, and hinge changes use the Mac-side
+extensions. Simulator Home, volume up/down, lock/unlock, and hinge changes use the Mac-side
 `@appium/coresim` HID service through `appium-ios-simulator`. Hinge readings remain
 in WDA. Orientation and rotation commands use WDA on both simulators and
 physical devices because WDA's internal animation-stability wait and orientation

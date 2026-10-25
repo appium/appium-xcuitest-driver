@@ -658,6 +658,7 @@ Emulates a press action on the given physical device button. The iOS implementat
 [pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton),
 while tvOS can use either [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton)
 or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
+On Duo simulators, `home`, `volumeup`, and `volumedown` use the host CoreSimulator HID service.
 A more universal API can also be used via [`mobile: performIoHidEvent`](#mobile-performiohidevent).
 
 Button values supported for the current device under test can be retrieved using
@@ -666,8 +667,8 @@ Button values supported for the current device under test can be retrieved using
 The following values are supported on iOS:
 
 * `home`
-* `volumeup` (real devices only)
-* `volumedown` (real devices only)
+* `volumeup` (real devices and Duo simulators)
+* `volumedown` (real devices and Duo simulators)
 * `action` (Xcode 15+, iOS 16+ supported devices only)
 * `camera` (Xcode 16+, iOS 16+ supported real devices only)
 
