@@ -33,7 +33,7 @@ physical devices because WDA's internal animation-stability wait and orientation
 verification are required. Physical devices use XCTest for button commands;
 simulated hinge changes are unsupported.
 
-## Device Limitations
+## Known Limitations
 
 * `mobile: setSimulatedHingeAngle` only supports simulators. `mobile: getSimulatedHingeAngle`
   supports both simulators and real devices with an available hinge sensor and CoreMotion readings.
