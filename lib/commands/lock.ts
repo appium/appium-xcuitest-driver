@@ -57,24 +57,24 @@ async function setLocked(driver: XCUITestDriver, locked: boolean): Promise<void>
     HIDPageEvent.kHIDPage_Consumer,
     locked ? HIDUsageConsumerEvent.kHIDUsage_Csmr_Power : HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu,
   );
-  // A sleeping device may need a second Home press after waking.
-  let retriedHome = false;
-  const started = Date.now();
-  await waitForCondition(
-    async () => {
-      if ((await driver.isLocked()) === locked) {
-        return true;
-      }
-      if (!locked && !retriedHome && Date.now() - started >= 1000) {
-        await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu);
-        retriedHome = true;
-      }
-      return false;
-    },
-    {
-      waitMs: 5000,
+  const timeoutError = new errors.UnknownError(`Timed out waiting for the simulator to ${locked ? 'lock' : 'unlock'}`);
+  const waitForState = async (waitMs: number) =>
+    await waitForCondition(async () => (await driver.isLocked()) === locked, {
+      waitMs,
       intervalMs: 100,
-      error: new errors.UnknownError(`Timed out waiting for the simulator to ${locked ? 'lock' : 'unlock'}`),
-    },
-  );
+      error: timeoutError,
+    });
+  if (!locked) {
+    try {
+      await waitForState(1000);
+      return;
+    } catch (err) {
+      if (err !== timeoutError) {
+        throw err;
+      }
+    }
+    // A sleeping device may need a second Home press after waking.
+    await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu);
+  }
+  await waitForState(locked ? 5000 : 4000);
 }
