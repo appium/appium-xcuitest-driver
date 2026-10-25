@@ -52,20 +52,6 @@ simulated hinge changes are unsupported.
   waiting for event completion. The simulator commands above use CoreSim to bypass this
   route.
 
-The following issues were [reported on a real Duo device](https://github.com/appium/appium/issues/22857#issuecomment-6386593459)
-and have not been independently reproduced as part of the host CoreSim validation:
-
-* `mobile: pressButton`, including `home`, did not operate the device buttons. The host CoreSim
-  implementation only applies to simulators and does not address these real-device failures.
-* Getting orientation worked, but setting orientation did not. Whether this is Duo-specific
-  or also affects other real devices has not been established.
-* The Automation Running overlay appeared only on the outer display, when active or briefly
-  during hinge changes, and did not appear on the inner display.
-* With the device unfolded and Control Center open on the inner display, refreshing screenshot
-  and source in Appium Inspector closed Control Center. The individual endpoint responsible
-  has not been isolated. The report did not reproduce this with Notification Center or on
-  the outer display.
-
 ## Related Tickets
 
 * [Duo WDA startup support](https://github.com/appium/appium-xcuitest-driver/pull/3000)
