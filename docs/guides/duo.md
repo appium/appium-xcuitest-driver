@@ -37,14 +37,34 @@ simulated hinge changes are unsupported.
 
 * `mobile: setSimulatedHingeAngle` only supports simulators. `mobile: getSimulatedHingeAngle`
   supports both simulators and real devices with an available hinge sensor and CoreMotion readings.
+  The setter returns after submitting the event, without waiting for folding to finish. Poll the
+  getter when a subsequent operation depends on reaching a target angle. A matching angle does
+  not guarantee that the app has finished updating its layout.
 * On Duo simulators, `mobile: pressButton` uses CoreSim for `home`, `volumeup`, and
   `volumedown`; other names are unsupported. `mobile: performIoHidEvent` forwards all
   valid HID page/usage values to CoreSim, including keyboard events. The runtime determines
   which events have an effect; successful submission alone does not confirm application.
+* `mobile: getPressableButtons` reports WDA/XCTest button names, which may not match usable
+  Duo controls. For example, real-device feedback reports `action` even though the device has
+  no Action button. The returned list does not override the simulator restrictions above.
 * The WDA/XCTest IO HID route has reported failures on real Duo devices and also failed
   in Duo simulator tests with Xcode 27.1 / iOS 27.1. It may return success after timing out
   waiting for event completion. The simulator commands above use CoreSim to bypass this
   route.
+
+The following issues were [reported on a real Duo device](https://github.com/appium/appium/issues/22857#issuecomment-6386593459)
+and have not been independently reproduced as part of the host CoreSim validation:
+
+* `mobile: pressButton`, including `home`, did not operate the device buttons. The host CoreSim
+  implementation only applies to simulators and does not address these real-device failures.
+* Getting orientation worked, but setting orientation did not. Whether this is Duo-specific
+  or also affects other real devices has not been established.
+* The Automation Running overlay appeared only on the outer display, when active or briefly
+  during hinge changes, and did not appear on the inner display.
+* With the device unfolded and Control Center open on the inner display, refreshing screenshot
+  and source in Appium Inspector closed Control Center. The individual endpoint responsible
+  has not been isolated. The report did not reproduce this with Notification Center or on
+  the outer display.
 
 ## Related Tickets
 
