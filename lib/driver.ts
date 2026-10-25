@@ -182,9 +182,6 @@ const WEB_ELEMENTS_CACHE_SIZE = 500;
 const SUPPORTED_ORIENATIONS = ['LANDSCAPE', 'PORTRAIT'];
 
 /* eslint-disable no-useless-escape */
-// Keep orientation and rotation commands proxied to WDA, including on Duo simulators.
-// WDA's internal animation-stability wait and orientation verification are required;
-// CoreSim HID submission alone does not provide equivalent completion guarantees.
 const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
   ['DELETE', /window/],
   ['GET', /^\/session\/[^\/]+$/],
