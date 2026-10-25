@@ -761,10 +761,6 @@ timeoutSeconds | number | no | For how long to wait until the notification is de
 
 ### mobile: performIoHidEvent
 
-On Duo simulators, this command forwards HID page, usage, and duration to host CoreSimulator
-instead of WDA/XCTest. All values accepted by CoreSim validation may be submitted, but the
-runtime determines their effect. Completion confirms submission only.
-
 Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
 in [HID Usage Tables](https://developer.apple.com/documentation/hiddriverkit/hid_usage_tables).
 For example, in order to emulate single press on Home button the extension should be called with the following arguments:

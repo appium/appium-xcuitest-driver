@@ -44,7 +44,7 @@ simulated hinge changes are unsupported.
 * The WDA/XCTest IO HID route has reported failures on real Duo devices and also failed
   in Duo simulator tests with Xcode 27.1 / iOS 27.1. It may return success after timing out
   waiting for event completion. The simulator commands above use CoreSim to bypass this
-  route. See the [Duo findings](https://github.com/appium/appium/issues/22857).
+  route.
 
 ## Related Tickets
 
