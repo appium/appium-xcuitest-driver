@@ -658,7 +658,8 @@ Emulates a press action on the given physical device button. The iOS implementat
 [pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton),
 while tvOS can use either [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton)
 or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
-On Duo simulators, `home`, `volumeup`, and `volumedown` use the host CoreSimulator HID service.
+On Duo simulators, `home`, `volumeup`, and `volumedown` use the host CoreSimulator HID service;
+other button names are unsupported.
 A more universal API can also be used via [`mobile: performIoHidEvent`](#mobile-performiohidevent).
 
 Button values supported for the current device under test can be retrieved using
@@ -759,6 +760,10 @@ type | string | no | Which notification type to expect. Either `plain` (the defa
 timeoutSeconds | number | no | For how long to wait until the notification is delivered in float seconds. 60 seconds by default | 5.5
 
 ### mobile: performIoHidEvent
+
+On Duo simulators, this command forwards HID page, usage, and duration to host CoreSimulator
+instead of WDA/XCTest. All values accepted by CoreSim validation may be submitted, but the
+runtime determines their effect. Completion confirms submission only.
 
 Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
 in [HID Usage Tables](https://developer.apple.com/documentation/hiddriverkit/hid_usage_tables).

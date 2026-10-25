@@ -3,7 +3,7 @@ import {errors} from 'appium/driver.js';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 
-import {getDuoSimulator} from './helpers/duo.js';
+import {getDuoSimulator, withDuoArgumentErrors} from './helpers/duo.js';
 import {HIDPageEvent, HIDUsageConsumerEvent} from './hid-event.js';
 
 dayjs.extend(utc);
@@ -192,13 +192,14 @@ export async function mobilePressButton(
   if (durationSeconds != null && typeof durationSeconds !== 'number') {
     throw new errors.InvalidArgumentError('durationSeconds should be a number');
   }
-  const usage = DUO_BUTTON_USAGES.get(name.toLowerCase());
-  if (usage !== undefined) {
-    const simulator = await getDuoSimulator(this);
-    if (simulator) {
-      // Preserve iOS pressButton semantics: durationSeconds is a tvOS-only option.
-      return await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, usage);
+  const simulator = await getDuoSimulator(this);
+  if (simulator) {
+    const usage = DUO_BUTTON_USAGES.get(name.toLowerCase());
+    if (usage === undefined) {
+      throw new errors.UnsupportedOperationError(`Button '${name}' has no supported Duo simulator HID mapping`);
     }
+    // Preserve iOS pressButton semantics: durationSeconds is a tvOS-only option.
+    return await withDuoArgumentErrors(() => simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, usage));
   }
   return await this.proxyCommand('/wda/pressButton', 'POST', {name, duration: durationSeconds});
 }

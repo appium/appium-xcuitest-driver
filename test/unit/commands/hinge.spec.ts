@@ -89,13 +89,39 @@ describe('host simulator HID routing', () => {
     }
     sinon.assert.notCalled(proxy);
   });
-  it('preserves the WDA route for other Duo buttons', async () => {
+  it('rejects unmapped Duo button names without falling back to WDA', async () => {
     const {driver, device, proxy} = setup();
     for (const name of ['action', 'camera'] as const) {
-      await driver.mobilePressButton(name);
-      sinon.assert.calledWithExactly(proxy, '/wda/pressButton', 'POST', {name, duration: undefined});
+      await assert.rejects(driver.mobilePressButton(name), errors.UnsupportedOperationError);
     }
+    sinon.assert.notCalled(proxy);
     sinon.assert.notCalled(device.pressHidButton);
+  });
+  it('routes arbitrary Duo IO HID pages and usages through CoreSim', async () => {
+    const {driver, device, proxy} = setup();
+    for (const [page, usage] of [
+      [12, 101],
+      [7, 42],
+      [0xff61, 0xffff],
+    ]) {
+      await driver.mobilePerformIoHidEvent(page, usage, '0.1');
+      sinon.assert.calledWithExactly(device.pressHidButton, page, usage, 0.1);
+    }
+    sinon.assert.notCalled(proxy);
+    device.pressHidButton.rejects(new TypeError('usage is outside the supported range'));
+    await assert.rejects(driver.mobilePerformIoHidEvent(12, 65536, 0.1), errors.InvalidArgumentError);
+    const failure = new Error('HID unavailable');
+    device.pressHidButton.rejects(failure);
+    await assert.rejects(driver.mobilePerformIoHidEvent(12, 64, 0.1), (err) => err === failure);
+  });
+  it('preserves WDA IO HID routing on other simulators and real devices', async () => {
+    for (const isSimulator of [true, false]) {
+      const {driver, device, proxy} = setup(isSimulator);
+      device.isDuo.resolves(false);
+      await driver.mobilePerformIoHidEvent(12, 64, '0.1');
+      sinon.assert.calledWithExactly(proxy, '/wda/performIoHidEvent', 'POST', {page: 12, usage: 64, duration: 0.1});
+      sinon.assert.notCalled(device.pressHidButton);
+    }
   });
   it('does not hide probe or host transport errors', async () => {
     const {driver, device} = setup();

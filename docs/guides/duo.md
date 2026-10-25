@@ -37,12 +37,14 @@ simulated hinge changes are unsupported.
 
 * `mobile: setSimulatedHingeAngle` only supports simulators. `mobile: getSimulatedHingeAngle`
   supports both simulators and real devices with an available hinge sensor and CoreMotion readings.
-* `mobile: performIoHidEvent` has reported failures on real Duo devices. On the Duo simulator
-  with Xcode 27.1 / iOS 27.1, tests of Home, Power, volume up/down, Mute, Snapshot, and keyboard
-  A/Backspace returned success after XCTest timed out waiting for event completion. Home,
-  Power, Snapshot, and keyboard input had no observed effect; volume and mute changes could
-  not be confirmed. A successful command response alone does not establish that the event
-  was applied. See the [Duo findings](https://github.com/appium/appium/issues/22857).
+* On Duo simulators, `mobile: pressButton` uses CoreSim for `home`, `volumeup`, and
+  `volumedown`; other names are unsupported. `mobile: performIoHidEvent` forwards all
+  valid HID page/usage values to CoreSim, including keyboard events. The runtime determines
+  which events have an effect; successful submission alone does not confirm application.
+* The WDA/XCTest IO HID route has reported failures on real Duo devices and also failed
+  in Duo simulator tests with Xcode 27.1 / iOS 27.1. It may return success after timing out
+  waiting for event completion. The simulator commands above use CoreSim to bypass this
+  route. See the [Duo findings](https://github.com/appium/appium/issues/22857).
 
 ## Related Tickets
 
