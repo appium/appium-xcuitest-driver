@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {it} from 'node:test';
-import {setTimeout as delay} from 'node:timers/promises';
 
 import {getSimulator} from 'appium-ios-simulator';
+import {waitForCondition} from 'asyncbox';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
 
@@ -43,14 +43,11 @@ it(
       (await request(`/session/${sessionId}${path}`, method, data)).value) as typeof driver.proxyCommand;
     const originalAngle = await driver.mobileGetSimulatedHingeAngle();
     async function waitFor(check: () => Promise<boolean>): Promise<void> {
-      const until = Date.now() + 5000;
-      do {
-        if (await check()) {
-          return;
-        }
-        await delay(100);
-      } while (Date.now() < until);
-      assert.fail('Simulator state did not converge');
+      await waitForCondition(check, {
+        waitMs: 5000,
+        intervalMs: 100,
+        error: 'Simulator state did not converge',
+      });
     }
     try {
       for (const angle of [0, 90, 180]) {

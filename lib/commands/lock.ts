@@ -1,9 +1,11 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {errors} from 'appium/driver.js';
+import {waitForCondition} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
 import {getDuoSimulator} from './helpers/duo.js';
+import {HIDPageEvent, HIDUsageConsumerEvent} from './hid-event.js';
 
 /**
  * Lock the device (and optionally unlock the device after a certain amount of time)
@@ -51,19 +53,28 @@ async function setLocked(driver: XCUITestDriver, locked: boolean): Promise<void>
   if ((await driver.isLocked()) === locked) {
     return;
   }
-  await simulator.pressHidButton(12, locked ? 48 : 64);
+  await simulator.pressHidButton(
+    HIDPageEvent.kHIDPage_Consumer,
+    locked ? HIDUsageConsumerEvent.kHIDUsage_Csmr_Power : HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu,
+  );
   // A sleeping device may need a second Home press after waking.
   let retriedHome = false;
   const started = Date.now();
-  while (Date.now() - started < 5000) {
-    if ((await driver.isLocked()) === locked) {
-      return;
-    }
-    if (!locked && !retriedHome && Date.now() - started >= 1000) {
-      await simulator.pressHidButton(12, 64);
-      retriedHome = true;
-    }
-    await delay(100);
-  }
-  throw new errors.UnknownError(`Timed out waiting for the simulator to ${locked ? 'lock' : 'unlock'}`);
+  await waitForCondition(
+    async () => {
+      if ((await driver.isLocked()) === locked) {
+        return true;
+      }
+      if (!locked && !retriedHome && Date.now() - started >= 1000) {
+        await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu);
+        retriedHome = true;
+      }
+      return false;
+    },
+    {
+      waitMs: 5000,
+      intervalMs: 100,
+      error: new errors.UnknownError(`Timed out waiting for the simulator to ${locked ? 'lock' : 'unlock'}`),
+    },
+  );
 }

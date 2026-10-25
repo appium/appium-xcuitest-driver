@@ -28,13 +28,25 @@ The simulated hinge angle can be read and changed through the
 [`mobile: setSimulatedHingeAngle`](../reference/execute-methods.md#mobile-setsimulatedhingeangle)
 extensions. Simulator Home, lock/unlock, and hinge changes use the Mac-side
 `@appium/coresim` HID service through `appium-ios-simulator`. Hinge readings remain
-in WDA. Orientation and rotation commands continue to use WDA on both simulators and
+in WDA. Orientation and rotation commands use WDA on both simulators and
 physical devices because WDA's internal animation-stability wait and orientation
 verification are required. Physical devices use XCTest for button commands;
 simulated hinge changes are unsupported.
+
+## Device Limitations
+
+* `mobile: setSimulatedHingeAngle` only supports simulators. `mobile: getSimulatedHingeAngle`
+  supports both simulators and real devices with an available hinge sensor and CoreMotion readings.
+* `mobile: performIoHidEvent` has reported failures on real Duo devices. On the Duo simulator
+  with Xcode 27.1 / iOS 27.1, tests of Home, Power, volume up/down, Mute, Snapshot, and keyboard
+  A/Backspace returned success after XCTest timed out waiting for event completion. Home,
+  Power, Snapshot, and keyboard input had no observed effect; volume and mute changes could
+  not be confirmed. A successful command response alone does not establish that the event
+  was applied. See the [Duo findings](https://github.com/appium/appium/issues/22857).
 
 ## Related Tickets
 
 * [Duo WDA startup support](https://github.com/appium/appium-xcuitest-driver/pull/3000)
 * [Simulated hinge angle commands](https://github.com/appium/appium-xcuitest-driver/pull/3001)
 * [WDA hinge angle support](https://github.com/appium/WebDriverAgent/pull/1287)
+* [Duo simulator and real-device findings](https://github.com/appium/appium/issues/22857)

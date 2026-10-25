@@ -104,6 +104,29 @@ describe('host simulator HID routing', () => {
       }
     }
   });
+  it('retries Home once while waiting for unlock', async () => {
+    const {driver, device} = setup();
+    sinon.stub(Date, 'now').onFirstCall().returns(0).returns(2000);
+    const locked = sinon.stub(driver, 'isLocked').resolves(false);
+    locked.onCall(0).resolves(true);
+    locked.onCall(1).resolves(true);
+    locked.onCall(2).resolves(true);
+    await driver.unlock();
+    assert.deepEqual(device.pressHidButton.args, [
+      [12, 64],
+      [12, 64],
+    ]);
+  });
+  it('preserves read and transport errors during lock polling', async () => {
+    const {driver, device} = setup();
+    const failure = new Error('WDA disconnected');
+    const locked = sinon.stub(driver, 'isLocked').onFirstCall().resolves(false);
+    locked.onSecondCall().rejects(failure);
+    await assert.rejects(driver.lock(), (err) => err === failure);
+    locked.resolves(false);
+    device.pressHidButton.rejects(failure);
+    await assert.rejects(driver.lock(), (err) => err === failure);
+  });
   it('locks and unlocks only when a state change is required', async () => {
     const {driver, device} = setup();
     const locked = sinon.stub(driver, 'isLocked');

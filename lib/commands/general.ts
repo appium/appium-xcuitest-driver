@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 
 import {getDuoSimulator} from './helpers/duo.js';
+import {HIDPageEvent, HIDUsageConsumerEvent} from './hid-event.js';
 
 dayjs.extend(utc);
 
@@ -188,7 +189,7 @@ export async function mobilePressButton(
   if (name.toLowerCase() === 'home') {
     const simulator = await getDuoSimulator(this);
     if (simulator) {
-      return await simulator.pressHidButton(12, 64);
+      return await simulator.pressHidButton(HIDPageEvent.kHIDPage_Consumer, HIDUsageConsumerEvent.kHIDUsage_Csmr_Menu);
     }
   }
   return await this.proxyCommand('/wda/pressButton', 'POST', {name, duration: durationSeconds});
