@@ -1,6 +1,3 @@
-import {setTimeout as delay} from 'node:timers/promises';
-
-import type {SupportsDuo} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
@@ -105,72 +102,4 @@ export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: 
     throw new errors.UnsupportedOperationError('Setting the hinge angle requires an iPhone Duo Simulator on Xcode 27+');
   }
   await withDuoArgumentErrors(() => simulator.setSimulatedHingeAngle(angle));
-}
-
-const ORIENTATIONS = {
-  PORTRAIT: 'portrait',
-  LANDSCAPE: 'landscape-left',
-  UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT: 'landscape-right',
-  UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN: 'portrait-upside-down',
-} as const;
-
-async function rotateDuo(
-  driver: XCUITestDriver,
-  orientation: Parameters<SupportsDuo['setHidOrientation']>[0],
-): Promise<boolean> {
-  const simulator = await getDuoSimulator(driver);
-  if (!simulator) {
-    return false;
-  }
-  const displays = await driver.mobileListDisplays();
-  const {currentDisplayId} = driver.settings.getSettings();
-  const display =
-    currentDisplayId == null
-      ? displays.find(({isDefault}) => isDefault)
-      : displays.find(({id}) => id === currentDisplayId);
-  if (!display) {
-    throw new errors.InvalidArgumentError(`Display '${currentDisplayId}' is unavailable`);
-  }
-  await withDuoArgumentErrors(() => simulator.setHidOrientation(orientation, display.isDefault));
-  await waitForDuoRotation(driver, ROTATION_Z[orientation]);
-  return true;
-}
-
-const ROTATION_Z = {portrait: 0, 'portrait-upside-down': 180, 'landscape-left': 270, 'landscape-right': 90} as const;
-
-/**
- * Poll WDA for the requested app-scene rotation after sending Duo simulator HID through CoreSim.
- * This route bypasses WDA's rotation setter and its internal animation-stability wait and
- * orientation verification. CoreSim confirms HID submission only and provides no equivalent
- * rotation-completion check, so poll GET /rotation until the reported angle matches.
- * Matching the angle does not guarantee that the rotation animation has finished.
- */
-async function waitForDuoRotation(driver: XCUITestDriver, z: number): Promise<void> {
-  const deadline = Date.now() + 5000;
-  do {
-    const rotation = (await driver.proxyCommand('/rotation', 'GET')) as {x: number; y: number; z: number} | null;
-    if (rotation?.x === 0 && rotation?.y === 0 && rotation?.z === z) {
-      return;
-    }
-    await delay(100);
-  } while (Date.now() < deadline);
-  throw new errors.InvalidElementStateError(`The app did not rotate to ${z} degrees within 5000 ms`);
-}
-
-/** Submit Duo's host control, then read the app scene without changing XCTest's orientation. */
-export async function setOrientation(this: XCUITestDriver, orientation: string): Promise<void> {
-  const target = ORIENTATIONS[orientation.toUpperCase() as keyof typeof ORIENTATIONS];
-  if (target && (await rotateDuo(this, target))) {
-    return;
-  }
-  await this.proxyCommand('/orientation', 'POST', {orientation});
-}
-
-export async function setRotation(this: XCUITestDriver, x: number, y: number, z: number): Promise<void> {
-  const targets = {0: 'portrait', 90: 'landscape-right', 180: 'portrait-upside-down', 270: 'landscape-left'} as const;
-  const target = targets[z as keyof typeof targets];
-  if (x === 0 && y === 0 && target && (await rotateDuo(this, target))) {
-    return;
-  }
-  await this.proxyCommand('/rotation', 'POST', {x, y, z});
 }

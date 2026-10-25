@@ -7,7 +7,7 @@ import {getSimulator} from 'appium-ios-simulator';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 // Opt-in host/WDA integration. Supply a booted Duo, an already running WDA,
-// and an installed test app supporting both portrait and landscape orientations.
+// and an installed test app.
 const {DUO_UDID, DUO_TEST_BUNDLE_ID, DUO_WDA_URL} = process.env;
 it(
   'host HID controls across closed, book and open Duo poses',
@@ -42,7 +42,6 @@ it(
     driver.proxyCommand = (async (path: string, method: string, data?: unknown) =>
       (await request(`/session/${sessionId}${path}`, method, data)).value) as typeof driver.proxyCommand;
     const originalAngle = await driver.mobileGetSimulatedHingeAngle();
-    const originalDeviceOrientation = await driver.proxyCommand('/wda/deviceOrientation', 'GET');
     async function waitFor(check: () => Promise<boolean>): Promise<void> {
       const until = Date.now() + 5000;
       do {
@@ -71,15 +70,6 @@ it(
           async () =>
             Number(await driver.proxyCommand('/wda/apps/state', 'POST', {bundleId: DUO_TEST_BUNDLE_ID})) === 4,
         );
-        for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
-          await driver.setOrientation(orientation);
-          assert.equal(await driver.proxyCommand('/orientation', 'GET'), orientation);
-        }
-        for (const z of [90, 270]) {
-          await driver.setRotation(0, 0, z);
-          assert.deepEqual(await driver.proxyCommand('/rotation', 'GET'), {x: 0, y: 0, z});
-        }
-        assert.equal(await driver.proxyCommand('/wda/deviceOrientation', 'GET'), originalDeviceOrientation);
         await driver.mobilePressButton('home');
         await waitFor(
           async () => Number(await driver.proxyCommand('/wda/apps/state', 'POST', {bundleId: DUO_TEST_BUNDLE_ID})) < 4,

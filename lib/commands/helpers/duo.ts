@@ -12,7 +12,7 @@ export async function getDuoSimulator(driver: XCUITestDriver): Promise<(Simulato
   if (typeof simulator.isDuo !== 'function' || !(await simulator.isDuo())) {
     return undefined;
   }
-  if (typeof simulator.setSimulatedHingeAngle !== 'function' || typeof simulator.setHidOrientation !== 'function') {
+  if (typeof simulator.setSimulatedHingeAngle !== 'function') {
     return undefined;
   }
   return simulator as Simulator & SupportsDuo;

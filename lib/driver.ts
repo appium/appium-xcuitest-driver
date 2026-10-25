@@ -182,9 +182,10 @@ const WEB_ELEMENTS_CACHE_SIZE = 500;
 const SUPPORTED_ORIENATIONS = ['LANDSCAPE', 'PORTRAIT'];
 
 /* eslint-disable no-useless-escape */
+// Keep orientation and rotation commands proxied to WDA, including on Duo simulators.
+// WDA's internal animation-stability wait and orientation verification are required;
+// CoreSim HID submission alone does not provide equivalent completion guarantees.
 const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
-  ['POST', /\/orientation$/],
-  ['POST', /\/rotation$/],
   ['DELETE', /window/],
   ['GET', /^\/session\/[^\/]+$/],
   ['GET', /alert_text/],
@@ -524,8 +525,6 @@ export class XCUITestDriver
   getViewportRect = displayCommands.getViewportRect;
   getScreenInfo = displayCommands.getScreenInfo;
   mobileListDisplays = displayCommands.mobileListDisplays;
-  setOrientation = displayCommands.setOrientation;
-  setRotation = displayCommands.setRotation;
   getStatusBarHeight = displayCommands.getStatusBarHeight;
   getDevicePixelRatio = displayCommands.getDevicePixelRatio;
   mobileSetSimulatedHingeAngle = displayCommands.mobileSetSimulatedHingeAngle;
@@ -1628,7 +1627,7 @@ export class XCUITestDriver
 
     this.log.debug(`Setting initial orientation to '${dstOrientation}'`);
     try {
-      await this.setOrientation(dstOrientation);
+      await this.proxyCommand('/orientation', 'POST', {orientation: dstOrientation});
     } catch (err) {
       this.log.warn(`Setting initial orientation failed with: ${(err as Error).message}`);
     }
