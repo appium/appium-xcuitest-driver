@@ -1,3 +1,9 @@
+## [12.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.20.0...v12.21.0) (2026-10-26)
+
+### Features
+
+* add keyboardWaitTimeout setting ([#3073](https://github.com/appium/appium-xcuitest-driver/issues/3073)) ([7f4bcbd](https://github.com/appium/appium-xcuitest-driver/commit/7f4bcbd27209dcdad2300cd285274a8fac61f0da))
+
 ## [12.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.19.1...v12.20.0) (2026-10-22)
 
 ### Features
