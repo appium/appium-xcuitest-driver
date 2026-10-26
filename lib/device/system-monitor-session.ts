@@ -53,10 +53,15 @@ export class SystemMonitorSession {
     const dvt = await this.remoteXPCFacade.requireService('system monitor', (Services) =>
       Services.startDVTService(this.udid),
     );
-    this.dvt = dvt;
     if (options.intervalMs !== undefined) {
-      await dvt.sysmontap.configure({intervalMs: options.intervalMs});
+      try {
+        await dvt.sysmontap.configure({intervalMs: options.intervalMs});
+      } catch (err) {
+        await this.closeDvt(dvt);
+        throw err;
+      }
     }
+    this.dvt = dvt;
     this.runPromise = this.consumeEvents(dvt, eventEmitter);
   }
 
@@ -104,6 +109,10 @@ export class SystemMonitorSession {
       }
     } finally {
       await this.closeDvt(dvt);
+      if (this.dvt === dvt) {
+        this.dvt = null;
+        this.runPromise = null;
+      }
     }
   }
 
