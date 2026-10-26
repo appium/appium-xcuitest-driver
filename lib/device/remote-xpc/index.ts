@@ -1,8 +1,8 @@
 export {
-  formatRemoteXPCFallbackLog,
   formatTunnelAvailabilityMessage,
-  isRemoteXPCUnavailableError,
   isTunnelAvailabilityError,
+  isTunnelRequiredError,
+  TunnelRequiredError,
 } from './utils.js';
-export type {RemoteXPCServices} from './utils.js';
+export type {RemoteXPCServices, TransportTier} from './utils.js';
 export {RemoteXPCFacade} from './facade.js';

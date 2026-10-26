@@ -28,11 +28,11 @@ In order to setup and launch WDA, please check the provided steps in the
 WebDriverAgent application acts as a REST server, which proxies external API requests to native
 XCTest calls for your application under test. The server address will be `localhost` if you run your
 tests on a simulator, or the actual phone IP address in case of real device. Appium uses
-[`appium-ios-device`](https://github.com/appium/appium-ios-device) to route network requests to a
+[`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) to route network requests to a
 real device from `localhost` via USB, which means one can use this tool to unify the WDA network
 addresses for a simulator and real device.
 
-You can use `appium-ios-device` to connect to a remote device by requiring the module from your
+You can use `appium-ios-remotexpc` to connect to a remote device by importing the module from your
 JavaScript code. Alternatively, you can use [`iproxy`](https://github.com/libimobiledevice/libusbmuxd#iproxy),
 [`go-ios`](https://github.com/danielpaulus/go-ios) or [`tidevice`](https://github.com/alibaba/taobao-iphone-device)
 to handle the WDA process outside Appium, by installing and launching the WDA package. For instance,

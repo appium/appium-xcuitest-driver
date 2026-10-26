@@ -7,6 +7,7 @@ import {util, timing} from 'appium/support.js';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log.js';
 import type {SafariConsoleEntry, SafariConsoleLog} from '../device/log/safari-console-log.js';
 import type {SafariNetworkLogEntry, SafariNetworkLog} from '../device/log/safari-network-log.js';
+import {formatTunnelAvailabilityMessage, isTunnelAvailabilityError} from '../device/remote-xpc/index.js';
 import type {XCUITestDriver} from '../driver.js';
 import type {Page} from '../types.js';
 import {isEmpty} from '../utils/index.js';
@@ -167,7 +168,15 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
   });
 
   const timeoutMs = this.opts.webviewConnectTimeout ?? DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS;
-  const apps = await this.remote.connect(timeoutMs);
+  let apps: Awaited<ReturnType<typeof this.remote.connect>>;
+  try {
+    apps = await this.remote.connect(timeoutMs);
+  } catch (err) {
+    if (isTunnelAvailabilityError(err)) {
+      throw new Error(formatTunnelAvailabilityMessage(err), {cause: err});
+    }
+    throw err;
+  }
   if (isEmpty(apps)) {
     this.log.info(
       `The remote debugger did not report any active web applications within ${timeoutMs}ms timeout. ` +
@@ -453,14 +462,20 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect) ? !!this.opts.safariGarbageCollect : false,
     logAllCommunication: this.opts.safariLogAllCommunication,
     logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
-    socketChunkSize: this.opts.safariSocketChunkSize,
     webInspectorMaxFrameLength: this.opts.safariWebInspectorMaxFrameLength,
     pageLoadStrategy: this.caps.pageLoadStrategy,
   };
 
-  return isRealDevice
-    ? createRemoteDebugger({...baseOpts, udid: this.opts.udid as string}, true)
-    : createRemoteDebugger(baseOpts, false);
+  if (!isRealDevice) {
+    return createRemoteDebugger(baseOpts, false);
+  }
+
+  if (util.hasValue(this.opts.safariWebInspectorMaxFrameLength)) {
+    this.log.warn(`The 'appium:safariWebInspectorMaxFrameLength' capability has no effect on real devices`);
+  }
+  // The tunnel is preferred; the tier falls back to usbmux only when no tunnel is available
+  const transport = await this.remoteXPCFacade.getTier();
+  return createRemoteDebugger({...baseOpts, udid: this.opts.udid as string, transport}, true);
 }
 
 /**

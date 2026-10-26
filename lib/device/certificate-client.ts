@@ -13,10 +13,6 @@ export interface InstallCertificateOptions {
 
 /**
  * Certificate (MDM profile) operations on real devices using RemoteXPC.
- *
- * Requires **iOS/tvOS 18+**, the optional **`appium-ios-remotexpc`** package, and
- * {@link CertificateClient.create} to be called with `useRemoteXPC: true` (typically from
- * `supportsApiLevel18` after session startup).
  */
 export class CertificateClient {
   private readonly mobileConfigService: RemoteXPCMobileConfigService;
@@ -32,19 +28,12 @@ export class CertificateClient {
    *
    * @param udid - Device UDID
    * @param log - Appium logger instance
-   * @param useRemoteXPC - Must be `true` for this client; callers derive this from `supportsApiLevel18(opts)` after `start()`
-   * @throws {Error} If `useRemoteXPC` is false, or RemoteXPC/mobile config setup fails
+   * @param facade - RemoteXPC facade of the session
+   * @throws {Error} If the mobile config service cannot be started
    */
-  static async create(udid: string, log: AppiumLogger, facade: RemoteXPCFacade | null): Promise<CertificateClient> {
-    if (!facade) {
-      throw new Error(
-        'Real device SSL/certificate operations require iOS/tvOS 18 or newer with the optional ' +
-          'appium-ios-remotexpc package installed.',
-      );
-    }
-
-    const mobileConfigService = await facade.requireService('mobile config', (Services) =>
-      Services.startMobileConfigService(udid),
+  static async create(udid: string, log: AppiumLogger, facade: RemoteXPCFacade): Promise<CertificateClient> {
+    const mobileConfigService = await facade.requireService('mobile config', (Services, options) =>
+      Services.startMobileConfigService(udid, options),
     );
     return new CertificateClient(mobileConfigService, log);
   }

@@ -2,153 +2,98 @@ import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder, LockdownService} from 'appium-ios-remotexpc';
 
 import {supportsApiLevel18} from '../../utils/index.js';
-import {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader.js';
+import {loadRemoteXPCModule} from './module-loader.js';
 import {isDeviceListedInUsbmux} from './usbmux-utils.js';
 import {
-  formatRemoteXPCFallbackLog,
   isTunnelAvailabilityError,
-  RemoteXPCUnavailableError,
+  REMOTE_XPC_TUNNEL_SETUP_DOC_LINK,
+  TUNNEL_CREATION_COMMAND,
+  TunnelRequiredError,
   wrapRemoteXPCConnectionError,
   type RemoteXPCEsmModule,
   type RemoteXPCServices,
   type RemoteXPCTestAttachment,
   type RemoteXPCTestRunner,
+  type TransportTier,
 } from './utils.js';
 
-const TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS = 3000;
+/** Options handed to service operations so that every `Services.start*` call uses the session tier. */
+export interface SessionServiceOptions {
+  transport: TransportTier;
+}
 
 /**
- * Per-driver-session RemoteXPC availability state.
- *
- * Initialized lazily on the first remotexpc operation. When the initial tunnel registry probe
- * fails with {@link isTunnelAvailabilityError}, remotexpc is disabled for the remainder of the
- * session so callers fall back without re-probing on every service call.
- * Later per-operation tunnel failures do not flip that cached state.
+ * Per-session RemoteXPC state. The transport tier (tunnel if available, else the temporary usbmux
+ * fallback) is decided once and cached for the whole session.
  */
 export class RemoteXPCFacade {
   private initPromise: Promise<void> | null = null;
-  private initialized = false;
-  private enabled = false;
   private module: RemoteXPCEsmModule | null = null;
-  private services: RemoteXPCServices | null = null;
-  private useUsbMuxPath = false;
-  private sessionFallbackLogged = false;
-  private lastImportError: Error | null = null;
+  private _tier: TransportTier | null = null;
+  private listedInUsbmux = false;
 
   constructor(
     readonly udid: string,
     private readonly platformVersion: string | undefined,
     private readonly log: AppiumLogger,
-    private readonly isRealDevice: boolean,
   ) {}
 
-  get eligible(): boolean {
-    return this.isRealDevice && supportsApiLevel18(this.platformVersion);
-  }
-
-  static async tryGetServicesStatic(platformVersion: string | null | undefined): Promise<RemoteXPCServices | null> {
-    if (platformVersion && !supportsApiLevel18(platformVersion)) {
-      return null;
-    }
-    const mod = await tryLoadRemoteXPCModule();
-    if (!mod) {
-      return null;
-    }
-    return mod.Services;
-  }
-
   /**
-   * Whether remotexpc should be used for service operations in this session.
+   * Resolves (once) which transport serves this session.
+   *
+   * @throws When the module cannot be loaded or the device is reachable neither through a tunnel nor over usbmux
    */
-  async determineAvailability(): Promise<boolean> {
+  async getTier(): Promise<TransportTier> {
     await this.ensureInitialized();
-    return this.enabled;
+    if (!this._tier) {
+      throw new Error(`The transport tier for '${this.udid}' has not been determined`);
+    }
+    return this._tier;
   }
 
   /**
-   * Loaded remotexpc Services export when {@link determineAvailability} is true.
+   * Whether the session runs on the RemoteXPC tunnel (as opposed to the usbmux fallback).
    */
-  async getServices(): Promise<RemoteXPCServices> {
-    await this.ensureInitialized();
-    if (!this.enabled || !this.services) {
-      throw new Error(`RemoteXPC is not available for device '${this.udid}' in this session`);
-    }
-    return this.services;
-  }
-
-  async tryGetServices(): Promise<RemoteXPCServices | null> {
-    if (!(await this.determineAvailability())) {
-      return null;
-    }
-    return this.services;
+  async isTunnelTier(): Promise<boolean> {
+    return (await this.getTier()) === 'tunnel';
   }
 
   /**
-   * XCTestRunner class from the loaded module.
+   * XCTestRunner class from the loaded module. Tunnel only.
    */
   async getXCTestRunner(): Promise<RemoteXPCTestRunner> {
+    await this.assertTunnelTier('XCTest');
     return (await this.requireModule()).XCTestRunner;
   }
 
   /**
-   * XCTestAttachment class from the loaded module.
+   * XCTestAttachment class from the loaded module. Tunnel only.
    */
   async getXCTestAttachment(): Promise<RemoteXPCTestAttachment> {
+    await this.assertTunnelTier('XCTest attachment deletion');
     return (await this.requireModule()).XCTestAttachment;
   }
 
   /**
-   * Resolves which RemoteXPC lockdown connector to use for this device.
-   *
-   * @throws When RemoteXPC lockdown cannot be used
+   * Resolves which RemoteXPC lockdown connector to use for this device (plain lockdownd queries,
+   * which are not subject to the removal of the legacy lockdown services).
    */
   async resolveLockdownStrategy(): Promise<'remotexpc-usbmux' | 'remotexpc-tunnel'> {
-    if (!this.eligible) {
-      throw new RemoteXPCUnavailableError();
-    }
-
-    try {
-      await this.requireModule();
-    } catch {
-      throw new RemoteXPCUnavailableError();
-    }
-
-    if (this.useUsbMuxPath) {
-      return 'remotexpc-usbmux';
-    }
-
-    return 'remotexpc-tunnel';
+    await this.requireModule();
+    return (await this.isListedInUsbmux()) ? 'remotexpc-usbmux' : 'remotexpc-tunnel';
   }
 
   /**
-   * Creates a RemoteXPC device port forwarder when eligible and available.
-   *
-   * @throws When RemoteXPC port forwarding cannot be used
+   * Creates a RemoteXPC device port forwarder.
    */
   async createDevicePortForwarder(localPort: number, devicePort: number): Promise<DevicePortForwarder> {
-    if (!this.eligible) {
-      throw new RemoteXPCUnavailableError();
-    }
-
-    let mod: RemoteXPCEsmModule;
-    try {
-      mod = await this.requireModule();
-    } catch {
-      throw new RemoteXPCUnavailableError();
-    }
-
-    if (this.useUsbMuxPath) {
+    const mod = await this.requireModule();
+    // a failed usbmuxd query is reported as "not listed", so the session tier is the second opinion
+    if ((await this.isListedInUsbmux()) || (await this.getTier()) === 'usbmux') {
       this.log.debug(`Using RemoteXPC usbmux strategy for '${this.udid}'`);
       return new mod.DevicePortForwarder(localPort, devicePort, {
         primaryConnector: () => mod.connectViaUsbmux(this.udid, devicePort),
       });
-    }
-
-    if (!(await this.determineAvailability())) {
-      throw wrapRemoteXPCConnectionError(
-        new Error('RemoteXPC tunnel is not available for this session'),
-        `Cannot create port forwarder via RemoteXPC tunnel for '${this.udid}'`,
-      );
     }
 
     this.log.debug(`Using RemoteXPC tunnel strategy for '${this.udid}'`);
@@ -200,121 +145,133 @@ export class RemoteXPCFacade {
   }
 
   /**
-   * Runs a RemoteXPC service operation when the session allows it.
-   *
-   * Tunnel availability failures during an operation are logged and return `null` without
-   * disabling remotexpc for the session (unlike the one-time init probe).
-   * Other failures are logged per call and also return `null` so callers can fall back once.
+   * Runs an operation on a service that either tier can serve; it must pass the received `{transport}`
+   * to the `Services.start*` call.
    */
-  async attemptService<T>(feature: string, operation: (services: RemoteXPCServices) => Promise<T>): Promise<T | null> {
-    if (!(await this.determineAvailability())) {
-      return null;
-    }
+  async requireService<T>(
+    feature: string,
+    operation: (services: RemoteXPCServices, options: SessionServiceOptions) => Promise<T>,
+  ): Promise<T> {
+    const tier = await this.getTier();
     try {
-      return await operation(await this.getServices());
+      return await operation((await this.requireModule()).Services, {transport: tier});
     } catch (err) {
-      this.handleServiceError(feature, err, 'log');
-      return null;
+      throw this.wrapServiceError(feature, tier, err);
     }
   }
 
   /**
-   * Runs a RemoteXPC service operation when the session allows it.
+   * Runs an operation on a tunnel-only service.
    *
-   * @throws When remotexpc is disabled for the session or the operation fails.
+   * @throws {TunnelRequiredError} When the session runs without a tunnel
    */
-  async requireService<T>(feature: string, operation: (services: RemoteXPCServices) => Promise<T>): Promise<T> {
-    if (!(await this.determineAvailability())) {
-      throw wrapRemoteXPCConnectionError(
-        this.lastImportError ?? new Error('RemoteXPC is not available for this session'),
-        `Failed ${feature} via RemoteXPC for '${this.udid}'`,
-      );
-    }
+  async requireTunnelService<T>(feature: string, operation: (services: RemoteXPCServices) => Promise<T>): Promise<T> {
+    await this.assertTunnelTier(feature);
     try {
-      return await operation(await this.getServices());
+      return await operation((await this.requireModule()).Services);
     } catch (err) {
-      this.handleServiceError(feature, err, 'throw');
-      throw wrapRemoteXPCConnectionError(err, `Failed ${feature} via RemoteXPC for '${this.udid}'`);
+      throw this.wrapServiceError(feature, 'tunnel', err);
     }
   }
 
   /**
-   * Disable remotexpc for the remainder of this session after the initial tunnel registry probe fails.
+   * @throws {TunnelRequiredError} When the session runs without a tunnel
    */
-  noteTunnelUnavailable(feature: string, err: unknown): void {
-    if (!isTunnelAvailabilityError(err)) {
-      return;
+  async assertTunnelTier(feature: string): Promise<void> {
+    if ((await this.getTier()) !== 'tunnel') {
+      throw new TunnelRequiredError(feature, this.udid, this.platformVersion);
     }
-    this.enabled = false;
-    this.services = null;
-    if (!this.sessionFallbackLogged) {
-      this.log.warn(formatRemoteXPCFallbackLog(feature, err));
-      this.sessionFallbackLogged = true;
-    } else {
-      this.log.debug(`RemoteXPC ${feature} skipped: tunnel unavailable for this session`);
+  }
+
+  private wrapServiceError(feature: string, tier: TransportTier, err: unknown): Error {
+    if (err instanceof TunnelRequiredError) {
+      return err;
     }
+    // e.g. UnsupportedTransportError: the service cannot be served over usbmux
+    if (tier === 'usbmux' && isTunnelAvailabilityError(err)) {
+      return new TunnelRequiredError(feature, this.udid, this.platformVersion);
+    }
+    return wrapRemoteXPCConnectionError(err, `Failed ${feature} via RemoteXPC for '${this.udid}'`);
   }
 
   private async ensureInitialized(): Promise<void> {
-    if (this.initialized) {
+    if (this._tier) {
       return;
     }
     if (!this.initPromise) {
-      this.initPromise = this.initialize();
+      this.initPromise = (async () => {
+        try {
+          await this.initialize();
+        } catch (err) {
+          // do not cache failures: the device may become reachable later
+          this.initPromise = null;
+          throw err;
+        }
+      })();
     }
     await this.initPromise;
-    this.initialized = true;
   }
 
   private async initialize(): Promise<void> {
-    if (!this.eligible) {
+    const mod = await this.requireModule();
+
+    // The tunnel service names (`*.shim.remote`) only exist on iOS/tvOS 18+
+    const tunnelCapable = !this.platformVersion || supportsApiLevel18(this.platformVersion);
+    // no point in waiting for a tunnel that cannot serve this device
+    const {tunnel, usbmux} = await mod.Services.getAvailableTransports(
+      this.udid,
+      [],
+      tunnelCapable ? {} : {tunnelWaitMs: 0},
+    );
+
+    if (tunnel && tunnelCapable) {
+      this._tier = 'tunnel';
+      this.log.debug(`RemoteXPC tier for '${this.udid}': tunnel`);
       return;
     }
-
-    const loadedModule = await tryLoadRemoteXPCModule();
-    if (!loadedModule) {
-      const err = getLastRemoteXPCImportError();
-      this.lastImportError = err;
-      this.log.warn(`appium-ios-remotexpc unavailable for '${this.udid}': ${err?.message ?? 'unknown'}`);
+    if (usbmux) {
+      this._tier = 'usbmux';
+      this.log.warn(this.formatUsbmuxTierWarning(tunnelCapable));
       return;
     }
+    throw new Error(
+      `The device '${this.udid}' is reachable neither through a RemoteXPC tunnel nor over usbmux. ` +
+        `Make sure it is connected, unlocked and trusts this computer` +
+        (tunnelCapable ? `, or start tunnels with \`${TUNNEL_CREATION_COMMAND}\`.` : '.'),
+    );
+  }
 
-    this.module = loadedModule;
-    this.useUsbMuxPath = await isDeviceListedInUsbmux(loadedModule, this.udid, this.log);
+  private formatUsbmuxTierWarning(tunnelCapable: boolean): string {
+    const reason = tunnelCapable
+      ? 'No RemoteXPC tunnel is available'
+      : `iOS/tvOS ${this.platformVersion} does not support the RemoteXPC tunnel services`;
+    const hint = tunnelCapable ? ` Start tunnels with \`${TUNNEL_CREATION_COMMAND}\`.` : '';
+    return (
+      `${reason} for '${this.udid}'. Falling back to the legacy lockdown services over usbmux, which is ` +
+      `temporary and limited: features that need a tunnel (e.g. crash reports, pasteboard, XCTest, ` +
+      `DVT-based features) will fail.${hint} See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
+    );
+  }
 
-    try {
-      await loadedModule.Services.getTunnelForDevice(this.udid, {
-        waitMs: TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS,
-      });
-      this.services = loadedModule.Services;
-      this.enabled = true;
-      this.log.debug(`RemoteXPC enabled for '${this.udid}' (tunnel registry reachable)`);
-    } catch (err) {
-      this.noteTunnelUnavailable('session initialization', err);
+  /** Only a positive answer is cached, so a transient usbmuxd failure does not stick for the session. */
+  private async isListedInUsbmux(): Promise<boolean> {
+    if (!this.listedInUsbmux) {
+      this.listedInUsbmux = await isDeviceListedInUsbmux(await this.requireModule(), this.udid, this.log);
     }
+    return this.listedInUsbmux;
   }
 
   private async requireModule(): Promise<RemoteXPCEsmModule> {
-    await this.ensureInitialized();
-    if (!this.module) {
-      throw wrapRemoteXPCConnectionError(
-        this.lastImportError ?? new Error('appium-ios-remotexpc is not available'),
-        `RemoteXPC module is not available for '${this.udid}'`,
-      );
+    if (this.module) {
+      return this.module;
     }
-    return this.module;
-  }
-
-  private handleServiceError(feature: string, err: unknown, onNonTunnelFailure: 'log' | 'throw'): void {
-    const message = formatRemoteXPCFallbackLog(feature, err);
-    if (isTunnelAvailabilityError(err)) {
-      if (onNonTunnelFailure === 'log') {
-        this.log.warn(message);
-      }
-      return;
+    let loadedModule: RemoteXPCEsmModule;
+    try {
+      loadedModule = await loadRemoteXPCModule();
+    } catch (err) {
+      throw wrapRemoteXPCConnectionError(err, `RemoteXPC module is not available for '${this.udid}'`);
     }
-    if (onNonTunnelFailure === 'log') {
-      this.log.error(message);
-    }
+    this.module = loadedModule;
+    return loadedModule;
   }
 }

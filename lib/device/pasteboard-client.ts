@@ -5,7 +5,7 @@ import type {RemoteXPCFacade} from './remote-xpc/index.js';
 /**
  * Pasteboard service on real hardware.
  *
- * Requires **iOS/tvOS 17+** and the optional **`appium-ios-remotexpc`** package.
+ * Requires **iOS/tvOS 17+** and a RemoteXPC tunnel.
  */
 export class PasteboardClient {
   constructor(
@@ -49,7 +49,7 @@ export class PasteboardClient {
   }
 
   private async withPasteboardService<T>(operation: (pasteboardService: PasteboardService) => Promise<T>): Promise<T> {
-    const pasteboardService = await this.remoteXPCFacade.requireService('Pasteboard', (Services) =>
+    const pasteboardService = await this.remoteXPCFacade.requireTunnelService('Pasteboard', (Services) =>
       Services.startPasteboardService(this.udid),
     );
     try {

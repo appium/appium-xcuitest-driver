@@ -129,13 +129,6 @@ export function assertWdaHostPlatformSupported(driver: XCUITestDriver): void {
         `'appium:webDriverAgentUrl' for an externally managed WDA.`,
     );
   }
-
-  if (!driver.remoteXPCFacade.eligible) {
-    throw new Error(
-      `RemoteXPC is required to launch preinstalled WebDriverAgent from '${process.platform}', ` +
-        `but this session is not eligible for RemoteXPC.`,
-    );
-  }
 }
 
 function stringifyLaunchEnvironment(env: WdaLaunchEnvironment): Record<string, string> {
@@ -176,8 +169,9 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
   return {
     async launchPreinstalled({udid, bundleId, env}) {
       try {
-        const dvt = await driver.remoteXPCFacade.requireService('launch preinstalled WebDriverAgent', (Services) =>
-          Services.startDVTService(udid),
+        const dvt = await driver.remoteXPCFacade.requireTunnelService(
+          'launch preinstalled WebDriverAgent',
+          (Services) => Services.startDVTService(udid),
         );
         try {
           await dvt.processControl.launch({
@@ -215,8 +209,9 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
 
     async terminate({udid, bundleId}) {
       try {
-        const dvt = await driver.remoteXPCFacade.requireService('terminate preinstalled WebDriverAgent', (Services) =>
-          Services.startDVTService(udid),
+        const dvt = await driver.remoteXPCFacade.requireTunnelService(
+          'terminate preinstalled WebDriverAgent',
+          (Services) => Services.startDVTService(udid),
         );
         try {
           const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);

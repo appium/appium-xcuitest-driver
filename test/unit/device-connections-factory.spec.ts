@@ -4,7 +4,6 @@ import {describe, it, beforeEach} from 'node:test';
 import {logger} from 'appium/support.js';
 
 import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory.js';
-import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils.js';
 
 describe('DeviceConnectionsFactory', function () {
   let devConFactory: DeviceConnectionsFactory;
@@ -58,26 +57,38 @@ describe('DeviceConnectionsFactory', function () {
     );
   });
 
-  it('should use legacy port forwarding if RemoteXPC is ineligible', async function () {
+  it('should create a port forwarder through the RemoteXPC facade', async function () {
     const f = devConFactory as any;
-    const portForwarder = await f._createPortForwarder('udid', 1234, 8100, {eligible: false});
+    const calls: number[][] = [];
+    const remoteXPCFacade = {
+      createDevicePortForwarder: async (localPort: number, devicePort: number) => {
+        calls.push([localPort, devicePort]);
+        return {on() {}, off() {}, start: async () => {}, stop: async () => {}};
+      },
+    };
 
+    const portForwarder = await f._createPortForwarder(1234, 8100, remoteXPCFacade);
+
+    assert.deepStrictEqual(calls, [[1234, 8100]]);
     assert.strictEqual(typeof portForwarder.start, 'function');
     assert.strictEqual(typeof portForwarder.stop, 'function');
   });
 
-  it('should fall back to legacy port forwarding if RemoteXPC is unavailable', async function () {
+  it('should propagate forwarder creation failures instead of falling back', async function () {
     const f = devConFactory as any;
     const remoteXPCFacade = {
-      eligible: true,
       createDevicePortForwarder: async () => {
-        throw new RemoteXPCUnavailableError('No tunnel');
+        throw new Error('No tunnel');
       },
     };
 
-    const portForwarder = await f._createPortForwarder('udid', 1234, 8100, remoteXPCFacade);
+    await assert.rejects(f._createPortForwarder(1234, 8100, remoteXPCFacade), /No tunnel/);
+  });
 
-    assert.strictEqual(typeof portForwarder.start, 'function');
-    assert.strictEqual(typeof portForwarder.stop, 'function');
+  it('should require the RemoteXPC facade for port forwarding', async function () {
+    await assert.rejects(
+      devConFactory.requestConnection('udid', 59999, {usePortForwarding: true, devicePort: 8100}),
+      /RemoteXPC facade is required/,
+    );
   });
 });

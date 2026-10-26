@@ -20,7 +20,7 @@ declare module '../driver.js' {
  * Starts streaming DVT sysmontap (CPU / memory / per-process) samples to WebDriver BiDi subscribers
  * (`appium:xcuitest.systemMonitor`).
  *
- * Requires a real device on iOS/tvOS 18+ and appium-ios-remotexpc.
+ * Requires a real device on iOS/tvOS 18+ with a RemoteXPC tunnel.
  *
  * @see https://github.com/appium/appium-ios/tree/main/packages/remotexpc
  *

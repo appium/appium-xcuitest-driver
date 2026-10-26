@@ -19,7 +19,7 @@ declare module '../driver.js' {
 /**
  * Starts streaming DVT NetworkMonitor events to WebDriver BiDi subscribers (`appium:xcuitest.networkMonitor`).
  *
- * Requires a real device on iOS/tvOS 18+ and appium-ios-remotexpc.
+ * Requires a real device on iOS/tvOS 18+ with a RemoteXPC tunnel.
  *
  * @see https://github.com/appium/appium-ios/tree/main/packages/remotexpc
  *

@@ -1,6 +1,4 @@
 import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {services} from 'appium-ios-device';
 import type {SyslogService} from 'appium-ios-remotexpc';
 
 import type {RemoteXPCFacade} from '../remote-xpc/index.js';
@@ -10,27 +8,24 @@ export interface IOSDeviceLogOpts {
   udid: string;
   showLogs?: boolean;
   log: AppiumLogger;
-  remoteXPCFacade?: RemoteXPCFacade | null;
+  remoteXPCFacade: RemoteXPCFacade;
 }
 
 export class IOSDeviceLog extends LineConsumingLog {
   private readonly udid: string;
   private readonly showLogs: boolean;
-  private readonly remoteXPCFacade: RemoteXPCFacade | null;
-  // Legacy service (appium-ios-device)
-  private legacyService: any = null;
-  // RemoteXPC syslog service
+  private readonly remoteXPCFacade: RemoteXPCFacade;
   private syslogService: SyslogService | null = null;
 
   constructor(opts: IOSDeviceLogOpts) {
     super({log: opts.log});
     this.udid = opts.udid;
     this.showLogs = !!opts.showLogs;
-    this.remoteXPCFacade = opts.remoteXPCFacade ?? null;
+    this.remoteXPCFacade = opts.remoteXPCFacade;
   }
 
   override get isCapturing(): boolean {
-    return !!this.syslogService || !!this.legacyService;
+    return !!this.syslogService;
   }
 
   override async startCapture(): Promise<void> {
@@ -38,47 +33,24 @@ export class IOSDeviceLog extends LineConsumingLog {
       return;
     }
 
-    const facade = this.remoteXPCFacade;
-    if (facade && (await facade.determineAvailability())) {
-      const started = await facade.attemptService('syslog', async (Services) => {
-        const {syslogService, serviceDescriptor} = await Services.startSyslogTextService(this.udid);
+    try {
+      await this.remoteXPCFacade.requireService('syslog', async (Services, options) => {
+        const {syslogService, serviceDescriptor} = await Services.startSyslogTextService(this.udid, options);
         this.syslogService = syslogService;
         syslogService.on('message', this.onLog.bind(this));
         syslogService.on('error', (err: Error) => {
           this.log.warn(`Syslog RemoteXPC error: ${err.message}`);
         });
         await syslogService.start(serviceDescriptor, {pid: -1, textMode: true});
-        return true;
       });
-      if (started) {
-        this.log.info('Starting RemoteXPC syslog capture');
-        return;
-      }
-      await this.stopRemoteXPCCapture();
+    } catch (err) {
+      await this.stopCapture();
+      throw err;
     }
-
-    await this.startLegacyCapture();
+    this.log.info('Starting RemoteXPC syslog capture');
   }
 
   override async stopCapture(): Promise<void> {
-    await this.stopRemoteXPCCapture();
-    await this.stopLegacyCapture();
-  }
-
-  private async startLegacyCapture(): Promise<void> {
-    this.legacyService = await services.startSyslogService(this.udid);
-    this.legacyService.start(this.onLog.bind(this));
-  }
-
-  private async stopLegacyCapture(): Promise<void> {
-    if (!this.legacyService) {
-      return;
-    }
-    this.legacyService.close();
-    this.legacyService = null;
-  }
-
-  private async stopRemoteXPCCapture(): Promise<void> {
     if (!this.syslogService) {
       return;
     }

@@ -16,9 +16,8 @@ export interface ZipConduitInstallOptions {
  * Thin wrapper around the RemoteXPC streaming `zip_conduit` service.
  *
  * `zip_conduit` streams an `.ipa` straight into the on-device installer, avoiding the separate AFC upload +
- * `installation_proxy` round trip. It is RemoteXPC-only (iOS/tvOS 18+ with an
- * active tunnel) and only accepts `.ipa` archives, so callers must keep a
- * fallback for unpacked `.app` bundles and older devices.
+ * `installation_proxy` round trip. It only accepts `.ipa` archives, so callers must keep a
+ * fallback for unpacked `.app` bundles and for devices that do not support it.
  */
 export class ZipConduitClient {
   private _lastLoggedProgress?: {percent?: number; status?: string};
@@ -38,20 +37,17 @@ export class ZipConduitClient {
   static async create(
     udid: string,
     logger: AppiumLogger = log,
-    facade: RemoteXPCFacade | null,
+    facade: RemoteXPCFacade,
   ): Promise<ZipConduitClient | null> {
-    const service = facade
-      ? await facade.attemptService('zip_conduit', (Services) => {
-          if (typeof Services.startZipConduitService !== 'function') {
-            throw new Error('startZipConduitService is not available');
-          }
-          return Services.startZipConduitService(udid);
-        })
-      : null;
-    if (!service) {
+    try {
+      const service = await facade.requireService('zip_conduit', (Services, options) =>
+        Services.startZipConduitService(udid, options),
+      );
+      return new ZipConduitClient(service, logger);
+    } catch (err: any) {
+      logger.warn(`zip_conduit is unavailable, using the regular installation flow: ${err.message}`);
       return null;
     }
-    return new ZipConduitClient(service, logger);
   }
 
   /**

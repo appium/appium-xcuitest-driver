@@ -9,7 +9,7 @@ const MAX_FILES_IN_ERROR = 10;
 /**
  * Lists and exports device crash reports (`.ips`) on real hardware over RemoteXPC.
  *
- * Requires **iOS/tvOS 18+** and the optional **`appium-ios-remotexpc`** package.
+ * Requires **iOS/tvOS 18+** and a RemoteXPC tunnel.
  * Used by {@link IOSCrashLog} for BiDi / `crashlog` collection on real devices.
  */
 export class CrashReportsClient {
@@ -24,17 +24,14 @@ export class CrashReportsClient {
    *
    * @param udid - Real device UDID
    * @param facade - Per-session RemoteXPC facade
-   * @throws {Error} If RemoteXPC is disabled for the session or setup fails
+   * @throws {TunnelRequiredError} If the session runs without a tunnel
    */
   static async create(udid: string, facade: RemoteXPCFacade | null): Promise<CrashReportsClient> {
     if (!facade) {
-      throw new Error(
-        'Real device crash report access requires iOS/tvOS 18 or newer with the appium-ios-remotexpc ' +
-          'package installed.',
-      );
+      throw new Error('Real device crash report access requires the RemoteXPC session facade, which is not available.');
     }
 
-    const crashReportsService = await facade.requireService('crash reports', (Services) =>
+    const crashReportsService = await facade.requireTunnelService('crash reports', (Services) =>
       Services.startCrashReportsService(udid),
     );
     return new CrashReportsClient(crashReportsService);
