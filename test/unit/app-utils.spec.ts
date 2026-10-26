@@ -19,12 +19,6 @@ describe('app-utils', function () {
 
   describe('unzipStream', function () {
     it('should unzip from stream', async function () {
-      try {
-        await fs.which('bsdtar');
-      } catch {
-        return;
-      }
-
       const tmpDir = await tempDir.openDir();
       let appRoot;
       let srcStream;
@@ -45,12 +39,6 @@ describe('app-utils', function () {
     });
 
     it('should fail for invalid archives', async function () {
-      try {
-        await fs.which('bsdtar');
-      } catch {
-        return;
-      }
-
       const tmpDir = await tempDir.openDir();
       let srcStream;
       try {
@@ -97,12 +85,6 @@ describe('app-utils', function () {
 
   describe('onDownloadApp', function () {
     it('should select an .ipa nested in a remote .zip on a real device', async function () {
-      try {
-        await fs.which('bsdtar');
-      } catch {
-        return;
-      }
-
       const sandbox = sinon.createSandbox();
       const tmpDir = await tempDir.openDir();
       let resultPath: string | undefined;

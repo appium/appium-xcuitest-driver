@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import {spawn} from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
@@ -22,7 +21,6 @@ import type {XCUITestDriverConstraints} from '../../desired-caps.js';
 import {installToRealDevice, type RealDevice} from '../../device/real-device-management.js';
 import {installToSimulator} from '../../device/simulator-management.js';
 import type {XCUITestDriver} from '../../driver.js';
-import {log} from '../../logger.js';
 import {isEmpty, isPlainObject, isTvOs, isWatchOs} from '../../utils/index.js';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from '../constants.js';
 import type {AutInstallationState, AutInstallationStateOptions} from '../types.js';
@@ -43,7 +41,6 @@ const SAFARI_OPTS_ALIASES_MAP = {
   safariIgnoreFraudWarning: [['WarnAboutFraudulentWebsites'], (x: boolean) => Number(!x)],
   safariOpenLinksInBackground: [['OpenLinksInBackground'], (x: boolean) => Number(Boolean(x))],
 } as const;
-const MACOS_RESOURCE_FOLDER = '__MACOSX';
 
 export interface UnzipInfo {
   rootDir: string;
@@ -57,13 +54,9 @@ export interface UnzipInfo {
  * @returns Temporary folder root where the archive has been extracted
  */
 export async function unzipFile(archivePath: string): Promise<UnzipInfo> {
-  const useSystemUnzipEnv = process.env.APPIUM_PREFER_SYSTEM_UNZIP;
-  const useSystemUnzip =
-    isEmpty(useSystemUnzipEnv) || !['0', 'false'].includes(String(useSystemUnzipEnv).toLowerCase());
   const tmpRoot = await tempDir.openDir();
   try {
     await zip.extractAllTo(archivePath, tmpRoot, {
-      useSystemUnzip,
       // https://github.com/appium/appium/issues/14100
       fileNamesEncoding: 'utf8',
     });
@@ -79,62 +72,20 @@ export async function unzipFile(archivePath: string): Promise<UnzipInfo> {
 
 /**
  * Unzips a ZIP archive from a stream.
- * Uses bdstar tool for this purpose.
  * This allows to optimize the time needed to prepare the app under test
  * to MAX(download, unzip) instead of SUM(download, unzip)
  */
 export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   const tmpRoot = await tempDir.openDir();
-  const bsdtarProcess = spawn(
-    await fs.which('bsdtar'),
-    ['-x', '--exclude', MACOS_RESOURCE_FOLDER, '--exclude', `${MACOS_RESOURCE_FOLDER}/*`, '-'],
-    {
-      cwd: tmpRoot,
-    },
-  );
-  let archiveSize = 0;
-  bsdtarProcess.stderr.on('data', (chunk) => {
-    const stderr = chunk.toString();
-    if (stderr.trim()) {
-      log.warn(stderr);
-    }
-  });
-  bsdtarProcess.stdin.on('error', (e) => {
-    log.warn(`Error occurred while writing to bsdtar stdin: ${e.message}`);
-  });
-  zipStream.on('data', (chunk) => {
-    archiveSize += chunk.length;
-  });
-  zipStream.pipe(bsdtarProcess.stdin);
   try {
-    await new Promise<void>((resolve, reject) => {
-      zipStream.once('error', reject);
-      bsdtarProcess.once('exit', (code, signal) => {
-        zipStream.unpipe(bsdtarProcess.stdin);
-        log.debug(`bsdtar process exited with code ${code}, signal ${signal}`);
-        if (code === 0) {
-          resolve(undefined);
-        } else {
-          reject(new Error('Is it a valid ZIP archive?'));
-        }
-      });
-      bsdtarProcess.once('error', (e) => {
-        zipStream.unpipe(bsdtarProcess.stdin);
-        reject(e);
-      });
+    const {archiveSize} = await zip.extractStreamTo(zipStream, tmpRoot, {
+      fileNamesEncoding: 'utf8',
     });
+    return {rootDir: tmpRoot, archiveSize};
   } catch (err: any) {
-    bsdtarProcess.kill(9);
     await fs.rimraf(tmpRoot);
     throw new Error(`The response data cannot be unzipped: ${err.message}`, {cause: err});
-  } finally {
-    bsdtarProcess.removeAllListeners();
-    zipStream.removeAllListeners();
   }
-  return {
-    rootDir: tmpRoot,
-    archiveSize,
-  };
 }
 
 /**
