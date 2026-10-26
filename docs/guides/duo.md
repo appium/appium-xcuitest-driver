@@ -26,7 +26,9 @@ display when closing it. Restart XCTest recording to change its display.
 The simulated hinge angle can be read and changed through the
 [`mobile: getSimulatedHingeAngle`](../reference/execute-methods.md#mobile-getsimulatedhingeangle) and
 [`mobile: setSimulatedHingeAngle`](../reference/execute-methods.md#mobile-setsimulatedhingeangle)
-extensions. Simulator Home, volume up/down, lock/unlock, and hinge changes use the Mac-side
+extensions.
+
+Simulator Home, volume up/down, lock/unlock, and hinge changes use the Mac-side
 `@appium/coresim` HID service through `appium-ios-simulator`. Hinge readings remain
 in WDA. Orientation and rotation commands use WDA on both simulators and
 physical devices because WDA's internal animation-stability wait and orientation
@@ -44,13 +46,7 @@ simulated hinge changes are unsupported.
   `volumedown`; other names are unsupported. `mobile: performIoHidEvent` forwards all
   valid HID page/usage values to CoreSim, including keyboard events. The runtime determines
   which events have an effect; successful submission alone does not confirm application.
-* `mobile: getPressableButtons` reports WDA/XCTest button names, which may not match usable
-  Duo controls. For example, real-device feedback reports `action` even though the device has
-  no Action button. The returned list does not override the simulator restrictions above.
-* The WDA/XCTest IO HID route has reported failures on real Duo devices and also failed
-  in Duo simulator tests with Xcode 27.1 / iOS 27.1. It may return success after timing out
-  waiting for event completion. The simulator commands above use CoreSim to bypass this
-  route.
+* `mobile: performIoHidEvent` has been reported not to work on real Duo devices.
 
 ## Related Tickets
 
