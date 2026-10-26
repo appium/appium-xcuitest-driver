@@ -133,7 +133,7 @@ Allows to retrieve the source tree of the current page in different representati
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 format | string | yes | One of possible page tree source representation formats: `xml` (the default value), `description` and `json`. The `xml` format generates the output similar to what `getPageSource` standard API returns. `description` representation is how XCTest "sees" the page internally and is the same string as [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription?language=objc) API would return for the root application element. This source representation format is useful for debugging purposes and is the fastest one to fetch. `json` representation is similar to `xml`, but the tree hierarchy there is represented as JSON elements tree rather than as XML nodes. | description
-excludedAttributes | string | no | One or more comma-separated attribute names to be excluded from the XML output, thus only makes sense if `format` is set to `xml`. It might be sometimes helpful to exclude, for example, the `visible` attribute, to significantly speed-up page source retrieval. | visible,accessible
+excludedAttributes | string | no | One or more comma-separated attribute names to be excluded from the `xml` or `json` output (ignored when `format` is `description`). It might be sometimes helpful to exclude, for example, the `visible` attribute, to significantly speed-up page source retrieval. | visible,accessible
 
 #### Returned Result
 
@@ -2525,6 +2525,7 @@ and physical Duo devices remain unverified. If affected, use
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 fps | number | no | The Frames Per Second value for the resulting video. Providing higher values will create video files that are greater in size, but with smoother transitions. It is highly recommended to keep this value is range 1-60. 24 by default | 60
+codec | number | no | The video codec identifier passed to XCTest's `XCTVideoEncoding` (`0` for H.264, `1` for HEVC). Because XCTest controls the underlying encoder bitrate and keyframe interval, lowering `fps` alone may not proportionally reduce the output file size. `0` by default | 1
 
 #### Returned Result
 
@@ -2534,7 +2535,7 @@ Name | Type | Description | Example
 --- | --- | --- | ---
 uuid | string | Unique identifier of the video being recorded | 1D988774-C7E2-4817-829D-3B835DDAA7DF
 fps | number | FPS value | 24
-codec | number | The magic for the used codec. Value of zero means h264 video codec is being used | 0
+codec | number | The identifier for the used video codec (`0` for H.264, `1` for HEVC) | 0
 startedAt | number | The timestamp when the screen recording has started in float seconds since Unix epoch | 1709826124.123
 
 ### mobile: getXCTestScreenRecordingInfo
