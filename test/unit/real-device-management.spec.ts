@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict';
+import type {ReadStream} from 'node:fs';
+import path from 'node:path';
 import {Readable} from 'node:stream';
+import {text} from 'node:stream/consumers';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
-import {fs} from 'appium/support.js';
+import {fs, tempDir} from 'appium/support.js';
 import sinon from 'sinon';
 
 import {AfcClient} from '../../lib/device/afc-client.js';
-import {installToRealDevice, pullFolder, RealDevice} from '../../lib/device/real-device-management.js';
+import {installToRealDevice, pullFolder, pushFolder, RealDevice} from '../../lib/device/real-device-management.js';
 import type {RemoteXPCFacade} from '../../lib/device/remote-xpc/index.js';
 import {ZipConduitClient} from '../../lib/device/zip-conduit-client.js';
 import {XCUITestDriver} from '../../lib/driver.js';
@@ -315,5 +318,103 @@ describe('pullFolder', function () {
     const client: AfcClient = Reflect.construct(AfcClient, [createWalkDirService({}), false]);
 
     await assert.rejects(client.pull('/', '/nonexistent/local'), errors.InvalidArgumentError);
+  });
+});
+
+describe('pushFolder', function () {
+  const dstRootPath = 'PublicStaging/com.example.app';
+  const tree: [string, boolean][] = [
+    ['', true],
+    ['a.txt', false],
+    ['sub', true],
+    ['sub/b.txt', false],
+    ['sub/deep', true],
+    ['sub/deep/c.txt', false],
+  ];
+
+  let sandbox: sinon.SinonSandbox;
+  let tmpRoot: string;
+  let srcRootPath: string;
+
+  beforeEach(async function () {
+    sandbox = sinon.createSandbox();
+    tmpRoot = await tempDir.openDir();
+    srcRootPath = path.join(tmpRoot, 'My.app');
+    for (const [relativePath, isDirectory] of tree) {
+      const fullPath = path.join(srcRootPath, relativePath);
+      if (isDirectory) {
+        await fs.mkdirp(fullPath);
+      } else {
+        await fs.writeFile(fullPath, relativePath);
+      }
+    }
+  });
+
+  afterEach(async function () {
+    sandbox.restore();
+    await fs.rimraf(tmpRoot);
+  });
+
+  /**
+   * Pushes the source tree with `fs.glob` resolving to `entries` and records the
+   * remote directories created and the local and remote path of each pushed file.
+   */
+  const pushWithGlobEntries = async (entries: object[]) => {
+    const createdDirectories = new Set<string>();
+    const pushedFiles: {localPath: string; remotePath: string}[] = [];
+    const service = {
+      rm: async () => {},
+      mkdir: async (remotePath: string) => {
+        createdDirectories.add(remotePath);
+      },
+      writeFromStream: async (remotePath: string, stream: ReadStream) => {
+        pushedFiles.push({localPath: String(stream.path), remotePath});
+        await text(stream);
+      },
+    };
+    sandbox.stub(fs, 'glob').resolves(entries as any);
+
+    await pushFolder(Reflect.construct(AfcClient, [service, true]), srcRootPath, dstRootPath);
+
+    return {
+      createdDirectories: [...createdDirectories],
+      pushedFiles: pushedFiles.toSorted((a, b) => a.remotePath.localeCompare(b.remotePath)),
+    };
+  };
+
+  const assertNestedTreePushed = ({
+    createdDirectories,
+    pushedFiles,
+  }: Awaited<ReturnType<typeof pushWithGlobEntries>>) => {
+    assert.deepStrictEqual(createdDirectories, [
+      dstRootPath,
+      path.join(dstRootPath, 'sub'),
+      path.join(dstRootPath, 'sub', 'deep'),
+    ]);
+    assert.deepStrictEqual(
+      pushedFiles,
+      ['a.txt', 'sub/b.txt', 'sub/deep/c.txt'].map((relativePath) => ({
+        localPath: path.join(srcRootPath, relativePath),
+        remotePath: path.join(dstRootPath, relativePath),
+      })),
+    );
+  };
+
+  it('pushes nested folders and files from native fs.glob Dirent entries', async function () {
+    const entries = tree.map(([relativePath, isDirectory]) => {
+      const fullPath = path.join(srcRootPath, relativePath);
+      return {name: path.basename(fullPath), parentPath: path.dirname(fullPath), isDirectory: () => isDirectory};
+    });
+
+    assertNestedTreePushed(await pushWithGlobEntries(entries));
+  });
+
+  it('pushes nested folders and files from legacy glob entries exposing relative()', async function () {
+    const entries = tree.map(([relativePath, isDirectory]) => ({
+      relative: () => relativePath,
+      isDirectory: () => isDirectory,
+    }));
+
+    assertNestedTreePushed(await pushWithGlobEntries(entries));
   });
 });
