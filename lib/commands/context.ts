@@ -556,6 +556,18 @@ export async function setContext(
   }
 
   const oldContext = this.curContext;
+
+  const previousPerformanceLog = this.logs.performance;
+  if (previousPerformanceLog?.isCapturing) {
+    this.log.debug('Stopping the previous performance log');
+    try {
+      await previousPerformanceLog.stopCapture();
+    } catch (err) {
+      this.log.warn(`Failed to stop the previous performance log: ${(err as Error).message}`);
+    }
+    previousPerformanceLog.removeAllListeners();
+  }
+
   this.curContext = this.curWindowHandle = contextId;
 
   // `contextId` will be in the form of `appId.pageId` in this case
@@ -596,12 +608,14 @@ export async function setContext(
       const consoleLog = safariConsole as SafariConsoleLog;
       const eventListener = (error?: Error, event?: StringRecord) =>
         consoleLog.onConsoleLogEvent(error, event as unknown as SafariConsoleEntry);
+      this.remote.stopConsole();
       this.remote.startConsole(eventListener);
     }
     if (safariNetwork) {
       const networkLog = safariNetwork as SafariNetworkLog;
       const eventListener = (error?: Error, event?: StringRecord, method?: string) =>
         networkLog.onNetworkEvent(error, event as unknown as SafariNetworkLogEntry, method);
+      this.remote.stopNetwork();
       this.remote.startNetwork(eventListener);
     }
   }
