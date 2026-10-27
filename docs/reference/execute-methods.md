@@ -658,6 +658,8 @@ Emulates a press action on the given physical device button. The iOS implementat
 [pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton),
 while tvOS can use either [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton)
 or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
+On Duo simulators, `home`, `volumeup`, and `volumedown` use the host CoreSimulator HID service;
+other button names are unsupported.
 A more universal API can also be used via [`mobile: performIoHidEvent`](#mobile-performiohidevent).
 
 Button values supported for the current device under test can be retrieved using
@@ -666,8 +668,8 @@ Button values supported for the current device under test can be retrieved using
 The following values are supported on iOS:
 
 * `home`
-* `volumeup` (real devices only)
-* `volumedown` (real devices only)
+* `volumeup` (real devices and Duo simulators)
+* `volumedown` (real devices and Duo simulators)
 * `action` (Xcode 15+, iOS 16+ supported devices only)
 * `camera` (Xcode 16+, iOS 16+ supported real devices only)
 
@@ -2169,11 +2171,6 @@ simulator or device with an available hinge. tvOS, watchOS, and devices without
 hinge angle reading support are unsupported. WDA determines support at runtime;
 the driver forwards the request and propagates WDA errors.
 
-This command has been tested only on the Duo simulator. We have not tested it on a
-real Duo device and are awaiting feedback on whether hinge angle reading works on
-real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
-for real-device feedback.
-
 The command waits up to five seconds for a valid reading and returns an error if
 none arrives. A reading during folding may reflect an intermediate angle; it does
 not wait for the transition to finish or change the hinge angle or `currentDisplayId`.
@@ -2184,16 +2181,11 @@ The current hinge angle as a number in degrees, for example `90.5`.
 
 ### mobile: setSimulatedHingeAngle
 
-Requests a simulated hinge angle change. Requires a WebDriverAgent build with
-simulated hinge angle support and an iOS simulator or device with an available
-hinge. WDA validates the angle and checks platform and device support at runtime;
-the driver forwards the request and propagates WDA errors. tvOS, watchOS, and devices
-without simulated hinge angle support are unsupported by the current WDA implementation.
-
-This command has been tested only on the Duo simulator. We have not tested it on a
-real Duo device and are awaiting feedback on whether simulated hinge angle changes
-work on real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
-for real-device feedback.
+Requests a simulated hinge angle change through the Mac-side CoreSimulator HID service.
+Requires an iPhone Duo Simulator on Xcode 27+ and a WebDriverAgent build with hinge
+angle reading support. The driver validates the angle and identifies Duo by its
+CoreSimulator device type, independently of hinge readings.
+Physical devices, tvOS, watchOS, and simulators without a hinge are unsupported.
 
 Successful completion does not guarantee that the requested angle was applied.
 Wait for the expected application
@@ -2514,8 +2506,7 @@ The feature is only available since Xcode 15/iOS 17.
 
 On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
 XCTest recording of the closed device's outer display produced a one-frame black video
-despite successful start/stop responses. Inner-display recording worked; other runtimes
-and physical Duo devices remain unverified. If affected, use
+despite successful start/stop responses. Inner-display recording worked. If affected, use
 [`startRecordingScreen`](./commands.md#startrecordingscreen) and enable
 [`mjpegFixOrientation`](./settings.md) for upright video.
 
