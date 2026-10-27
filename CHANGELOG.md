@@ -1,3 +1,9 @@
+## [12.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.21.0...v12.22.0) (2026-10-27)
+
+### Features
+
+* route Duo simulator HID controls through the host ([#3077](https://github.com/appium/appium-xcuitest-driver/issues/3077)) ([32dae67](https://github.com/appium/appium-xcuitest-driver/commit/32dae673c5b93bdee2fc5c3fe57a45c02a0295b2))
+
 ## [12.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.20.0...v12.21.0) (2026-10-26)
 
 ### Features
