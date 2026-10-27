@@ -516,15 +516,19 @@ export async function pushFolder(
   ) as any[];
   log.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
   // top-level folders go first
+  const toRelativePath = (x: any): string =>
+    typeof x.relative === 'function'
+      ? x.relative()
+      : path.relative(srcRootPath, path.join(x.parentPath ?? x.path, x.name));
   const foldersToPush: string[] = allItems
     .filter((x) => x.isDirectory())
-    .map((x) => x.relative())
+    .map(toRelativePath)
     .sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
   // larger files go first
   const filesToPush: string[] = allItems
     .filter((x) => !x.isDirectory())
     .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
-    .map((x) => x.relative());
+    .map(toRelativePath);
   const totalBytes = allItems.filter((x) => !x.isDirectory()).reduce((sum, x) => sum + (x.size ?? 0), 0);
   log.debug(
     `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
