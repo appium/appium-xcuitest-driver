@@ -175,7 +175,7 @@ describe('context', function () {
       const networkEntry = {requestId: 'request-1', timestamp: 42};
       const timelineEntry = {record: {type: 'EventDispatch'}};
 
-      it('registers exactly one console and network listener on the remote debugger', async function () {
+      it('registers exactly one remote debugger listener per log type', async function () {
         const {driver, rpcClient} = buildDriver();
 
         await driver.setContext('WEBVIEW_5191.1');
@@ -185,6 +185,7 @@ describe('context', function () {
         assert.strictEqual(rpcClient.listenerCount('Console.messageAdded'), 1);
         assert.strictEqual(rpcClient.listenerCount('Console.messageRepeatCountUpdated'), 1);
         assert.strictEqual(rpcClient.listenerCount('NetworkEvent'), 1);
+        assert.strictEqual(rpcClient.listenerCount('Timeline.eventRecorded'), 1);
       });
 
       it('stops the previous performance log before starting a new one', async function () {
