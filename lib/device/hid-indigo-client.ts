@@ -5,7 +5,7 @@ import type {RemoteXPCFacade} from './remote-xpc/index.js';
 /**
  * HID Indigo service on real hardware.
  *
- * Requires **iOS/tvOS 26+** and the optional **`appium-ios-remotexpc`** package.
+ * Requires **iOS/tvOS 26+** and a RemoteXPC tunnel.
  */
 export class HidIndigoClient {
   constructor(
@@ -26,7 +26,7 @@ export class HidIndigoClient {
   }
 
   private async withHidIndigoService(operation: (hidIndigoService: HidIndigoService) => Promise<void>): Promise<void> {
-    const hidIndigoService = await this.remoteXPCFacade.requireService('HID Indigo', (Services) =>
+    const hidIndigoService = await this.remoteXPCFacade.requireTunnelService('HID Indigo', (Services) =>
       Services.startHidIndigoService(this.udid),
     );
     try {

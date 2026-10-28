@@ -2,7 +2,6 @@ import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 
-import {SimulateLocationClient, type SimulateLocationSession} from '../device/simulate-location-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import {supportsApiLevel17} from '../utils/index.js';
 import {AuthorizationStatus} from './enum.js';
@@ -17,6 +16,9 @@ declare module '../driver.js' {
     ): ReturnType<typeof mobileResetLocationService>;
   }
 }
+
+const REAL_DEVICE_LOCATION_UNSUPPORTED_MESSAGE =
+  'Simulating the location is only supported on real devices running iOS/tvOS 17 or newer';
 
 /**
  * Returns the geographic location of the device under test.
@@ -73,9 +75,10 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
  *
  * On a simulator, coordinates are passed to the simulator API. On a real device running
  * iOS 17 or newer, this uses `mobile:setSimulatedLocation` (XCTest session simulated location).
- * On older real devices, it uses the legacy lockdown simulate-location service.
+ * Older real devices are not supported.
  *
  * @param location - Must include `latitude` and `longitude` (each coerced with `Number()`).
+ * @throws {errors.NotImplementedError} When the target is a real device below iOS/tvOS 17.
  */
 export async function setGeoLocation(
   this: XCUITestDriver,
@@ -102,27 +105,18 @@ export async function setGeoLocation(
     this.log.info(`Proxying to mobile:setSimulatedLocation method for iOS 17+`);
     await this.mobileSetSimulatedLocation(latitudeNumber, longitudeNumber);
   } else {
-    await withLegacySimulateLocationSession(
-      this,
-      'Device UDID is required to set geolocation on a real device',
-      (session) => session.setLocation(latitudeNumber, longitudeNumber),
-      (udid, msg) => `Can't set the location on device '${udid}'. Original error: ${msg}`,
-    );
+    throw new errors.NotImplementedError(REAL_DEVICE_LOCATION_UNSUPPORTED_MESSAGE);
   }
 
   return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: 0};
 }
 
 /**
- * Resets simulated or legacy location state.
+ * Resets the simulated location state.
  *
- * - iOS 17 and newer: `mobile:resetSimulatedLocation` (simulator or real device).
- * - Real device, older iOS: legacy simulate-location session over lockdown (UDID required).
- * - Simulator, older iOS: not supported.
+ * Supported on iOS 17 and newer (`mobile:resetSimulatedLocation`, simulator or real device).
  *
- * @throws {errors.NotImplementedError} When the target is a simulator on iOS < 17.
- * @throws {errors.InvalidArgumentError} When the legacy path runs without a UDID.
- * @throws {Error} When the underlying reset fails.
+ * @throws {errors.NotImplementedError} When the target is a simulator or a real device on iOS < 17.
  */
 export async function mobileResetLocationService(this: XCUITestDriver): Promise<void> {
   if (supportsApiLevel17(this.opts.platformVersion, this.opts.platformName)) {
@@ -131,37 +125,5 @@ export async function mobileResetLocationService(this: XCUITestDriver): Promise<
     return;
   }
 
-  if (this.isSimulator()) {
-    throw new errors.NotImplementedError();
-  }
-
-  await withLegacySimulateLocationSession(
-    this,
-    'Device UDID is required to reset location on a real device',
-    (session) => session.resetLocation(),
-    (udid, msg) => `Failed to reset location on device '${udid}'. Original error: ${msg}`,
-  );
-}
-
-/**
- * Opens a legacy simulate-location session, runs `run`, closes the session, and maps errors.
- */
-async function withLegacySimulateLocationSession(
-  driver: XCUITestDriver,
-  udidRequiredMessage: string,
-  run: (session: SimulateLocationSession) => void | Promise<void>,
-  formatError: (udid: string, originalMessage: string) => string,
-): Promise<void> {
-  const {udid} = driver.opts;
-  if (!udid) {
-    throw new errors.InvalidArgumentError(udidRequiredMessage);
-  }
-  const session = await SimulateLocationClient.startSession(udid);
-  try {
-    await run(session);
-  } catch (e: any) {
-    throw driver.log.errorWithException(formatError(udid, e.message));
-  } finally {
-    session.close();
-  }
+  throw new errors.NotImplementedError(this.isSimulator() ? undefined : REAL_DEVICE_LOCATION_UNSUPPORTED_MESSAGE);
 }

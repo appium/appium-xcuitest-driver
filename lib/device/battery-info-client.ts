@@ -1,14 +1,12 @@
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
- * IOPMPowerSource IORegistry payload from the diagnostics relay (RemoteXPC shim).
+ * IOPMPowerSource IORegistry payload from the diagnostics relay.
  */
 export type AdvancedBatteryInfo = Record<string, any>;
 
 /**
  * Advanced battery metrics from the device diagnostics service on real hardware.
- *
- * Requires **iOS/tvOS 18+** and the optional **`appium-ios-remotexpc`** package.
  */
 export class BatteryInfoClient {
   constructor(
@@ -17,11 +15,11 @@ export class BatteryInfoClient {
   ) {}
 
   /**
-   * Reads IOPMPowerSource data via RemoteXPC diagnostics.
+   * Reads IOPMPowerSource data via the diagnostics service.
    */
   async getAdvancedInfo(): Promise<AdvancedBatteryInfo> {
-    const diagnosticsService = await this.remoteXPCFacade.requireService('diagnostics', (Services) =>
-      Services.startDiagnosticsService(this.udid),
+    const diagnosticsService = await this.remoteXPCFacade.requireService('diagnostics', (Services, options) =>
+      Services.startDiagnosticsService(this.udid, options),
     );
     return await diagnosticsService.ioregistry({
       ioClass: 'IOPMPowerSource',

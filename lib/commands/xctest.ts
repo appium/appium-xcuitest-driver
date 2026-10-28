@@ -25,7 +25,7 @@ const xctestLog = logger.getLogger('XCTest');
 /**
  * Run a native XCTest script.
  *
- * Supported only on **real devices** running **iOS/tvOS 18+** with the optional **appium-ios-remotexpc**
+ * Supported only on **real devices** running **iOS/tvOS 18+** with a RemoteXPC tunnel (**appium-ios-remotexpc**)
  * package installed. UI and app test types use RemoteXPC. Logic tests are not supported. This API does
  * not run XCTest bundles on simulators.
  *
@@ -63,7 +63,7 @@ export async function mobileRunXCTest(
 /**
  * Installs an XCTest bundle to the device under test.
  *
- * Supported only on real devices running iOS/tvOS 18+ with appium-ios-remotexpc. Use a `.app` or `.ipa`;
+ * Supported only on real devices running iOS/tvOS 18+ with a RemoteXPC tunnel. Use a `.app` or `.ipa`;
  * bare `.xctest` bundles are not supported via RemoteXPC.
  *
  * @param xctestApp - Path of the XCTest app (URL or filename with extension `.app`)
@@ -83,7 +83,7 @@ export async function mobileInstallXCTestBundle(this: XCUITestDriver, xctestApp:
 /**
  * List XCTest bundles that are installed on the device.
  *
- * Supported only on real devices running iOS/tvOS 18+ with appium-ios-remotexpc.
+ * Supported only on real devices running iOS/tvOS 18+ with a RemoteXPC tunnel.
  *
  * @returns List of XCTest bundles (e.g.: `XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance`)
  */

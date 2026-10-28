@@ -14,9 +14,8 @@ several limitations:
 
 ## Prerequisites
 
-Device communication on non-macOS hosts is provided by the `appium-ios-remotexpc` optional
-dependency. In most cases, it will be automatically installed along with the XCUITest driver. If
-installing manually, ensure you are using version `5.1.0` or later.
+Device communication on non-macOS hosts is provided by the `appium-ios-remotexpc`
+dependency, which is installed along with the XCUITest driver.
 
 Once the package is installed, you should:
 

@@ -1,12 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {services} from 'appium-ios-device';
-/** @ts-expect-error no types */
-import type {InstallationProxyService as IOSDeviceInstallationProxyService} from 'appium-ios-device';
 import type {InstallationProxyService as RemoteXPCInstallationProxyService} from 'appium-ios-remotexpc';
 
 import {log} from '../logger.js';
-import type {AppInfo, AppInfoMapping, ClosableService} from '../types.js';
+import type {AppInfo, AppInfoMapping} from '../types.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
@@ -39,45 +35,22 @@ interface LookupApplicationOptions {
 }
 
 interface CreateInstallationProxyOptions {
-  allowLegacyFallback?: boolean;
-  facade?: RemoteXPCFacade | null;
+  facade: RemoteXPCFacade;
   logger?: AppiumLogger;
 }
 
 /**
- * Unified Installation Proxy Client
+ * Installation Proxy Client
  *
- * Provides a unified interface for app installation/management operations on iOS devices
+ * Provides app installation/management operations on iOS devices on top of appium-ios-remotexpc
  */
 export class InstallationProxyClient {
   private _lastLoggedProgress?: {percent?: number; status?: string};
 
   private constructor(
-    private readonly service: RemoteXPCInstallationProxyService | ClosableService,
-    private readonly _isRemoteXPC: boolean,
+    private readonly service: RemoteXPCInstallationProxyService,
     private readonly _log: AppiumLogger = log,
   ) {}
-
-  /**
-   * Check if this client is using RemoteXPC
-   */
-  private get isRemoteXPC(): boolean {
-    return this._isRemoteXPC;
-  }
-
-  /**
-   * Get the RemoteXPC service (throws if not RemoteXPC)
-   */
-  private get remoteXPCService(): RemoteXPCInstallationProxyService {
-    return this.service as RemoteXPCInstallationProxyService;
-  }
-
-  /**
-   * Get the ios-device service (throws if not ios-device)
-   */
-  private get iosDeviceService(): IOSDeviceInstallationProxyService {
-    return this.service as IOSDeviceInstallationProxyService;
-  }
 
   //#region Public Methods
 
@@ -88,21 +61,12 @@ export class InstallationProxyClient {
    * @param opts - Creation options
    * @returns InstallationProxy client instance
    */
-  static async create(udid: string, opts: CreateInstallationProxyOptions = {}): Promise<InstallationProxyClient> {
-    const {allowLegacyFallback = true, facade = null, logger} = opts;
-    const service = facade
-      ? await facade.attemptService('InstallationProxy', (Services) => Services.startInstallationProxyService(udid))
-      : null;
-    if (service) {
-      return new InstallationProxyClient(service, true, logger);
-    }
-
-    if (!allowLegacyFallback) {
-      throw new Error(`InstallationProxy access via RemoteXPC is required for '${udid}', but it is unavailable.`);
-    }
-
-    const legacyService = await services.startInstallationProxyService(udid);
-    return new InstallationProxyClient(legacyService, false, logger);
+  static async create(udid: string, opts: CreateInstallationProxyOptions): Promise<InstallationProxyClient> {
+    const {facade, logger} = opts;
+    const service = await facade.requireService('InstallationProxy', (Services, options) =>
+      Services.startInstallationProxyService(udid, options),
+    );
+    return new InstallationProxyClient(service, logger);
   }
 
   /**
@@ -122,12 +86,8 @@ export class InstallationProxyClient {
       };
     }
 
-    if (!this.isRemoteXPC) {
-      return await this.iosDeviceService.listApplications(normalizedOpts);
-    }
-
-    // RemoteXPC returns array, need to convert to object
-    const apps = await this.remoteXPCService.browse({
+    // The service returns an array, need to convert to object
+    const apps = await this.service.browse({
       applicationType: normalizedOpts?.applicationType || 'Any',
       // Use '*' to request all attributes when returnAttributes is not explicitly specified
       returnAttributes: normalizedOpts?.returnAttributes || '*',
@@ -149,12 +109,8 @@ export class InstallationProxyClient {
    * @returns Object keyed by bundle ID
    */
   async lookupApplications(opts: LookupApplicationOptions): Promise<AppInfoMapping> {
-    if (!this.isRemoteXPC) {
-      return await this.iosDeviceService.lookupApplications(opts);
-    }
-
     const bundleIds = Array.isArray(opts.bundleIds) ? opts.bundleIds : [opts.bundleIds];
-    return (await this.remoteXPCService.lookup(bundleIds, {
+    return (await this.service.lookup(bundleIds, {
       returnAttributes: opts.returnAttributes,
       applicationType: opts.applicationType,
     })) as AppInfoMapping;
@@ -168,14 +124,8 @@ export class InstallationProxyClient {
    * @param timeoutMs - Timeout in milliseconds
    */
   async installApplication(path: string, clientOptions?: Record<string, any>, timeoutMs?: number): Promise<void> {
-    if (!this.isRemoteXPC) {
-      const messages = await this.iosDeviceService.installApplication(path, clientOptions, timeoutMs);
-      this.logProgressBatch('install', messages);
-      return;
-    }
-
     await this.executeWithProgressLogging('install', (progressHandler) =>
-      this.remoteXPCService.install(path, {...clientOptions, timeoutMs}, progressHandler),
+      this.service.install(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
 
@@ -187,14 +137,8 @@ export class InstallationProxyClient {
    * @param timeoutMs - Timeout in milliseconds
    */
   async upgradeApplication(path: string, clientOptions?: Record<string, any>, timeoutMs?: number): Promise<void> {
-    if (!this.isRemoteXPC) {
-      const messages = await this.iosDeviceService.upgradeApplication(path, clientOptions, timeoutMs);
-      this.logProgressBatch('upgrade', messages);
-      return;
-    }
-
     await this.executeWithProgressLogging('upgrade', (progressHandler) =>
-      this.remoteXPCService.upgrade(path, {...clientOptions, timeoutMs}, progressHandler),
+      this.service.upgrade(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
 
@@ -205,13 +149,8 @@ export class InstallationProxyClient {
    * @param timeoutMs - Timeout in milliseconds
    */
   async uninstallApplication(bundleId: string, timeoutMs?: number): Promise<void> {
-    if (!this.isRemoteXPC) {
-      await this.iosDeviceService.uninstallApplication(bundleId, timeoutMs);
-      return;
-    }
-
     await this.executeWithProgressLogging('uninstall', (progressHandler) =>
-      this.remoteXPCService.uninstall(bundleId, {timeoutMs}, progressHandler),
+      this.service.uninstall(bundleId, {timeoutMs}, progressHandler),
     );
   }
 
@@ -243,13 +182,6 @@ export class InstallationProxyClient {
     await operation((percentComplete, status) => {
       this.logProgress(progressOperation, {PercentComplete: percentComplete, Status: status});
     });
-  }
-
-  private logProgressBatch(progressOperation: InstallationProxyProgressOperation, messages: ProgressResponse[]): void {
-    this._lastLoggedProgress = undefined;
-    for (const message of messages) {
-      this.logProgress(progressOperation, message);
-    }
   }
 
   private logProgress(progressOperation: InstallationProxyProgressOperation, message: ProgressResponse): void {

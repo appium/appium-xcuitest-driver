@@ -1,8 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it, afterEach, beforeEach} from 'node:test';
 
-//@ts-expect-error no types
-import {services} from 'appium-ios-device';
 import sinon from 'sinon';
 
 import {RealDevice} from '../../../lib/device/real-device-management.js';
@@ -52,22 +50,13 @@ describe('location commands', function () {
   });
 
   describe('setLocation', function () {
-    let startSimulateLocationServiceStub: sinon.SinonStub;
-    let setLocationStub: sinon.SinonStub;
-
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
       proxySpy = sinon.stub(driver, 'proxyCommand');
-      startSimulateLocationServiceStub = sinon.stub(services, 'startSimulateLocationService');
-      const mockService = {setLocation() {}, close() {}};
-      setLocationStub = sinon.stub(mockService, 'setLocation');
-      startSimulateLocationServiceStub.returns(mockService);
     });
 
     afterEach(function () {
       driver = new XCUITestDriver({} as any);
-      startSimulateLocationServiceStub.restore();
-      setLocationStub.restore();
       proxySpy.reset();
     });
 
@@ -81,21 +70,15 @@ describe('location commands', function () {
         driver._device = new RealDevice('123', {} as XCUITestDriverOpts);
       });
 
-      it('should use location service to set a location when no platform version', async function () {
-        await driver.setGeoLocation({latitude: 1.234, longitude: 2.789});
-
-        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, true);
-        assert.strictEqual(startSimulateLocationServiceStub.firstCall.args[0], udid);
-        assert.deepStrictEqual(setLocationStub.args[0], [1.234, 2.789]);
+      it('should not support setting a location when no platform version', async function () {
+        await assert.rejects(driver.setGeoLocation({latitude: 1.234, longitude: 2.789}), /iOS\/tvOS 17 or newer/);
+        assert.strictEqual(proxySpy.called, false);
       });
 
-      it('should use location service to set a location for lower than platform version 17', async function () {
+      it('should not support setting a location for lower than platform version 17', async function () {
         driver.opts.platformVersion = '16.4.5';
-        await driver.setGeoLocation({latitude: 1.234, longitude: 2.789});
-
-        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, true);
-        assert.strictEqual(startSimulateLocationServiceStub.firstCall.args[0], udid);
-        assert.deepStrictEqual(setLocationStub.args[0], [1.234, 2.789]);
+        await assert.rejects(driver.setGeoLocation({latitude: 1.234, longitude: 2.789}), /iOS\/tvOS 17 or newer/);
+        assert.strictEqual(proxySpy.called, false);
       });
 
       it('should use mobileSetSimulatedLocation to set a location for over platform version 17', async function () {
@@ -107,7 +90,6 @@ describe('location commands', function () {
 
         const result = await driver.setGeoLocation(locationRequest);
 
-        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, false);
         assert.strictEqual(proxySpy.firstCall.args[0], '/wda/simulatedLocation');
         assert.strictEqual(proxySpy.firstCall.args[1], 'POST');
         assert.deepStrictEqual(proxySpy.firstCall.args[2], locationRequest);
@@ -121,18 +103,9 @@ describe('location commands', function () {
 
         await assert.rejects(driver.setGeoLocation(locationRequest), /An error in proxying the request/);
 
-        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, false);
         assert.strictEqual(proxySpy.firstCall.args[0], '/wda/simulatedLocation');
         assert.strictEqual(proxySpy.firstCall.args[1], 'POST');
         assert.deepStrictEqual(proxySpy.firstCall.args[2], locationRequest);
-      });
-
-      it('should use location service to set a location with negative values', async function () {
-        await driver.setGeoLocation({latitude: 1.234, longitude: -2});
-
-        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, true);
-        assert.strictEqual(startSimulateLocationServiceStub.firstCall.args[0], udid);
-        assert.deepStrictEqual(setLocationStub.args[0], [1.234, -2]);
       });
     });
 

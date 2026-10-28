@@ -1,3 +1,5 @@
+import type {Dirent} from 'node:fs';
+import {readdir} from 'node:fs/promises';
 import path from 'node:path';
 
 import type {AppiumLogger} from '@appium/types';
@@ -16,7 +18,7 @@ import {ConnectedDevicesClient} from './connected-devices-client.js';
 import {InstallationProxyClient} from './installation-proxy-client.js';
 import {LockdownClient} from './lockdown-client.js';
 import {NotificationClient} from './notification-client.js';
-import type {RemoteXPCFacade} from './remote-xpc/index.js';
+import {RemoteXPCFacade} from './remote-xpc/index.js';
 import {ZipConduitClient} from './zip-conduit-client.js';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
@@ -96,9 +98,16 @@ export class RealDevice {
     this.remoteXPCFacade = facade;
   }
 
+  private requireFacade(): RemoteXPCFacade {
+    if (!this.remoteXPCFacade) {
+      throw new Error(`The RemoteXPC facade has not been attached to the device '${this.udid}'`);
+    }
+    return this.remoteXPCFacade;
+  }
+
   async remove(bundleId: string): Promise<void> {
     const client = await InstallationProxyClient.create(this.udid, {
-      facade: this.remoteXPCFacade,
+      facade: this.requireFacade(),
       logger: this.log,
     });
     try {
@@ -115,34 +124,33 @@ export class RealDevice {
   async install(appPath: string, bundleId: string, opts: RealDeviceInstallOptions = {}): Promise<void> {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
-    const useRemoteXPC = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
 
-    // first try with zip_conduit service for iOS/tvOS 18+ and IPA only
+    // first try with the zip_conduit service for IPA only
     // fall through to the AFC + installation_proxy path for other cases/zip_conduit failure
-    if (useRemoteXPC && (await this.installViaZipConduit(appPath, timeoutMs))) {
+    if (await this.installViaZipConduit(appPath, timeoutMs)) {
       this.log.info(
         `The installation of '${bundleId}' succeeded after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
       );
       return;
     }
 
-    const afcClient = await AfcClient.createForDevice(this.udid, {
-      facade: this.remoteXPCFacade,
-    });
+    const afcClient = await AfcClient.createForDevice(this.udid, this.requireFacade());
+    // zip_conduit may have used part of the budget already
+    const remainingMs = Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000);
     try {
       let bundlePathOnPhone: string;
       if ((await fs.stat(appPath)).isFile()) {
         // https://github.com/doronz88/pymobiledevice3/blob/6ff5001f5776e03b610363254e82d7fbcad4ef5f/pymobiledevice3/services/installation_proxy.py#L75
         bundlePathOnPhone = `/${path.basename(appPath)}`;
         await pushFile(afcClient, appPath, bundlePathOnPhone, {
-          timeoutMs,
+          timeoutMs: remainingMs,
           log: this.log,
         });
       } else {
         bundlePathOnPhone = `${INSTALLATION_STAGING_DIR}/${bundleId}`;
         await pushFolder(afcClient, appPath, bundlePathOnPhone, {
           enableParallelPush: true,
-          timeoutMs,
+          timeoutMs: remainingMs,
           log: this.log,
         });
       }
@@ -169,16 +177,27 @@ export class RealDevice {
   async installOrUpgradeApplication(bundlePathOnPhone: string, opts: InstallOrUpgradeOptions): Promise<void> {
     const {isUpgrade, timeout} = opts;
     const notificationClient = await NotificationClient.create(this.udid, {
-      facade: this.remoteXPCFacade,
+      facade: this.requireFacade(),
       logger: this.log,
     });
-    const installationClient = await InstallationProxyClient.create(this.udid, {
-      facade: this.remoteXPCFacade,
-      logger: this.log,
-    });
-    const appInstalledNotification = notificationClient.observeNotification(APPLICATION_INSTALLED_NOTIFICATION);
+    let installationClient: InstallationProxyClient | undefined;
     const clientOptions = {PackageType: 'Developer'};
     try {
+      installationClient = await InstallationProxyClient.create(this.udid, {
+        facade: this.requireFacade(),
+        logger: this.log,
+      });
+      // subscribe before installing, otherwise a fast install may finish before the subscription exists.
+      // The notification is best effort, so a failed subscription does not fail the installation
+      let appInstalledNotification: Promise<void> | undefined;
+      try {
+        await notificationClient.observe(APPLICATION_INSTALLED_NOTIFICATION);
+        appInstalledNotification = notificationClient.expectNotification(timeout + APPLICATION_NOTIFICATION_TIMEOUT_MS);
+        // the wait below may never happen if the installation fails first
+        void Promise.allSettled([appInstalledNotification]);
+      } catch (e) {
+        this.log.warn(`Could not subscribe to the application installed notification: ${(e as Error).message}`);
+      }
       if (isUpgrade) {
         this.log.debug(
           `An upgrade of the existing application is going to be performed. ` +
@@ -191,18 +210,20 @@ export class RealDevice {
         );
         await installationClient.installApplication(bundlePathOnPhone, clientOptions, timeout);
       }
-      try {
-        await withTimeout(
-          appInstalledNotification,
-          APPLICATION_NOTIFICATION_TIMEOUT_MS,
-          `Could not get the application installed notification within ` +
-            `${APPLICATION_NOTIFICATION_TIMEOUT_MS}ms but we will continue`,
-        );
-      } catch (e) {
-        this.log.warn((e as Error).message);
+      if (appInstalledNotification) {
+        try {
+          await withTimeout(
+            appInstalledNotification,
+            APPLICATION_NOTIFICATION_TIMEOUT_MS,
+            `Could not get the application installed notification within ` +
+              `${APPLICATION_NOTIFICATION_TIMEOUT_MS}ms but we will continue`,
+          );
+        } catch (e) {
+          this.log.warn((e as Error).message);
+        }
       }
     } finally {
-      await installationClient.close();
+      await installationClient?.close();
       await notificationClient.close();
     }
   }
@@ -244,7 +265,7 @@ export class RealDevice {
     returnAttributes: string | string[] = ['CFBundleIdentifier', 'CFBundleVersion'],
   ): Promise<Record<string, any> | undefined> {
     const client = await InstallationProxyClient.create(this.udid, {
-      facade: this.remoteXPCFacade,
+      facade: this.requireFacade(),
       logger: this.log,
     });
     try {
@@ -262,8 +283,8 @@ export class RealDevice {
 
   /**
    * Terminates the application with the given bundle identifier on the real device.
-   * Uses RemoteXPC DVT processControl when session access allows it; on connection/execution
-   * error falls back to the legacy path (InstallationProxy + devicectl or instrument service).
+   * Uses RemoteXPC DVT processControl when the session runs on the tunnel; otherwise falls back to
+   * InstallationProxy + devicectl (macOS, iOS/tvOS 17+).
    *
    * @param bundleId - Bundle identifier of the app to terminate
    * @returns `true` if the app was running and was terminated, `false` otherwise
@@ -275,7 +296,7 @@ export class RealDevice {
       platformVersion,
       this.devicectl,
       this.log,
-      this.remoteXPCFacade,
+      this.requireFacade(),
     );
     return await terminationClient.terminate(bundleId);
   }
@@ -289,7 +310,7 @@ export class RealDevice {
    */
   async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
     const client = await InstallationProxyClient.create(this.udid, {
-      facade: this.remoteXPCFacade,
+      facade: this.requireFacade(),
       logger: this.log,
     });
     try {
@@ -309,10 +330,9 @@ export class RealDevice {
   }
 
   async getPlatformVersion(): Promise<string> {
-    const lockdown = await LockdownClient.createForDevice(this.udid, {
-      facade: this.remoteXPCFacade,
-      logger: this.log,
-    });
+    // Runs during device discovery, before the session facade exists; plain lockdown needs no tier
+    const facade = this.remoteXPCFacade ?? new RemoteXPCFacade(this.udid, undefined, this.log);
+    const lockdown = await LockdownClient.createForDevice(this.udid, {facade});
     try {
       return await lockdown.getOSVersion();
     } finally {
@@ -345,7 +365,7 @@ export class RealDevice {
   }
 
   /**
-   * Attempt a streaming zip_conduit install of an `.ipa` over RemoteXPC.
+   * Attempt a streaming zip_conduit install of an `.ipa`.
    *
    * @param appPath - Local path to the app package
    * @param timeoutMs - Overall install timeout in milliseconds
@@ -364,7 +384,7 @@ export class RealDevice {
 
     let client: ZipConduitClient | null = null;
     try {
-      client = await ZipConduitClient.create(this.udid, this.log, this.remoteXPCFacade);
+      client = await ZipConduitClient.create(this.udid, this.log, this.requireFacade());
       if (!client) {
         return false;
       }
@@ -508,24 +528,28 @@ export async function pushFolder(
   const {timeoutMs = IO_TIMEOUT_MS, enableParallelPush = false, log = defaultLogger} = opts;
 
   const timer = new timing.Timer().start();
-  const allItems = /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (
-    await fs.glob('**', {
-      cwd: srcRootPath,
-      withFileTypes: true,
-    })
-  ) as any[];
+  const toRelative = (entry: Dirent): string => path.relative(srcRootPath, path.join(entry.parentPath, entry.name));
+  // hidden files and folders (e.g. .DS_Store) are skipped, like fs.glob('**') does
+  const entries = (await readdir(srcRootPath, {recursive: true, withFileTypes: true})).filter(
+    (x) =>
+      !toRelative(x)
+        .split(path.sep)
+        .some((segment) => segment.startsWith('.')),
+  );
   log.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
   // top-level folders go first
-  const foldersToPush: string[] = allItems
+  const foldersToPush: string[] = entries
     .filter((x) => x.isDirectory())
-    .map((x) => x.relative())
+    .map(toRelative)
     .sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
+  const files = await asyncmap(
+    entries.filter((x) => !x.isDirectory()),
+    async (x) => ({relativePath: toRelative(x), size: (await fs.stat(path.join(x.parentPath, x.name))).size}),
+    {concurrency: MAX_IO_CHUNK_SIZE},
+  );
   // larger files go first
-  const filesToPush: string[] = allItems
-    .filter((x) => !x.isDirectory())
-    .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
-    .map((x) => x.relative());
-  const totalBytes = allItems.filter((x) => !x.isDirectory()).reduce((sum, x) => sum + (x.size ?? 0), 0);
+  const filesToPush: string[] = files.sort((a, b) => b.size - a.size).map((x) => x.relativePath);
+  const totalBytes = files.reduce((sum, x) => sum + x.size, 0);
   log.debug(
     `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
       `${util.pluralize('file', filesToPush.length, true)} to push`,
@@ -599,11 +623,9 @@ export async function pushFolder(
 
 /**
  * Get list of connected devices.
-
- * @param opts - Driver options; used to decide if tunnel registry is used.
  */
-export async function getConnectedDevices(opts: XCUITestDriverOpts): Promise<string[]> {
-  const client = await ConnectedDevicesClient.create(opts);
+export async function getConnectedDevices(): Promise<string[]> {
+  const client = await ConnectedDevicesClient.create();
   return await client.getConnectedDevices();
 }
 
@@ -707,7 +729,7 @@ export function applySafariStartupArgs(this: XCUITestDriver): boolean {
  */
 export async function detectUdid(this: XCUITestDriver): Promise<string> {
   this.log.debug('Auto-detecting real device udid...');
-  const udids = await getConnectedDevices(this.opts);
+  const udids = await getConnectedDevices();
   if (isEmpty(udids)) {
     throw new Error('No real devices are connected to the host');
   }

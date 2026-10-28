@@ -92,6 +92,13 @@ application (which the driver installs on the device under test) is also downgra
 
 ### iOS/iPadOS/tvOS
 
+!!! note
+
+    Real devices communicate with the host through [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc),
+    ideally over a [Remote XPC tunnel](../guides/remotexpc-tunnels-real-devices.md) (iOS/tvOS 18+). Real
+    devices running iOS/tvOS < 18 can only use the temporary, limited `usbmux` fallback, which relies on
+    legacy lockdown services that Apple is expected to remove.
+
 | Device OS version | Fully supported driver/WDA versions | Last likely working driver/WDA version |
 | --- | --- | --- |
 | >= 27.0 | >= [11.1.2](https://github.com/appium/appium-xcuitest-driver/pull/2872) (WDA >= 14.1.1) | Latest |

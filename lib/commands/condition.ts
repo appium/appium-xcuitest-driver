@@ -43,7 +43,7 @@ export async function listConditionInducers(this: XCUITestDriver): Promise<Condi
  * then stop the condition.
  *
  * (Note: the socket needs to remain connected during operation)
- * (Note: Device conditions are available only for real devices running iOS 13.0 and later.)
+ * (Note: Device conditions are available only for real devices running iOS/tvOS 18+ with a RemoteXPC tunnel.)
  *
  * @param conditionID - Determine which condition IDs are available with the {@linkcode XCUITestDriver.listConditionInducers} command
  * @param profileID - Determine which profile IDs are available with the {@linkcode XCUITestDriver.listConditionInducers} command

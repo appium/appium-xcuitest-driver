@@ -1,61 +1,23 @@
 import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {services} from 'appium-ios-device';
-/** @ts-expect-error no types */
-import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
 import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 
-import type {ClosableService} from '../types.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 interface CreateNotificationClientOptions {
-  allowLegacyFallback?: boolean;
-  facade?: RemoteXPCFacade | null;
+  facade: RemoteXPCFacade;
   logger: AppiumLogger;
 }
 
 /**
- * Unified Notification Proxy Client
+ * Notification Proxy Client
  *
- * Provides a unified interface for notification proxy operations on iOS devices,
- * automatically handling the differences between iOS < 18 (appium-ios-device)
- * and iOS 18 and above (appium-ios-remotexpc NotificationProxyService).
+ * Provides notification proxy operations on iOS devices on top of appium-ios-remotexpc.
  */
 export class NotificationClient {
-  private readonly service: RemoteXPCNotificationProxyService | ClosableService;
-  private readonly _isRemoteXPC: boolean;
-  private readonly log: AppiumLogger;
-
   private constructor(
-    service: RemoteXPCNotificationProxyService | ClosableService,
-    log: AppiumLogger,
-    isRemoteXPC: boolean,
-  ) {
-    this.service = service;
-    this.log = log;
-    this._isRemoteXPC = isRemoteXPC;
-  }
-
-  /**
-   * Check if this client is using RemoteXPC
-   */
-  private get isRemoteXPC(): boolean {
-    return this._isRemoteXPC;
-  }
-
-  /**
-   * Get service as RemoteXPC NotificationProxyService
-   */
-  private get remoteXPCNotificationProxy(): RemoteXPCNotificationProxyService {
-    return this.service as RemoteXPCNotificationProxyService;
-  }
-
-  /**
-   * Get service as iOS Device NotificationProxy
-   */
-  private get iosDeviceNotificationProxy(): IOSDeviceNotificationProxy {
-    return this.service as IOSDeviceNotificationProxy;
-  }
+    private readonly service: RemoteXPCNotificationProxyService,
+    private readonly log: AppiumLogger,
+  ) {}
 
   /**
    * Create a notification client for device
@@ -65,40 +27,31 @@ export class NotificationClient {
    * @returns NotificationClient instance
    */
   static async create(udid: string, opts: CreateNotificationClientOptions): Promise<NotificationClient> {
-    const {allowLegacyFallback = true, facade = null, logger} = opts;
-    const service = facade
-      ? await facade.attemptService('notification proxy', (Services) => Services.startNotificationProxyService(udid))
-      : null;
-    if (service) {
-      return new NotificationClient(service, logger, true);
-    }
-
-    if (!allowLegacyFallback) {
-      throw new Error(`Notification proxy access via RemoteXPC is required for '${udid}', but it is unavailable.`);
-    }
-
-    // Fallback to appium-ios-device
-    const notificationProxy = await services.startNotificationProxyService(udid);
-    return new NotificationClient(notificationProxy, logger, false);
+    const {facade, logger} = opts;
+    const service = await facade.requireService('notification proxy', (Services, options) =>
+      Services.startNotificationProxyService(udid, options),
+    );
+    return new NotificationClient(service, logger);
   }
 
   /**
-   * Observe a specific notification and wait for it
+   * Subscribe to a specific notification. Resolves once the subscription is in place,
+   * so that an action triggered afterwards cannot be missed.
    *
    * @param notificationName - Name of the notification to observe
-   * @returns Promise that resolves when the notification is received
    */
-  async observeNotification(notificationName: string): Promise<void> {
-    if (this.isRemoteXPC) {
-      await this.remoteXPCNotificationProxy.observe(notificationName);
-    } else {
-      // iOS Device: Use callback-based observation wrapped in a promise
-      return new Promise((resolve) => {
-        this.iosDeviceNotificationProxy.observeNotification(notificationName, {
-          notification: resolve,
-        });
-      });
-    }
+  async observe(notificationName: string): Promise<void> {
+    await this.service.observe(notificationName);
+  }
+
+  /**
+   * Wait for a notification of an already observed name
+   *
+   * @param timeoutMs - How long to wait for the notification
+   * @throws If nothing is received within the timeout
+   */
+  async expectNotification(timeoutMs?: number): Promise<void> {
+    await this.service.expectNotification(timeoutMs);
   }
 
   /**

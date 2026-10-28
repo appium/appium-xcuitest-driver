@@ -32,7 +32,7 @@ class ImageMounter {
       throw new Error(
         'appium-ios-remotexpc is not installed. Please install it using:\n' +
           'npm install appium-ios-remotexpc\n\n' +
-          'Note: This is an optional dependency required for image mounting functionality.',
+          'Note: This is a dependency of the XCUITest driver required for image mounting functionality.',
       );
     }
   }

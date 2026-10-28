@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {
-  formatRemoteXPCFallbackLog,
   formatTunnelAvailabilityMessage,
   isTunnelAvailabilityError,
   REMOTE_XPC_TUNNEL_SETUP_DOC_LINK,
   TUNNEL_CREATION_COMMAND,
+  TunnelRequiredError,
+  isTunnelRequiredError,
   wrapRemoteXPCConnectionError,
 } from '../../../lib/device/remote-xpc/utils.js';
 
@@ -49,12 +50,25 @@ describe('remotexpc-utils tunnel availability', function () {
     assert.strictEqual(wrapped.cause, err);
   });
 
-  it('formatRemoteXPCFallbackLog uses tunnel guidance when applicable', function () {
-    const err = new Error('registry down');
-    (err as any).code = 'ERR_TUNNEL_AVAILABILITY';
-    const msg = formatRemoteXPCFallbackLog('AFC', err);
-    assert.match(msg, /RemoteXPC AFC unavailable:/);
-    assert.ok(msg.includes(REMOTE_XPC_TUNNEL_SETUP_DOC_LINK));
-    assert.ok(msg.includes('Falling back to appium-ios-device.'));
+  it('TunnelRequiredError does not suggest a tunnel on platform versions that cannot have one', function () {
+    const err = new TunnelRequiredError('pasteboard', 'udid-1', '17.5');
+    assert.match(err.message, /not supported for 'udid-1' on iOS\/tvOS 17.5/);
+    assert.ok(!err.message.includes(TUNNEL_CREATION_COMMAND));
+  });
+
+  it('TunnelRequiredError names the feature and the device and is a tunnel availability error', function () {
+    const err = new TunnelRequiredError('crash reports', 'udid-1');
+    assert.ok(isTunnelRequiredError(err));
+    assert.ok(isTunnelAvailabilityError(err));
+    assert.match(err.message, /crash reports requires a RemoteXPC tunnel for 'udid-1'/);
+    assert.ok(err.message.includes(TUNNEL_CREATION_COMMAND));
+    assert.ok(err.message.includes(REMOTE_XPC_TUNNEL_SETUP_DOC_LINK));
+  });
+
+  it('formatTunnelAvailabilityMessage leaves TunnelRequiredError messages untouched', function () {
+    const modern = new TunnelRequiredError('crash reports', 'udid-1', '18.0');
+    assert.strictEqual(formatTunnelAvailabilityMessage(modern), modern.message);
+    const legacy = new TunnelRequiredError('pasteboard', 'udid-1', '17.5');
+    assert.strictEqual(formatTunnelAvailabilityMessage(legacy), legacy.message);
   });
 });

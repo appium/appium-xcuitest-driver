@@ -1,4 +1,26 @@
-import {fs} from 'appium/support.js';
+import {fileURLToPath} from 'node:url';
+
+import {fs, node} from 'appium/support.js';
+
+import {memoize} from '../utils/index.js';
+
+export const REMOTE_XPC_PACKAGE_NAME = 'appium-ios-remotexpc';
+
+export const isRemoteXpcDependencyAvailable = memoize(
+  async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
+    try {
+      // We only care that the module can be imported; we don't need to use it here.
+      await import(REMOTE_XPC_PACKAGE_NAME);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+);
+
+export const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string | null {
+  return node.getModuleRootSync('appium-xcuitest-driver', fileURLToPath(import.meta.url));
+});
 
 /**
  * Return an executable path of cmd

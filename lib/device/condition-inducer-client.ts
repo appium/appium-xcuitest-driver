@@ -1,19 +1,11 @@
 import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 
 import type {Condition, IConditionInducer} from '../types.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
-type InstrumentService = {
-  callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;
-  close(): void;
-  _socketClient: {destroyed: boolean};
-};
-
 /**
- * RemoteXPC-based implementation for iOS 18+.
+ * RemoteXPC-based (DVT) condition inducer. Tunnel only.
  */
 class RemoteXPCConditionInducer implements IConditionInducer {
   private connection: DVTInstruments | null = null;
@@ -89,114 +81,23 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   }
 
   async startConnection(): Promise<DVTInstruments> {
-    return this.remoteXPCFacade.requireService('condition inducer', (Services) => Services.startDVTService(this.udid));
-  }
-}
-
-/**
- * Instrument service implementation (appium-ios-device) for iOS &lt; 18 and RemoteXPC fallback.
- */
-class InstrumentConditionInducer implements IConditionInducer {
-  private service: InstrumentService | null = null;
-
-  constructor(
-    private readonly udid: string,
-    private readonly log: AppiumLogger,
-  ) {}
-
-  async list(): Promise<Condition[]> {
-    const service = (await services.startInstrumentService(this.udid)) as InstrumentService;
-    try {
-      const ret = await service.callChannel(INSTRUMENT_CHANNEL.CONDITION_INDUCER, 'availableConditionInducers');
-      return ret.selector;
-    } finally {
-      service.close();
-    }
-  }
-
-  async enable(conditionID: string, profileID: string): Promise<boolean> {
-    if (this.service && !this.service._socketClient.destroyed) {
-      throw new Error(`Condition inducer has been started. A condition is already active.`);
-    }
-
-    this.service = (await services.startInstrumentService(this.udid)) as InstrumentService;
-    const ret = await this.service.callChannel(
-      INSTRUMENT_CHANNEL.CONDITION_INDUCER,
-      'enableConditionWithIdentifier:profileIdentifier:',
-      conditionID,
-      profileID,
+    return this.remoteXPCFacade.requireTunnelService('condition inducer', (Services) =>
+      Services.startDVTService(this.udid),
     );
-
-    if (typeof ret.selector !== 'boolean') {
-      this.service.close();
-      this.service = null;
-      throw new Error(`Enable condition inducer error: '${JSON.stringify(ret.selector)}'`);
-    }
-
-    return ret.selector;
-  }
-
-  async disable(): Promise<boolean> {
-    if (!this.service) {
-      this.log.warn('Condition inducer server has not started');
-      return false;
-    }
-
-    try {
-      const ret = await this.service.callChannel(INSTRUMENT_CHANNEL.CONDITION_INDUCER, 'disableActiveCondition');
-      if (typeof ret.selector !== 'boolean') {
-        this.log.warn(`Disable condition inducer error: '${JSON.stringify(ret.selector)}'`);
-        return false;
-      }
-      return ret.selector;
-    } finally {
-      if (this.service) {
-        this.service.close();
-        this.service = null;
-      }
-    }
-  }
-
-  async close(): Promise<void> {
-    if (this.service) {
-      this.service.close();
-      this.service = null;
-    }
-  }
-
-  isActive(): boolean {
-    return this.service !== null && !this.service._socketClient.destroyed;
   }
 }
 
 /**
- * Picks RemoteXPC when the session facade is eligible and probe succeeds; otherwise legacy instrument service.
+ * Creates a condition inducer for the session.
+ *
+ * @throws {TunnelRequiredError} When the session runs without a RemoteXPC tunnel
  */
 export async function createConditionInducer(params: {
   udid: string;
   log: AppiumLogger;
-  remoteXPCFacade?: RemoteXPCFacade | null;
+  remoteXPCFacade: RemoteXPCFacade;
 }): Promise<IConditionInducer> {
-  const {udid, log, remoteXPCFacade = null} = params;
-
-  if (!remoteXPCFacade?.eligible) {
-    return new InstrumentConditionInducer(udid, log);
-  }
-
-  if (!(await remoteXPCFacade.determineAvailability())) {
-    return new InstrumentConditionInducer(udid, log);
-  }
-
-  const xpcInducer = new RemoteXPCConditionInducer(udid, log, remoteXPCFacade);
-  try {
-    const connection = await xpcInducer.startConnection();
-    await connection.dvtService.close();
-  } catch (err: any) {
-    log.warn(
-      `Unable to use RemoteXPC-based condition inducer for device ${udid}, ` +
-        `falling back to the legacy implementation: ${err.message}`,
-    );
-    return new InstrumentConditionInducer(udid, log);
-  }
-  return xpcInducer;
+  const {udid, log, remoteXPCFacade} = params;
+  await remoteXPCFacade.assertTunnelTier('condition inducer');
+  return new RemoteXPCConditionInducer(udid, log, remoteXPCFacade);
 }

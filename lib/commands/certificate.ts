@@ -238,7 +238,7 @@ export async function mobileInstallCertificate(
 /**
  * Removes installed certificates.
  *
- * Requires a real device running iOS/tvOS 18+ with the optional appium-ios-remotexpc package.
+ * Requires a real device. Works through the RemoteXPC tunnel or, as a temporary fallback, over usbmux.
  *
  * @since 4.19.2
  * @param name - Name of the profile
@@ -254,7 +254,7 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
 /**
  * Returns map of certificates installed on the real device.
  *
- * Requires a real device running iOS/tvOS 18+ with the optional appium-ios-remotexpc package.
+ * Requires a real device. Works through the RemoteXPC tunnel or, as a temporary fallback, over usbmux.
  * @since 4.10.0
  * @returns An object describing the certificates installed on the real device.
  * @throws {Error} If attempting to list certificates for a simulated device or if RemoteXPC setup fails
@@ -266,8 +266,8 @@ export async function mobileListCertificates(this: XCUITestDriver): Promise<Cert
 
 /**
  * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
- * On iOS/tvOS 18+ this requires `appium-ios-remotexpc` (same RemoteXPC certificate client as mobile
- * certificate commands); setup throws if RemoteXPC is unavailable or iOS version is less than 18.
+ * Uses the same RemoteXPC certificate client as the mobile certificate commands; setup throws if the
+ * device cannot be reached.
  * `start()` has already set `platformVersion` from the device when the capability was omitted.
  */
 export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {
