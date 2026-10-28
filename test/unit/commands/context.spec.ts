@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {describe, it} from 'node:test';
 
-import type {RemoteDebugger} from 'appium-remote-debugger';
+import {RemoteDebugger} from 'appium-remote-debugger';
 
 import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from '../../../lib/commands/bidi/constants.js';
 import type {LogEntryAddedEvent} from '../../../lib/commands/bidi/types.js';
 import {assignBiDiLogListener} from '../../../lib/commands/log.js';
+import type {IOSPerformanceLog} from '../../../lib/device/log/ios-performance-log.js';
+import {SafariConsoleLog} from '../../../lib/device/log/safari-console-log.js';
 import {SafariNetworkLog} from '../../../lib/device/log/safari-network-log.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
@@ -83,6 +85,9 @@ describe('context', function () {
           startNetwork: (listener: Parameters<RemoteDebugger['startNetwork']>[0]) => {
             networkEvents.on('NetworkEvent', listener);
           },
+          stopNetwork: () => {
+            networkEvents.removeAllListeners('NetworkEvent');
+          },
         } as any;
         const networkLog = new SafariNetworkLog({showLogs: false, log: driver.log});
         driver.logs.safariNetwork = assignBiDiLogListener(driver.eventEmitter, networkLog, {
@@ -116,6 +121,114 @@ describe('context', function () {
         }
       });
     }
+
+    describe('repeated webview switches', function () {
+      /**
+       * Builds a driver wired to a real RemoteDebugger whose RPC client is a bare
+       * EventEmitter, so the real startConsole/startNetwork/startTimeline listener
+       * bookkeeping runs and listener counts can be inspected directly.
+       */
+      function buildDriver() {
+        const driver = new XCUITestDriver({} as any);
+        driver.curContext = null;
+        driver.contexts = ['5191.1', '5191.2'];
+        driver.opts.enablePerformanceLogging = true;
+
+        const rpcClient = Object.assign(new EventEmitter(), {
+          isConnected: true,
+          selectPage: async () => {},
+          send: async () => {},
+        });
+        const remote = new RemoteDebugger({log: driver.log} as any);
+        (remote as any)._rpcClient = rpcClient;
+        driver._remote = remote;
+
+        driver.logs.safariConsole = assignBiDiLogListener(
+          driver.eventEmitter,
+          new SafariConsoleLog({showLogs: false, log: driver.log}),
+          {type: 'safariConsole'},
+        )[0];
+        driver.logs.safariNetwork = assignBiDiLogListener(
+          driver.eventEmitter,
+          new SafariNetworkLog({showLogs: false, log: driver.log}),
+          {type: 'safariNetwork'},
+        )[0];
+
+        const bidiEvents: LogEntryAddedEvent[] = [];
+        driver.eventEmitter.on(BIDI_EVENT_NAME, (event: LogEntryAddedEvent) => {
+          if (event.method === LOG_ENTRY_ADDED_EVENT) {
+            bidiEvents.push(event);
+          }
+        });
+        return {driver, rpcClient, bidiEvents};
+      }
+
+      const consoleEntry = {
+        source: 'console-api',
+        level: 'log',
+        text: 'hello',
+        type: 'log',
+        line: 1,
+        column: 1,
+        repeatCount: 1,
+      };
+      const networkEntry = {requestId: 'request-1', timestamp: 42};
+      const timelineEntry = {record: {type: 'EventDispatch'}};
+
+      it('registers exactly one remote debugger listener per log type', async function () {
+        const {driver, rpcClient} = buildDriver();
+
+        await driver.setContext('WEBVIEW_5191.1');
+        await driver.setContext('NATIVE_APP');
+        await driver.setContext('WEBVIEW_5191.2');
+
+        assert.strictEqual(rpcClient.listenerCount('Console.messageAdded'), 1);
+        assert.strictEqual(rpcClient.listenerCount('Console.messageRepeatCountUpdated'), 1);
+        assert.strictEqual(rpcClient.listenerCount('NetworkEvent'), 1);
+        assert.strictEqual(rpcClient.listenerCount('Timeline.eventRecorded'), 1);
+      });
+
+      it('stops the previous performance log before starting a new one', async function () {
+        const {driver} = buildDriver();
+
+        await driver.setContext('WEBVIEW_5191.1');
+        const firstPerformanceLog = driver.logs.performance as IOSPerformanceLog;
+        assert.strictEqual(firstPerformanceLog.isCapturing, true);
+
+        await driver.setContext('WEBVIEW_5191.2');
+        assert.notStrictEqual(driver.logs.performance, firstPerformanceLog);
+        assert.strictEqual(firstPerformanceLog.isCapturing, false);
+        assert.strictEqual(firstPerformanceLog.listenerCount('output'), 0);
+      });
+
+      it('records each remote debugger event once after switching webviews', async function () {
+        const {driver, rpcClient, bidiEvents} = buildDriver();
+
+        await driver.setContext('WEBVIEW_5191.1');
+        await driver.setContext('NATIVE_APP');
+        await driver.setContext('WEBVIEW_5191.2');
+
+        rpcClient.emit('Console.messageAdded', undefined, consoleEntry);
+        rpcClient.emit('NetworkEvent', undefined, networkEntry, 'Network.requestWillBeSent');
+        rpcClient.emit('Timeline.eventRecorded', timelineEntry);
+
+        const consoleLogs = await driver.extractLogs('safariConsole', driver.logs);
+        const networkLogs = await driver.extractLogs('safariNetwork', driver.logs);
+        const performanceLogs = await driver.extractLogs('performance', driver.logs);
+        assert.strictEqual(consoleLogs.length, 1, 'safariConsole entries');
+        assert.strictEqual(networkLogs.length, 1, 'safariNetwork entries');
+        assert.strictEqual(performanceLogs.length, 1, 'performance entries');
+
+        const byType = (type: string) => bidiEvents.filter(({params}) => params.type === type);
+        assert.strictEqual(byType('safariConsole').length, 1, 'safariConsole BiDi events');
+        assert.strictEqual(byType('safariNetwork').length, 1, 'safariNetwork BiDi events');
+        assert.strictEqual(byType('performance').length, 1, 'performance BiDi events');
+        assert.deepStrictEqual(
+          byType('performance').map(({params}) => params.source.context),
+          ['5191.2'],
+        );
+      });
+    });
   });
 
   describe('onPageChange', function () {
