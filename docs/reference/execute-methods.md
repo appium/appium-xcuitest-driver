@@ -910,7 +910,7 @@ style | string | yes | Either `light` or `dark` | dark
 ### mobile: getIncreaseContrast
 
 Get the device's "increase contrast" accessibility mode.
-On **real devices** this requires **iOS/tvOS 18+** and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no usbmux fallback, so the command throws if no tunnel is available.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Returned Result
 
@@ -927,7 +927,7 @@ Real devices only ever report `enabled` or `disabled`.
 ### mobile: setIncreaseContrast
 
 Enable or disable the device's "increase contrast" accessibility mode.
-On **real devices** this requires **iOS/tvOS 18+** and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no usbmux fallback, so the command throws if no tunnel is available.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Arguments
 
@@ -938,7 +938,7 @@ increaseContrast | string | yes | Either `enabled` or `disabled` (case insensiti
 ### mobile: contentSize
 
 Get the device's content size.
-On **real devices** this requires **iOS/tvOS 18+** and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no usbmux fallback, so the command throws if no tunnel is available.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Returned Result
 
@@ -959,12 +959,10 @@ One of below:
 - `unknown`
 - `unsupported`
 
-Simulators and real devices report the same values.
-
 ### mobile: setContentSize
 
 Set the device's content size.
-On **real devices** this requires **iOS/tvOS 18+** and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no usbmux fallback, so the command throws if no tunnel is available.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Arguments
 
@@ -987,7 +985,7 @@ size | string | yes | One of the content sizes listed below in case-insensitive.
 - `increment`
 - `decrement`
 
-`increment` and `decrement` step one place through the list above and do nothing at either end.
+`increment` and `decrement` allow iterating through the above list, and have no effect if the content size is already at its min or max value.
 
 On real devices, the five `accessibility-*` sizes additionally require **Larger Accessibility Sizes** to be enabled on
 the device (Settings -> Accessibility -> Display & Text Size -> Larger Text). When it is off, the CoreDevice service
