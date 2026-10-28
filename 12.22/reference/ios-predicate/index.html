@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
   
@@ -3740,12 +3740,12 @@ select only those for which some condition evaluates to true.</p>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// java</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;isVisible == 1&quot;</span><span class="p">));</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"isVisible == 1"</span><span class="p">));</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// java</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSClassChain</span><span class="p">(</span><span class="s">&quot;**/XCUIElementTypeWindow[`label LIKE &#39;*yolo*&#39;`]&quot;</span><span class="p">));</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSClassChain</span><span class="p">(</span><span class="s">"**/XCUIElementTypeWindow[`label LIKE '*yolo*'`]"</span><span class="p">));</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -3759,10 +3759,10 @@ predicates. Check the <a href="#more-information">More Information</a> section b
 <li>
 <p><code>=</code> , <code>==</code> - The left-hand expression is equal to the right-hand expression:
   <div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// java</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;label == &#39;Olivia&#39;&quot;</span><span class="p">));</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"label == 'Olivia'"</span><span class="p">));</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">// same in Xpath:</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//*[@label = &#39;Olivia&#39;]&quot;</span><span class="p">));</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">"//*[@label = 'Olivia']"</span><span class="p">));</span>
 </span></code></pre></div></p>
 </li>
 <li>
@@ -3785,7 +3785,7 @@ predicates. Check the <a href="#more-information">More Information</a> section b
   the right-hand side. The right-hand side is a two value array (an array is required to specify
   order) giving upper and lower bounds. For example, <code>1 BETWEEN { 0 , 33 }</code>, or <code>$INPUT BETWEEN { $LOWER, $UPPER }</code>.
   In Objective-C, you could create a <code>BETWEEN</code> predicate as shown in the following example:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;rect.x BETWEEN { 1, 100 }&quot;</span><span class="p">));</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"rect.x BETWEEN { 1, 100 }"</span><span class="p">));</span>
 </span></code></pre></div>
 <p>This creates a predicate that matches all elements whole left top coordinate is in range between
 1 and 100.</p>
@@ -3819,18 +3819,18 @@ respectively, for example, <code>value BEGINSWITH[cd] 'bar'</code>.</p>
 <ul>
 <li>
 <p><code>BEGINSWITH</code> - The left-hand expression begins with the right-hand expression.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;type == &#39;XCUIElementTypeButton&#39; AND name BEGINSWITH &#39;results toggle&#39;&quot;</span><span class="p">));</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"type == 'XCUIElementTypeButton' AND name BEGINSWITH 'results toggle'"</span><span class="p">));</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// same in Xpath:</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//XCUIElementTypeButton[starts-with(@name, &#39;results toggle&#39;)]&quot;</span><span class="p">));</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">"//XCUIElementTypeButton[starts-with(@name, 'results toggle')]"</span><span class="p">));</span>
 </span></code></pre></div>
 </li>
 <li>
 <p><code>CONTAINS</code> - The left-hand expression contains the right-hand expression.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;type == &#39;XCUIElementCollectionView&#39; AND name CONTAINS &#39;opera&#39;&quot;</span><span class="p">));</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"type == 'XCUIElementCollectionView' AND name CONTAINS 'opera'"</span><span class="p">));</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">// same in Xpath:</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//XCUIElementCollectionView[contains(@name, &#39;opera&#39;)]&quot;</span><span class="p">));</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">"//XCUIElementCollectionView[contains(@name, 'opera')]"</span><span class="p">));</span>
 </span></code></pre></div>
 </li>
 <li>
@@ -3840,7 +3840,7 @@ respectively, for example, <code>value BEGINSWITH[cd] 'bar'</code>.</p>
 <p><code>LIKE</code> - The left hand expression equals the right-hand expression: <code>?</code> and <code>*</code> are allowed as
   wildcard characters, where <code>?</code> matches 1 character and <code>*</code> matches 0 or more characters. In Mac
   OS X v10.4, wildcard characters do not match newline characters.</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;name LIKE &#39;*Total: $*&#39;&quot;</span><span class="p">));</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"name LIKE '*Total: $*'"</span><span class="p">));</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">// XPath1 does not have an alternative to the above expression</span>
 </span></code></pre></div>
@@ -3849,7 +3849,7 @@ respectively, for example, <code>value BEGINSWITH[cd] 'bar'</code>.</p>
 <p><code>MATCHES</code> - The left hand expression equals the right hand expression using a regex-style
   comparison according to ICU v3 (for more details see the ICU User Guide for
   <a href="http://userguide.icu-project.org/strings/regexp">Regular Expressions</a>).</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;value MATCHES &#39;.*of [1-9]&#39;&quot;</span><span class="p">));</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">"value MATCHES '.*of [1-9]'"</span><span class="p">));</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1">// XPath1 does not have an alternative to the above expression</span>
 </span></code></pre></div>
@@ -4101,10 +4101,10 @@ names and types that are available for usage in predicate locators.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       
