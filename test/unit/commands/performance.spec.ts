@@ -59,10 +59,22 @@ describe('performance commands', function () {
     });
   });
 
+  describe('PerfRecorder.start', function () {
+    it('should remove the report root if no recording tool is available', async function () {
+      const reportRoot = await tempDir.openDir();
+      const recorder = new PerfRecorder(reportRoot, '00008120-0000000000000000', {profileName: 'CPU Profiler'});
+      sandbox.stub(fs, 'which').rejects(new Error('not found'));
+
+      await assert.rejects(recorder.start(), /has not been found in PATH/);
+      assert.strictEqual(await fs.exists(reportRoot), false);
+    });
+  });
+
   describe('mobile: stopPerfRecord', function () {
     let driver: XCUITestDriver;
     let resultPath: string;
     let recorderStopStub: sinon.SinonStub;
+    let resultPath: string;
 
     beforeEach(async function () {
       driver = new XCUITestDriver({} as any);
