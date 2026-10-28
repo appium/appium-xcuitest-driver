@@ -1,3 +1,26 @@
+## [13.0.0-beta.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.0-beta.2...v13.0.0-beta.3) (2026-10-28)
+
+### ⚠ BREAKING CHANGES
+
+* appium-ios-device is no longer used.
+* The lockdown simulate-location service is gone, so setting the geolocation on real devices below iOS/tvOS 17 is not supported.
+* The appium:safariSocketChunkSize capability has been removed.
+* The appium:safariWebInspectorMaxFrameLength no longer has an effect on real devices.
+* mobile: killApp always returns false on real devices below iOS/tvOS 17 (and on Linux/Windows hosts without a tunnel), because the instruments service it used is gone.
+* the bsdtar utility is no longer used and the APPIUM_PREFER_SYSTEM_UNZIP environment variable has no effect. Non-UTF-8-flagged zip file names are decoded as utf8; cp437 is not supported.
+
+### Features
+
+* add keyboardWaitTimeout setting ([#3084](https://github.com/appium/appium-xcuitest-driver/issues/3084)) ([20f7102](https://github.com/appium/appium-xcuitest-driver/commit/20f7102670d98e5102d4f5c76d66c2b1576d245d))
+* drop appium-ios-device; real devices use appium-ios-remotexpc (tunnel preferred, usbmux fallback) ([#3082](https://github.com/appium/appium-xcuitest-driver/issues/3082)) ([dff4ee2](https://github.com/appium/appium-xcuitest-driver/commit/dff4ee2827c3b4421bfeb6efe10e4ffb774d4a49))
+* route Duo simulator HID controls through the host ([#3077](https://github.com/appium/appium-xcuitest-driver/issues/3077)) ([#3085](https://github.com/appium/appium-xcuitest-driver/issues/3085)) ([f5eeb01](https://github.com/appium/appium-xcuitest-driver/commit/f5eeb01fc1c56ed2cb4fa119e3609436f7aa8c0b))
+* use zip streaming from @appium/support instead of bsdtar/system unzip ([#3080](https://github.com/appium/appium-xcuitest-driver/issues/3080)) ([fa3e992](https://github.com/appium/appium-xcuitest-driver/commit/fa3e992654aad214855ac04ebc5c51d4ba4ca826))
+
+### Bug Fixes
+
+* stop stale remote debugger listeners when switching webview contexts ([#3090](https://github.com/appium/appium-xcuitest-driver/issues/3090)) ([55d6bc0](https://github.com/appium/appium-xcuitest-driver/commit/55d6bc0147169b9276d882e472845a709fb39724))
+* use AsyncLock from asyncbox instead of async-lock ([#3074](https://github.com/appium/appium-xcuitest-driver/issues/3074)) ([d53af13](https://github.com/appium/appium-xcuitest-driver/commit/d53af1396ab527f4e24346d0579ed2748e1b56bd))
+
 ## [13.0.0-beta.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.0-beta.1...v13.0.0-beta.2) (2026-10-21)
 
 ### ⚠ BREAKING CHANGES
