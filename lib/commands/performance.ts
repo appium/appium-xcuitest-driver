@@ -89,6 +89,15 @@ export class PerfRecorder {
   }
 
   async start(): Promise<void> {
+    try {
+      await this._startRecording();
+    } catch (e) {
+      await this._enforceTermination();
+      throw e;
+    }
+  }
+
+  private async _startRecording(): Promise<void> {
     let binaryPath: string;
     try {
       binaryPath = await requireXctrace();
@@ -165,7 +174,6 @@ export class PerfRecorder {
         },
       );
     } catch {
-      await this._enforceTermination();
       const listProfilesCommand = toolName === XCTRACE ? `${XCRUN} ${XCTRACE} list templates` : `${INSTRUMENTS} -s`;
       throw this._logger.errorWithException(
         `There is no ${DEFAULT_EXT} file found for performance profile ` +
@@ -363,20 +371,22 @@ export async function mobileStopPerfRecord(
     );
   }
 
-  const result = await encodeBase64OrUpload(resultPath, remotePath, {
-    user,
-    pass,
-    method,
-    headers,
-    fileFieldName,
-    formFields,
-  });
-  const recorderIndex = this._perfRecorders.indexOf(recorder);
-  if (recorderIndex >= 0) {
-    this._perfRecorders.splice(recorderIndex, 1);
+  try {
+    return await encodeBase64OrUpload(resultPath, remotePath, {
+      user,
+      pass,
+      method,
+      headers,
+      fileFieldName,
+      formFields,
+    });
+  } finally {
+    const recorderIndex = this._perfRecorders.indexOf(recorder);
+    if (recorderIndex >= 0) {
+      this._perfRecorders.splice(recorderIndex, 1);
+    }
+    await fs.rimraf(resultPath);
   }
-  await fs.rimraf(resultPath);
-  return result;
 }
 
 async function requireXctrace(): Promise<string> {
