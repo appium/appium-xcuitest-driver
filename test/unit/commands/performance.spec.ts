@@ -79,7 +79,10 @@ describe('performance commands', function () {
 
     it('should remove the zipped report if the upload fails', async function () {
       await assert.rejects(
-        driver.execute('mobile: stopPerfRecord', {profileName: 'CPU Profiler', remotePath: 'sftp://127.0.0.1/perf.zip'}),
+        driver.execute('mobile: stopPerfRecord', {
+          profileName: 'CPU Profiler',
+          remotePath: 'sftp://127.0.0.1/perf.zip',
+        }),
         /Unsupported remote protocol/,
       );
       assert.strictEqual(await fs.exists(resultPath), false);
