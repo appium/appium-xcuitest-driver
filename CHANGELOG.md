@@ -1,3 +1,9 @@
+## [12.22.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.2...v12.22.3) (2026-10-28)
+
+### Bug Fixes
+
+* remove perf recording temp files when start or upload fails ([#3092](https://github.com/appium/appium-xcuitest-driver/issues/3092)) ([edc9a19](https://github.com/appium/appium-xcuitest-driver/commit/edc9a192397db0343858cb5b4e0b4defbaede681))
+
 ## [12.22.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.1...v12.22.2) (2026-10-28)
 
 ### Bug Fixes
