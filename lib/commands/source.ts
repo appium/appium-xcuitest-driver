@@ -38,7 +38,7 @@ export async function getPageSource(this: XCUITestDriver): Promise<string> {
  * Retrieve the source tree of the current page in XML or JSON format.
  *
  * @param format - Page tree source representation format.
- * @param excludedAttributes - A comma-separated string of attribute names to exclude from the output. Only works if `format` is `xml`.
+ * @param excludedAttributes - A comma-separated string of attribute names to exclude from the `xml` or `json` output.
  * @privateRemarks Why isn't `excludedAttributes` an array?
  * @returns The source tree of the current page in the given format.
  */
