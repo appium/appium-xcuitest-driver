@@ -1,3 +1,9 @@
+## [12.22.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.0...v12.22.1) (2026-10-28)
+
+### Miscellaneous Chores
+
+* release to bump the dependency for shell quote ([6d988f1](https://github.com/appium/appium-xcuitest-driver/commit/6d988f1df3a6388545458bc55da75efb5309fb30))
+
 ## [12.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.21.0...v12.22.0) (2026-10-27)
 
 ### Features
