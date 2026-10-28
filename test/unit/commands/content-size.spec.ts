@@ -79,6 +79,37 @@ describe('content size commands', function () {
       assert.strictEqual(await driver.mobileGetContentSize(), 'large');
       assert.strictEqual(requireTunnelService.notCalled, true);
     });
+
+    it('should lowercase the size reported by simctl', async function () {
+      simulatorGetStub.resolves('Extra-Small');
+      assert.strictEqual(await driver.mobileGetContentSize(), 'extra-small');
+    });
+
+    it('should resolve increment against the current size', async function () {
+      simulatorGetStub.resolves('Large');
+      await driver.mobileSetContentSize('increment');
+      assert.strictEqual(simulatorSetStub.calledOnceWithExactly('extra-large'), true);
+    });
+
+    it('should resolve decrement against the current size', async function () {
+      simulatorGetStub.resolves('large');
+      await driver.mobileSetContentSize('decrement');
+      assert.strictEqual(simulatorSetStub.calledOnceWithExactly('medium'), true);
+    });
+
+    it('should not write when stepping past either end', async function () {
+      simulatorGetStub.resolves('accessibility-extra-extra-extra-large');
+      await driver.mobileSetContentSize('increment');
+      simulatorGetStub.resolves('extra-small');
+      await driver.mobileSetContentSize('decrement');
+      assert.strictEqual(simulatorSetStub.notCalled, true);
+    });
+
+    it('should fail to step from an unknown size', async function () {
+      simulatorGetStub.resolves('unknown');
+      await assert.rejects(driver.mobileSetContentSize('increment'), /Cannot increment the content size/);
+      assert.strictEqual(simulatorSetStub.notCalled, true);
+    });
   });
 
   describe('real device', function () {
