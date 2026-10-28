@@ -34,7 +34,7 @@ export interface Condition {
 }
 
 /**
- * Facade for condition-inducer operations (RemoteXPC on iOS 18+ vs legacy instrument service).
+ * Facade for condition-inducer operations (RemoteXPC DVT).
  * Constructed by `createConditionInducer` in `device/condition-inducer-client`.
  */
 export interface IConditionInducer {
@@ -143,8 +143,3 @@ export interface AppInfo {
  * Mapping of bundle identifiers to application information
  */
 export type AppInfoMapping = Record<string, AppInfo>;
-
-/** Minimal shape of the untyped appium-ios-device services */
-export interface ClosableService {
-  close(): void;
-}

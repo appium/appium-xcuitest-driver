@@ -266,9 +266,6 @@ export const desiredCapConstraints = {
   safariLogAllCommunicationHexDump: {
     isBoolean: true,
   },
-  safariSocketChunkSize: {
-    isNumber: true,
-  },
   mjpegServerPort: {
     isNumber: true,
   },

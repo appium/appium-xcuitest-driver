@@ -1,138 +1,117 @@
 import assert from 'node:assert/strict';
-import {afterEach, beforeEach, describe, it} from 'node:test';
+import {afterEach, describe, it, mock} from 'node:test';
 
-/** @ts-expect-error no types */
-import {utilities} from 'appium-ios-device';
-import {createSandbox} from 'sinon';
-import type {SinonSandbox} from 'sinon';
+import sinon from 'sinon';
 
-import {ConnectedDevicesClient} from '../../../lib/device/connected-devices-client.js';
-import {RemoteXPCFacade, type RemoteXPCServices} from '../../../lib/device/remote-xpc/index.js';
-import type {XCUITestDriverOpts} from '../../../lib/driver.js';
-import {log} from '../../../lib/logger.js';
+import * as moduleLoaderModule from '../../../lib/device/remote-xpc/module-loader.js';
 
-describe('connected real-device discovery', function () {
-  let sandbox: SinonSandbox;
-  let preferDevicectl: string | undefined;
+let currentModule: any = null;
+let devicectlDevices: string[] = [];
 
-  beforeEach(function () {
-    sandbox = createSandbox();
-    preferDevicectl = process.env.APPIUM_XCUITEST_PREFER_DEVICECTL;
+mock.module('../../../lib/device/remote-xpc/module-loader.js', {
+  namedExports: {
+    ...moduleLoaderModule,
+    loadRemoteXPCModule: async () => {
+      if (!currentModule) {
+        throw new Error('Cannot find package');
+      }
+      return currentModule;
+    },
+  },
+});
+
+mock.module('node-devicectl', {
+  namedExports: {
+    Devicectl: class {
+      async listDevices() {
+        return devicectlDevices.map((udid) => ({hardwareProperties: {udid}}));
+      }
+    },
+  },
+});
+
+const {ConnectedDevicesClient} = await import('../../../lib/device/connected-devices-client.js');
+
+function makeModule({registry, usbmux}: {registry: string[] | Error; usbmux: string[] | Error}) {
+  const close = sinon.stub().resolves();
+  return {
+    close,
+    module: {
+      Services: {
+        getAvailableDevices:
+          registry instanceof Error ? sinon.stub().rejects(registry) : sinon.stub().resolves(registry),
+      },
+      createUsbmux:
+        usbmux instanceof Error
+          ? sinon.stub().rejects(usbmux)
+          : sinon.stub().resolves({
+              listDevices: async () => usbmux.map((SerialNumber) => ({Properties: {SerialNumber}})),
+              close,
+            }),
+    },
+  };
+}
+
+describe('ConnectedDevicesClient', function () {
+  afterEach(function () {
+    currentModule = null;
     delete process.env.APPIUM_XCUITEST_PREFER_DEVICECTL;
   });
 
-  afterEach(function () {
-    sandbox.restore();
-    if (preferDevicectl === undefined) {
-      delete process.env.APPIUM_XCUITEST_PREFER_DEVICECTL;
-    } else {
-      process.env.APPIUM_XCUITEST_PREFER_DEVICECTL = preferDevicectl;
-    }
+  it('lists usbmux devices without a tunnel registry, de-duplicating the USB and network entries', async function () {
+    const {module, close} = makeModule({registry: new Error('registry down'), usbmux: ['A', 'B', 'A']});
+    currentModule = module;
+
+    const client = await ConnectedDevicesClient.create();
+
+    assert.deepStrictEqual(await client.getConnectedDevices(), ['A', 'B']);
+    assert.strictEqual(close.calledOnce, true);
   });
 
-  async function createClient(tunnelUdids: string[], legacyUdids: string[]) {
-    const getAvailableDevices = sandbox.stub().resolves(tunnelUdids);
-    const getLegacyDevices = sandbox.stub(utilities, 'getConnectedDevices').resolves(legacyUdids);
-    const getServices = sandbox
-      .stub(RemoteXPCFacade, 'tryGetServicesStatic')
-      .resolves({getAvailableDevices} as unknown as RemoteXPCServices);
-    const warn = sandbox.stub(log, 'warn');
-    const client = await ConnectedDevicesClient.create({platformVersion: '18.0'} as XCUITestDriverOpts);
-    return {client, getAvailableDevices, getLegacyDevices, getServices, warn};
-  }
+  it('puts usbmux-only devices first and registry devices last, ignoring case in the de-duplication', async function () {
+    const {module} = makeModule({registry: ['W', 'a'], usbmux: ['A', 'U']});
+    currentModule = module;
 
-  const outcomes = ['nonempty', 'empty', 'rejected'] as const;
-  for (const tunnelOutcome of outcomes) {
-    for (const legacyOutcome of outcomes) {
-      it(`combines tunnel=${tunnelOutcome} and legacy=${legacyOutcome}`, async function () {
-        const tunnelUdids = tunnelOutcome === 'nonempty' ? ['Tunnel-A'] : [];
-        const legacyUdids = legacyOutcome === 'nonempty' ? ['Legacy-B'] : [];
-        const {client, getAvailableDevices, getLegacyDevices, warn} = await createClient(tunnelUdids, legacyUdids);
-        const tunnelError = new Error('tunnel lookup failed');
-        const legacyError = new Error('legacy lookup failed');
-        if (tunnelOutcome === 'rejected') {
-          getAvailableDevices.rejects(tunnelError);
-        }
-        if (legacyOutcome === 'rejected') {
-          getLegacyDevices.rejects(legacyError);
-        }
+    const client = await ConnectedDevicesClient.create();
 
-        if (tunnelOutcome === 'rejected' && legacyOutcome === 'rejected') {
-          await assert.rejects(client.getConnectedDevices(), (error: unknown) => {
-            assert.ok(error instanceof Error);
-            assert.match(error.message, /tunnel lookup failed/);
-            assert.match(error.message, /legacy lookup failed/);
-            assert.ok(error.cause instanceof AggregateError);
-            assert.deepEqual(error.cause.errors, [tunnelError, legacyError]);
-            return true;
-          });
-        } else {
-          assert.deepEqual(await client.getConnectedDevices(), [...tunnelUdids, ...legacyUdids]);
-          const oneFailed = tunnelOutcome === 'rejected' || legacyOutcome === 'rejected';
-          assert.equal(warn.callCount, oneFailed ? 1 : 0);
-          if (legacyOutcome === 'rejected') {
-            assert.match(String(warn.firstCall.args[0]), /legacy lookup failed/);
-          }
-        }
-        assert.equal(getAvailableDevices.callCount, 1);
-        assert.equal(getLegacyDevices.callCount, 1);
-      });
-    }
-  }
-
-  it('retains a device whose tunnel disappeared while another tunnel remains', async function () {
-    const {client} = await createClient(['Device-A'], ['Device-A', 'Device-B']);
-    assert.deepEqual(await client.getConnectedDevices(), ['Device-A', 'Device-B']);
+    assert.deepStrictEqual(await client.getConnectedDevices(), ['U', 'W', 'a']);
   });
 
-  it('lists tunnels first in registry order and appends only unseen legacy devices', async function () {
-    const {client} = await createClient(
-      ['Tunnel-A', 'tunnel-a', 'Tunnel-B'],
-      ['Legacy-A', 'legacy-a', 'TUNNEL-A', 'Legacy-B', 'TUNNEL-B'],
-    );
-    assert.deepEqual(await client.getConnectedDevices(), ['Tunnel-A', 'Tunnel-B', 'Legacy-A', 'Legacy-B']);
+  it('lists devicectl devices instead of usbmux ones when preferred', async function () {
+    process.env.APPIUM_XCUITEST_PREFER_DEVICECTL = 'true';
+    devicectlDevices = ['D1', 'D2'];
+    const {module} = makeModule({registry: new Error('registry down'), usbmux: ['A']});
+    currentModule = module;
+
+    const client = await ConnectedDevicesClient.create();
+
+    assert.deepStrictEqual(await client.getConnectedDevices(), ['D1', 'D2']);
+    assert.strictEqual(module.createUsbmux.called, false);
   });
 
-  it('does not mutate either source list', async function () {
-    const tunnels = ['Device-A', 'device-a'];
-    const legacy = ['device-a', 'Device-B', 'device-b'];
-    Object.freeze(tunnels);
-    Object.freeze(legacy);
-    const {client} = await createClient(tunnels, legacy);
-    assert.deepEqual(await client.getConnectedDevices(), ['Device-A', 'Device-B']);
-    assert.deepEqual(tunnels, ['Device-A', 'device-a']);
-    assert.deepEqual(legacy, ['device-a', 'Device-B', 'device-b']);
+  it('returns the registry devices when usbmuxd is unreachable', async function () {
+    const {module} = makeModule({registry: ['W'], usbmux: new Error('The usbmuxd socket does not exist')});
+    currentModule = module;
+
+    const client = await ConnectedDevicesClient.create();
+
+    assert.deepStrictEqual(await client.getConnectedDevices(), ['W']);
   });
 
-  it('normalizes non-Error rejection messages and retains both original causes', async function () {
-    const {client, getAvailableDevices, getLegacyDevices} = await createClient([], []);
-    getAvailableDevices.callsFake(() => Promise.reject('registry unavailable'));
-    getLegacyDevices.callsFake(() => Promise.reject(42));
-    await assert.rejects(client.getConnectedDevices(), (error: unknown) => {
-      assert.ok(error instanceof Error);
-      assert.match(error.message, /registry unavailable/);
-      assert.match(error.message, /42/);
-      assert.ok(error.cause instanceof AggregateError);
-      assert.deepEqual(error.cause.errors, ['registry unavailable', 42]);
-      return true;
-    });
+  it('returns an empty list instead of throwing when nothing is reachable', async function () {
+    const {module} = makeModule({registry: new Error('registry down'), usbmux: new Error('no usbmuxd')});
+    currentModule = module;
+
+    const client = await ConnectedDevicesClient.create();
+
+    assert.deepStrictEqual(await client.getConnectedDevices(), []);
   });
 
-  it('uses the legacy list when RemoteXPC services cannot be loaded', async function () {
-    const {getServices, getAvailableDevices, getLegacyDevices, warn} = await createClient([], ['Legacy-B']);
-    getServices.resolves(null);
-    const client = await ConnectedDevicesClient.create({platformVersion: '17.0'} as XCUITestDriverOpts);
-    assert.deepEqual(await client.getConnectedDevices(), ['Legacy-B']);
-    assert.equal(getAvailableDevices.callCount, 0);
-    assert.equal(getLegacyDevices.callCount, 1);
-    assert.equal(warn.callCount, 1);
-  });
+  it('returns an empty list when the remotexpc module cannot be loaded', async function () {
+    currentModule = null;
 
-  it('refreshes both sources between calls instead of retaining stale tunnel membership', async function () {
-    const {client, getAvailableDevices} = await createClient(['Device-A', 'Device-B'], ['Device-A', 'Device-B']);
-    assert.deepEqual(await client.getConnectedDevices(), ['Device-A', 'Device-B']);
-    getAvailableDevices.resolves(['Device-B']);
-    assert.deepEqual(await client.getConnectedDevices(), ['Device-B', 'Device-A']);
-    assert.equal(getAvailableDevices.callCount, 2);
+    const client = await ConnectedDevicesClient.create();
+
+    assert.deepStrictEqual(await client.getConnectedDevices(), []);
   });
 });

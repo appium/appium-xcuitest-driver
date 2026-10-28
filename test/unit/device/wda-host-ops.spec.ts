@@ -174,9 +174,11 @@ describe('wda host ops', function () {
         dvtService: {close},
       };
       const startDVTService = sinon.stub().resolves(dvt);
-      const requireService = sinon.stub().callsFake(async (_feature, operation) => await operation({startDVTService}));
+      const requireTunnelService = sinon
+        .stub()
+        .callsFake(async (_feature, operation) => await operation({startDVTService}));
       const driver = {
-        remoteXPCFacade: {requireService},
+        remoteXPCFacade: {requireTunnelService},
         log: {info: sinon.stub()},
       } as any;
 
@@ -213,9 +215,9 @@ describe('wda host ops', function () {
     it('falls back to devicectl launch on macOS below iOS 27 if RemoteXPC launch fails', async function () {
       await withPlatformAsync('darwin', async () => {
         const launchApp = sinon.stub().resolves();
-        const requireService = sinon.stub().rejects(new Error('No tunnel'));
+        const requireTunnelService = sinon.stub().rejects(new Error('No tunnel'));
         const driver = {
-          remoteXPCFacade: {requireService},
+          remoteXPCFacade: {requireTunnelService},
           device: {devicectl: {launchApp}},
           opts: {platformVersion: '18.0'},
           log: {warn: sinon.stub()},
@@ -241,9 +243,9 @@ describe('wda host ops', function () {
     it('falls back to devicectl terminate on macOS if RemoteXPC terminate fails', async function () {
       await withPlatformAsync('darwin', async () => {
         const terminateApp = sinon.stub().resolves();
-        const requireService = sinon.stub().rejects(new Error('No tunnel'));
+        const requireTunnelService = sinon.stub().rejects(new Error('No tunnel'));
         const driver = {
-          remoteXPCFacade: {requireService},
+          remoteXPCFacade: {requireTunnelService},
           device: {devicectl: {terminateApp}},
           opts: {platformVersion: '27.0'},
           log: {warn: sinon.stub()},
@@ -262,9 +264,9 @@ describe('wda host ops', function () {
     it('does not fall back to devicectl launch on iOS/tvOS 27+ if RemoteXPC launch fails', async function () {
       await withPlatformAsync('darwin', async () => {
         const launchApp = sinon.stub().resolves();
-        const requireService = sinon.stub().rejects(new Error('No tunnel'));
+        const requireTunnelService = sinon.stub().rejects(new Error('No tunnel'));
         const driver = {
-          remoteXPCFacade: {requireService},
+          remoteXPCFacade: {requireTunnelService},
           device: {devicectl: {launchApp}},
           opts: {platformVersion: '27.0'},
           log: {warn: sinon.stub()},

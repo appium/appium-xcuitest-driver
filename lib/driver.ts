@@ -429,12 +429,12 @@ export class XCUITestDriver
   }
 
   /**
-   * Lazy per-session RemoteXPC facade (tunnel probe + cached fallback state).
+   * Lazy per-session RemoteXPC facade (holds the cached tunnel/usbmux transport tier).
    *
    * @throws {Error} If this.opts.udid is not set.
    */
   get remoteXPCFacade(): RemoteXPCFacade {
-    return this.getOrCreateRemoteXPCFacade(this.isRealDevice());
+    return this.getOrCreateRemoteXPCFacade();
   }
 
   override async onIpcInit(): Promise<void> {
@@ -527,8 +527,8 @@ export class XCUITestDriver
     if (shouldResetLocationService) {
       try {
         await this.mobileResetLocationService();
-      } catch {
-        /* Ignore this error since mobileResetLocationService already logged the error */
+      } catch (err) {
+        this.log.warn(`Cannot reset the location service: ${(err as Error).message}`);
       }
     }
 
@@ -910,7 +910,7 @@ export class XCUITestDriver
     this.caps.platformVersion = this.opts.platformVersion;
 
     if (this.isRealDevice()) {
-      (this.device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade(true));
+      (this.device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade());
     }
 
     assertWdaHostPlatformSupported(this);
@@ -1236,13 +1236,13 @@ export class XCUITestDriver
     }
   }
 
-  private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {
+  private getOrCreateRemoteXPCFacade(): RemoteXPCFacade {
     const udid = this.opts.udid;
     if (!udid) {
       throw new Error('Cannot access RemoteXPC session state before device UDID is set');
     }
     if (!this._remoteXPCFacade || this._remoteXPCFacade.udid !== udid) {
-      this._remoteXPCFacade = new RemoteXPCFacade(udid, this.opts.platformVersion, this.log, isRealDevice);
+      this._remoteXPCFacade = new RemoteXPCFacade(udid, this.opts.platformVersion, this.log);
     }
     return this._remoteXPCFacade;
   }

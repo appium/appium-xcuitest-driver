@@ -79,10 +79,7 @@ export async function getDeviceTime(this: XCUITestDriver, format = DATETIME_FORM
     throw new errors.UnknownError('Device UDID is required to read time on a real device');
   }
 
-  const lockdown = await LockdownClient.createForDevice(udid, {
-    facade: this.remoteXPCFacade,
-    logger: this.log,
-  });
+  const lockdown = await LockdownClient.createForDevice(udid, {facade: this.remoteXPCFacade});
   let timestamp: number;
   let utcOffset: number;
   try {

@@ -1,67 +1,55 @@
-/** @ts-expect-error no types */
-import {utilities} from 'appium-ios-device';
 import {Devicectl} from 'node-devicectl';
 
-import type {XCUITestDriverOpts} from '../driver.js';
 import {log} from '../logger.js';
-import {toErrorMessage} from '../utils/index.js';
-import {formatRemoteXPCFallbackLog, RemoteXPCFacade, type RemoteXPCServices} from './remote-xpc/index.js';
+import {loadRemoteXPCModule} from './remote-xpc/module-loader.js';
+import {listUsbmuxUdids} from './remote-xpc/usbmux-utils.js';
+import type {RemoteXPCEsmModule} from './remote-xpc/utils.js';
 
 export class ConnectedDevicesClient {
-  private constructor(private readonly services: RemoteXPCServices | null) {}
+  private constructor(private readonly remoteXPC: RemoteXPCEsmModule | null) {}
 
   /**
    * Create a connected devices client instance.
-   * When opts indicate iOS/tvOS 18+, loads and stores the remotexpc Services
-   * instance for tunnel registry listing; otherwise uses legacy listing only.
    */
-  static async create(opts: XCUITestDriverOpts): Promise<ConnectedDevicesClient> {
-    const services = await RemoteXPCFacade.tryGetServicesStatic(opts.platformVersion);
-    return new ConnectedDevicesClient(services);
+  static async create(): Promise<ConnectedDevicesClient> {
+    let remoteXPC: RemoteXPCEsmModule | null = null;
+    try {
+      remoteXPC = await loadRemoteXPCModule();
+    } catch (err) {
+      log.debug(`Cannot load appium-ios-remotexpc for devices listing: ${(err as Error).message}`);
+    }
+    return new ConnectedDevicesClient(remoteXPC);
   }
 
   /**
-   * Returns the case-insensitive union of tunnel registry and legacy real-device UDIDs.
-   * Tunnel registry UDIDs come first, followed by legacy-only devices.
-   * Uses either successful lookup, including an empty result, and throws only if both fail.
+   * Returns the UDIDs of the connected real devices, never throwing. Devices known only to usbmux
+   * (or devicectl, if preferred) come first and tunnel registry devices last, so that picking the last
+   * one prefers a device that has a tunnel.
    */
   async getConnectedDevices(): Promise<string[]> {
-    const [tunnelSettled, legacySettled] = await Promise.allSettled([
+    const [registrySettled, hostSettled] = await Promise.allSettled([
       this.listUdidsFromTunnelsRegistry(),
-      this.listLegacyUdids(),
+      this.isPreferDevicectlEnabled() ? this.listUdidsFromDevicectl() : this.listUdidsFromUsbmux(),
     ]);
 
-    if (tunnelSettled.status === 'rejected' && legacySettled.status === 'rejected') {
-      throw new Error(
-        `Could not list connected devices: tunnel registry failed (${toErrorMessage(tunnelSettled.reason)}); ` +
-          `legacy lookup failed (${toErrorMessage(legacySettled.reason)})`,
-        {cause: new AggregateError([tunnelSettled.reason, legacySettled.reason], 'Both device lookups failed')},
-      );
+    const failures: string[] = [];
+    const registryUdids = this.unwrap(registrySettled, 'tunnel registry', failures);
+    const hostUdids = this.unwrap(hostSettled, 'host', failures);
+    const knownToRegistry = new Set(registryUdids.map((udid) => udid.toLowerCase()));
+    const udids = [...hostUdids.filter((udid) => !knownToRegistry.has(udid.toLowerCase())), ...registryUdids];
+    if (udids.length === 0 && failures.length > 0) {
+      log.info(`No connected real devices were found. ${failures.join('; ')}`);
     }
+    return udids;
+  }
 
-    if (tunnelSettled.status === 'rejected') {
-      log.warn(formatRemoteXPCFallbackLog('devices listing', tunnelSettled.reason));
+  private unwrap(settled: PromiseSettledResult<string[]>, source: string, failures: string[]): string[] {
+    if (settled.status === 'fulfilled') {
+      return [...new Set(settled.value)];
     }
-    if (legacySettled.status === 'rejected') {
-      log.warn(
-        `Legacy devices listing failed: ${toErrorMessage(legacySettled.reason)}. Using tunnel registry results.`,
-      );
-    }
-
-    const tunnelUdids = tunnelSettled.status === 'fulfilled' ? tunnelSettled.value : [];
-    const legacyUdids = legacySettled.status === 'fulfilled' ? legacySettled.value : [];
-    const seen = new Set<string>();
-    const result: string[] = [];
-
-    // Preserve tunnel registry spelling and order, then append unseen legacy-only devices.
-    for (const udid of [...tunnelUdids, ...legacyUdids]) {
-      const key = udid.toLowerCase();
-      if (!seen.has(key)) {
-        seen.add(key);
-        result.push(udid);
-      }
-    }
-    return result;
+    // The registry is normally unreachable when no tunnel is running
+    failures.push(`Cannot list the devices from the ${source}: ${settled.reason?.message}`);
+    return [];
   }
 
   private isPreferDevicectlEnabled(): boolean {
@@ -69,22 +57,29 @@ export class ConnectedDevicesClient {
   }
 
   /**
-   * Fetches UDIDs from the tunnel registry.
-   * @throws When remotexpc is not loaded or when the tunnel registry is unreachable.
+   * @throws When the tunnel registry is unreachable.
    */
   private async listUdidsFromTunnelsRegistry(): Promise<string[]> {
-    if (!this.services) {
-      throw new Error('appium-ios-remotexpc module cannot be loaded');
-    }
-    return await this.services.getAvailableDevices();
+    return await this.requireRemoteXPC().Services.getAvailableDevices();
   }
 
-  private async listLegacyUdids(): Promise<string[]> {
-    if (this.isPreferDevicectlEnabled()) {
-      return (await new Devicectl('').listDevices())
-        .map(({hardwareProperties}) => hardwareProperties?.udid)
-        .filter(Boolean);
+  /**
+   * @throws When usbmuxd is unreachable.
+   */
+  private async listUdidsFromUsbmux(): Promise<string[]> {
+    return await listUsbmuxUdids(this.requireRemoteXPC());
+  }
+
+  private async listUdidsFromDevicectl(): Promise<string[]> {
+    return (await new Devicectl('').listDevices())
+      .map(({hardwareProperties}) => hardwareProperties?.udid)
+      .filter(Boolean);
+  }
+
+  private requireRemoteXPC(): RemoteXPCEsmModule {
+    if (!this.remoteXPC) {
+      throw new Error('appium-ios-remotexpc module cannot be loaded');
     }
-    return await utilities.getConnectedDevices();
+    return this.remoteXPC;
   }
 }

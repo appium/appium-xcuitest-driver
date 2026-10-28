@@ -1,12 +1,14 @@
-import {fileURLToPath} from 'node:url';
-
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
-import {console as consoleUtils, doctor, fs, node} from 'appium/support.js';
+import {console as consoleUtils, doctor, fs} from 'appium/support.js';
 import axios from 'axios';
 import {exec, SubProcess} from 'teen_process';
 
-import {memoize} from '../utils/index.js';
-import {resolveExecutablePath} from './utils.js';
+import {
+  REMOTE_XPC_PACKAGE_NAME,
+  getXcuitestDriverRoot,
+  isRemoteXpcDependencyAvailable,
+  resolveExecutablePath,
+} from './utils.js';
 
 export class OptionalSimulatorCheck implements IDoctorCheck {
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [
@@ -125,63 +127,6 @@ export class OptionalFfmpegCheck implements IDoctorCheck {
 }
 export const optionalFfmpegCheck = new OptionalFfmpegCheck();
 
-const REMOTE_XPC_PACKAGE_NAME = 'appium-ios-remotexpc';
-
-const isRemoteXpcDependencyAvailable = memoize(async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
-  try {
-    // We only care that the module can be imported; we don't need to use it here.
-    await import(REMOTE_XPC_PACKAGE_NAME);
-    return true;
-  } catch {
-    return false;
-  }
-});
-
-const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string | null {
-  return node.getModuleRootSync('appium-xcuitest-driver', fileURLToPath(import.meta.url));
-});
-
-export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
-  static readonly README_LINK = 'https://github.com/appium/appium-ios/tree/main/packages/remotexpc';
-  log!: AppiumLogger;
-
-  async diagnose(): Promise<DoctorCheckResult> {
-    const available = await isRemoteXpcDependencyAvailable();
-    if (available) {
-      return doctor.okOptional(
-        `${REMOTE_XPC_PACKAGE_NAME} is installed and can be imported. ` +
-          `Remote XPC-based features are available for real devices (iOS/tvOS 18+).`,
-      );
-    }
-    return doctor.nokOptional(
-      `${REMOTE_XPC_PACKAGE_NAME} is not installed or cannot be imported. ` +
-        `Install it as an optional dependency if you plan to use Remote XPC-based features ` +
-        `on real devices (iOS/tvOS 18+). Tests may still run without it, but some ` +
-        `advanced functionality might not work or be unavailable.`,
-    );
-  }
-
-  async fix(): Promise<string> {
-    const driverRoot = getXcuitestDriverRoot();
-    const locationHint = driverRoot ? `cd "${driverRoot}"; ` : '';
-    return (
-      `${consoleUtils.styleText('bold', REMOTE_XPC_PACKAGE_NAME)} provides Remote XPC communication ` +
-      `and tunneling support for real devices (iOS/tvOS 18+). ` +
-      `Run '${locationHint}npm install ${REMOTE_XPC_PACKAGE_NAME}'. ` +
-      `For more information, see ${OptionalIosRemoteXpcDependencyCheck.README_LINK}.`
-    );
-  }
-
-  hasAutofix(): boolean {
-    return false;
-  }
-
-  isOptional(): boolean {
-    return true;
-  }
-}
-export const optionalIosRemoteXpcDependencyCheck = new OptionalIosRemoteXpcDependencyCheck();
-
 const TUNNEL_SCRIPT_TIMEOUT_MS = 5000;
 const API_READY_PATTERN = /:\d+\/remotexpc\/tunnels/;
 
@@ -196,7 +141,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
       return doctor.nokOptional(
         `Remote XPC tunnel availability cannot be checked because ` +
           `${REMOTE_XPC_PACKAGE_NAME} is not installed or cannot be imported. ` +
-          `Install it first using the '${REMOTE_XPC_PACKAGE_NAME}' optional check.`,
+          `Install it first (see the '${REMOTE_XPC_PACKAGE_NAME}' check).`,
       );
     }
 
@@ -220,8 +165,10 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `The Remote XPC tunnel infrastructure is used for IPv6 tunneling when testing against real ` +
-      `devices (iOS/tvOS 18+). ` +
+      `The Remote XPC tunnel is the recommended way to test against real devices (iOS/tvOS 18+). ` +
+      `Without it, the driver falls back to the legacy lockdown services over usbmux, which is temporary, ` +
+      `limited and expected to stop working: crash reports, pasteboard, XCTest, the HID, network and system ` +
+      `monitors and condition inducer require a tunnel. ` +
       `To explicitly start or verify tunnels when needed, run ` +
       `'${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' with sudo/root privileges. ` +
       `See ${OptionalTunnelAvailabilityCheck.README_LINK} for more details about tunnel usage.`

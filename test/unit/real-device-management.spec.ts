@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
-import {Readable} from 'node:stream';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {errors} from 'appium/driver.js';
-import {fs} from 'appium/support.js';
+import {fs, tempDir} from 'appium/support.js';
 import sinon from 'sinon';
 
 import {AfcClient} from '../../lib/device/afc-client.js';
-import {installToRealDevice, pullFolder, RealDevice} from '../../lib/device/real-device-management.js';
+import {InstallationProxyClient} from '../../lib/device/installation-proxy-client.js';
+import {NotificationClient} from '../../lib/device/notification-client.js';
+import {installToRealDevice, pushFolder, RealDevice} from '../../lib/device/real-device-management.js';
 import type {RemoteXPCFacade} from '../../lib/device/remote-xpc/index.js';
 import {ZipConduitClient} from '../../lib/device/zip-conduit-client.js';
 import {XCUITestDriver} from '../../lib/driver.js';
@@ -181,15 +182,13 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
   const stubAfcSentinel = () =>
     sandbox.stub(AfcClient, 'createForDevice').rejects(new Error('afc-sentinel')) as sinon.SinonStub;
 
-  const attachAvailableFacade = (realDevice: RealDevice) => {
-    realDevice.attachRemoteXPCFacade({
-      determineAvailability: sandbox.stub().resolves(true),
-    } as unknown as RemoteXPCFacade);
+  const attachFacade = (realDevice: RealDevice) => {
+    realDevice.attachRemoteXPCFacade({} as unknown as RemoteXPCFacade);
   };
 
-  it('streams an .ipa via zip_conduit on iOS 18+ and skips the AFC path', async function () {
+  it('streams an .ipa via zip_conduit and skips the AFC path', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
-    attachAvailableFacade(realDevice);
+    attachFacade(realDevice);
     stubStat(true);
     const installStub = sandbox.stub().resolves();
     const closeStub = sandbox.stub().resolves();
@@ -206,9 +205,9 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     assert.strictEqual(afcStub.called, false);
   });
 
-  it('falls back to the legacy AFC path and closes the client when zip_conduit fails', async function () {
+  it('falls back to the AFC upload and closes the client when zip_conduit fails', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
-    attachAvailableFacade(realDevice);
+    attachFacade(realDevice);
     stubStat(true);
     const closeStub = sandbox.stub().resolves();
     sandbox.stub(ZipConduitClient, 'create').resolves({
@@ -224,6 +223,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
 
   it('does not use zip_conduit for unpacked .app bundles', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
+    attachFacade(realDevice);
     stubStat(false);
     const createStub = sandbox.stub(ZipConduitClient, 'create') as sinon.SinonStub;
     const afcStub = stubAfcSentinel();
@@ -233,14 +233,15 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     assert.strictEqual(afcStub.calledOnce, true);
   });
 
-  it('does not use zip_conduit on iOS < 18', async function () {
+  it('falls back to the AFC upload when zip_conduit is unavailable', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '17.4'} as XCUITestDriverOpts);
+    attachFacade(realDevice);
     stubStat(true);
-    const createStub = sandbox.stub(ZipConduitClient, 'create') as sinon.SinonStub;
+    const createStub = sandbox.stub(ZipConduitClient, 'create').resolves(null) as sinon.SinonStub;
     const afcStub = stubAfcSentinel();
 
     await assert.rejects(realDevice.install(ipaPath, bundleId), /afc-sentinel/);
-    assert.strictEqual(createStub.called, false);
+    assert.strictEqual(createStub.calledOnce, true);
     assert.strictEqual(afcStub.calledOnce, true);
   });
 });
@@ -284,36 +285,86 @@ describe('RealDevice host utility fallback policy', function () {
   });
 });
 
-describe('pullFolder', function () {
-  /** Fake legacy (non-RemoteXPC) AFC service serving a fixed tree rooted at '/'. */
-  const createWalkDirService = (tree: Record<string, string[]>) => {
-    const walk = async (dir: string, onPath: (p: string, isDirectory: boolean) => unknown): Promise<void> => {
-      for (const entry of tree[dir] ?? []) {
-        const isDirectory = entry in tree;
-        await onPath(entry, isDirectory);
-        if (isDirectory) {
-          await walk(entry, onPath);
-        }
-      }
-    };
-    return {
-      getFileInfo: async (p: string) => ({isDirectory: () => p in tree}),
-      createReadStream: async (p: string) => Readable.from([`content of ${p}`]),
-      walkDir: async (dir: string, _recursive: boolean, onPath: (p: string, isDirectory: boolean) => unknown) =>
-        await walk(dir, onPath),
-    };
-  };
-
-  it('rejects pulling the container root instead of zipping the temp folder parent', async function () {
-    const service = createWalkDirService({'/': ['/a.txt', '/sub'], '/sub': ['/sub/b.txt']});
-    const client: AfcClient = Reflect.construct(AfcClient, [service, false]);
-
-    await assert.rejects(pullFolder(client, '/'), errors.InvalidArgumentError);
+describe('RealDevice.installOrUpgradeApplication', function () {
+  afterEach(function () {
+    sinon.restore();
   });
 
-  it('rejects a single-file pull of a remote path without a basename', async function () {
-    const client: AfcClient = Reflect.construct(AfcClient, [createWalkDirService({}), false]);
+  it('continues the installation and closes both clients when the notification subscription fails', async function () {
+    const realDevice = new RealDevice('test-udid', {platformVersion: '18.0'} as XCUITestDriverOpts);
+    realDevice.attachRemoteXPCFacade({} as unknown as RemoteXPCFacade);
+    const notificationClose = sinon.stub().resolves();
+    const installationClose = sinon.stub().resolves();
+    const installApplication = sinon.stub().resolves();
+    sinon.stub(NotificationClient, 'create').resolves({
+      observe: sinon.stub().rejects(new Error('observe-failed')),
+      close: notificationClose,
+    } as any);
+    sinon.stub(InstallationProxyClient, 'create').resolves({
+      installApplication,
+      close: installationClose,
+    } as any);
 
-    await assert.rejects(client.pull('/', '/nonexistent/local'), errors.InvalidArgumentError);
+    await realDevice.installOrUpgradeApplication('/app', {isUpgrade: false, timeout: 1000});
+
+    assert.strictEqual(installApplication.calledOnce, true);
+    assert.strictEqual(notificationClose.calledOnce, true);
+    assert.strictEqual(installationClose.calledOnce, true);
+  });
+
+  it('closes both clients when the installation fails', async function () {
+    const realDevice = new RealDevice('test-udid', {platformVersion: '18.0'} as XCUITestDriverOpts);
+    realDevice.attachRemoteXPCFacade({} as unknown as RemoteXPCFacade);
+    const notificationClose = sinon.stub().resolves();
+    const installationClose = sinon.stub().resolves();
+    sinon.stub(NotificationClient, 'create').resolves({
+      observe: sinon.stub().resolves(),
+      expectNotification: sinon.stub().returns(new Promise(() => {})),
+      close: notificationClose,
+    } as any);
+    sinon.stub(InstallationProxyClient, 'create').resolves({
+      installApplication: sinon.stub().rejects(new Error('install-failed')),
+      close: installationClose,
+    } as any);
+
+    await assert.rejects(
+      realDevice.installOrUpgradeApplication('/app', {isUpgrade: false, timeout: 1000}),
+      /install-failed/,
+    );
+    assert.strictEqual(notificationClose.calledOnce, true);
+    assert.strictEqual(installationClose.calledOnce, true);
+  });
+});
+
+describe('pushFolder', function () {
+  it('creates the folder structure top-down and pushes larger files first', async function () {
+    const root = await tempDir.openDir();
+    try {
+      await fs.mkdir(path.join(root, 'a', 'b'), {recursive: true});
+      await fs.writeFile(path.join(root, 'small.txt'), 'x');
+      await fs.writeFile(path.join(root, '.DS_Store'), 'x');
+      await fs.mkdir(path.join(root, '.hidden'), {recursive: true});
+      await fs.writeFile(path.join(root, '.hidden', 'file'), 'x');
+      await fs.writeFile(path.join(root, 'a', 'b', 'big.txt'), 'x'.repeat(100));
+      const created: string[] = [];
+      const pushed: string[] = [];
+      const client = {
+        deleteDirectory: async () => {
+          throw new Error('OBJECT_NOT_FOUND');
+        },
+        createDirectory: async (p: string) => void created.push(p),
+        writeFromStream: async (p: string, stream: {destroy: () => void}) => {
+          pushed.push(p);
+          stream.destroy();
+        },
+      } as unknown as AfcClient;
+
+      await pushFolder(client, root, '/dst');
+
+      assert.deepStrictEqual(created, ['/dst', '/dst/a', '/dst/a/b']);
+      assert.deepStrictEqual(pushed, ['/dst/a/b/big.txt', '/dst/small.txt']);
+    } finally {
+      await fs.rimraf(root);
+    }
   });
 });

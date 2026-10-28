@@ -1,6 +1,4 @@
 import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {Devicectl} from 'node-devicectl';
 
 import {isEmpty, supportsApiLevel17} from '../utils/index.js';
@@ -17,28 +15,19 @@ export class AppTerminationClient {
     private readonly platformVersion: string,
     private readonly devicectl: Devicectl,
     private readonly log: AppiumLogger,
-    private readonly remoteXPCFacade: RemoteXPCFacade | null = null,
+    private readonly remoteXPCFacade: RemoteXPCFacade,
   ) {}
 
   async terminate(bundleId: string): Promise<boolean> {
-    let result: TerminateAppResult | null =
-      (await this.remoteXPCFacade?.attemptService(`terminate '${bundleId}'`, async (Services) => {
-        const dvt = await Services.startDVTService(this.udid);
-        try {
-          const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
-          if (!pid) {
-            return {terminated: false, reason: 'not_running'} satisfies TerminateAppResult;
-          }
-          await dvt.processControl.kill(pid);
-          return {terminated: true, pid} satisfies TerminateAppResult;
-        } finally {
-          await dvt.dvtService.close();
-        }
-      })) ?? null;
-
-    if (!result) {
-      result = await this.terminateLegacy(bundleId);
+    let result: TerminateAppResult | null = null;
+    try {
+      if (await this.remoteXPCFacade.isTunnelTier()) {
+        result = await this.terminateViaDvt(bundleId);
+      }
+    } catch (err) {
+      this.log.warn(`Cannot terminate '${bundleId}' via RemoteXPC: ${(err as Error).message}`);
     }
+    result ??= await this.terminateViaDevicectl(bundleId);
 
     if (result.terminated) {
       this.log.debug(`Killed process for '${bundleId}' app with PID ${result.pid}`);
@@ -55,11 +44,37 @@ export class AppTerminationClient {
     return false;
   }
 
-  private async terminateLegacy(bundleId: string): Promise<TerminateAppResult> {
-    let instrumentService: any;
+  private async terminateViaDvt(bundleId: string): Promise<TerminateAppResult> {
+    return await this.remoteXPCFacade.requireTunnelService(`terminate '${bundleId}'`, async (Services) => {
+      const dvt = await Services.startDVTService(this.udid);
+      try {
+        const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
+        if (!pid) {
+          return {terminated: false, reason: 'not_running'} satisfies TerminateAppResult;
+        }
+        await dvt.processControl.kill(pid);
+        return {terminated: true, pid} satisfies TerminateAppResult;
+      } finally {
+        await dvt.dvtService.close();
+      }
+    });
+  }
+
+  /**
+   * Used when the session has no tunnel or DVT failed: looks up the executable name via
+   * InstallationProxy and signals the process through devicectl (macOS only).
+   */
+  private async terminateViaDevicectl(bundleId: string): Promise<TerminateAppResult> {
     let installProxyClient: InstallationProxyClient | undefined;
     try {
-      installProxyClient = await InstallationProxyClient.create(this.udid);
+      if (process.platform !== 'darwin' || !supportsApiLevel17(this.platformVersion)) {
+        return {
+          terminated: false,
+          reason: 'error',
+          detail: `Terminating '${bundleId}' via devicectl requires macOS and iOS/tvOS 17+ (RemoteXPC is not usable)`,
+        };
+      }
+      installProxyClient = await InstallationProxyClient.create(this.udid, {facade: this.remoteXPCFacade});
       const apps = await installProxyClient.listApplications({
         returnAttributes: ['CFBundleIdentifier', 'CFBundleExecutable'],
       });
@@ -68,44 +83,20 @@ export class AppTerminationClient {
       }
       const executableName = apps[bundleId].CFBundleExecutable;
       this.log.debug(`The executable name for the bundle id '${bundleId}' was '${String(executableName)}'`);
-      if (supportsApiLevel17(this.platformVersion)) {
-        if (process.platform !== 'darwin') {
-          return {
-            terminated: false,
-            reason: 'error',
-            detail: `devicectl is only available on macOS; cannot terminate '${bundleId}' via devicectl from '${process.platform}'`,
-          };
-        }
-        this.log.debug(`Calling devicectl to kill the process`);
-        const pids = (await this.devicectl.listProcesses())
-          .filter(({executable}) => executable.endsWith(`/${String(executableName)}`))
-          .map(({processIdentifier}) => processIdentifier);
-        if (isEmpty(pids)) {
-          return {terminated: false, reason: 'not_running'};
-        }
-        await this.devicectl.sendSignalToProcess(pids[0], 2);
-        return {terminated: true, pid: pids[0]};
-      }
-
-      // iOS < 17: use instrument service
-      instrumentService = await services.startInstrumentService(this.udid);
-      const processes = await instrumentService.callChannel(INSTRUMENT_CHANNEL.DEVICE_INFO, 'runningProcesses');
-      const matchingProcess = processes.selector.find((proc: any) => proc.name === executableName);
-      if (!matchingProcess) {
+      this.log.debug(`Calling devicectl to kill the process`);
+      const pids = (await this.devicectl.listProcesses())
+        .filter(({executable}) => executable.endsWith(`/${String(executableName)}`))
+        .map(({processIdentifier}) => processIdentifier);
+      if (isEmpty(pids)) {
         return {terminated: false, reason: 'not_running'};
       }
-      await instrumentService.callChannel(INSTRUMENT_CHANNEL.PROCESS_CONTROL, 'killPid:', `${matchingProcess.pid}`);
-      return {terminated: true, pid: matchingProcess.pid};
+      await this.devicectl.sendSignalToProcess(pids[0], 2);
+      return {terminated: true, pid: pids[0]};
     } catch (err) {
       const detail = (err as any).stderr ?? (err as Error).message;
       return {terminated: false, reason: 'error', detail: String(detail)};
     } finally {
-      if (installProxyClient) {
-        await installProxyClient.close();
-      }
-      if (instrumentService) {
-        instrumentService.close();
-      }
+      await installProxyClient?.close();
     }
   }
 }

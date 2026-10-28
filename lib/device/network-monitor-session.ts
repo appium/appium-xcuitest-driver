@@ -44,7 +44,7 @@ export class NetworkMonitorSession {
     if (!this.remoteXPCFacade) {
       throw new Error(`RemoteXPC is not available for device '${this.udid}'`);
     }
-    const dvt = await this.remoteXPCFacade.requireService('network monitor', (Services) =>
+    const dvt = await this.remoteXPCFacade.requireTunnelService('network monitor', (Services) =>
       Services.startDVTService(this.udid),
     );
     this.dvt = dvt;

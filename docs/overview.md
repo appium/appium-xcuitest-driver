@@ -55,12 +55,12 @@ Under the hood, the driver combines several different technologies to achieve it
     - Based on the `xcrun simctl` and other `xcrun` command line utility calls
     - Provided by the [`appium-ios-simulator`](https://github.com/appium/appium-ios/tree/main/packages/simulator) library
 - Real device communication
-    - Legacy approach (to be eventually deprecated)
-        - Based on re-implemented [`libimobiledevice`](https://github.com/libimobiledevice/libimobiledevice) system calls
-        - Provided by the [`appium-ios-device`](https://github.com/appium/appium-ios-device) library
-    - Modern approach (iOS/tvOS 18+ only)
-        - Based on remote XPC services
-        - Provided by the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) library
+    - Provided by the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) library
+    - Preferred: remote XPC services over a [tunnel](./guides/remotexpc-tunnels-real-devices.md) (iOS/tvOS 18+)
+    - Temporary fallback when no tunnel is running: the classic lockdown services over `usbmux`. It supports a
+      limited set of features (see the [feature availability table](./guides/remotexpc-tunnels-real-devices.md#feature-availability))
+      and is expected to stop working once Apple removes these services. This is also the only mode available
+      for devices running iOS/tvOS < 18
 
 ## End-to-End Architecture
 

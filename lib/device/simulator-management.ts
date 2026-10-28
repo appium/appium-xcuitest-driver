@@ -80,15 +80,28 @@ export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts =
  * Different callers (a user-supplied capability vs. simctl's own CoreSimulator-reported
  * list) do not necessarily agree on letter case.
  *
+ * @param platform - Only match devices of this platform; any platform if omitted
  * @returns The matching device's canonical udid, or `undefined` if no device matches.
  */
 export async function findSimulatorUdidCase(
   udid: string,
   devicesSetPath: string | undefined,
-  platform: string,
+  platform?: string,
 ): Promise<string | undefined> {
+  return (await findSimulatorByUdid(udid, devicesSetPath, platform))?.udid;
+}
+
+/**
+ * Same as {@linkcode findSimulatorUdidCase}, but returns the whole list entry
+ * (e.g. to check the simulator platform).
+ */
+export async function findSimulatorByUdid(
+  udid: string,
+  devicesSetPath: string | undefined,
+  platform?: string,
+): Promise<SimulatorListEntry | undefined> {
   const devices = await listSimulators({devicesSetPath});
-  return devices.find((d) => d.platform === platform && d.udid.toLowerCase() === udid.toLowerCase())?.udid;
+  return devices.find((d) => (!platform || d.platform === platform) && d.udid.toLowerCase() === udid.toLowerCase());
 }
 
 /**

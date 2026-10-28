@@ -134,11 +134,10 @@ class RealDeviceXcTestScreenRecordingRetriever extends XcTestScreenRecordingRetr
 /**
  * Start a new screen recording via XCTest.
  *
- * On **real devices**, if **iOS 18+** and a new enough **appium-ios-remotexpc** (with
- * **XCTestAttachment**) are present, the attachment is removed after stop and the
+ * On **real devices**, if the session runs on a RemoteXPC tunnel, the attachment is removed after stop and the
  * `xctest_screen_record` insecure feature is **not** required.
- * If deletion cannot be performed (older iOS, package missing, or too old), you must enable
- * the `xctest_screen_record` insecure feature to start recording.
+ * If deletion cannot be performed (no tunnel), you must enable the `xctest_screen_record` insecure feature
+ * to start recording.
  *
  * If the recording is already running this API is a noop.
  *
@@ -154,7 +153,7 @@ export async function mobileStartXctestScreenRecording(
   codec?: number,
 ): Promise<XcTestScreenRecordingInfo> {
   if (this.isRealDevice()) {
-    const canDeleteAfterStop = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
+    const canDeleteAfterStop = await this.remoteXPCFacade.isTunnelTier().catch(() => false);
     if (!canDeleteAfterStop) {
       this.assertFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE);
     }
@@ -193,7 +192,7 @@ export async function mobileGetXctestScreenRecordingInfo(
  * The resulting movie is automatically deleted from the host temp file FOR SIMULATORS ONLY.
  * On **real devices**, after a successful pull the driver removes the XCTest attachment via
  * **appium-ios-remotexpc** when the same conditions hold as for starting without
- * `xctest_screen_record` (iOS 18+, package present, **XCTestAttachment** export). Otherwise
+ * `xctest_screen_record` (the session runs on a RemoteXPC tunnel). Otherwise
  * device-side delete is skipped. That deletion runs even if Base64 encoding or remote upload
  * fails afterward (the original encode/upload error is still thrown); if both fail, delete errors
  * are logged as warnings so the encode/upload failure remains primary.
@@ -257,7 +256,7 @@ export async function mobileStopXctestScreenRecording(
     encodeOrUploadError = err;
   } finally {
     await fs.rimraf(videoPath);
-    if (this.remoteXPCFacade?.eligible) {
+    if (this.isRealDevice() && (await this.remoteXPCFacade.isTunnelTier().catch(() => false))) {
       try {
         const deletionClient = new XctestAttachmentDeletionClient(this.remoteXPCFacade);
         await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
