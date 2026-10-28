@@ -211,7 +211,7 @@ const DEFAULT_SETTINGS = {
   // Read https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Utilities/FBConfiguration.m for following settings' values
   mjpegServerScreenshotQuality: 25,
   mjpegServerFramerate: 10,
-  screenshotQuality: 1,
+  screenshotQuality: 3,
   mjpegScalingFactor: 100,
   // set `reduceMotion` to `null` so that it will be verified but still set either true/false
   reduceMotion: null,

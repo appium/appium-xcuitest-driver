@@ -472,6 +472,27 @@ describe('XCUITestDriver', function () {
     });
   });
 
+  describe('setupSessionSettings', function () {
+    it('should report the WDA default screenshotQuality', function () {
+      const driver = new XCUITestDriver({} as any);
+      assert.strictEqual(driver.settings.getSettings().screenshotQuality, 3);
+    });
+
+    it('should send screenshotQuality capability to WDA', async function () {
+      for (const screenshotQuality of [0, 1, 2]) {
+        const driver = new XCUITestDriver({} as any);
+        driver.opts.screenshotQuality = screenshotQuality;
+        const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+        await driver.setupSessionSettings();
+        assert.ok(
+          proxyStub.calledWith('/appium/settings', 'POST', {settings: {screenshotQuality}}),
+          `screenshotQuality ${screenshotQuality} was not sent`,
+        );
+        assert.strictEqual(driver.settings.getSettings().screenshotQuality, screenshotQuality);
+      }
+    });
+  });
+
   describe('installOtherApps', function () {
     let driver: InstanceType<typeof XCUITestDriver>;
 
