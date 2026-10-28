@@ -59,15 +59,27 @@ On iOS/tvOS 27+, this `devicectl` launch fallback is disabled: on that stack, th
 launched via `devicectl` never enters the background and never starts its HTTP server (see
 [appium/appium#22636](https://github.com/appium/appium/issues/22636)), so a missing/broken RemoteXPC
 tunnel now fails fast there with an actionable error instead of hanging for the WDA launch timeout.
-On iOS/tvOS 17-26, the `devicectl` fallback still applies as before. The runner app should not
-include embedded `Frameworks/XC**` copies (use the device's local XCTest frameworks instead).
+On iOS/tvOS 17-26, the `devicectl` fallback still applies as before.
+
+| Configuration | iOS/tvOS 18 / 26 | iOS/tvOS 27 |
+|---|---|---|
+| `usePreinstalledWDA: true`, RemoteXPC available | Uses RemoteXPC to launch WDA in the background. | Uses the same RemoteXPC launch path. |
+| `usePreinstalledWDA: true`, RemoteXPC unavailable | Falls back to `devicectl`. With the Xcode 27 DDI/XCTest stack, this can leave the runner in the foreground and prevent the WDA HTTP server from starting. | Fails immediately. |
+| `usePrebuiltWDA: true`, `usePreinstalledWDA` omitted/`false` | Uses `xcodebuild test-without-building`. RemoteXPC is not required for this WDA launch path. | Uses the same `xcodebuild` launch path. |
+| Both capabilities enabled | Uses the preinstalled path described above. | Uses the preinstalled path described above. |
+
+The runner app should not include embedded `Frameworks/XC**` copies (use the device's local XCTest frameworks instead).
 
 For example, after building the WebDriverAgent with Xcode with proper sign, it generates `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app`.
-Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm Frameworks/WebDriverAgentRunner-Runner.app/XC**`.
+Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm -rf WebDriverAgentRunner-Runner.app/Frameworks/XC**`.
 
 Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the `WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it as part of `appium:usePreinstalledWDA` functionality.
 
 !!! note
+
+    A `WebDriverAgentRunner-Runner.app` installed directly onto a real device by a prior `xcodebuild` session
+    still contains the bundled `Frameworks/XC**` files, so reusing that on-device bundle with
+    `appium:usePreinstalledWDA: true` can cause the runner process to exit before starting its HTTP server.
 
     You can also remove other frameworks such as  `Frameworks/Testing.framework` to reduce the package size
     because WebDriverAgent doesn't need them. Then, the total size of the WebDriverAgent runner app can be 3MB or less.
