@@ -357,7 +357,8 @@ Either `true` if the app was successfully terminated, otherwise `false`
 
 ### mobile: killApp
 
-Kill the given app on the real device under test by instruments service.
+Kill the given app on the real device under test.
+Without a RemoteXPC tunnel (iOS/tvOS 18+), this requires macOS and iOS/tvOS 17+; otherwise it always returns `false`.
 If the app is not running or failed to kill, then nothing is done.
 
 #### Arguments
@@ -481,7 +482,7 @@ The resulting file in .trace format can be either returned directly as base64-en
 
 Installs a custom certificate onto the device.
 
-On **real devices** running iOS/tvOS 18+, [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) is required: profile installation goes through RemoteXPC only, and the driver throws if the package cannot be loaded or RemoteXPC setup fails.
+On **real devices**, profile installation goes through [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) (over a RemoteXPC tunnel or, as a temporary fallback, `usbmux`), and the driver throws if the device cannot be reached.
 
 On **Simulator** only: if the Xcode/SDK version predates 11.4, Apple provides no official CLI path. In that situation (and as a Simulator fallback when simctl-based installation fails) this method wraps the certificate into a .mobileconfig, serves it from the internal HTTP server for mobile Safari to open, and drives the profile installation UI with WebDriverAgent.
 
@@ -499,7 +500,7 @@ The content of the generated .mobileconfig file as base64-encoded string. This c
 
 ### mobile: removeCertificate
 
-Removes an installed certificate profile on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) is required**.
+Removes an installed certificate profile on real devices (over a RemoteXPC tunnel or, as a temporary fallback, `usbmux`).
 
 #### Arguments
 
@@ -513,7 +514,7 @@ Returns the string `Acknowledged` when the profile is removed successfully.
 
 ### mobile: listCertificates
 
-Lists installed certificate profiles on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) is required**.
+Lists installed certificate profiles on real devices (over a RemoteXPC tunnel or, as a temporary fallback, `usbmux`).
 
 #### Returned Result
 
@@ -659,6 +660,8 @@ Emulates a press action on the given physical device button. The iOS implementat
 [pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton),
 while tvOS can use either [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton)
 or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
+On Duo simulators, `home`, `volumeup`, and `volumedown` use the host CoreSimulator HID service;
+other button names are unsupported.
 A more universal API can also be used via [`mobile: performIoHidEvent`](#mobile-performiohidevent).
 
 Button values supported for the current device under test can be retrieved using
@@ -667,8 +670,8 @@ Button values supported for the current device under test can be retrieved using
 The following values are supported on iOS:
 
 * `home`
-* `volumeup` (real devices only)
-* `volumedown` (real devices only)
+* `volumeup` (real devices and Duo simulators)
+* `volumedown` (real devices and Duo simulators)
 * `action` (Xcode 15+, iOS 16+ supported devices only)
 * `camera` (Xcode 16+, iOS 16+ supported real devices only)
 
@@ -1127,7 +1130,7 @@ Base64-encoded content of the recorded media file or an empty string if no audio
 
 Starts streaming DVT networking instrument events from the device. Each sample is published on the WebDriver BiDi bus as **`appium:xcuitest.networkMonitor`** with a `params.event` object (discriminated by `event.type`: interface `0`, new connection `1`, per-flow stats `2`). This is **not** a Wireshark-style PCAP; see [BiDi: networkMonitor](./bidi.md#appiumxcuitestnetworkmonitor) for full examples and field meanings.
 
-Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+Requires a **real** device running **iOS/tvOS 18+**, a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md), and a BiDi-capable client subscribed to that method.
 
 If a monitor is already running, the call does nothing so the existing stream continues.
 
@@ -1139,7 +1142,7 @@ Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tear
 
 Starts streaming DVT sysmontap samples (CPU usage, memory footprint, and other per-process/system metrics) from the device. Each labelled sample is published on the WebDriver BiDi bus as **`appium:xcuitest.systemMonitor`** with a `params.event` object (discriminated by `event.kind`: `"system"` for a device-wide snapshot, `"processes"` for a per-process snapshot array); see [BiDi: systemMonitor](./bidi.md#appiumxcuitestsystemmonitor) for full examples and field meanings.
 
-Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+Requires a **real** device running **iOS/tvOS 18+**, a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md), and a BiDi-capable client subscribed to that method.
 
 If a monitor is already running, the call does nothing so the existing stream continues.
 
@@ -1157,7 +1160,7 @@ Stops DVT sysmontap streaming started with `mobile: startSystemMonitor` and tear
 
 Runs a native XCTest suite on the device under test.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc) package. `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported**. This extension does not run XCTest bundles on simulators.
+Supported only on **real devices** running **iOS/tvOS 18+** with a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md). `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported**. This extension does not run XCTest bundles on simulators.
 
 #### Arguments
 
@@ -1190,7 +1193,7 @@ The API call returns a map with the following entries:
 
 Installs an XCTest bundle (`.app` or `.ipa`) on the device under test.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead.
+Supported only on **real devices** running **iOS/tvOS 18+** with a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md). Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead.
 
 #### Arguments
 
@@ -1202,7 +1205,7 @@ xctestBundle | string | yes | Path to your xctest .app bundle. Could be an URL |
 
 Lists XCTest-related bundles installed on the device.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Listing uses **RemoteXPC** only.
+Supported only on **real devices** running **iOS/tvOS 18+** with a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md). Listing uses **RemoteXPC** only.
 
 #### Returned Result
 
@@ -2015,7 +2018,7 @@ On iOS 17+ it is an alias to [mobile: resetSimulatedLocation](#mobile-resetsimul
 
 ### mobile: enableConditionInducer
 
-Important: Device conditions are available for real devices running iOS 13.0 and later.
+Important: Device conditions are available for real devices running iOS/tvOS 18+ with a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md).
 
 This API is going to throw an error if it is called while another condition inducer has been already enabled and is not explicitly disabled.
 
@@ -2170,11 +2173,6 @@ simulator or device with an available hinge. tvOS, watchOS, and devices without
 hinge angle reading support are unsupported. WDA determines support at runtime;
 the driver forwards the request and propagates WDA errors.
 
-This command has been tested only on the Duo simulator. We have not tested it on a
-real Duo device and are awaiting feedback on whether hinge angle reading works on
-real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
-for real-device feedback.
-
 The command waits up to five seconds for a valid reading and returns an error if
 none arrives. A reading during folding may reflect an intermediate angle; it does
 not wait for the transition to finish or change the hinge angle or `currentDisplayId`.
@@ -2185,16 +2183,11 @@ The current hinge angle as a number in degrees, for example `90.5`.
 
 ### mobile: setSimulatedHingeAngle
 
-Requests a simulated hinge angle change. Requires a WebDriverAgent build with
-simulated hinge angle support and an iOS simulator or device with an available
-hinge. WDA validates the angle and checks platform and device support at runtime;
-the driver forwards the request and propagates WDA errors. tvOS, watchOS, and devices
-without simulated hinge angle support are unsupported by the current WDA implementation.
-
-This command has been tested only on the Duo simulator. We have not tested it on a
-real Duo device and are awaiting feedback on whether simulated hinge angle changes
-work on real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
-for real-device feedback.
+Requests a simulated hinge angle change through the Mac-side CoreSimulator HID service.
+Requires an iPhone Duo Simulator on Xcode 27+ and a WebDriverAgent build with hinge
+angle reading support. The driver validates the angle and identifies Duo by its
+CoreSimulator device type, independently of hinge readings.
+Physical devices, tvOS, watchOS, and simulators without a hinge are unsupported.
 
 Successful completion does not guarantee that the requested angle was applied.
 Wait for the expected application
@@ -2515,8 +2508,7 @@ The feature is only available since Xcode 15/iOS 17.
 
 On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
 XCTest recording of the closed device's outer display produced a one-frame black video
-despite successful start/stop responses. Inner-display recording worked; other runtimes
-and physical Duo devices remain unverified. If affected, use
+despite successful start/stop responses. Inner-display recording worked. If affected, use
 [`startRecordingScreen`](./commands.md#startrecordingscreen) and enable
 [`mjpegFixOrientation`](./settings.md) for upright video.
 

@@ -1,5 +1,7 @@
 import type * as RemoteXPCModule from 'appium-ios-remotexpc';
 
+import {supportsApiLevel18} from '../../utils/index.js';
+
 export type RemoteXPCEsmModule = typeof RemoteXPCModule;
 export type RemoteXPCServices = RemoteXPCEsmModule['Services'];
 export type RemoteXPCTestRunner = RemoteXPCEsmModule['XCTestRunner'];
@@ -12,20 +14,32 @@ export const REMOTE_XPC_TUNNEL_SETUP_DOC_LINK =
 /** Driver script that starts the tunnel registry (must run with sudo/root). */
 export const TUNNEL_CREATION_COMMAND = 'sudo appium driver run xcuitest tunnel-creation';
 
+/** Which transport serves RemoteXPC services in a session: the tunnel (preferred) or the temporary usbmux fallback. */
+export type TransportTier = 'tunnel' | 'usbmux';
+
 /**
- * RemoteXPC cannot satisfy the request in a way the caller may handle without treating it as
- * a hard tunnel/connectivity failure (for example module missing or session ineligible).
+ * A feature needs the RemoteXPC tunnel, but the session runs without one
+ * (on the temporary usbmux fallback).
  */
-export class RemoteXPCUnavailableError extends Error {
-  constructor(message = 'RemoteXPC is not available') {
-    super(message);
-    this.name = 'RemoteXPCUnavailableError';
+export class TunnelRequiredError extends Error {
+  /** Matches {@link isTunnelAvailabilityError}, so callers handling missing tunnels treat this the same way */
+  readonly code = 'ERR_TUNNEL_AVAILABILITY';
+
+  constructor(feature: string, udid: string, platformVersion?: string) {
+    super(
+      platformVersion && !supportsApiLevel18(platformVersion)
+        ? `${feature} is not supported for '${udid}' on iOS/tvOS ${platformVersion}: it requires a RemoteXPC ` +
+            `tunnel, which is only available on iOS/tvOS 18 or newer`
+        : `${feature} requires a RemoteXPC tunnel for '${udid}', but none is available. ` +
+            `Start tunnels with \`${TUNNEL_CREATION_COMMAND}\` (requires root). See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`,
+    );
+    this.name = 'TunnelRequiredError';
   }
 }
 
-/** Whether `err` is a {@link RemoteXPCUnavailableError}. */
-export function isRemoteXPCUnavailableError(err: unknown): boolean {
-  return err instanceof RemoteXPCUnavailableError;
+/** Whether `err` is a {@link TunnelRequiredError}. */
+export function isTunnelRequiredError(err: unknown): err is TunnelRequiredError {
+  return err instanceof TunnelRequiredError;
 }
 
 /**
@@ -47,6 +61,10 @@ export function isTunnelAvailabilityError(err: unknown): boolean {
  * User-facing message for tunnel registry / tunnel-entry failures from appium-ios-remotexpc.
  */
 export function formatTunnelAvailabilityMessage(err: unknown): string {
+  if (err instanceof TunnelRequiredError) {
+    // already carries its own (version-aware) guidance
+    return err.message;
+  }
   let detail: string;
   if (err instanceof Error) {
     detail = err.message;
@@ -72,16 +90,4 @@ export function wrapRemoteXPCConnectionError(err: unknown, context: string): Err
   }
   const detail = err instanceof Error ? err.message : String(err);
   return new Error(`${context} (${detail})`, {cause: err});
-}
-
-/**
- * Log line when an optional RemoteXPC feature falls back after a connection failure.
- */
-export function formatRemoteXPCFallbackLog(feature: string, err: unknown): string {
-  const legacyNote = 'Falling back to appium-ios-device.';
-  if (isTunnelAvailabilityError(err)) {
-    return `RemoteXPC ${feature} unavailable: ${formatTunnelAvailabilityMessage(err)} ${legacyNote}`;
-  }
-  const detail = err instanceof Error ? err.message : String(err);
-  return `Failed ${feature} via RemoteXPC: ${detail}. ${legacyNote}`;
 }

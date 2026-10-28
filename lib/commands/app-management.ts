@@ -177,7 +177,9 @@ export async function mobileActivateApp(this: XCUITestDriver, bundleId: string):
 }
 
 /**
- * Kill the given app on the real device under test by instruments service.
+ * Kill the given app on the real device under test.
+ * Without a RemoteXPC tunnel (iOS/tvOS 18+), this requires macOS and iOS/tvOS 17+;
+ * otherwise `false` is always returned.
  *
  * If the app is not running or kill failed, then nothing is done.
  *

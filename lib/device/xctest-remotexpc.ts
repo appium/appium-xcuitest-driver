@@ -128,10 +128,10 @@ export async function runXCTestViaRemoteXPC(
  * Uses InstallationProxy to browse apps and filter for xctrunner bundles.
  */
 export async function listXCTestBundlesViaRemoteXPC(udid: string, facade: RemoteXPCFacade): Promise<string[]> {
+  await facade.assertTunnelTier('XCTest');
   const installProxy = await InstallationProxyClient.create(udid, {
     facade,
     logger: xctestLog,
-    allowLegacyFallback: false,
   });
   try {
     const apps = await installProxy.listApplications({
@@ -166,10 +166,10 @@ export async function installXCTestBundleViaRemoteXPC(
     throw new Error('Bare .xctest bundles cannot be installed via RemoteXPC. Provide a .app or .ipa instead.');
   }
 
+  await facade.assertTunnelTier('XCTest');
   const installProxy = await InstallationProxyClient.create(udid, {
     facade,
     logger: xctestLog,
-    allowLegacyFallback: false,
   });
   try {
     await installProxy.installApplication(xctestApp);

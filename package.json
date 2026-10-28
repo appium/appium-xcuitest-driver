@@ -1,6 +1,6 @@
 {
   "name": "appium-xcuitest-driver",
-  "version": "13.0.0-beta.2",
+  "version": "13.0.0-beta.3",
   "description": "Appium driver for iOS using XCUITest for backend",
   "keywords": [
     "appium",
@@ -72,10 +72,10 @@
   "dependencies": {
     "@appium/css-locator-to-native": "^1.0.1",
     "@appium/strongbox": "^3.0.0-beta.1",
-    "appium-ios-device": "^3.1.22",
-    "appium-ios-simulator": "^10.9.1",
-    "appium-remote-debugger": "^17.7.3",
-    "appium-webdriveragent": "^16.17.0",
+    "appium-ios-remotexpc": "^5.28.1",
+    "appium-ios-simulator": "^10.10.0",
+    "appium-remote-debugger": "^18.0.3",
+    "appium-webdriveragent": "^16.17.2",
     "appium-xcode": "^7.1.1",
     "asyncbox": "^6.5.0",
     "axios": "^1.18.0",
@@ -108,7 +108,6 @@
     "appium": "^4.0.0-beta.6"
   },
   "optionalDependencies": {
-    "appium-ios-remotexpc": "^5.25.0",
     "sharp": "^0.x"
   },
   "engines": {

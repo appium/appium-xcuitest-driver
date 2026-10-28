@@ -3,6 +3,8 @@ import {getPath as getXcodePath} from 'appium-xcode';
 import {console as consoleUtils, fs, doctor} from 'appium/support.js';
 import {exec} from 'teen_process';
 
+import {REMOTE_XPC_PACKAGE_NAME, getXcuitestDriverRoot, isRemoteXpcDependencyAvailable} from './utils.js';
+
 export class XcodeCheck implements IDoctorCheck {
   log!: AppiumLogger;
 
@@ -115,3 +117,41 @@ export interface EnvVarCheckOptions {
    */
   expectFile?: boolean;
 }
+
+export class IosRemoteXpcDependencyCheck implements IDoctorCheck {
+  static readonly README_LINK = 'https://github.com/appium/appium-ios/tree/main/packages/remotexpc';
+  log!: AppiumLogger;
+
+  async diagnose(): Promise<DoctorCheckResult> {
+    if (await isRemoteXpcDependencyAvailable()) {
+      return doctor.ok(
+        `${REMOTE_XPC_PACKAGE_NAME} is installed and can be imported. ` +
+          `It is used for all communication with real devices.`,
+      );
+    }
+    return doctor.nok(
+      `${REMOTE_XPC_PACKAGE_NAME} is not installed or cannot be imported. ` +
+        `It is required for all communication with real devices.`,
+    );
+  }
+
+  async fix(): Promise<string> {
+    const driverRoot = getXcuitestDriverRoot();
+    const locationHint = driverRoot ? `cd "${driverRoot}"; ` : '';
+    return (
+      `${consoleUtils.styleText('bold', REMOTE_XPC_PACKAGE_NAME)} provides the communication with real devices ` +
+      `(over a Remote XPC tunnel or, as a temporary fallback, usbmux). ` +
+      `Run '${locationHint}npm install ${REMOTE_XPC_PACKAGE_NAME}'. ` +
+      `For more information, see ${IosRemoteXpcDependencyCheck.README_LINK}.`
+    );
+  }
+
+  hasAutofix(): boolean {
+    return false;
+  }
+
+  isOptional(): boolean {
+    return false;
+  }
+}
+export const iosRemoteXpcDependencyCheck = new IosRemoteXpcDependencyCheck();

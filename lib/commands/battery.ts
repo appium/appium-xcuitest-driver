@@ -19,14 +19,14 @@ export async function mobileGetBatteryInfo(
   this: XCUITestDriver,
 ): Promise<BatteryInfo & {advanced: AdvancedBatteryInfo}> {
   let batteryInfoFromShimService: AdvancedBatteryInfo = {};
-  if (await this.remoteXPCFacade.determineAvailability()) {
+  if (this.isRealDevice()) {
     try {
       batteryInfoFromShimService = await new BatteryInfoClient(
         this.device.udid,
         this.remoteXPCFacade,
       ).getAdvancedInfo();
     } catch (err: any) {
-      this.log.error(`Failed to get battery info from DiagnosticsService: ${err.message}`);
+      this.log.error(`Failed to get advanced battery info from DiagnosticsService: ${err.message}`);
     }
   }
 

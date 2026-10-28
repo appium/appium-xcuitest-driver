@@ -50,7 +50,7 @@ export class SystemMonitorSession {
     if (!this.remoteXPCFacade) {
       throw new Error(`RemoteXPC is not available for device '${this.udid}'`);
     }
-    const dvt = await this.remoteXPCFacade.requireService('system monitor', (Services) =>
+    const dvt = await this.remoteXPCFacade.requireTunnelService('system monitor', (Services) =>
       Services.startDVTService(this.udid),
     );
     if (options.intervalMs !== undefined) {

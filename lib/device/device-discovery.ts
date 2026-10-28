@@ -6,7 +6,7 @@ import {UDID_AUTO} from '../constants.js';
 import type {XCUITestDriverOpts} from '../driver.js';
 import {normalizePlatformName, normalizePlatformVersion} from '../utils/index.js';
 import {getConnectedDevices, RealDevice} from './real-device-management.js';
-import {findSimulatorUdidCase} from './simulator-management.js';
+import {findSimulatorByUdid} from './simulator-management.js';
 import {isStrictHostUtilityMode} from './wda-host-ops.js';
 
 export interface DeviceDiscoveryResult {
@@ -142,63 +142,56 @@ export class DeviceDiscovery {
 
   private async determineDeviceWithExplicitUdid(isStrictHostMode: boolean): Promise<DeviceDiscoveryResult> {
     const udid = this.sessionOpts.udid as string;
-    let isRealDeviceUdid = false;
-    // If webDriverAgentUrl is set with a real device, assume the user prepared the device.
-    const shouldCheckAvailableRealDevices = !this.sessionOpts.webDriverAgentUrl;
-    if (shouldCheckAvailableRealDevices) {
-      if (isStrictHostMode) {
-        isRealDeviceUdid = true;
-      } else {
-        const devices = await getConnectedDevices(this.sessionOpts);
-        this.log.debug(`Available real devices: ${devices.join(', ')}`);
-        isRealDeviceUdid = devices.some((deviceUdid) => deviceUdid.toLowerCase() === udid.toLowerCase());
-      }
+    if (isStrictHostMode) {
+      return await this.createRealDeviceForUdid(udid);
     }
 
-    if (!isRealDeviceUdid) {
-      const simulatorDevice = await this.determineSimulatorWithExplicitUdid(
-        udid,
-        shouldCheckAvailableRealDevices,
-        isStrictHostMode,
-      );
+    // Simulators exist on macOS only. They are checked first, so that simulator sessions never query real devices
+    if (process.platform === 'darwin') {
+      const simulatorDevice = await this.determineSimulatorWithExplicitUdid(udid);
       if (simulatorDevice) {
         return simulatorDevice;
       }
     }
 
+    // If webDriverAgentUrl is set with a real device, assume the user prepared the device.
+    if (!this.sessionOpts.webDriverAgentUrl) {
+      const devices = await getConnectedDevices();
+      this.log.debug(`Available real devices: ${devices.join(', ')}`);
+      if (!devices.some((deviceUdid) => deviceUdid.toLowerCase() === udid.toLowerCase())) {
+        throw new Error(`Unknown device or simulator UDID: '${udid}'`);
+      }
+    } else {
+      this.log.debug(
+        'Skipping checking of the real devices availability since the session specifies appium:webDriverAgentUrl',
+      );
+    }
+
     return await this.createRealDeviceForUdid(udid);
   }
 
-  private async determineSimulatorWithExplicitUdid(
-    udid: string,
-    shouldCheckAvailableRealDevices: boolean,
-    isStrictHostMode: boolean,
-  ): Promise<DeviceDiscoveryResult | null> {
-    if (isStrictHostMode) {
-      this.log.debug(
-        `Skipping Simulator lookup for '${udid}' because the selected session ` +
-          `strategy must not use macOS Simulator utilities`,
-      );
-      return null;
-    }
-
+  private async determineSimulatorWithExplicitUdid(udid: string): Promise<DeviceDiscoveryResult | null> {
     try {
       const devicesSetPath = this.sessionOpts.simulatorDevicesSetPath;
-      const platform = normalizePlatformName(this.sessionOpts.platformName);
-      const canonicalUdid = (await findSimulatorUdidCase(udid, devicesSetPath, platform)) ?? udid;
-      const device = await getSimulator(canonicalUdid, {
+      // any platform: the udid identifies the simulator, whatever platformName says
+      const entry = await findSimulatorByUdid(udid, devicesSetPath);
+      if (!entry) {
+        return null;
+      }
+      const requestedPlatform = normalizePlatformName(this.sessionOpts.platformName);
+      if (entry.platform && entry.platform !== requestedPlatform) {
+        this.log.warn(
+          `The simulator '${udid}' is a ${entry.platform} simulator, but the platformName capability ` +
+            `resolves to '${requestedPlatform}'. Make sure the platformName capability is correct.`,
+        );
+      }
+      const device = await getSimulator(entry.udid, {
         devicesSetPath,
         logger: this.log as any,
       });
       await this.ensurePlatformVersion(device);
       return this.toResult({device, realDevice: false, udid});
     } catch {
-      if (shouldCheckAvailableRealDevices) {
-        throw new Error(`Unknown device or simulator UDID: '${udid}'`);
-      }
-      this.log.debug(
-        'Skipping checking of the real devices availability since the session specifies appium:webDriverAgentUrl',
-      );
       return null;
     }
   }

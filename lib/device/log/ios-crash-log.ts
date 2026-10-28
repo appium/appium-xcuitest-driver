@@ -8,7 +8,7 @@ import {asyncfilter} from 'asyncbox';
 import type {LogEntry} from '../../commands/types.js';
 import {isEmpty} from '../../utils/index.js';
 import {CrashReportsClient} from '../crash-reports-client.js';
-import type {RemoteXPCFacade} from '../remote-xpc/index.js';
+import {isTunnelRequiredError, type RemoteXPCFacade} from '../remote-xpc/index.js';
 import {toLogEntry, grepFile} from './helpers.js';
 import {IOSLog} from './ios-log.js';
 
@@ -17,6 +17,8 @@ const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
 // The size of a single diagnostic report might be hundreds of kilobytes.
 // Thus we do not want to store too many items in the memory at once.
 const MAX_RECENT_ITEMS = 20;
+// Pause between attempts to create the crash reports client after a failure
+const CLIENT_RETRY_DELAY_MS = 30 * 1000;
 
 /**
  * Options for {@link IOSCrashLog}.
@@ -39,12 +41,14 @@ type TSerializedEntry = [string, number];
  * Collects iOS/tvOS crash logs for BiDi `log.entryAdded` / classic log APIs.
  *
  * - **Simulator:** reads `~/Library/Logs/DiagnosticReports` and filters by simulator UDID.
- * - **Real device:** uses RemoteXPC (`appium-ios-remotexpc`) when `useRemoteXPC` is true; if the client
+ * - **Real device:** uses RemoteXPC (`appium-ios-remotexpc`); crash reports need a tunnel. If the client
  *   cannot be created, collection is skipped and errors are logged (no session failure).
  */
 export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private readonly _udid: string | undefined;
   private readonly _remoteXPCFacade: RemoteXPCFacade | null;
+  private _crashReportsRequireTunnel = false;
+  private _clientRetryNotBefore = 0;
   private _realDeviceClient: CrashReportsClient | null;
   private readonly _logDir: string | null;
   private readonly _sim: Simulator | undefined;
@@ -149,10 +153,23 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
    *   listing errors so a later poll can recreate it. Never throws to callers.
    */
   private async _gatherFromRealDevice(): Promise<string[]> {
+    if (this._crashReportsRequireTunnel) {
+      return [];
+    }
     if (!this._realDeviceClient) {
+      if (Date.now() < this._clientRetryNotBefore) {
+        return [];
+      }
       try {
         this._realDeviceClient = await CrashReportsClient.create(this._udid as string, this._remoteXPCFacade);
       } catch (err) {
+        if (isTunnelRequiredError(err)) {
+          // the session tier does not change, so there is no point in polling again
+          this._crashReportsRequireTunnel = true;
+          this.log.warn(`Crash logs collection is disabled for this session: ${(err as Error).message}`);
+          return [];
+        }
+        this._clientRetryNotBefore = Date.now() + CLIENT_RETRY_DELAY_MS;
         this.log.error(
           `Failed to create crash reports client: ${(err as Error).message}. ` +
             `Skipping crash logs collection for real devices.`,

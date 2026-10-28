@@ -1,4 +1,7 @@
+import {errors} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
+import {getDuoSimulator, withDuoArgumentErrors} from './helpers/duo.js';
 import type {Viewport, ScreenInfo, DisplayInfo, WDADisplayInfo} from './types.js';
 
 declare module '../driver.js' {
@@ -95,20 +98,24 @@ export async function getDevicePixelRatio(this: XCUITestDriver): Promise<number>
  * Reads the current hinge angle in degrees, including changes made outside WDA.
  * Requires a WDA build with GET /wda/device/hingeAngle support.
  * WDA checks platform, hinge and CoreMotion availability and waits up to five seconds for a valid reading.
- * Physical Duo behavior is unverified. A reading may reflect an intermediate angle during folding.
+ * A reading may reflect an intermediate angle during folding.
  */
 export async function mobileGetSimulatedHingeAngle(this: XCUITestDriver): Promise<number> {
   return await this.proxyCommand('/wda/device/hingeAngle', 'GET');
 }
 
 /**
- * Requests a simulated hinge angle on an iOS device with an available hinge.
- * Requires a WDA build with /wda/device/hingeAngle support; WDA validates the angle and checks availability at runtime.
- * Tested only on the Duo simulator. Physical Duo behavior is unverified.
+ * Requests a simulated hinge angle through the host CoreSimulator HID service.
+ * Requires an iPhone Duo Simulator on Xcode 27+; CoreSimulator identifies the device type.
+ * WDA supplies hinge angle readings.
  * The transition completes asynchronously. Select currentDisplayId separately.
  *
  * @param angle - Degrees from 0 (closed) to 180 (fully open), inclusive.
  */
 export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: number): Promise<void> {
-  await this.proxyCommand('/wda/device/hingeAngle', 'POST', {angle});
+  const simulator = await getDuoSimulator(this);
+  if (!simulator) {
+    throw new errors.UnsupportedOperationError('Setting the hinge angle requires an iPhone Duo Simulator on Xcode 27+');
+  }
+  await withDuoArgumentErrors(() => simulator.setSimulatedHingeAngle(angle));
 }

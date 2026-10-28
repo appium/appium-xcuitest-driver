@@ -3,6 +3,7 @@ import {errors} from 'appium/driver.js';
 
 import {HidIndigoClient} from '../device/hid-indigo-client.js';
 import type {XCUITestDriver} from '../driver.js';
+import {getDuoSimulator, withDuoArgumentErrors} from './helpers/duo.js';
 import {requireRealDevice} from './helpers/index.js';
 import {HIDUsageEvent, HIDPageEvent} from './hid-event.js';
 
@@ -19,6 +20,9 @@ declare module '../driver.js' {
 
 /**
  * Emulates triggering of the given low-level IO HID device event.
+ *
+ * Duo simulators use host CoreSimulator HID with native argument validation.
+ * Other devices use WDA/XCTest. Completion does not guarantee that the event was applied.
  *
  * Popular constants:
  * - `kHIDPage_Consumer` = `0x0C`
@@ -38,6 +42,11 @@ export async function mobilePerformIoHidEvent(
   usage: number,
   durationSeconds: number | string,
 ): Promise<void> {
+  const simulator = await getDuoSimulator(this);
+  if (simulator) {
+    const duration = typeof durationSeconds === 'string' ? parseFloat(durationSeconds) : durationSeconds;
+    return await withDuoArgumentErrors(() => simulator.pressHidButton(page, usage, duration));
+  }
   if (!isHIDPageEvent(page)) {
     throw new errors.InvalidArgumentError(`'page' argument must be a valid HIDPageEvent identifier`);
   }

@@ -1,14 +1,10 @@
-import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {utilities} from 'appium-ios-device';
 import type {LockdownService} from 'appium-ios-remotexpc';
 
 import type {LockdownInfo} from '../commands/types.js';
-import {log as defaultLogger} from '../logger.js';
-import {isRemoteXPCUnavailableError, type RemoteXPCFacade} from './remote-xpc/index.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
- * Shape returned by {@linkcode utilities.getDeviceTime} in appium-ios-device.
+ * Fields needed to format the device local time.
  */
 export interface DeviceTimeLockdownFields {
   /** UTC timestamp in seconds since 1970-01-01T00:00:00Z */
@@ -18,54 +14,28 @@ export interface DeviceTimeLockdownFields {
 }
 
 interface CreateLockdownClientOptions {
-  allowLegacyFallback?: boolean;
-  facade?: RemoteXPCFacade | null;
-  logger?: AppiumLogger;
+  facade: RemoteXPCFacade;
 }
 
 /**
- * Unified lockdown access for real devices.
- *
- * On iOS/tvOS 18+ attempts a tunnel registry RemoteXPC connection and lockdown over RSD
- * (`createLockdownServiceForTunnel`). When that path is unavailable, uses
- * {@linkcode utilities} from `appium-ios-device` (USB/local usbmux).
+ * Lockdown access for real devices on top of appium-ios-remotexpc: lockdown over usbmux when the
+ * device is listed there, otherwise lockdown over the RSD tunnel (`createLockdownServiceForTunnel`).
  */
 export class LockdownClient {
   private constructor(
     private readonly udid: string,
-    private readonly log: AppiumLogger,
-    private readonly strategy: 'ios-device' | 'remotexpc-usbmux' | 'remotexpc-tunnel',
-    private readonly remoteXPCFacade: RemoteXPCFacade | null = null,
+    private readonly strategy: 'remotexpc-usbmux' | 'remotexpc-tunnel',
+    private readonly remoteXPCFacade: RemoteXPCFacade,
   ) {}
 
   /**
    * @param udid - Device UDID
    * @param opts - Creation options
    */
-  static async createForDevice(udid: string, opts: CreateLockdownClientOptions = {}): Promise<LockdownClient> {
-    const {allowLegacyFallback = true, facade = null, logger = defaultLogger} = opts;
-    if (!facade?.eligible) {
-      if (!allowLegacyFallback) {
-        throw new Error(
-          `RemoteXPC lockdown is required for '${udid}', but this session is not eligible ` + `for RemoteXPC.`,
-        );
-      }
-      return new LockdownClient(udid, logger, 'ios-device');
-    }
-
-    try {
-      const strategy = await facade.resolveLockdownStrategy();
-      return new LockdownClient(udid, logger, strategy, facade);
-    } catch (err) {
-      if (!isRemoteXPCUnavailableError(err)) {
-        throw err;
-      }
-      if (!allowLegacyFallback) {
-        throw err;
-      }
-      logger.warn('RemoteXPC lockdown is not available. Using appium-ios-device lockdown (legacy fallback).');
-      return new LockdownClient(udid, logger, 'ios-device');
-    }
+  static async createForDevice(udid: string, opts: CreateLockdownClientOptions): Promise<LockdownClient> {
+    const {facade} = opts;
+    const strategy = await facade.resolveLockdownStrategy();
+    return new LockdownClient(udid, strategy, facade);
   }
 
   private static coerceFiniteNumber(value: unknown): number | undefined {
@@ -93,9 +63,6 @@ export class LockdownClient {
    * Full lockdown `GetValue` payload (`GetValue` with no key/domain).
    */
   async getDeviceInfo(): Promise<LockdownInfo> {
-    if (this.strategy === 'ios-device') {
-      return await utilities.getDeviceInfo(this.udid);
-    }
     return (await this.runWithRemotexpcLockdownRequiringValue(
       (lockdown) => lockdown.getDeviceInfo(),
       'device info payload',
@@ -109,9 +76,6 @@ export class LockdownClient {
    * If a RemoteXPC lockdown payload does not include ProductVersion, throws.
    */
   async getOSVersion(): Promise<string> {
-    if (this.strategy === 'ios-device') {
-      return await utilities.getOSVersion(this.udid);
-    }
     return await this.runWithRemotexpcLockdownRequiringValue(
       (lockdown) => lockdown.getProductVersion(),
       'ProductVersion',
@@ -119,7 +83,7 @@ export class LockdownClient {
   }
 
   /**
-   * Fields needed to format device local time (same contract as {@linkcode utilities.getDeviceTime}).
+   * Fields needed to format device local time.
    */
   async getDeviceTimeFields(): Promise<DeviceTimeLockdownFields> {
     const readTimeFromLockdown = async (lockdown: LockdownService): Promise<DeviceTimeLockdownFields | undefined> => {
@@ -132,52 +96,13 @@ export class LockdownClient {
       return {timestamp, utcOffset: tzOffsetSeconds / 60};
     };
 
-    switch (this.strategy) {
-      case 'ios-device': {
-        const {timestamp, utcOffset, timeZone} = await utilities.getDeviceTime(this.udid);
-        return {
-          timestamp,
-          utcOffset: this.normalizeUtcOffsetMinutes(utcOffset, timeZone),
-        };
-      }
-      case 'remotexpc-usbmux':
-      case 'remotexpc-tunnel':
-        return await this.runWithRemotexpcLockdownRequiringValue(readTimeFromLockdown, 'device time fields');
-    }
-  }
-
-  private requireRemoteXPCFacade(): RemoteXPCFacade {
-    if (!this.remoteXPCFacade) {
-      throw new Error(`RemoteXPC lockdown is not configured for '${this.udid}'.`);
-    }
-    return this.remoteXPCFacade;
-  }
-
-  /**
-   * Legacy ios-device can provide inconsistent offset payloads. Normalize to a final offset in
-   * minutes for consumers.
-   */
-  private normalizeUtcOffsetMinutes(utcOffset: number, timeZone: string | number): number {
-    // Normal/expected: offset already in minutes.
-    if (Math.abs(utcOffset) <= 12 * 60) {
-      return utcOffset;
-    }
-    // Sometimes `timeZone` is a numeric offset in seconds.
-    const offsetSeconds = typeof timeZone === 'number' ? timeZone : Number(timeZone);
-    if (Number.isFinite(offsetSeconds) && Math.abs(offsetSeconds) <= 12 * 60 * 60) {
-      return offsetSeconds / 60;
-    }
-    this.log.warn(
-      `Did not know how to apply UTC offset from lockdown (utcOffset=${utcOffset}, timeZone=${timeZone}). ` +
-        `Using UTC.`,
-    );
-    return 0;
+    return await this.runWithRemotexpcLockdownRequiringValue(readTimeFromLockdown, 'device time fields');
   }
 
   private async runWithRemotexpcUsbmuxLockdown<T>(
     fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
-    return await this.requireRemoteXPCFacade().withUsbMuxLockdown(fn);
+    return await this.remoteXPCFacade.withUsbMuxLockdown(fn);
   }
 
   private async runWithRemotexpcLockdown<T>(
@@ -188,8 +113,6 @@ export class LockdownClient {
         return await this.runWithRemotexpcUsbmuxLockdown(fn);
       case 'remotexpc-tunnel':
         return await this.runWithTunnelLockdown(fn);
-      default:
-        throw new Error(`RemoteXPC lockdown is not active for '${this.udid}'.`);
     }
   }
 
@@ -213,6 +136,6 @@ export class LockdownClient {
   private async runWithTunnelLockdown<T>(
     fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
-    return await this.requireRemoteXPCFacade().withTunnelLockdown(fn);
+    return await this.remoteXPCFacade.withTunnelLockdown(fn);
   }
 }

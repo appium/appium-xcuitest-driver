@@ -1,9 +1,6 @@
-import net from 'node:net';
 import type {Socket} from 'node:net';
 
 import type {AppiumLogger} from '@appium/types';
-/** @ts-expect-error no types */
-import {utilities} from 'appium-ios-device';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
 import {util, timing} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
@@ -11,7 +8,6 @@ import {checkPortStatus} from 'portscanner';
 
 import {isEmpty} from '../utils/index.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
-import {isRemoteXPCUnavailableError} from './remote-xpc/index.js';
 
 const LOCALHOST = '127.0.0.1';
 const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
@@ -51,96 +47,6 @@ class TerminationSubscription {
       this.unsubscribe();
       this.unsubscribe = null;
     }
-  }
-}
-
-class LegacyPortForwarder implements PortForwarder {
-  private localServer: net.Server | null = null;
-  private readonly termination = new TerminationSubscription();
-
-  constructor(
-    private readonly udid: string,
-    private readonly localport: number,
-    private readonly deviceport: number,
-    private readonly log: AppiumLogger,
-  ) {}
-
-  async start(): Promise<void> {
-    if (this.localServer) {
-      return;
-    }
-
-    this.localServer = net.createServer(async (localSocket: net.Socket) => {
-      let remoteSocket: any;
-      try {
-        // We can only connect to the remote socket after the local socket connection succeeds
-        remoteSocket = await utilities.connectPort(this.udid, this.deviceport);
-      } catch (e) {
-        this.log.debug((e as Error).message);
-        localSocket.destroy();
-        return;
-      }
-
-      const destroyCommChannel = () => {
-        remoteSocket.unpipe(localSocket);
-        localSocket.unpipe(remoteSocket);
-      };
-      remoteSocket.once('close', () => {
-        destroyCommChannel();
-        localSocket.destroy();
-      });
-      // not all remote socket errors are critical for the user
-      remoteSocket.on('error', (e: Error) => this.log.debug(e));
-      localSocket.once('end', destroyCommChannel);
-      localSocket.once('close', () => {
-        destroyCommChannel();
-        remoteSocket.destroy();
-      });
-      localSocket.on('error', (e: Error) => this.log.warn(e.message));
-      localSocket.pipe(remoteSocket);
-      remoteSocket.pipe(localSocket);
-    });
-    const listeningPromise = new Promise<void>((resolve, reject) => {
-      if (this.localServer) {
-        this.localServer.once('listening', resolve);
-        this.localServer.once('error', reject);
-      } else {
-        reject(new Error('Local server is not initialized'));
-      }
-    });
-    this.localServer.listen(this.localport);
-    try {
-      await listeningPromise;
-    } catch (e) {
-      this.localServer = null;
-      throw e;
-    }
-    this.localServer.on('error', (e: Error) => this.log.warn(e.message));
-    this.localServer.once('close', (e?: Error) => {
-      if (e) {
-        this.log.info(`The connection has been closed with error ${e.message}`);
-      } else {
-        this.log.info(`The connection has been closed`);
-      }
-      this.localServer = null;
-    });
-
-    this.termination.subscribe(() => this._closeLocalServer());
-  }
-
-  async stop(): Promise<void> {
-    this.termination.dispose();
-    this._closeLocalServer();
-  }
-
-  private _closeLocalServer(): void {
-    if (!this.localServer) {
-      return;
-    }
-
-    this.log.debug(`Closing the connection`);
-    this.localServer.close();
-    this.localServer = null;
   }
 }
 
@@ -243,8 +149,7 @@ class RemotexpcPortForwarder implements PortForwarder {
 /**
  * Manages cached local device connections and optional TCP port forwarding to real iOS devices.
  *
- * Forwarding may use `appium-ios-remotexpc` on iOS 18+ (usbmux or tunnel) with fallback to
- * `appium-ios-device` {@linkcode utilities.connectPort}
+ * Forwarding uses `appium-ios-remotexpc` (usbmux or tunnel).
  */
 export class DeviceConnectionsFactory {
   /** Shared across factory instances so parallel sessions coordinate the same local ports. */
@@ -289,7 +194,7 @@ export class DeviceConnectionsFactory {
    * @param udid - Device UDID
    * @param port - Local port on the host
    * @param options - Forwarding options; `devicePort` is used when `usePortForwarding` is true
-   *   (eligible RemoteXPC sessions may use tunnel/usbmux forwarding; otherwise legacy applies)
+   *   (the RemoteXPC facade is required in that case)
    * @throws If `usePortForwarding` is true but `devicePort` is not an integer
    * @throws If the local port is still in use after attempting cleanup
    */
@@ -324,13 +229,10 @@ export class DeviceConnectionsFactory {
       if (!Number.isInteger(devicePort)) {
         throw new Error('devicePort is required when usePortForwarding is true');
       }
-      await this._startAndRegisterPortForwarder(
-        currentKey,
-        udid,
-        port,
-        Number(devicePort),
-        options.remoteXPCFacade ?? null,
-      );
+      if (!options.remoteXPCFacade) {
+        throw new Error('The RemoteXPC facade is required when usePortForwarding is true');
+      }
+      await this._startAndRegisterPortForwarder(currentKey, port, Number(devicePort), options.remoteXPCFacade);
     } else {
       DeviceConnectionsFactory._connectionsMapping[currentKey] = {};
     }
@@ -421,12 +323,11 @@ export class DeviceConnectionsFactory {
 
   private async _startAndRegisterPortForwarder(
     currentKey: string,
-    udid: string,
     port: number,
     devicePort: number,
-    remoteXPCFacade: RemoteXPCFacade | null,
+    remoteXPCFacade: RemoteXPCFacade,
   ): Promise<void> {
-    const portForwarder = await this._createPortForwarder(udid, port, devicePort, remoteXPCFacade);
+    const portForwarder = await this._createPortForwarder(port, devicePort, remoteXPCFacade);
     try {
       await portForwarder.start();
       DeviceConnectionsFactory._connectionsMapping[currentKey] = {portForwarder};
@@ -477,25 +378,12 @@ export class DeviceConnectionsFactory {
   }
 
   private async _createPortForwarder(
-    udid: string,
     localPort: number,
     devicePort: number,
-    remoteXPCFacade: RemoteXPCFacade | null,
+    remoteXPCFacade: RemoteXPCFacade,
   ): Promise<PortForwarder> {
-    if (!remoteXPCFacade?.eligible) {
-      return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
-    }
-
-    try {
-      const forwarder = await remoteXPCFacade.createDevicePortForwarder(localPort, devicePort);
-      return new RemotexpcPortForwarder(forwarder, this.log, localPort, devicePort);
-    } catch (err) {
-      if (!isRemoteXPCUnavailableError(err)) {
-        throw err;
-      }
-      this.log.debug('RemoteXPC port forwarding is not available. Using appium-ios-device port forwarding fallback.');
-      return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
-    }
+    const forwarder = await remoteXPCFacade.createDevicePortForwarder(localPort, devicePort);
+    return new RemotexpcPortForwarder(forwarder, this.log, localPort, devicePort);
   }
 }
 

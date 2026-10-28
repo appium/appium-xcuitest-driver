@@ -2,15 +2,19 @@
 title: Remote XPC Tunnels
 ---
 
-Certain features of the XCUITest driver rely on Remote XPC services and IPv6 tunneling. This
-functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
+The XCUITest driver communicates with real devices using Remote XPC services and IPv6 tunneling.
+This functionality is provided by the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios/tree/main/packages/remotexpc)
 library.
 
 !!! info
 
-    The driver only uses remote XPC tunnels for ^^real devices running iOS/tvOS 18 or later^^.
-    Real devices running iOS/tvOS < 18 do not support this tunneling mechanism, whereas
-    simulators do not need to use it.
+    **Running a tunnel is the recommended way to test on real devices.** The driver uses the tunnel
+    whenever it is available. Without a tunnel it falls back to the classic lockdown services over
+    `usbmux`, which is temporary, limited and expected to stop working once Apple removes these
+    services. See [Feature Availability](#feature-availability).
+
+    Tunnels are only supported on ^^real devices running iOS/tvOS 18 or later^^. Real devices running
+    iOS/tvOS < 18 always use the `usbmux` fallback, whereas simulators do not need either of them.
 
 ## Why Use Remote XPC
 
@@ -32,9 +36,8 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
     - The driver supports devices connected via `usbmuxd` (wired and wireless), as well as
       wireless tvOS devices (must be paired first, [see tvOS guide](./tvos.md#wireless-tvos-18-or-later))
 - `appium-ios-remotexpc` installed
-    - The driver declares this package as an **optional dependency**, so in a normal
-      installation npm will install it automatically. You only need to install it manually if
-      the optional dependency step failed or you are wiring a custom environment.
+    - The driver declares this package as a dependency, so in a normal installation npm will
+      install it automatically.
 - On Windows hosts, Apple Mobile Device drivers are required. They can be installed through Apple's
   standalone iTunes package for Windows (the non-Microsoft Store installer already bundles them).
 - On Linux hosts, it is necessary to load the TUN/TAP kernel module and give the user permissions to
@@ -67,13 +70,33 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
     sudo pacman -S iproute2
     ```
 
-To verify that the optional dependency and tunnel infrastructure are available, you can run:
+To verify that the dependency and the tunnel infrastructure are available, you can run:
 
 ```bash
 appium driver doctor xcuitest
 ```
 
-Look for the optional checks related to `appium-ios-remotexpc` and “tunnel availability”.
+Look for the check related to `appium-ios-remotexpc` and the optional “tunnel availability” check.
+
+## Feature Availability
+
+The driver decides **once per session** how it talks to the device: through the tunnel if it is
+available when the session starts, otherwise through the temporary `usbmux` fallback. The decision is
+not revisited if a tunnel starts or stops later. The driver logs a warning when a session runs on the
+fallback.
+
+| Works without a tunnel (temporary `usbmux` fallback) | Needs a tunnel |
+| --- | --- |
+| Device discovery, OS version, `mobile: deviceInfo`, device time | Crash reports |
+| WDA and MJPEG port forwarding; WDA launched via `xcodebuild` or prebuilt (macOS) and all WDA-backed commands | HID events (`mobile: performIndigoHidEvent`) |
+| App install/uninstall/list, including the streaming `zip_conduit` install | XCTest runs, listing and installing test bundles, attachment cleanup |
+| File transfer (AFC) and app container access | Network and system monitors, condition inducer |
+| Syslog, install notifications | Launching a preinstalled WDA (`usePreinstalledWDA`) on iOS/tvOS 27+ |
+| Certificates, advanced battery information | |
+| Webviews and Safari | |
+
+Features from the right column fail with an error that suggests starting a tunnel. Everything also
+works through the tunnel, which is the preferred path.
 
 ## Creating Tunnels
 
@@ -149,9 +172,10 @@ should remaing running in the background, _in addition to_ the Appium server pro
 
 No extra capabilities are required to "enable" tunnels; they are automatically used when:
 
-- `appium-ios-remotexpc` is installed
-- the tunnel registry server is reachable
+- the tunnel registry server is reachable when the session starts
 - the platform is a real device running iOS/tvOS 18 or later
+
+Otherwise the session continues on the [`usbmux` fallback](#feature-availability).
 
 Refer to [the Non-macOS Hosts guide](./non-macos-hosts.md) for additional requirements in order to
 run sessions on Windows/Linux hosts.
