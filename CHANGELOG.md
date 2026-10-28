@@ -1,3 +1,9 @@
+## [12.22.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.1...v12.22.2) (2026-10-28)
+
+### Bug Fixes
+
+* stop stale remote debugger listeners when switching webview contexts ([#3089](https://github.com/appium/appium-xcuitest-driver/issues/3089)) ([e963398](https://github.com/appium/appium-xcuitest-driver/commit/e96339839225581647e0f90ea0d98d0a825db2dd))
+
 ## [12.22.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.0...v12.22.1) (2026-10-28)
 
 ### Miscellaneous Chores
