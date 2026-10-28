@@ -464,17 +464,6 @@ export async function setContext(
   callback?: any,
   skipReadyCheck: boolean = false,
 ): Promise<void> {
-  function alreadyInContext(desired: string | null, current: string | null): boolean {
-    return (
-      desired === current ||
-      (desired === null && current === NATIVE_WIN) ||
-      (desired === NATIVE_WIN && current === null)
-    );
-  }
-  function isNativeContext(context: string | null): boolean {
-    return context === NATIVE_WIN || context === null;
-  }
-
   // allow the full context list to be passed in
   const strName = String(typeof name === 'object' && name && 'id' in name ? name.id : name);
 
@@ -497,87 +486,18 @@ export async function setContext(
     return;
   }
 
-  // switching into a webview context
-
-  // if contexts have not already been retrieved, get them
-  if (this.contexts === undefined) {
-    await this.getContexts();
-  }
-
-  let contextId = strName.replace(WEBVIEW_BASE, '');
-  if (contextId === '') {
-    // allow user to pass in "WEBVIEW" without an index
-    // the second context will be the first webview as
-    // the first is always NATIVE_APP
-    contextId = (this.contexts as string[])[1];
-  }
-  if (!this.contexts.includes(contextId)) {
-    throw new errors.NoSuchContextError();
-  }
-
-  const oldContext = this.curContext;
-
-  const previousPerformanceLog = this.logs.performance;
-  if (previousPerformanceLog?.isCapturing) {
-    this.log.debug('Stopping the previous performance log');
-    try {
-      await previousPerformanceLog.stopCapture();
-    } catch (err) {
-      this.log.warn(`Failed to stop the previous performance log: ${(err as Error).message}`);
-    }
-    previousPerformanceLog.removeAllListeners();
-  }
-
-  this.curContext = this.curWindowHandle = contextId;
-
-  // `contextId` will be in the form of `appId.pageId` in this case
-  const [appIdKey, pageIdKey] = contextId.split('.').map((id) => parseInt(id, 10));
-  try {
-    this.selectingNewPage = true;
-    await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
-    await notifyBiDiContextChange.bind(this)();
-  } catch (err) {
-    this.curContext = this.curWindowHandle = oldContext;
-    throw err;
-  } finally {
-    this.selectingNewPage = false;
-  }
+  const contextId = await resolveWebviewContextId.call(this, strName);
+  await stopPerformanceLog.call(this);
+  await selectWebviewPage.call(this, contextId, skipReadyCheck);
 
   // attempt to start performance logging, if requested
   if (this.opts.enablePerformanceLogging && this._remote) {
-    const context = this.curContext;
-    this.log.debug(`Starting performance log on '${context}'`);
-    this.logs.performance = assignBiDiLogListener(
-      this.eventEmitter,
-      new IOSPerformanceLog({
-        remoteDebugger: this.remote,
-        log: this.log,
-      }),
-      {
-        type: 'performance',
-        context,
-      },
-    )[0];
-    await this.logs.performance?.startCapture();
+    await startPerformanceLog.call(this, contextId);
   }
 
   // start safari logging if the logs handlers are active
   if (name && name !== NATIVE_WIN && this.logs) {
-    const {safariConsole, safariNetwork} = this.logs;
-    if (safariConsole) {
-      const consoleLog = safariConsole as SafariConsoleLog;
-      const eventListener = (error?: Error, event?: StringRecord) =>
-        consoleLog.onConsoleLogEvent(error, event as unknown as SafariConsoleEntry);
-      this.remote.stopConsole();
-      this.remote.startConsole(eventListener);
-    }
-    if (safariNetwork) {
-      const networkLog = safariNetwork as SafariNetworkLog;
-      const eventListener = (error?: Error, event?: StringRecord, method?: string) =>
-        networkLog.onNetworkEvent(error, event as unknown as SafariNetworkLogEntry, method);
-      this.remote.stopNetwork();
-      this.remote.startNetwork(eventListener);
-    }
+    restartSafariLogs.call(this);
   }
 }
 
@@ -646,4 +566,133 @@ function isUrlIgnored(url: string, safariIgnoreWebHostnames?: string): boolean {
     }
   }
   return false;
+}
+
+/**
+ * Checks if the desired context is the current one, treating `null` and `NATIVE_APP` as equal.
+ *
+ * @param desired - The context being switched to
+ * @param current - The current context
+ */
+function alreadyInContext(desired: string | null, current: string | null): boolean {
+  return (
+    desired === current || (desired === null && current === NATIVE_WIN) || (desired === NATIVE_WIN && current === null)
+  );
+}
+
+/**
+ * Checks if the given context is the native one.
+ *
+ * @param context - The context to check
+ */
+function isNativeContext(context: string | null): boolean {
+  return context === NATIVE_WIN || context === null;
+}
+
+/**
+ * Resolves the webview context id to switch to, retrieving the contexts first if needed.
+ * A bare `WEBVIEW` name resolves to the first webview, which is the second context
+ * since the first one is always `NATIVE_APP`.
+ *
+ * @param name - The requested context name
+ * @throws {errors.NoSuchContextError} If the resolved context does not exist
+ */
+async function resolveWebviewContextId(this: XCUITestDriver, name: string): Promise<string> {
+  if (this.contexts === undefined) {
+    await this.getContexts();
+  }
+
+  let contextId = name.replace(WEBVIEW_BASE, '');
+  if (contextId === '') {
+    contextId = (this.contexts as string[])[1];
+  }
+  if (!this.contexts.includes(contextId)) {
+    throw new errors.NoSuchContextError();
+  }
+  return contextId;
+}
+
+/**
+ * Stops the current performance log and detaches its listeners, so it neither keeps
+ * capturing nor forwards events after a new one is created for the next webview.
+ */
+async function stopPerformanceLog(this: XCUITestDriver): Promise<void> {
+  const performanceLog = this.logs.performance;
+  if (!performanceLog?.isCapturing) {
+    return;
+  }
+  try {
+    await performanceLog.stopCapture();
+  } catch (err) {
+    this.log.warn(`Failed to stop the previous performance log: ${(err as Error).message}`);
+  }
+  performanceLog.removeAllListeners();
+}
+
+/**
+ * Selects the page behind the given webview context and makes it current.
+ * The context id is in the form of `appId.pageId`. The previous context is restored
+ * if the page cannot be selected.
+ *
+ * @param contextId - The webview context id
+ * @param skipReadyCheck - Whether to skip waiting for the page to be ready
+ */
+async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipReadyCheck: boolean): Promise<void> {
+  const oldContext = this.curContext;
+  this.curContext = this.curWindowHandle = contextId;
+
+  const [appIdKey, pageIdKey] = contextId.split('.').map((id) => parseInt(id, 10));
+  try {
+    this.selectingNewPage = true;
+    await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
+    await notifyBiDiContextChange.bind(this)();
+  } catch (err) {
+    this.curContext = this.curWindowHandle = oldContext;
+    throw err;
+  } finally {
+    this.selectingNewPage = false;
+  }
+}
+
+/**
+ * Creates a performance log for the given webview context and starts capturing.
+ *
+ * @param context - The webview context id
+ */
+async function startPerformanceLog(this: XCUITestDriver, context: string): Promise<void> {
+  this.log.debug(`Starting performance log on '${context}'`);
+  this.logs.performance = assignBiDiLogListener(
+    this.eventEmitter,
+    new IOSPerformanceLog({
+      remoteDebugger: this.remote,
+      log: this.log,
+    }),
+    {
+      type: 'performance',
+      context,
+    },
+  )[0];
+  await this.logs.performance?.startCapture();
+}
+
+/**
+ * Re-registers the Safari console and network listeners on the remote debugger,
+ * stopping the previous ones first so each event is recorded once.
+ */
+function restartSafariLogs(this: XCUITestDriver): void {
+  const {safariConsole, safariNetwork} = this.logs;
+  if (safariConsole) {
+    const consoleLog = safariConsole as SafariConsoleLog;
+    const eventListener = (error?: Error, event?: StringRecord) =>
+      consoleLog.onConsoleLogEvent(error, event as unknown as SafariConsoleEntry);
+    this.remote.stopConsole();
+    this.remote.startConsole(eventListener);
+  }
+  if (safariNetwork) {
+    const networkLog = safariNetwork as SafariNetworkLog;
+    const eventListener = (error?: Error, event?: StringRecord, method?: string) =>
+      networkLog.onNetworkEvent(error, event as unknown as SafariNetworkLogEntry, method);
+    this.remote.stopNetwork();
+    this.remote.startNetwork(eventListener);
+  }
 }
