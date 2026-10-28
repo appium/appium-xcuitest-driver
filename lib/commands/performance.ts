@@ -27,7 +27,6 @@ const STARTUP_TIMEOUT_MS = 60 * 1000;
 const DEFAULT_PROFILE_NAME = 'Activity Monitor';
 const DEFAULT_EXT = '.trace';
 const DEFAULT_PID = 'current';
-const INSTRUMENTS = 'instruments';
 const XCTRACE = 'xctrace';
 const XCRUN = 'xcrun';
 
@@ -105,48 +104,30 @@ export class PerfRecorder {
   }
 
   private async _startRecording(): Promise<void> {
-    let binaryPath: string;
-    try {
-      binaryPath = await requireXctrace();
-    } catch (e: any) {
-      this._logger.debug(e.message);
-      this._logger.warn(`Defaulting to ${INSTRUMENTS} usage`);
-      binaryPath = await requireInstruments();
-    }
-
-    const args: string[] = [];
-    const toolName = path.basename(binaryPath) === XCRUN ? XCTRACE : INSTRUMENTS;
-    if (toolName === XCTRACE) {
-      args.push(
-        XCTRACE,
-        'record',
-        '--device',
-        this._udid,
-        '--template',
-        this._profileName,
-        '--output',
-        this._reportPath,
-        '--time-limit',
-        `${this._timeout}ms`,
-      );
-      if (this._pid) {
-        args.push('--attach', `${this._pid}`);
-      } else {
-        args.push('--all-processes');
-      }
+    const binaryPath = await requireXctrace();
+    const args = [
+      XCTRACE,
+      'record',
+      '--device',
+      this._udid,
+      '--template',
+      this._profileName,
+      '--output',
+      this._reportPath,
+      '--time-limit',
+      `${this._timeout}ms`,
+    ];
+    if (this._pid) {
+      args.push('--attach', `${this._pid}`);
     } else {
-      // https://help.apple.com/instruments/mac/current/#/devb14ffaa5
-      args.push('-w', this._udid, '-t', this._profileName, '-D', this._reportPath, '-l', `${this._timeout}`);
-      if (this._pid) {
-        args.push('-p', `${this._pid}`);
-      }
+      args.push('--all-processes');
     }
     const fullCmd = [binaryPath, ...args];
     this._process = new SubProcess(fullCmd[0], fullCmd.slice(1));
     this._archivePromise = null;
     this._logger.debug(`Starting performance recording: ${util.quote(fullCmd)}`);
     for (const streamName of ['stdout', 'stderr']) {
-      this._process.on(`line-${streamName}`, (line: string) => this._logger.debug(`[${toolName}] ${line}`));
+      this._process.on(`line-${streamName}`, (line: string) => this._logger.debug(`[${XCTRACE}] ${line}`));
     }
     this._process.once('exit', async (code: number | null, signal: string | null) => {
       this._process = null;
@@ -171,7 +152,7 @@ export class PerfRecorder {
             return true;
           }
           if (!this._process) {
-            throw new Error(`${toolName} process died unexpectedly`);
+            throw new Error(`${XCTRACE} process died unexpectedly`);
           }
           return false;
         },
@@ -181,11 +162,10 @@ export class PerfRecorder {
         },
       );
     } catch {
-      const listProfilesCommand = toolName === XCTRACE ? `${XCRUN} ${XCTRACE} list templates` : `${INSTRUMENTS} -s`;
       throw this._logger.errorWithException(
         `There is no ${DEFAULT_EXT} file found for performance profile ` +
           `'${this._profileName}'. Make sure the profile is supported on this device. ` +
-          `You could use '${listProfilesCommand}' command to see the list of all available profiles. ` +
+          `You could use '${XCRUN} ${XCTRACE} list templates' command to see the list of all available profiles. ` +
           `Check the server log for more details`,
       );
     }
@@ -253,9 +233,7 @@ export class PerfRecorder {
  *
  * Relaxing security is mandatory for simulators. It can always work for real devices.
  *
- * Since XCode 12 the method tries to use `xctrace` tool to record performance stats.
- *
- * The `instruments` developer utility is used as a fallback for this purpose if `xctrace` is not available.
+ * The `xcrun xctrace` tool is used to record performance stats.
  *
  * It is possible to record multiple profiles at the same time.
  *
@@ -273,7 +251,7 @@ export async function mobileStartPerfRecord(
 ): Promise<void> {
   if (process.platform !== 'darwin') {
     throw this.log.errorWithException(
-      `Performance recording requires macOS developer tools (${XCRUN} ${XCTRACE} or ${INSTRUMENTS}) ` +
+      `Performance recording requires macOS developer tools (${XCRUN} ${XCTRACE}) ` +
         `and cannot run from '${process.platform}'.`,
     );
   }
@@ -412,16 +390,6 @@ async function requireXctrace(): Promise<string> {
     );
   }
   return xcrunPath;
-}
-
-async function requireInstruments(): Promise<string> {
-  try {
-    return await fs.which(INSTRUMENTS);
-  } catch {
-    throw new Error(
-      `${INSTRUMENTS} has not been found in PATH. ` + `Please make sure XCode development tools are installed`,
-    );
-  }
 }
 
 async function requireXcrun(): Promise<string> {
