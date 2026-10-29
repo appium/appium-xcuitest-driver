@@ -1,3 +1,9 @@
+## [12.22.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.3...v12.22.4) (2026-10-29)
+
+### Bug Fixes
+
+* make WDA the source of truth for its settings ([#3097](https://github.com/appium/appium-xcuitest-driver/issues/3097)) ([ce5a997](https://github.com/appium/appium-xcuitest-driver/commit/ce5a99708c06edce87db87b117cebbac9b58b02a))
+
 ## [12.22.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.2...v12.22.3) (2026-10-28)
 
 ### Bug Fixes
