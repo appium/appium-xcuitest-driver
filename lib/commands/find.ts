@@ -252,18 +252,7 @@ export async function getFirstVisibleChild(
   if (!context) {
     throw new Error('Cannot get first visible child without a context element');
   }
-  let index = 1;
-  while (true) {
-    const strategy = WDA_CLASS_CHAIN_STRATEGY;
-    const selector = `*[${index}]`;
-    const nthChild = (await this.doNativeFind(strategy, selector, false, context)) as Element;
-    const visible = await this.getAttribute('visible', nthChild);
-    if (visible === 'true') {
-      this.log.info(`Found first visible child at position ${index}`);
-      return nthChild;
-    }
-    index++;
-  }
+  return await this.doNativeFind(WDA_CLASS_CHAIN_STRATEGY, '*[`visible == 1`][1]', false, context);
 }
 
 const MAGIC_FIRST_VIS_CHILD_SEL = /\/\*\[@firstVisible\s*=\s*('|")true\1\]/;

@@ -86,33 +86,52 @@ describe('general commands', function () {
     it('should convert magic first visible child xpath to class chain', async function () {
       const variants = ['/*[@firstVisible="true"]', "/*[@firstVisible='true']", "/*[@firstVisible = 'true']"];
       const attribSpy = sinon.stub(driver, 'getAttribute');
-      for (const variant of variants) {
-        proxySpy.withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[1]'}).resolves({ELEMENT: 1});
-        proxySpy.withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[2]'}).resolves({ELEMENT: 2});
-        attribSpy.withArgs('visible', {ELEMENT: 1} as any).resolves('false');
-        attribSpy.withArgs('visible', {ELEMENT: 2} as any).resolves('true');
-        const el = await driver.findNativeElementOrElements('xpath', variant, false, {
-          ELEMENT: 'ctx',
-        });
-        assert.strictEqual(proxySpy.calledTwice, true);
+      try {
+        for (const variant of variants) {
+          proxySpy
+            .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[`visible == 1`][1]'})
+            .resolves({ELEMENT: 2});
+          const el = await driver.findNativeElementOrElements('xpath', variant, false, {
+            ELEMENT: 'ctx',
+          });
+          assert.strictEqual(
+            proxySpy.calledOnceWith('/element/ctx/element', 'POST', {
+              using: 'class chain',
+              value: '*[`visible == 1`][1]',
+            }),
+            true,
+          );
+          assert.strictEqual(attribSpy.called, false);
+          assert.deepStrictEqual(el, {ELEMENT: 2});
+          proxySpy.reset();
+        }
+      } finally {
+        attribSpy.restore();
+      }
+    });
+
+    it('should throw NoSuchElementError after a single lookup when no child is visible', async function () {
+      const attribSpy = sinon.stub(driver, 'getAttribute');
+      try {
+        proxySpy
+          .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[`visible == 1`][1]'})
+          .resolves([]);
+        await assert.rejects(
+          driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false, {
+            ELEMENT: 'ctx',
+          }),
+          {name: 'NoSuchElementError'},
+        );
         assert.strictEqual(
-          proxySpy.calledWith('/element/ctx/element', 'POST', {
+          proxySpy.calledOnceWith('/element/ctx/element', 'POST', {
             using: 'class chain',
-            value: '*[1]',
+            value: '*[`visible == 1`][1]',
           }),
           true,
         );
-        assert.strictEqual(
-          proxySpy.calledWith('/element/ctx/element', 'POST', {
-            using: 'class chain',
-            value: '*[2]',
-          }),
-          true,
-        );
-        assert.strictEqual(attribSpy.calledTwice, true);
-        assert.deepStrictEqual(el, {ELEMENT: 2});
-        proxySpy.reset();
-        attribSpy.reset();
+        assert.strictEqual(attribSpy.called, false);
+      } finally {
+        attribSpy.restore();
       }
     });
 
