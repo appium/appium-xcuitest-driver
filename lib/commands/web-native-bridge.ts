@@ -553,9 +553,7 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
  * @param force - Recalibrate unconditionally, ignoring any cached entry
  */
 async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
-  const implicitWaitMs = this.implicitWaitMs;
-  this.setImplicitWait(0);
-  try {
+  return await this.withoutImplicitWait(async () => {
     if (!force) {
       const signature = await computeViewportSignature.call(this);
       if (this._webviewCalibrationCache?.signature === signature) {
@@ -565,10 +563,8 @@ async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false
     }
     this.log.debug('Fitting a new web-to-native coordinates calibration');
     this._webviewCalibrationCache = await performCalibration.call(this);
-  } finally {
-    this.setImplicitWait(implicitWaitMs);
-  }
-  return this._webviewCalibrationCache.data;
+    return this._webviewCalibrationCache.data;
+  });
 }
 
 /**
@@ -594,7 +590,7 @@ async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsEl
       return false;
     }
 
-    const els = (await this.findNativeElementOrElements('accessibility id', uuid, true)) as Element[];
+    const els = await this.withoutImplicitWait(() => this.findNativeElementOrElements('accessibility id', uuid, true));
     if (els.length !== 1) {
       this.log.debug(`Expected to find exactly 1 native element with accessibility id '${uuid}', found ${els.length}`);
       return false;

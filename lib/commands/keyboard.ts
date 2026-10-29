@@ -38,7 +38,9 @@ export async function mobileHideKeyboard(this: XCUITestDriver, keys: string[] = 
  */
 export async function isKeyboardShown(this: XCUITestDriver): Promise<boolean> {
   try {
-    await this.findNativeElementOrElements('class name', 'XCUIElementTypeKeyboard', false);
+    await this.withoutImplicitWait(() =>
+      this.findNativeElementOrElements('class name', 'XCUIElementTypeKeyboard', false),
+    );
     return true;
   } catch {
     return false;

@@ -55,11 +55,13 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
   try {
     const navBar = await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
     let dstButton: Element<string>;
-    const backButtons = await this.findNativeElementOrElements(
-      '-ios predicate string',
-      'type == "XCUIElementTypeButton" AND label == "Back"',
-      true,
-      navBar,
+    const backButtons = await this.withoutImplicitWait(() =>
+      this.findNativeElementOrElements(
+        '-ios predicate string',
+        'type == "XCUIElementTypeButton" AND label == "Back"',
+        true,
+        navBar,
+      ),
     );
     if (backButtons.length === 0) {
       const buttons = await this.findNativeElementOrElements(
@@ -71,10 +73,10 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
       if (buttons.length === 0) {
         throw new Error('No buttons found in navigation bar');
       }
-      this.log.debug(`Found navigation bar 'back' button. Clicking.`);
+      this.log.debug(`Did not find any navigation bar 'back' button. Clicking the first one.`);
       dstButton = buttons[0];
     } else {
-      this.log.debug(`Did not find any navigation bar 'back' button. Clicking the first one.`);
+      this.log.debug(`Found navigation bar 'back' button. Clicking.`);
       dstButton = backButtons[0];
     }
 
