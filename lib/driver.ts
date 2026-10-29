@@ -206,15 +206,6 @@ const DEFAULT_SETTINGS = {
   nativeWebTapStrict: false,
   useJSONSource: false,
   webScreenshotMode: 'native',
-  shouldUseCompactResponses: true,
-  elementResponseAttributes: 'type,label',
-  // Read https://github.com/appium/appium-ios/blob/main/packages/webdriveragent/WebDriverAgentLib/Utilities/FBConfiguration.m for following settings' values
-  mjpegServerScreenshotQuality: 25,
-  mjpegServerFramerate: 10,
-  screenshotQuality: 1,
-  mjpegScalingFactor: 100,
-  // set `reduceMotion` to `null` so that it will be verified but still set either true/false
-  reduceMotion: null,
   pageSourceExcludedAttributes: '',
   // `null` targets the main display
   currentDisplayId: null,
@@ -578,6 +569,24 @@ export class XCUITestDriver
 
   override proxyActive(): boolean {
     return Boolean(this.jwpProxyActive);
+  }
+
+  /**
+   * Returns the current session settings. Settings owned by WebDriverAgent are read
+   * from WDA itself, so it stays the single source of truth for their values.
+   */
+  override async getSettings(): Promise<StringRecord> {
+    const settings = await super.getSettings();
+    if (!this.proxyActive()) {
+      return settings;
+    }
+    try {
+      const wdaSettings = (await this.proxyCommand('/appium/settings', 'GET')) as StringRecord;
+      return {...settings, ...wdaSettings};
+    } catch (err) {
+      this.log.debug(`Cannot retrieve WebDriverAgent settings: ${(err as Error).message}`);
+      return settings;
+    }
   }
 
   override getProxyAvoidList(): RouteMatcher[] {
@@ -1064,10 +1073,7 @@ export class XCUITestDriver
       await this.updateSettings({useJSONSource: this.opts.useJSONSource});
     }
 
-    const wdaSettings: StringRecord = {
-      elementResponseAttributes: DEFAULT_SETTINGS.elementResponseAttributes,
-      shouldUseCompactResponses: DEFAULT_SETTINGS.shouldUseCompactResponses,
-    };
+    const wdaSettings: StringRecord = {};
     if ('elementResponseAttributes' in this.opts && typeof this.opts.elementResponseAttributes === 'string') {
       wdaSettings.elementResponseAttributes = this.opts.elementResponseAttributes;
     }
@@ -1084,7 +1090,6 @@ export class XCUITestDriver
       this.log.info(`Setting the quality of phone screenshot: '${this.opts.screenshotQuality}'`);
       wdaSettings.screenshotQuality = this.opts.screenshotQuality;
     }
-    // ensure WDA gets our defaults instead of whatever its own might be
     await this.updateSettings(wdaSettings);
   }
 
