@@ -1,3 +1,9 @@
+## [12.22.5](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.4...v12.22.5) (2026-10-29)
+
+### Performance Improvements
+
+* find first visible child with a single class chain query ([#3100](https://github.com/appium/appium-xcuitest-driver/issues/3100)) ([768b2af](https://github.com/appium/appium-xcuitest-driver/commit/768b2af5c6ea01afb2ce0f0e0f887e6f6d395f3a))
+
 ## [12.22.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.3...v12.22.4) (2026-10-29)
 
 ### Bug Fixes
