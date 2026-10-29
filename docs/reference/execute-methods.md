@@ -910,7 +910,7 @@ style | string | yes | Either `light` or `dark` | dark
 ### mobile: getIncreaseContrast
 
 Get the device's "increase contrast" accessibility mode.
-This API only works on simulators. An exception is thrown if executed with real devices.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Returned Result
 
@@ -921,11 +921,13 @@ One of below:
 - `unsupported`: The platform or runtime version does not support the Increase Contrast setting.
 - `unknown`: The current setting is unknown or there was an error detecting it.
 
+Real devices only ever report `enabled` or `disabled`.
+
 
 ### mobile: setIncreaseContrast
 
 Enable or disable the device's "increase contrast" accessibility mode.
-This API only works on simulators. An exception is thrown if executed with real devices.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Arguments
 
@@ -936,7 +938,7 @@ increaseContrast | string | yes | Either `enabled` or `disabled` (case insensiti
 ### mobile: contentSize
 
 Get the device's content size.
-This API only works on simulators. An exception is thrown if executed with real devices.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Returned Result
 
@@ -960,7 +962,7 @@ One of below:
 ### mobile: setContentSize
 
 Set the device's content size.
-This API only works on simulators. An exception is thrown if executed with real devices.
+On real devices, iOS/tvOS 18+ and an active RemoteXPC tunnel are required.
 
 #### Arguments
 
@@ -980,6 +982,14 @@ size | string | yes | One of the content sizes listed below in case-insensitive.
 - `accessibility-extra-large`
 - `accessibility-extra-extra-large`
 - `accessibility-extra-extra-extra-large`
+- `increment`
+- `decrement`
+
+`increment` and `decrement` allow iterating through the above list, and have no effect if the content size is already at its min or max value.
+
+On real devices, the five `accessibility-*` sizes additionally require **Larger Accessibility Sizes** to be enabled on
+the device (Settings -> Accessibility -> Display & Text Size -> Larger Text). When it is off, the CoreDevice service
+rejects those sizes with `Enable Larger Accessibility Sizes on the device before setting`.
 
 ### mobile: getClipboard
 
