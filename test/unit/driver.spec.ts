@@ -473,13 +473,15 @@ describe('XCUITestDriver', function () {
   });
 
   describe('setupSessionSettings', function () {
-    it('should report the WDA default screenshotQuality', function () {
+    it('should not send WDA settings without capabilities', async function () {
       const driver = new XCUITestDriver({} as any);
-      assert.strictEqual(driver.settings.getSettings().screenshotQuality, 3);
+      const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+      await driver.setupSessionSettings();
+      assert.strictEqual(proxyStub.called, false);
     });
 
     it('should send screenshotQuality capability to WDA', async function () {
-      for (const screenshotQuality of [0, 1, 2]) {
+      for (const screenshotQuality of [0, 1, 2, 3]) {
         const driver = new XCUITestDriver({} as any);
         driver.opts.screenshotQuality = screenshotQuality;
         const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
@@ -488,8 +490,37 @@ describe('XCUITestDriver', function () {
           proxyStub.calledWith('/appium/settings', 'POST', {settings: {screenshotQuality}}),
           `screenshotQuality ${screenshotQuality} was not sent`,
         );
-        assert.strictEqual(driver.settings.getSettings().screenshotQuality, screenshotQuality);
       }
+    });
+  });
+
+  describe('getSettings', function () {
+    it('should return WDA settings merged with driver settings', async function () {
+      const driver = new XCUITestDriver({} as any);
+      driver.jwpProxyActive = true;
+      const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves({screenshotQuality: 3});
+      const settings = await driver.getSettings();
+      assert.ok(proxyStub.calledOnceWith('/appium/settings', 'GET'));
+      assert.strictEqual(settings.screenshotQuality, 3);
+      assert.strictEqual(settings.webScreenshotMode, 'native');
+    });
+
+    it('should return driver settings if WDA is not running', async function () {
+      const driver = new XCUITestDriver({} as any);
+      const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves({screenshotQuality: 3});
+      const settings = await driver.getSettings();
+      assert.strictEqual(proxyStub.called, false);
+      assert.strictEqual(settings.screenshotQuality, undefined);
+      assert.strictEqual(settings.webScreenshotMode, 'native');
+    });
+
+    it('should return driver settings if WDA settings cannot be retrieved', async function () {
+      const driver = new XCUITestDriver({} as any);
+      driver.jwpProxyActive = true;
+      sandbox.stub(driver, 'proxyCommand').rejects(new Error('boom'));
+      const settings = await driver.getSettings();
+      assert.strictEqual(settings.screenshotQuality, undefined);
+      assert.strictEqual(settings.webScreenshotMode, 'native');
     });
   });
 
