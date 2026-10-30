@@ -217,11 +217,10 @@ async function main() {
       '--fallback-queue-max-len <number>',
       'If the archive for the installed WDA version is not published yet, try up to this many lower versions allowed by package.json (newest first). Default: 0 (no fallback)',
       (value) => {
-        const parsed = Number.parseInt(value, 10);
-        if (!Number.isInteger(parsed) || parsed < 0) {
+        if (!/^\d+$/.test(value)) {
           throw new InvalidArgumentError('Must be a non-negative integer');
         }
-        return parsed;
+        return Number(value);
       },
     )
     .addHelpText(
