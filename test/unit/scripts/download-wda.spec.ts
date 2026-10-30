@@ -52,3 +52,85 @@ describe('prebuilt WDA release migration', () => {
     }
   }
 });
+
+describe('prebuilt WDA fallback to lower versions', () => {
+  const notFound = () => new Error('Cannot download', {cause: {response: {status: 404}}});
+  const archive = `WebDriverAgentRunner-Build-Sim-${os.arch() === 'arm64' ? 'arm64' : 'x86_64'}.zip`;
+  const urlOf = (v: string) =>
+    `https://github.com/appium/appium-ios/releases/download/appium-webdriveragent@${v}/${archive}`;
+
+  afterEach(() => sinon.restore());
+
+  async function run(fallbackQueueMaxLen: number) {
+    const parent = await mkdtemp(path.join(os.tmpdir(), 'wda-download-'));
+    const originalCwd = process.cwd();
+    try {
+      process.chdir(parent);
+      await getWDAPrebuiltPackage({
+        platform: 'iOS',
+        kind: 'sim',
+        outdir: path.join(parent, 'runner'),
+        fallbackQueueMaxLen,
+      });
+    } finally {
+      process.chdir(originalCwd);
+      await rm(parent, {recursive: true, force: true});
+    }
+  }
+
+  function stubEnv() {
+    sinon
+      .stub(fs, 'readFile')
+      .callsFake((async (p: unknown) =>
+        String(p).includes('node_modules')
+          ? JSON.stringify({version: '16.17.4'})
+          : JSON.stringify({dependencies: {'appium-webdriveragent': '^16.17.2'}})) as any);
+    sinon.stub(zip, 'extractAllTo').resolves();
+    sinon
+      .stub(globalThis, 'fetch')
+      .resolves(
+        new Response(
+          JSON.stringify({versions: {'16.17.1': {}, '16.17.2': {}, '16.17.3': {}, '16.17.4': {}, '16.17.5': {}}}),
+        ),
+      );
+    return sinon.stub(net, 'downloadFile');
+  }
+
+  it('tries lower versions within the allowed range when enabled', async () => {
+    const download = stubEnv();
+    download.callsFake(async (url: string) => {
+      if (url !== urlOf('16.17.3')) {
+        throw notFound();
+      }
+    });
+    await run(10);
+    assert.deepEqual(
+      download.getCalls().map((c) => c.args[0]),
+      [urlOf('16.17.4'), urlOf('16.17.3')],
+    );
+  });
+
+  it('fails once the allowed range is exhausted', async () => {
+    const download = stubEnv();
+    download.rejects(notFound());
+    await assert.rejects(run(10));
+    assert.equal(download.callCount, 3);
+  });
+
+  it('limits the number of fallback versions', async () => {
+    const download = stubEnv();
+    download.rejects(notFound());
+    await assert.rejects(run(1));
+    assert.deepEqual(
+      download.getCalls().map((c) => c.args[0]),
+      [urlOf('16.17.4'), urlOf('16.17.3')],
+    );
+  });
+
+  it('does not fall back by default', async () => {
+    const download = stubEnv();
+    download.rejects(notFound());
+    await assert.rejects(run(0));
+    assert.equal(download.callCount, 1);
+  });
+});
