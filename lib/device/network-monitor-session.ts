@@ -20,7 +20,11 @@ export class NetworkMonitorSession extends DvtMonitorSession {
    */
   async start(eventEmitter: EventEmitter): Promise<void> {
     // Start eagerly so setup failures reject the command instead of surfacing in the stream
-    await this.begin(eventEmitter, (dvt) => dvt.networkMonitor.start());
+    await this.begin(eventEmitter, async (dvt, isCancelled) => {
+      if (!isCancelled()) {
+        await dvt.networkMonitor.start();
+      }
+    });
   }
 
   protected async stopInstrument(dvt: DVTInstruments): Promise<void> {

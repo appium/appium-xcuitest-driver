@@ -25,11 +25,14 @@ export class SystemMonitorSession extends DvtMonitorSession {
    * @param eventEmitter - Typically the session driver's `eventEmitter` (WebDriver BiDi bus).
    */
   async start(eventEmitter: EventEmitter, options: SystemMonitorSessionOptions = {}): Promise<void> {
-    await this.begin(eventEmitter, async (dvt) => {
+    await this.begin(eventEmitter, async (dvt, isCancelled) => {
+      if (isCancelled()) {
+        return;
+      }
       if (options.intervalMs !== undefined) {
         await dvt.sysmontap.configure({intervalMs: options.intervalMs});
       }
-      if (this.isCancelled(dvt)) {
+      if (isCancelled()) {
         return;
       }
       // Start eagerly so setup failures reject the command instead of surfacing in the stream

@@ -11,7 +11,8 @@ import type {RemoteXPCFacade} from './remote-xpc/index.js';
 export abstract class DvtMonitorSession {
   private dvt: DVTInstruments | null = null;
   private runPromise: Promise<void> | null = null;
-  private starting = false;
+  private startPromise: Promise<boolean> | null = null;
+  private generation = 0;
   private stopped = false;
 
   /**
@@ -35,27 +36,58 @@ export abstract class DvtMonitorSession {
 
   /** @returns `true` while starting or while the consume loop may still receive events. */
   isRunning(): boolean {
-    return this.starting || this.dvt !== null;
+    return this.startPromise !== null || this.dvt !== null;
   }
 
   /**
-   * Opens the DVT service, runs `prepare`, then starts consuming. No-op if already running or starting.
+   * Opens the DVT service, runs `prepare`, then starts consuming. Resolves immediately if already
+   * streaming. A call made during an in-flight start waits for it and shares its outcome.
    * Rejects (after closing the service) if `prepare` fails.
+   *
+   * @param prepare - Instrument setup; it should bail out once `isCancelled()` returns `true`.
    */
-  protected async begin(eventEmitter: EventEmitter, prepare?: (dvt: DVTInstruments) => Promise<void>): Promise<void> {
-    if (this.isRunning()) {
-      return;
-    }
-    this.starting = true;
-    this.stopped = false;
-    try {
-      await this.open(eventEmitter, prepare);
-    } finally {
-      this.starting = false;
+  protected async begin(
+    eventEmitter: EventEmitter,
+    prepare?: (dvt: DVTInstruments, isCancelled: () => boolean) => Promise<void>,
+  ): Promise<void> {
+    const generation = this.generation;
+    for (;;) {
+      if (this.startPromise) {
+        if (await this.startPromise) {
+          return;
+        }
+        // The awaited start was cancelled: retry only if no interrupt() came after this call
+        if (this.generation !== generation) {
+          return;
+        }
+      } else if (this.dvt) {
+        return;
+      } else {
+        this.stopped = false;
+        this.startPromise = this.runOpen(eventEmitter, prepare);
+        await this.startPromise;
+        return;
+      }
     }
   }
 
-  private async open(eventEmitter: EventEmitter, prepare?: (dvt: DVTInstruments) => Promise<void>): Promise<void> {
+  /** Runs {@link open} and clears `startPromise` before any waiter resumes. */
+  private async runOpen(
+    eventEmitter: EventEmitter,
+    prepare?: (dvt: DVTInstruments, isCancelled: () => boolean) => Promise<void>,
+  ): Promise<boolean> {
+    try {
+      return await this.open(eventEmitter, prepare);
+    } finally {
+      this.startPromise = null;
+    }
+  }
+
+  /** @returns `true` if streaming began, `false` if the start was cancelled by {@link interrupt}. */
+  private async open(
+    eventEmitter: EventEmitter,
+    prepare?: (dvt: DVTInstruments, isCancelled: () => boolean) => Promise<void>,
+  ): Promise<boolean> {
     if (!this.remoteXPCFacade) {
       throw new Error(`RemoteXPC is not available for device '${this.udid}'`);
     }
@@ -65,24 +97,25 @@ export abstract class DvtMonitorSession {
     if (this.stopped) {
       // interrupt() ran while the service was being opened
       await this.closeDvt(dvt);
-      return;
+      return false;
     }
     this.dvt = dvt;
     try {
-      await prepare?.(dvt);
+      await prepare?.(dvt, () => this.isCancelled(dvt));
     } catch (err) {
-      if (this.dvt !== dvt) {
+      if (this.isCancelled(dvt)) {
         // interrupt() already closed the service; the cancelled start isn't an error
-        return;
+        return false;
       }
       this.dvt = null;
       await this.closeDvt(dvt);
       throw err;
     }
-    if (this.dvt !== dvt) {
-      return;
+    if (this.isCancelled(dvt)) {
+      return false;
     }
     this.runPromise = this.consumeEvents(dvt, eventEmitter);
+    return true;
   }
 
   /** Stops monitoring and waits for the consume loop; closes DVT here if streaming never began. */
@@ -92,6 +125,7 @@ export abstract class DvtMonitorSession {
     }
 
     this.stopped = true;
+    this.generation++;
     const dvt = this.dvt;
     const runPromise = this.runPromise;
     this.dvt = null;
@@ -117,7 +151,7 @@ export abstract class DvtMonitorSession {
   }
 
   /** @returns `true` if {@link interrupt} has detached `dvt`, so setup should stop early. */
-  protected isCancelled(dvt: DVTInstruments): boolean {
+  private isCancelled(dvt: DVTInstruments): boolean {
     return this.dvt !== dvt;
   }
 

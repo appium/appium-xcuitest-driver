@@ -23,8 +23,8 @@ interface Fixture {
   create(log: AppiumLogger, facade: RemoteXPCFacade): DvtMonitorSession & {start(e: EventEmitter): Promise<void>};
   startCommand: (this: any) => Promise<void>;
   sessionProp: '_networkMonitorSession' | '_systemMonitorSession';
-  /** Instrument stub that rejects when setup fails */
-  failSetup(dvt: any, err: Error): void;
+  /** The instrument's eager-start stub */
+  startStub(dvt: any): sinon.SinonStub;
 }
 
 const fixtures: Fixture[] = [
@@ -34,7 +34,7 @@ const fixtures: Fixture[] = [
     create: (log, facade) => new NetworkMonitorSession(log, 'udid', facade),
     startCommand: mobileStartNetworkMonitor,
     sessionProp: '_networkMonitorSession',
-    failSetup: (dvt, err) => dvt.networkMonitor.start.rejects(err),
+    startStub: (dvt) => dvt.networkMonitor.start,
   },
   {
     name: 'SystemMonitorSession',
@@ -50,7 +50,7 @@ const fixtures: Fixture[] = [
     create: (log, facade) => new SystemMonitorSession(log, 'udid', facade),
     startCommand: mobileStartSystemMonitor,
     sessionProp: '_systemMonitorSession',
-    failSetup: (dvt, err) => dvt.sysmontap.start.rejects(err),
+    startStub: (dvt) => dvt.sysmontap.start,
   },
 ];
 
@@ -183,12 +183,12 @@ for (const fixture of fixtures) {
       const first = fixture.startCommand.call(driver);
       const session = driver[fixture.sessionProp];
       assert.ok(session);
-      await fixture.startCommand.call(driver);
+      const second = fixture.startCommand.call(driver);
       assert.strictEqual(driver[fixture.sessionProp], session);
 
       await session.interrupt();
       opening.resolve();
-      await first;
+      await Promise.all([first, second]);
 
       assert.strictEqual(requireTunnelService.calledOnce, true);
       assert.strictEqual(session.isRunning(), false);
@@ -229,15 +229,120 @@ for (const fixture of fixtures) {
 
 for (const f of fixtures) {
   describe(`${f.name} setup`, function () {
+    /** Makes the instrument's eager start block until released */
+    function blockStart(dvt: any) {
+      const gate = Promise.withResolvers<void>();
+      f.startStub(dvt).callsFake(() => gate.promise);
+      return gate;
+    }
+
+    it('starts the instrument exactly once', async function () {
+      const {session, dvt} = setup(f, async function* (stopped) {
+        yield {};
+        await stopped;
+      });
+
+      await session.start(new EventEmitter());
+
+      assert.strictEqual(f.startStub(dvt).calledOnce, true);
+      await session.interrupt();
+    });
+
     it('rejects and closes DVT when the instrument fails to start', async function () {
       const {session, close, dvt} = setup(f, async function* () {});
       const error = new Error('start failed');
-      f.failSetup(dvt, error);
+      f.startStub(dvt).rejects(error);
 
       await assert.rejects(session.start(new EventEmitter()), error);
 
       assert.strictEqual(close.calledOnce, true);
       assert.strictEqual(session.isRunning(), false);
+    });
+
+    it('closes DVT when interrupted during setup', async function () {
+      const {session, close, dvt} = setup(f, async function* () {});
+      const gate = blockStart(dvt);
+
+      const starting = session.start(new EventEmitter());
+      await setImmediate();
+      await session.interrupt();
+      gate.resolve();
+      await starting;
+
+      assert.strictEqual(session.isRunning(), false);
+      assert.strictEqual(close.calledOnce, true);
+    });
+
+    it('does not close twice or reject when interrupted and setup then fails', async function () {
+      const {session, close, dvt} = setup(f, async function* () {});
+      const gate = blockStart(dvt);
+
+      const starting = session.start(new EventEmitter());
+      await setImmediate();
+      await session.interrupt();
+      gate.reject(new Error('connection closed'));
+
+      await assert.doesNotReject(starting);
+      assert.strictEqual(close.calledOnce, true);
+      assert.strictEqual(session.isRunning(), false);
+    });
+
+    it('lets a concurrent start wait for the in-flight one', async function () {
+      const {session, dvt, requireTunnelService} = setup(f, async function* (stopped) {
+        yield {};
+        await stopped;
+      });
+      const gate = blockStart(dvt);
+
+      const first = session.start(new EventEmitter());
+      await setImmediate();
+      let secondDone = false;
+      const second = session.start(new EventEmitter()).then(() => (secondDone = true));
+      await setImmediate();
+      assert.strictEqual(secondDone, false);
+
+      gate.resolve();
+      await Promise.all([first, second]);
+
+      assert.strictEqual(requireTunnelService.calledOnce, true);
+      assert.strictEqual(session.isRunning(), true);
+      await session.interrupt();
+    });
+
+    it('rejects a concurrent start when the in-flight one fails', async function () {
+      const {session, dvt} = setup(f, async function* () {});
+      const gate = blockStart(dvt);
+      const error = new Error('start failed');
+
+      const first = assert.rejects(session.start(new EventEmitter()), error);
+      await setImmediate();
+      const second = assert.rejects(session.start(new EventEmitter()), error);
+      await setImmediate();
+      gate.reject(error);
+
+      await Promise.all([first, second]);
+      assert.strictEqual(session.isRunning(), false);
+    });
+
+    it('starts again when start() follows an interrupt() that cancelled an in-flight start', async function () {
+      const {session, dvt, requireTunnelService} = setup(f, async function* (stopped) {
+        yield {};
+        await stopped;
+      });
+      const gate = blockStart(dvt);
+
+      const first = session.start(new EventEmitter());
+      await setImmediate();
+      await session.interrupt();
+      const second = session.start(new EventEmitter());
+      f.startStub(dvt).resolves();
+      gate.resolve();
+      await Promise.all([first, second]);
+
+      // The fake's stop signal is shared, so the restarted stream may already have ended
+      assert.strictEqual(requireTunnelService.callCount, 2);
+      assert.strictEqual(f.startStub(dvt).callCount, 2);
+      await session.interrupt();
     });
   });
 }
@@ -260,7 +365,7 @@ describe('SystemMonitorSession start', function () {
     assert.strictEqual(close.calledOnce, true);
   });
 
-  it('closes DVT when interrupted during setup', async function () {
+  it('does not start sampling when interrupted while configure() is pending', async function () {
     const {session, close, dvt} = setup(fixture, async function* () {});
     const configuring = Promise.withResolvers<void>();
     dvt.sysmontap.configure.callsFake(() => configuring.promise);
@@ -274,20 +379,5 @@ describe('SystemMonitorSession start', function () {
     assert.strictEqual(session.isRunning(), false);
     assert.strictEqual(dvt.sysmontap.start.called, false);
     assert.strictEqual(close.calledOnce, true);
-  });
-
-  it('does not close twice or reject when interrupted and setup then fails', async function () {
-    const {session, close, dvt} = setup(fixture, async function* () {});
-    const configuring = Promise.withResolvers<void>();
-    dvt.sysmontap.configure.callsFake(() => configuring.promise);
-
-    const starting = (session as SystemMonitorSession).start(new EventEmitter(), {intervalMs: 1});
-    await setImmediate();
-    await session.interrupt();
-    configuring.reject(new Error('connection closed'));
-
-    await assert.doesNotReject(starting);
-    assert.strictEqual(close.calledOnce, true);
-    assert.strictEqual(session.isRunning(), false);
   });
 });

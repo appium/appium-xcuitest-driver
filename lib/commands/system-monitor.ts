@@ -39,8 +39,11 @@ export async function mobileStartSystemMonitor(this: XCUITestDriver, intervalMs?
     );
   }
 
-  if (this._systemMonitorSession?.isRunning()) {
+  const existing = this._systemMonitorSession;
+  if (existing?.isRunning()) {
     this.log.info(`DVT system monitor is already active; continuing`);
+    // Waits for an in-flight start and shares its outcome; no-op once streaming
+    await existing.start(this.eventEmitter, {intervalMs});
     return;
   }
   if (this._systemMonitorSession) {

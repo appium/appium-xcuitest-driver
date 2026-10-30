@@ -35,8 +35,11 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
     );
   }
 
-  if (this._networkMonitorSession?.isRunning()) {
+  const existing = this._networkMonitorSession;
+  if (existing?.isRunning()) {
     this.log.info(`DVT network monitor is already active; continuing`);
+    // Waits for an in-flight start and shares its outcome; no-op once streaming
+    await existing.start(this.eventEmitter);
     return;
   }
   if (this._networkMonitorSession) {
