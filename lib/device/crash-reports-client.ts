@@ -14,6 +14,7 @@ const MAX_FILES_IN_ERROR = 10;
  */
 export class CrashReportsClient {
   private readonly crashReportsService: RemoteXPCCrashReportsService;
+  private crashReportPaths: string[] = [];
 
   private constructor(crashReportsService: RemoteXPCCrashReportsService) {
     this.crashReportsService = crashReportsService;
@@ -41,8 +42,8 @@ export class CrashReportsClient {
    * @returns Basenames of crash report files on the device (e.g. `MyApp-2024-01-01-120000.ips`)
    */
   async listCrashes(): Promise<string[]> {
-    const allFiles = await this._listCrashReportPaths();
-    return allFiles.map((filePath) => {
+    this.crashReportPaths = await this._listCrashReportPaths();
+    return this.crashReportPaths.map((filePath) => {
       const parts = filePath.split('/');
       return parts[parts.length - 1];
     });
@@ -51,15 +52,22 @@ export class CrashReportsClient {
   /**
    * Pulls a single crash report off the device into a local folder.
    *
+   * Resolves the name against the paths from the last {@link CrashReportsClient.listCrashes} call
+   * and walks the device tree again only if the name is not among them.
+   *
    * @param name - Crash file basename as returned by {@link CrashReportsClient.listCrashes}
    * @param dstFolder - Existing local directory to write into
    * @throws {Error} If the named report is not found on the device
    */
   async exportCrash(name: string, dstFolder: string): Promise<void> {
-    const allFiles = await this._listCrashReportPaths();
-    const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
+    let fullPath = this._findCrashReportPath(name);
+    if (!fullPath) {
+      this.crashReportPaths = await this._listCrashReportPaths();
+      fullPath = this._findCrashReportPath(name);
+    }
 
     if (!fullPath) {
+      const allFiles = this.crashReportPaths;
       const filesList = allFiles.slice(0, MAX_FILES_IN_ERROR).join(', ');
       const hasMore = allFiles.length > MAX_FILES_IN_ERROR;
       throw new Error(
@@ -80,6 +88,14 @@ export class CrashReportsClient {
     } catch (err) {
       log.warn(`Error closing crash reports service: ${(err as Error).message}`);
     }
+  }
+
+  /**
+   * @param name - Crash file basename
+   * @returns The full path from the last listing whose basename is `name`, if any
+   */
+  private _findCrashReportPath(name: string): string | undefined {
+    return this.crashReportPaths.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
   }
 
   /**
