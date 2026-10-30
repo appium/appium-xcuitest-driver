@@ -1141,7 +1141,7 @@ Starts streaming DVT networking instrument events from the device. Each sample i
 
 Requires a **real** device running **iOS/tvOS 18+**, a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md), and a BiDi-capable client subscribed to that method.
 
-If a monitor is already running, the call does nothing so the existing stream continues.
+If a monitor is already running, the call does nothing so the existing stream continues. The stream can also end on its own, for example if the device connection drops; the driver then logs a warning or error, stops emitting events (no BiDi event is sent) and the next call starts a new stream.
 
 ### mobile: stopNetworkMonitor
 
@@ -1153,7 +1153,7 @@ Starts streaming DVT sysmontap samples (CPU usage, memory footprint, and other p
 
 Requires a **real** device running **iOS/tvOS 18+**, a running [RemoteXPC tunnel](../guides/remotexpc-tunnels-real-devices.md), and a BiDi-capable client subscribed to that method.
 
-If a monitor is already running, the call does nothing so the existing stream continues.
+If a monitor is already running, the call does nothing so the existing stream continues. The stream can also end on its own, for example if the device connection drops; the driver then logs a warning or error, stops emitting events (no BiDi event is sent) and the next call starts a new stream.
 
 #### Arguments
 
