@@ -495,7 +495,6 @@ export class XCUITestDriver
   findNativeElementOrElements = findCommands.findNativeElementOrElements;
   doNativeFind = findCommands.doNativeFind;
   getFirstVisibleChild = findCommands.getFirstVisibleChild;
-  withoutImplicitWait = findCommands.withoutImplicitWait;
 
   /*---------+
    | GENERAL |

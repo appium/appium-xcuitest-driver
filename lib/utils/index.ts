@@ -12,6 +12,7 @@ export {
 export {hasElementId, hasWebElementId} from './element.js';
 export {cropBase64Image, requireSharp} from './image.js';
 export {memoize} from './memoize.js';
+export {withoutImplicitWait} from './implicit-wait.js';
 export {
   toApiLevelRequirementText,
   isTvOs,
