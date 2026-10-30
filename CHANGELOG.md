@@ -1,3 +1,9 @@
+## [12.22.6](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.5...v12.22.6) (2026-10-30)
+
+### Bug Fixes
+
+* don't wait for implicit timeout on internal native lookups ([#3101](https://github.com/appium/appium-xcuitest-driver/issues/3101)) ([c1e611e](https://github.com/appium/appium-xcuitest-driver/commit/c1e611e91ac22cbc4d3f824e87caf167c6fe2625))
+
 ## [12.22.5](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.4...v12.22.5) (2026-10-29)
 
 ### Performance Improvements
