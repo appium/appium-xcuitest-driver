@@ -24,7 +24,6 @@ declare module '../driver.js' {
     doNativeFind(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
     doNativeFind(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element | Element[]>;
     getFirstVisibleChild(...args: Parameters<typeof getFirstVisibleChild>): ReturnType<typeof getFirstVisibleChild>;
-    withoutImplicitWait<T>(fn: () => Promise<T>): Promise<T>;
   }
 }
 
@@ -236,27 +235,6 @@ export async function doNativeFind(
     throw new errors.NoSuchElementError();
   }
   return els;
-}
-
-/**
- * Runs the given callback with the implicit wait temporarily set to zero,
- * restoring the original value afterwards. Internal lookups that only probe
- * the current screen state use this so they never stall for the
- * user-configured implicit timeout.
- *
- * @param fn - Callback to run without the implicit wait
- */
-export async function withoutImplicitWait<T>(this: XCUITestDriver, fn: () => Promise<T>): Promise<T> {
-  const implicitWaitMs = this.implicitWaitMs;
-  if (implicitWaitMs === 0) {
-    return await fn();
-  }
-  this.setImplicitWait(0);
-  try {
-    return await fn();
-  } finally {
-    this.setImplicitWait(implicitWaitMs);
-  }
 }
 
 /**

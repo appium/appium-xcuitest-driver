@@ -1,7 +1,7 @@
 import type {Element} from '@appium/types';
 
 import type {XCUITestDriver} from '../driver.js';
-import {isTvOs} from '../utils/index.js';
+import {isTvOs, withoutImplicitWait} from '../utils/index.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -64,7 +64,7 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
   try {
     const navBar = await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
     let dstButton: Element<string>;
-    const backButtons = await this.withoutImplicitWait(() =>
+    const backButtons = await withoutImplicitWait(this, () =>
       this.findNativeElementOrElements(
         '-ios predicate string',
         'type == "XCUIElementTypeButton" AND label == "Back"',
