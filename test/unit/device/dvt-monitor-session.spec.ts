@@ -272,6 +272,7 @@ describe('SystemMonitorSession start', function () {
     await starting;
 
     assert.strictEqual(session.isRunning(), false);
+    assert.strictEqual(dvt.sysmontap.start.called, false);
     assert.strictEqual(close.calledOnce, true);
   });
 

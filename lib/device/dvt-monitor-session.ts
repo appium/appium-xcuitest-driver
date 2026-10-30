@@ -116,6 +116,11 @@ export abstract class DvtMonitorSession {
     }
   }
 
+  /** @returns `true` if {@link interrupt} has detached `dvt`, so setup should stop early. */
+  protected isCancelled(dvt: DVTInstruments): boolean {
+    return this.dvt !== dvt;
+  }
+
   private async consumeEvents(dvt: DVTInstruments, eventEmitter: EventEmitter): Promise<void> {
     try {
       await this.consume(dvt, eventEmitter);

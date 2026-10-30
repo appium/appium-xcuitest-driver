@@ -29,6 +29,9 @@ export class SystemMonitorSession extends DvtMonitorSession {
       if (options.intervalMs !== undefined) {
         await dvt.sysmontap.configure({intervalMs: options.intervalMs});
       }
+      if (this.isCancelled(dvt)) {
+        return;
+      }
       // Start eagerly so setup failures reject the command instead of surfacing in the stream
       await dvt.sysmontap.start();
     });
