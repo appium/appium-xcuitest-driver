@@ -1,3 +1,9 @@
+## [12.22.7](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.6...v12.22.7) (2026-10-30)
+
+### Bug Fixes
+
+* move withoutImplicitWait to utils ([#3103](https://github.com/appium/appium-xcuitest-driver/issues/3103)) ([24d1285](https://github.com/appium/appium-xcuitest-driver/commit/24d1285588d5e6584a9187b397bf53781dc6f669))
+
 ## [12.22.6](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.5...v12.22.6) (2026-10-30)
 
 ### Bug Fixes
