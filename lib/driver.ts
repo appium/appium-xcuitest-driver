@@ -1391,7 +1391,6 @@ Object.assign(XCUITestDriver.prototype, {
   findNativeElementOrElements: findCommands.findNativeElementOrElements,
   doNativeFind: findCommands.doNativeFind,
   getFirstVisibleChild: findCommands.getFirstVisibleChild,
-  withoutImplicitWait: findCommands.withoutImplicitWait,
 
   // general
   touchId: generalCommands.touchId,

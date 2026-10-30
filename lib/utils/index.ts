@@ -4,6 +4,7 @@ export const {escapeRegExp, isEmpty, isPlainObject, memoize, truncateString} = u
 export {assignDefaults, capitalize, mergeDeep, toErrorMessage, upperFirst} from './lang.js';
 export {hasElementId, hasWebElementId} from './element.js';
 export {cropBase64Image, requireSharp} from './image.js';
+export {withoutImplicitWait} from './implicit-wait.js';
 export {
   toApiLevelRequirementText,
   isTvOs,
