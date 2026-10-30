@@ -1,4 +1,5 @@
 import type {XCUITestDriver} from '../driver.js';
+import {withoutImplicitWait} from '../utils/index.js';
 import type {KeyboardKey} from './types.js';
 
 /**
@@ -38,7 +39,7 @@ export async function mobileHideKeyboard(this: XCUITestDriver, keys: string[] = 
  */
 export async function isKeyboardShown(this: XCUITestDriver): Promise<boolean> {
   try {
-    await this.withoutImplicitWait(() =>
+    await withoutImplicitWait(this, () =>
       this.findNativeElementOrElements('class name', 'XCUIElementTypeKeyboard', false),
     );
     return true;

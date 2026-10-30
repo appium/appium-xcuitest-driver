@@ -4,7 +4,7 @@ import {retryInterval} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
 import type {CalibrationCacheEntry, CalibrationData, CalibrationSample, ViewportState} from '../types.js';
-import {isEmpty, toErrorMessage} from '../utils/index.js';
+import {isEmpty, toErrorMessage, withoutImplicitWait} from '../utils/index.js';
 import {requireWebContext} from './helpers/index.js';
 import type {AtomsElement} from './types.js';
 
@@ -553,7 +553,7 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
  * @param force - Recalibrate unconditionally, ignoring any cached entry
  */
 async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
-  return await this.withoutImplicitWait(async () => {
+  return await withoutImplicitWait(this, async () => {
     if (!force) {
       const signature = await computeViewportSignature.call(this);
       if (this._webviewCalibrationCache?.signature === signature) {
@@ -590,7 +590,7 @@ async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsEl
       return false;
     }
 
-    const els = await this.withoutImplicitWait(() => this.findNativeElementOrElements('accessibility id', uuid, true));
+    const els = await withoutImplicitWait(this, () => this.findNativeElementOrElements('accessibility id', uuid, true));
     if (els.length !== 1) {
       this.log.debug(`Expected to find exactly 1 native element with accessibility id '${uuid}', found ${els.length}`);
       return false;
