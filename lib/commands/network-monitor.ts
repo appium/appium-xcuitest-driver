@@ -44,13 +44,17 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
   }
 
   const session = new NetworkMonitorSession(this.log, this.device.udid, this.remoteXPCFacade);
+  // Store before starting so concurrent starts and teardown can see and interrupt it
+  this._networkMonitorSession = session;
   try {
     await session.start(this.eventEmitter);
   } catch (e) {
     await session.interrupt();
+    if (this._networkMonitorSession === session) {
+      this._networkMonitorSession = null;
+    }
     throw e;
   }
-  this._networkMonitorSession = session;
 }
 
 /** Stops DVT NetworkMonitor streaming started with `mobile: startNetworkMonitor`. */

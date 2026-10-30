@@ -161,6 +161,40 @@ for (const fixture of fixtures) {
       assert.strictEqual(close.calledOnce, true);
     });
 
+    it('stores the session before starting so concurrent starts and teardown see it', async function () {
+      const {facade, log, requireTunnelService, close, dvt} = setup(fixture, async function* (stopped) {
+        yield {};
+        await stopped;
+      });
+      const opening = Promise.withResolvers<void>();
+      requireTunnelService.callsFake(async () => {
+        await opening.promise;
+        return dvt;
+      });
+      const driver: any = {
+        isRealDevice: () => true,
+        opts: {platformName: 'iOS', platformVersion: '18.0'},
+        device: {udid: 'udid'},
+        log,
+        eventEmitter: new EventEmitter(),
+        remoteXPCFacade: facade,
+      };
+
+      const first = fixture.startCommand.call(driver);
+      const session = driver[fixture.sessionProp];
+      assert.ok(session);
+      await fixture.startCommand.call(driver);
+      assert.strictEqual(driver[fixture.sessionProp], session);
+
+      await session.interrupt();
+      opening.resolve();
+      await first;
+
+      assert.strictEqual(requireTunnelService.calledOnce, true);
+      assert.strictEqual(session.isRunning(), false);
+      assert.strictEqual(close.calledOnce, true);
+    });
+
     it('starts a new session through the command after the previous stream ended', async function () {
       const first = setup(fixture, async function* () {});
       const second = setup(fixture, async function* (stopped) {
@@ -235,5 +269,20 @@ describe('SystemMonitorSession start', function () {
 
     assert.strictEqual(session.isRunning(), false);
     assert.strictEqual(close.calledOnce, true);
+  });
+
+  it('does not close twice or reject when interrupted and setup then fails', async function () {
+    const {session, close, dvt} = setup(fixture, async function* () {});
+    const configuring = Promise.withResolvers<void>();
+    dvt.sysmontap.configure.callsFake(() => configuring.promise);
+
+    const starting = (session as SystemMonitorSession).start(new EventEmitter(), {intervalMs: 1});
+    await setImmediate();
+    await session.interrupt();
+    configuring.reject(new Error('connection closed'));
+
+    await assert.doesNotReject(starting);
+    assert.strictEqual(close.calledOnce, true);
+    assert.strictEqual(session.isRunning(), false);
   });
 });

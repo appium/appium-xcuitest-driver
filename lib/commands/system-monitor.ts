@@ -48,13 +48,17 @@ export async function mobileStartSystemMonitor(this: XCUITestDriver, intervalMs?
   }
 
   const session = new SystemMonitorSession(this.log, this.device.udid, this.remoteXPCFacade);
+  // Store before starting so concurrent starts and teardown can see and interrupt it
+  this._systemMonitorSession = session;
   try {
     await session.start(this.eventEmitter, {intervalMs});
   } catch (e) {
     await session.interrupt();
+    if (this._systemMonitorSession === session) {
+      this._systemMonitorSession = null;
+    }
     throw e;
   }
-  this._systemMonitorSession = session;
 }
 
 /** Stops DVT sysmontap streaming started with `mobile: startSystemMonitor`. */

@@ -11,6 +11,7 @@ import type {RemoteXPCFacade} from './remote-xpc/index.js';
 export abstract class DvtMonitorSession {
   private dvt: DVTInstruments | null = null;
   private runPromise: Promise<void> | null = null;
+  private starting = false;
   private stopped = false;
 
   /**
@@ -32,27 +33,29 @@ export abstract class DvtMonitorSession {
   /** Iterates the instrument stream until it ends, emitting each item on `eventEmitter`. */
   protected abstract consume(dvt: DVTInstruments, eventEmitter: EventEmitter): Promise<void>;
 
-  /**
-   * @returns `true` only while the consume loop may still be receiving events (`this.dvt` is set).
-   * After normal completion, error, or {@link interrupt}, this becomes `false`.
-   */
+  /** @returns `true` while starting or while the consume loop may still receive events. */
   isRunning(): boolean {
-    return this.dvt !== null;
+    return this.starting || this.dvt !== null;
   }
 
   /**
-   * Opens `startDVTService`, runs `prepare` and begins consuming the instrument stream.
-   * A `prepare` failure closes the DVT service and is rethrown, so the caller sees start errors.
-   * Does nothing if the session is already running.
-   *
-   * @param eventEmitter - Typically the session driver's `eventEmitter` (WebDriver BiDi bus).
-   * @param prepare - Optional instrument setup that must complete before streaming begins.
+   * Opens the DVT service, runs `prepare`, then starts consuming. No-op if already running or starting.
+   * Rejects (after closing the service) if `prepare` fails.
    */
   protected async begin(eventEmitter: EventEmitter, prepare?: (dvt: DVTInstruments) => Promise<void>): Promise<void> {
     if (this.isRunning()) {
       return;
     }
+    this.starting = true;
     this.stopped = false;
+    try {
+      await this.open(eventEmitter, prepare);
+    } finally {
+      this.starting = false;
+    }
+  }
+
+  private async open(eventEmitter: EventEmitter, prepare?: (dvt: DVTInstruments) => Promise<void>): Promise<void> {
     if (!this.remoteXPCFacade) {
       throw new Error(`RemoteXPC is not available for device '${this.udid}'`);
     }
@@ -68,23 +71,21 @@ export abstract class DvtMonitorSession {
     try {
       await prepare?.(dvt);
     } catch (err) {
-      if (this.dvt === dvt) {
-        this.dvt = null;
+      if (this.dvt !== dvt) {
+        // interrupt() already closed the service; the cancelled start isn't an error
+        return;
       }
+      this.dvt = null;
       await this.closeDvt(dvt);
       throw err;
     }
     if (this.dvt !== dvt) {
-      // interrupt() ran during prepare and already closed the service
       return;
     }
     this.runPromise = this.consumeEvents(dvt, eventEmitter);
   }
 
-  /**
-   * Stops monitoring and waits for the consume loop to finish. DVT is closed by the consume loop,
-   * or here if streaming never began.
-   */
+  /** Stops monitoring and waits for the consume loop; closes DVT here if streaming never began. */
   async interrupt(): Promise<void> {
     if (this.stopped) {
       return;
