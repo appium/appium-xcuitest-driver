@@ -178,6 +178,30 @@ describe('native web tap atom requests', () => {
       sandbox.restore();
     }
   });
+
+  it('falls back to coordinates without waiting for the implicit timeout when the marked element is not exposed natively', async () => {
+    const driver = new XCUITestDriver({} as any);
+    driver.sessionId = 'session-id';
+    driver.implicitWaitMs = 700;
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('execute_script').resolves({hadAttribute: false, original: null});
+      execute.withArgs('get_size').resolves({width: 100, height: 80});
+      execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
+      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+
+      await driver.nativeWebTap('target');
+
+      assert.equal(proxy.callCount, 1, `expected a single native lookup, got ${proxy.callCount}`);
+      assert.ok(tap.calledOnceWithExactly(70, 70));
+      assert.equal(driver.implicitWaitMs, 700);
+    } finally {
+      sandbox.restore();
+    }
+  });
 });
 
 describe('web calibration zoom', () => {
