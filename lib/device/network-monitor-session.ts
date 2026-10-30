@@ -19,7 +19,8 @@ export class NetworkMonitorSession extends DvtMonitorSession {
    * @param eventEmitter - Typically the session driver's `eventEmitter` (WebDriver BiDi bus).
    */
   async start(eventEmitter: EventEmitter): Promise<void> {
-    await this.begin(eventEmitter);
+    // Start eagerly so setup failures reject the command instead of surfacing in the stream
+    await this.begin(eventEmitter, (dvt) => dvt.networkMonitor.start());
   }
 
   protected async stopInstrument(dvt: DVTInstruments): Promise<void> {

@@ -30,11 +30,11 @@ interface Fixture {
 const fixtures: Fixture[] = [
   {
     name: 'NetworkMonitorSession',
-    createDvt: (events, stop) => ({networkMonitor: {events, stop}}),
+    createDvt: (events, stop) => ({networkMonitor: {events, stop, start: sinon.stub().resolves()}}),
     create: (log, facade) => new NetworkMonitorSession(log, 'udid', facade),
     startCommand: mobileStartNetworkMonitor,
     sessionProp: '_networkMonitorSession',
-    failSetup: () => {},
+    failSetup: (dvt, err) => dvt.networkMonitor.start.rejects(err),
   },
   {
     name: 'SystemMonitorSession',
@@ -227,6 +227,21 @@ for (const fixture of fixtures) {
   });
 }
 
+for (const f of fixtures) {
+  describe(`${f.name} setup`, function () {
+    it('rejects and closes DVT when the instrument fails to start', async function () {
+      const {session, close, dvt} = setup(f, async function* () {});
+      const error = new Error('start failed');
+      f.failSetup(dvt, error);
+
+      await assert.rejects(session.start(new EventEmitter()), error);
+
+      assert.strictEqual(close.calledOnce, true);
+      assert.strictEqual(session.isRunning(), false);
+    });
+  });
+}
+
 describe('SystemMonitorSession start', function () {
   const fixture = fixtures[1];
 
@@ -243,17 +258,6 @@ describe('SystemMonitorSession start', function () {
     await assert.doesNotReject(session.interrupt());
     assert.strictEqual(stop.called, false);
     assert.strictEqual(close.calledOnce, true);
-  });
-
-  it('rejects when sampling fails to start', async function () {
-    const {session, close, dvt} = setup(fixture, async function* () {});
-    const error = new Error('start failed');
-    fixture.failSetup(dvt, error);
-
-    await assert.rejects(session.start(new EventEmitter()), error);
-
-    assert.strictEqual(close.calledOnce, true);
-    assert.strictEqual(session.isRunning(), false);
   });
 
   it('closes DVT when interrupted during setup', async function () {
