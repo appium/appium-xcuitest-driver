@@ -4,13 +4,14 @@ import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 import {fs, logger, zip, net, node} from 'appium/support.js';
-import {Command} from 'commander';
+import {Command, InvalidArgumentError} from 'commander';
 import semver from 'semver';
 
 const log = logger.getLogger('download-wda');
 const WDA_KIND_REAL = 'real';
 const WDA_KIND_SIM = 'sim';
 const WDA_MONOREPO_VERSION = '16.16.0';
+const WDA_PACKAGE_NAME = 'appium-webdriveragent';
 
 const wdaUrl = (/** @type {string} */ version, /** @type {string} */ zipFileName) => {
   // 16.16.0 is the first release published from the appium-ios monorepo.
@@ -30,11 +31,9 @@ export async function getWDAPrebuiltPackage(options) {
   const destDir = await prepareRootDir(options.outdir);
   const zipFileName = destZip(options.platform, kind);
   const wdaVersion = await getWebdriveragentPkgVersion();
-  const urlToDownload = wdaUrl(wdaVersion, zipFileName);
   const downloadedZipFile = path.join(destDir, zipFileName);
   try {
-    log.info(`Downloading ${urlToDownload}`);
-    await net.downloadFile(urlToDownload, downloadedZipFile);
+    await downloadWithFallback(wdaVersion, zipFileName, downloadedZipFile, options.fallbackQueueMaxLen ?? 0);
 
     log.info(`Unpacking ${downloadedZipFile} into ${destDir}`);
     await zip.extractAllTo(downloadedZipFile, destDir);
@@ -45,6 +44,76 @@ export async function getWDAPrebuiltPackage(options) {
       await fs.unlink(downloadedZipFile);
     }
   }
+}
+
+/**
+ * Download the archive for the given version. If `fallbackQueueMaxLen` is positive and it
+ * is not published yet (404), retry with up to that many lower versions that still
+ * satisfy the allowed range, newest first.
+ * @param {string} version
+ * @param {string} zipFileName
+ * @param {string} dstPath
+ * @param {number} fallbackQueueMaxLen
+ * @returns {Promise<void>}
+ */
+async function downloadWithFallback(version, zipFileName, dstPath, fallbackQueueMaxLen) {
+  /** @type {string[] | undefined} */
+  let fallbackVersions;
+  const queue = [version];
+  for (let current = queue.shift(); current; current = queue.shift()) {
+    const url = wdaUrl(current, zipFileName);
+    try {
+      log.info(`Downloading ${url}`);
+      await net.downloadFile(url, dstPath);
+      return;
+    } catch (err) {
+      if (fallbackQueueMaxLen <= 0 || !isNotFound(err)) {
+        throw err;
+      }
+      fallbackVersions ??= await getLowerAllowedVersions(version, fallbackQueueMaxLen);
+      if (current === version) {
+        queue.push(...fallbackVersions);
+      }
+      if (!queue.length) {
+        throw err;
+      }
+      log.warn(`${url} is not available. Trying ${queue[0]} instead`);
+    }
+  }
+}
+
+/**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+function isNotFound(err) {
+  return /** @type {any} */ (err)?.cause?.response?.status === 404;
+}
+
+/**
+ * Published WDA versions below the given one, which satisfy the range
+ * from the driver's package.json. Sorted from the highest to the lowest.
+ * @param {string} version
+ * @param {number} maxLen
+ * @returns {Promise<string[]>}
+ */
+async function getLowerAllowedVersions(version, maxLen) {
+  const range = (await readDriverPackageJson()).dependencies?.[WDA_PACKAGE_NAME];
+  if (!range) {
+    return [];
+  }
+  const res = await fetch(`https://registry.npmjs.org/${WDA_PACKAGE_NAME}`, {
+    headers: {Accept: 'application/vnd.npm.install-v1+json'},
+  });
+  if (!res.ok) {
+    log.warn(`Cannot list published ${WDA_PACKAGE_NAME} versions: HTTP ${res.status}`);
+    return [];
+  }
+  const {versions = {}} = /** @type {{versions?: Record<string, unknown>}} */ (await res.json());
+  return Object.keys(versions)
+    .filter((v) => semver.lt(v, version) && semver.satisfies(v, range))
+    .sort(semver.rcompare)
+    .slice(0, maxLen);
 }
 
 /** @type {Record<string, string>} */
@@ -72,15 +141,28 @@ function normalizeKind(kind) {
 }
 
 /**
- * Return installed appium-webdriveragent package version
- * @returns {Promise<string>}
+ * Return the driver's package.json contents
+ * @returns {Promise<Record<string, any>>}
  */
-async function getWebdriveragentPkgVersion() {
+async function readDriverPackageJson() {
+  return JSON.parse(await fs.readFile(path.join(getDriverRoot(), 'package.json'), 'utf8'));
+}
+
+/** @returns {string} */
+function getDriverRoot() {
   const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', fileURLToPath(import.meta.url));
   if (!moduleRoot) {
     throw new Error('Cannot resolve module root for appium-xcuitest-driver');
   }
-  const pkgPath = path.join(moduleRoot, 'node_modules', 'appium-webdriveragent', 'package.json');
+  return moduleRoot;
+}
+
+/**
+ * Return installed appium-webdriveragent package version
+ * @returns {Promise<string>}
+ */
+async function getWebdriveragentPkgVersion() {
+  const pkgPath = path.join(getDriverRoot(), 'node_modules', WDA_PACKAGE_NAME, 'package.json');
   const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
   if (!pkg.version || typeof pkg.version !== 'string') {
     throw new Error(`Cannot find version in ${pkgPath}`);
@@ -131,6 +213,16 @@ async function main() {
       '--kind <kind>',
       `Target package type: ${WDA_KIND_REAL} (real devices) or ${WDA_KIND_SIM} (simulators). Default: ${WDA_KIND_REAL}`,
     )
+    .option(
+      '--fallback-queue-max-len <number>',
+      'If the archive for the installed WDA version is not published yet, try up to this many lower versions allowed by package.json (newest first). Default: 0 (no fallback)',
+      (value) => {
+        if (!/^\d+$/.test(value)) {
+          throw new InvalidArgumentError('Must be a non-negative integer');
+        }
+        return Number(value);
+      },
+    )
     .addHelpText(
       'after',
       `
@@ -168,4 +260,5 @@ if (isMainModule) {
  * @property {string} outdir
  * @property {string} platform
  * @property {WDAKind | undefined} [kind]
+ * @property {number} [fallbackQueueMaxLen]
  */
