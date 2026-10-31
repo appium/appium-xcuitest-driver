@@ -102,7 +102,8 @@ appium:xcuitest.contextUpdated = (
 Indicates that a new network event is available for consumption.
 
 This event is continuously emitted as soon as the [`mobile: startNetworkMonitor`](./execute-methods.md#mobile-startnetworkmonitor) is invoked. Event emission stops as soon as the [`mobile: stopNetworkMonitor`](./execute-methods.md#mobile-stopnetworkmonitor)
-execute method is called.
+execute method is called, or when the stream ends on its own (for example if the device connection drops).
+No event announces the latter, so call `mobile: startNetworkMonitor` again to resume.
 
 Events are only supported for real devices running iOS/tvOS 18 or later, and the
 `appium-ios-remotexpc` package must be installed. Refer to the [RemoteXPC Tunnels guide](../guides/remotexpc-tunnels-real-devices.md)
@@ -242,7 +243,8 @@ Indicates that a new labelled DVT sysmontap sample (system-wide or per-process) 
 consumption.
 
 This event is continuously emitted as soon as [`mobile: startSystemMonitor`](./execute-methods.md#mobile-startsystemmonitor) is invoked. Event emission stops as soon as the [`mobile: stopSystemMonitor`](./execute-methods.md#mobile-stopsystemmonitor)
-execute method is called.
+execute method is called, or when the stream ends on its own (for example if the device connection drops).
+No event announces the latter, so call `mobile: startSystemMonitor` again to resume.
 
 Events are only supported for real devices running iOS/tvOS 18 or later, and the
 `appium-ios-remotexpc` package must be installed. Refer to the
