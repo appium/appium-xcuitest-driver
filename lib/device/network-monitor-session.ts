@@ -95,6 +95,10 @@ export class NetworkMonitorSession {
       }
     } finally {
       await this.closeDvt(dvt);
+      if (this.dvt === dvt) {
+        this.dvt = null;
+        this.runPromise = null;
+      }
     }
   }
 
