@@ -62,10 +62,14 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
 
 /** Stops DVT NetworkMonitor streaming started with `mobile: startNetworkMonitor`. */
 export async function mobileStopNetworkMonitor(this: XCUITestDriver): Promise<void> {
-  if (!this._networkMonitorSession) {
+  const session = this._networkMonitorSession;
+  if (!session) {
     this.log.info('Network monitor has not been started; nothing to stop');
     return;
   }
-  await this._networkMonitorSession.interrupt();
-  this._networkMonitorSession = null;
+  await session.interrupt();
+  // A newer session may have been registered while this one was closing
+  if (this._networkMonitorSession === session) {
+    this._networkMonitorSession = null;
+  }
 }

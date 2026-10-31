@@ -66,10 +66,14 @@ export async function mobileStartSystemMonitor(this: XCUITestDriver, intervalMs?
 
 /** Stops DVT sysmontap streaming started with `mobile: startSystemMonitor`. */
 export async function mobileStopSystemMonitor(this: XCUITestDriver): Promise<void> {
-  if (!this._systemMonitorSession) {
+  const session = this._systemMonitorSession;
+  if (!session) {
     this.log.info('System monitor has not been started; nothing to stop');
     return;
   }
-  await this._systemMonitorSession.interrupt();
-  this._systemMonitorSession = null;
+  await session.interrupt();
+  // A newer session may have been registered while this one was closing
+  if (this._systemMonitorSession === session) {
+    this._systemMonitorSession = null;
+  }
 }
