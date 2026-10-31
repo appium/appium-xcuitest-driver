@@ -1,3 +1,9 @@
+## [12.22.8](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.7...v12.22.8) (2026-10-31)
+
+### Miscellaneous Chores
+
+* remove wrong docstring comment ([#3108](https://github.com/appium/appium-xcuitest-driver/issues/3108)) ([6df7cff](https://github.com/appium/appium-xcuitest-driver/commit/6df7cff8f8fb6602231e9910be6707a10f4ffe93))
+
 ## [12.22.7](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.6...v12.22.7) (2026-10-30)
 
 ### Bug Fixes
