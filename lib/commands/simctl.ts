@@ -52,7 +52,6 @@ export interface SimctlExecResponse {
 
 /**
  * Run the given command with arguments as `xcrun simctl` subcommand.
- * This method works behind the 'simctl' security flag.
  *
  * @param command - Subcommand to run with `xcrun simctl`. Must be one of the supported commands.
  * @param args - Arguments for the subcommand. The arguments should be after <device> in the help.
