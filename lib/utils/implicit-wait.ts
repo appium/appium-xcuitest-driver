@@ -1,9 +1,11 @@
+import type {TimeoutValue} from '@appium/types';
+
 /**
  * Minimal driver surface needed to temporarily override the implicit wait.
  */
 export interface ImplicitWaitOwner {
-  implicitWaitMs: number;
-  setImplicitWait(ms: number): void;
+  implicitWaitMs: TimeoutValue;
+  setImplicitWait(ms: TimeoutValue): void;
 }
 
 /**

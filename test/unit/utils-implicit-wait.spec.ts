@@ -41,6 +41,16 @@ describe('utils/implicit-wait', function () {
       assert.strictEqual(driver.implicitWaitMs, 700);
     });
 
+    it('should restore an unlimited implicit wait', async function () {
+      driver.implicitWaitMs = null;
+
+      await withoutImplicitWait(driver, async () => {
+        assert.strictEqual(driver.implicitWaitMs, 0);
+      });
+
+      assert.strictEqual(driver.implicitWaitMs, null);
+    });
+
     it('should not touch the implicit wait when it is already zero', async function () {
       driver.implicitWaitMs = 0;
       const setImplicitWait = sinon.spy(driver, 'setImplicitWait');

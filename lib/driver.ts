@@ -1402,7 +1402,6 @@ Object.assign(XCUITestDriver.prototype, {
   mobilePressButton: generalCommands.mobilePressButton,
   mobileGetPressableButtons: generalCommands.mobileGetPressableButtons,
   mobileSiriCommand: generalCommands.mobileSiriCommand,
-  mobileGetPressableButtons: generalCommands.mobileGetPressableButtons,
 
   // app-strings
   getStrings: appStringsCommands.getStrings,

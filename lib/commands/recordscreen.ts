@@ -306,10 +306,10 @@ export class ScreenRecorder {
       this.timeoutHandler = null;
     }
 
-    const process = this.mainProcess;
-    if (process?.isRunning) {
+    const mainProcess = this.mainProcess;
+    if (mainProcess?.isRunning) {
       try {
-        await process.stop(force ? 'SIGTERM' : 'SIGINT');
+        await mainProcess.stop(force ? 'SIGTERM' : 'SIGINT');
       } catch (e: any) {
         // A disconnected MJPEG source can leave ffmpeg waiting to reconnect. Keep
         // its handle so cleanup can retry; its MP4 trailer may not be written.
@@ -318,16 +318,16 @@ export class ScreenRecorder {
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
         );
         result = false;
-        if (force && process.isRunning) {
+        if (force && mainProcess.isRunning) {
           try {
-            await process.stop('SIGKILL');
+            await mainProcess.stop('SIGKILL');
             result = true;
           } catch (killError: any) {
             this.log.warn(`Cannot kill ${FFMPEG_BINARY}. Original error: ${killError.message}`);
           }
         }
       } finally {
-        if (!process.isRunning && this.mainProcess === process) {
+        if (!mainProcess.isRunning && this.mainProcess === mainProcess) {
           this.mainProcess = null;
         }
       }

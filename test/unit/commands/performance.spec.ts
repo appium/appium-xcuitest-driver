@@ -72,7 +72,6 @@ describe('performance commands', function () {
 
   describe('mobile: stopPerfRecord', function () {
     let driver: XCUITestDriver;
-    let resultPath: string;
     let recorderStopStub: sinon.SinonStub;
     let resultPath: string;
 

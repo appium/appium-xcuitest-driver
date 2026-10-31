@@ -1,6 +1,6 @@
 import type {EventEmitter} from 'node:events';
 
-import type {AnyCase, Element, HTTPHeaders, Location, Rect, Size, StringRecord} from '@appium/types';
+import type {AnyCase, Element, HTTPHeaders, Rect, Size, StringRecord} from '@appium/types';
 
 import type {XCUITestDriverOpts} from '../driver.js';
 import type {Page} from '../types.js';
@@ -280,7 +280,7 @@ export interface DeviceInfo {
   timeZone: string;
   name: string;
   model: string;
-  uuid: 'unknown' | string;
+  uuid: string;
   userInterfaceIdiom: string;
   userInterfaceStyle: string;
   isSimulator: boolean;
