@@ -158,7 +158,7 @@ jobs:
           cd ~
           appium driver install --source=local "$cwd"
           appium driver doctor xcuitest
-          appium driver run xcuitest download-wda -- --platform="$DOWNLOAD_PLATFORM" --outdir=$(dirname "$PREBUILT_WDA_PATH") --kind=sim
+          appium driver run xcuitest download-wda -- --platform="$DOWNLOAD_PLATFORM" --outdir=$(dirname "$PREBUILT_WDA_PATH") --kind=sim --fallback-queue-max-len=10
           echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
           nohup appium server \
             --port=$APPIUM_TEST_SERVER_PORT \
