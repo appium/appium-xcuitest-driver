@@ -35,8 +35,11 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
     );
   }
 
-  if (this._networkMonitorSession?.isRunning()) {
+  const existing = this._networkMonitorSession;
+  if (existing?.isRunning()) {
     this.log.info(`DVT network monitor is already active; continuing`);
+    // Waits for an in-flight start and shares its outcome; no-op once streaming
+    await existing.start(this.eventEmitter);
     return;
   }
   if (this._networkMonitorSession) {
@@ -44,21 +47,29 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
   }
 
   const session = new NetworkMonitorSession(this.log, this.device.udid, this.remoteXPCFacade);
+  // Store before starting so concurrent starts and teardown can see and interrupt it
+  this._networkMonitorSession = session;
   try {
     await session.start(this.eventEmitter);
   } catch (e) {
     await session.interrupt();
+    if (this._networkMonitorSession === session) {
+      this._networkMonitorSession = null;
+    }
     throw e;
   }
-  this._networkMonitorSession = session;
 }
 
 /** Stops DVT NetworkMonitor streaming started with `mobile: startNetworkMonitor`. */
 export async function mobileStopNetworkMonitor(this: XCUITestDriver): Promise<void> {
-  if (!this._networkMonitorSession) {
+  const session = this._networkMonitorSession;
+  if (!session) {
     this.log.info('Network monitor has not been started; nothing to stop');
     return;
   }
-  await this._networkMonitorSession.interrupt();
-  this._networkMonitorSession = null;
+  await session.interrupt();
+  // A newer session may have been registered while this one was closing
+  if (this._networkMonitorSession === session) {
+    this._networkMonitorSession = null;
+  }
 }
