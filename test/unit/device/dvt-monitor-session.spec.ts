@@ -324,25 +324,20 @@ for (const f of fixtures) {
       assert.strictEqual(session.isRunning(), false);
     });
 
-    it('starts again when start() follows an interrupt() that cancelled an in-flight start', async function () {
-      const {session, dvt, requireTunnelService} = setup(f, async function* (stopped) {
-        yield {};
-        await stopped;
-      });
+    it('does not restart a start cancelled by interrupt()', async function () {
+      const {session, dvt, requireTunnelService, close} = setup(f, async function* () {});
       const gate = blockStart(dvt);
 
       const first = session.start(new EventEmitter());
       await setImmediate();
-      await session.interrupt();
+      const interrupting = session.interrupt();
       const second = session.start(new EventEmitter());
-      f.startStub(dvt).resolves();
       gate.resolve();
-      await Promise.all([first, second]);
+      await Promise.all([first, second, interrupting]);
 
-      // The fake's stop signal is shared, so the restarted stream may already have ended
-      assert.strictEqual(requireTunnelService.callCount, 2);
-      assert.strictEqual(f.startStub(dvt).callCount, 2);
-      await session.interrupt();
+      assert.strictEqual(requireTunnelService.calledOnce, true);
+      assert.strictEqual(close.calledOnce, true);
+      assert.strictEqual(session.isRunning(), false);
     });
   });
 }

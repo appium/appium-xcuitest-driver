@@ -12,7 +12,6 @@ export abstract class DvtMonitorSession {
   private dvt: DVTInstruments | null = null;
   private runPromise: Promise<void> | null = null;
   private startPromise: Promise<boolean> | null = null;
-  private generation = 0;
   private stopped = false;
 
   /**
@@ -40,35 +39,24 @@ export abstract class DvtMonitorSession {
   }
 
   /**
-   * Opens the DVT service, runs `prepare`, then starts consuming. Resolves immediately if already
-   * streaming. A call made during an in-flight start waits for it and shares its outcome.
-   * Rejects (after closing the service) if `prepare` fails.
-   *
+   * Opens the DVT service, runs `prepare`, then starts consuming; a start already in flight is awaited instead.
    * @param prepare - Instrument setup; it should bail out once `isCancelled()` returns `true`.
    */
   protected async begin(
     eventEmitter: EventEmitter,
     prepare?: (dvt: DVTInstruments, isCancelled: () => boolean) => Promise<void>,
   ): Promise<void> {
-    const generation = this.generation;
-    for (;;) {
-      if (this.startPromise) {
-        if (await this.startPromise) {
-          return;
-        }
-        // The awaited start was cancelled: retry only if no interrupt() came after this call
-        if (this.generation !== generation) {
-          return;
-        }
-      } else if (this.dvt) {
-        return;
-      } else {
-        this.stopped = false;
-        this.startPromise = this.runOpen(eventEmitter, prepare);
-        await this.startPromise;
-        return;
-      }
+    if (this.startPromise) {
+      // A start cancelled by interrupt() isn't retried: the caller no longer owns this session
+      await this.startPromise;
+      return;
     }
+    if (this.dvt) {
+      return;
+    }
+    this.stopped = false;
+    this.startPromise = this.runOpen(eventEmitter, prepare);
+    await this.startPromise;
   }
 
   /** Runs {@link open} and clears `startPromise` before any waiter resumes. */
@@ -125,7 +113,6 @@ export abstract class DvtMonitorSession {
     }
 
     this.stopped = true;
-    this.generation++;
     const dvt = this.dvt;
     const runPromise = this.runPromise;
     this.dvt = null;
