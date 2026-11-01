@@ -93,4 +93,37 @@ describe('timeouts commands', function () {
       assert.strictEqual(timeouts.implicit, driver.implicitWaitMs);
     });
   });
+
+  describe('initial page-load timeout capability', function () {
+    for (const [pageLoad, effectiveTimeout] of [
+      [45000, 45000],
+      [0, 0],
+      [null, 3600000],
+      [Number.MAX_SAFE_INTEGER, 3600000],
+      [undefined, 6000],
+    ] as const) {
+      it(`applies ${String(pageLoad)} before backend startup`, async function (t) {
+        // Keep the real BaseDriver capability handling, replacing only device/session setup.
+        t.mock.method(driver as any, 'start', async () => {
+          assert.strictEqual(driver.pageLoadMs, effectiveTimeout);
+        });
+        t.mock.method(driver as any, 'setupSessionSettings', async () => {});
+        t.mock.method(driver.deviceConnectionsFactory, 'requestConnection', async () => {});
+        (driver as any)._device = {getWebInspectorSocket: async () => undefined};
+
+        await driver.createSession({
+          alwaysMatch: {
+            platformName: 'iOS',
+            'appium:automationName': 'XCUITest',
+            'appium:platformVersion': '18.0',
+            ...(pageLoad === undefined ? {} : {timeouts: {pageLoad}}),
+          },
+          firstMatch: [{}],
+        });
+
+        assert.strictEqual((await driver.getTimeouts()).pageLoad, pageLoad === undefined ? 6000 : pageLoad);
+        assert.strictEqual((await driver.getNewRemoteDebugger()).pageLoadMs, effectiveTimeout);
+      });
+    }
+  });
 });
