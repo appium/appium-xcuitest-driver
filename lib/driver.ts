@@ -226,6 +226,7 @@ const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
   ['GET', /context/],
   ['GET', /location/],
   ['GET', /log/],
+  ['GET', /property/],
   ['GET', /screenshot/],
   ['GET', /size/],
   ['GET', /source/],

@@ -82,6 +82,16 @@ describe('element commands', function () {
       assert.strictEqual(proxyStub.calledOnce, true);
     });
 
+    it('should handle native value property requests through the attribute fallback', async function () {
+      proxyStub.resolves('bunchoftext');
+      assert.strictEqual(await driver.getProperty('value', 'element-id'), 'bunchoftext');
+      assert.ok(proxyStub.calledOnceWithExactly('/element/element-id/attribute/value', 'GET'));
+      assert.strictEqual(
+        driver.proxyRouteIsAvoided('session-id', 'GET', '/session/session-id/element/element-id/property/value'),
+        true,
+      );
+    });
+
     it('should properly parse boolean true attribute presented as integer', async function () {
       proxyStub.resolves(1);
       assert.strictEqual(await driver.getProperty(property, elementId as any), 'true');
