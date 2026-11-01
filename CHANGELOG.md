@@ -30,8 +30,6 @@ Appium 4's own minimum supported Node engine. The appium/app/reset
 endpoint is also gone; use the corresponding 'mobile:' extensions to
 manage app state instead.
 
-Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
-
 ### Features
 
 * add execute method for retrieving pressable buttons ([#3069](https://github.com/appium/appium-xcuitest-driver/issues/3069)) ([0ca8f46](https://github.com/appium/appium-xcuitest-driver/commit/0ca8f4614ce54e1ddc77de332d8c6c9aa2c5bc13))
