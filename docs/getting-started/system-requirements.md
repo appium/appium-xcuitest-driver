@@ -165,7 +165,8 @@ and prerequisites of Appium itself can be found in [the Appium documentation](ht
 
 | XCUITest driver version | Supported Appium server version |
 | --- | --- |
-| >= 10.0.0 | Appium 3 |
+| >= 13.0.0 | Appium 4 |
+| 10.0.0 - 12.22.8 | Appium 3 |
 | 4.0.0 - 9.10.5 | Appium 2 |
 
 ## Other Requirements

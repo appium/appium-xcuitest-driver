@@ -28,7 +28,7 @@ This is an Appium driver for automating native and hybrid applications on iOS, i
 watchOS (Simulator only).
 
 > [!IMPORTANT]
-> Since major version *10.0.0*, this driver is only compatible with Appium 3.
+> Since major version *13.0.0*, this driver is only compatible with Appium 4.
 
 
 ## Documentation
