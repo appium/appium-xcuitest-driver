@@ -244,7 +244,7 @@ describe('Safari - basics -', function () {
         const el = await driver.$('#comments');
         const form = await driver.$('#jumpContact');
         await el.setValue('This is a comment');
-        await form.submit(el as any);
+        await driver.execute('arguments[0].submit();', form);
         await spinWait(async function () {
           const comments = await driver.$('#your_comments');
           assert.strictEqual(await comments.getText(), 'Your comments: This is a comment');
