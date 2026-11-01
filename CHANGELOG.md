@@ -1,3 +1,9 @@
+## [13.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.2...v13.0.3) (2026-11-01)
+
+### Bug Fixes
+
+* route native element property requests through driver ([#3116](https://github.com/appium/appium-xcuitest-driver/issues/3116)) ([2235a99](https://github.com/appium/appium-xcuitest-driver/commit/2235a99c5119a5462b892769bbdeac0c4ced4f7c))
+
 ## [13.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.1...v13.0.2) (2026-11-01)
 
 ### Bug Fixes
