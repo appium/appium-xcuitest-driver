@@ -210,14 +210,14 @@ describe('native web tap -', function () {
 
       it('should be able to tap on an element inside a same-origin iframe', async function () {
         await loadPage(driver, guineaPigIframeWrapPage(baseUrl));
-        await driver.switchToFrame(await driver.$('#id-wrapped'));
+        await driver.switchFrame(await driver.$('#id-wrapped'));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
         // The click navigates the iframe itself, which can detach it and reset
         // curWebFrames - read the new title from the top level instead of
         // assuming the driver is still switched into the (now-stale) frame.
-        await driver.switchToFrame(null);
+        await driver.switchFrame(null);
         await retryInterval(SPIN_RETRIES, 500, async function () {
           const title = await driver.execute("return document.getElementById('id-wrapped').contentDocument.title;");
           assert.strictEqual(title, PAGE_3_TITLE);
@@ -226,12 +226,12 @@ describe('native web tap -', function () {
 
       it('should be able to tap on an element inside a nested same-origin iframe', async function () {
         await loadPage(driver, guineaPigNestedIframeWrapPage(baseUrl));
-        await driver.switchToFrame(await driver.$('#id-outer-wrap'));
-        await driver.switchToFrame(await driver.$('#id-wrapped'));
+        await driver.switchFrame(await driver.$('#id-outer-wrap'));
+        await driver.switchFrame(await driver.$('#id-wrapped'));
 
         await driver.$(`=${PAGE_3_LINK}`).click();
 
-        await driver.switchToFrame(null);
+        await driver.switchFrame(null);
         await retryInterval(SPIN_RETRIES, 500, async function () {
           const title = await driver.execute(
             "return document.getElementById('id-outer-wrap').contentDocument.getElementById('id-wrapped').contentDocument.title;",
@@ -246,7 +246,7 @@ describe('native web tap -', function () {
           const crossOriginBaseUrl = (await crossOriginServer.setup()).baseUrl;
           await loadPage(driver, guineaPigCrossOriginIframeWrapPage(baseUrl, crossOriginBaseUrl));
 
-          await assert.rejects(driver.switchToFrame(await driver.$('#id-cross-origin')), /different origin/);
+          await assert.rejects(driver.switchFrame(await driver.$('#id-cross-origin')), /different origin/);
         } finally {
           await crossOriginServer.teardown();
         }

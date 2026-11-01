@@ -20,6 +20,11 @@ import {
 const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`;
 const GET_ELEM_ASYNC = `arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);`;
 
+// wdio 10 dropped index-based frame switching
+async function switchToFrameByIndex(driver: Browser, index: number): Promise<void> {
+  await driver.switchFrame((await driver.$$('frame, iframe'))[index]);
+}
+
 const FRAMESET_TITLE = 'Frameset guinea pig';
 const IFRAME_FRAMESET_TITLE = 'Iframe guinea pig';
 const SUB_FRAME_1_TITLE = 'Sub frame 1';
@@ -204,7 +209,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch to frame by index', async function () {
-        await driver.switchToFrame(0);
+        await switchToFrameByIndex(driver, 0);
         assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -212,7 +217,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch to frame by element', async function () {
-        await driver.switchToFrame(await driver.$('#frame3'));
+        await driver.switchFrame(await driver.$('#frame3'));
         assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -220,39 +225,39 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch back to default content from frame', async function () {
-        await driver.switchToFrame(await driver.$('[name="first"]'));
+        await driver.switchFrame(await driver.$('[name="first"]'));
         assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
         assert.strictEqual(await h1.getText(), SUB_FRAME_1_TITLE);
 
-        await driver.switchToFrame(null);
+        await driver.switchFrame(null);
         assert.strictEqual(isEmpty(await driver.$$('<frameset />')), false);
       });
 
       it('should switch to child frames', async function () {
-        await driver.switchToFrame(await driver.$('[name="third"]'));
+        await driver.switchFrame(await driver.$('[name="third"]'));
         assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
-        await driver.switchToFrame(await driver.$('[name="childframe"]'));
+        await driver.switchFrame(await driver.$('[name="childframe"]'));
         assert.strictEqual(isEmpty(await driver.$$('#only_on_page_2')), false);
       });
 
       it('should execute javascript in frame', async function () {
-        await driver.switchToFrame(1);
+        await switchToFrameByIndex(driver, 1);
         assert.strictEqual(await driver.executeScript(GET_ELEM_SYNC, []), SUB_FRAME_2_TITLE);
       });
 
       it('should execute async javascript in frame', async function () {
         await driver.setTimeout({script: 2000});
-        await driver.switchToFrame(0);
-        assert.strictEqual(await driver.executeAsync(GET_ELEM_ASYNC), SUB_FRAME_1_TITLE);
+        await switchToFrameByIndex(driver, 0);
+        assert.strictEqual(await driver.executeAsyncScript(GET_ELEM_ASYNC, []), SUB_FRAME_1_TITLE);
       });
 
       it('should get source within a frame', async function () {
         assert.ok((await driver.getPageSource()).includes(FRAMESET_TITLE));
 
-        await driver.switchToFrame(0);
+        await switchToFrameByIndex(driver, 0);
 
         const frameSource = await driver.getPageSource();
         assert.ok(frameSource.includes(SUB_FRAME_1_TITLE));
@@ -267,7 +272,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch to iframe by index', async function () {
-        await driver.switchToFrame(0);
+        await switchToFrameByIndex(driver, 0);
         assert.strictEqual(await driver.getTitle(), IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -275,7 +280,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch to iframe by element', async function () {
-        await driver.switchToFrame(await driver.$('#id-iframe3'));
+        await driver.switchFrame(await driver.$('#id-iframe3'));
         assert.strictEqual(await driver.getTitle(), IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -283,25 +288,25 @@ describe('safari - windows and frames', function () {
       });
 
       it('should not switch to iframe by element of wrong type', async function () {
-        const h1 = await driver.findElement('tag name', 'h1');
-        await assert.rejects(driver.switchToFrame(h1));
+        const h1 = await driver.$('h1');
+        await assert.rejects(driver.switchFrame(h1));
       });
 
       it('should switch back to default content from iframe', async function () {
-        await driver.switchToFrame(await driver.$('[name="iframe1"]'));
+        await driver.switchFrame(await driver.$('[name="iframe1"]'));
         assert.strictEqual(await driver.getTitle(), IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
         assert.strictEqual(await h1.getText(), SUB_FRAME_1_TITLE);
 
-        await driver.switchToFrame(null);
+        await driver.switchFrame(null);
         assert.strictEqual((await driver.$$('<iframe />')).length, 3);
       });
 
       it('should get source within an iframe', async function () {
         assert.ok((await driver.getPageSource()).includes(IFRAME_FRAMESET_TITLE));
 
-        await driver.switchToFrame(await driver.$('[name="iframe1"]'));
+        await driver.switchFrame(await driver.$('[name="iframe1"]'));
 
         const frameSource = await driver.getPageSource();
         assert.ok(frameSource.includes(SUB_FRAME_1_TITLE));

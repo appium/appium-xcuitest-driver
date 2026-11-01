@@ -37,6 +37,8 @@ export async function createRemoteSession(
     capabilities: caps,
     connectionRetryTimeout: E2E_TIMEOUT_MS,
     connectionRetryCount: 1,
+    // wdio 10 defaults to strict selectors; the tests rely on first-match $()
+    strictSelectors: false,
     ...remoteOpts,
   });
 }
