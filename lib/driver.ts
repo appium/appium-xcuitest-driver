@@ -446,6 +446,9 @@ export class XCUITestDriver
   ): Promise<DefaultCreateSessionResult<XCUITestDriverConstraints>> {
     try {
       const [sessionId, initialCaps] = await super.createSession(w3cCapabilities);
+      // BaseDriver assigns initial timeout capabilities directly, bypassing our setters.
+      // Sync the value used by the remote debugger before starting the backend.
+      this.setPageLoadTimeout(this.pageLoadTimeoutMs);
       let caps = initialCaps;
 
       // merge cli args to opts, and if we did merge any, revalidate opts to ensure the final set
