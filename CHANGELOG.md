@@ -1,3 +1,9 @@
+## [13.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.1...v13.0.2) (2026-11-01)
+
+### Bug Fixes
+
+* apply initial page-load timeout before backend startup ([#3112](https://github.com/appium/appium-xcuitest-driver/issues/3112)) ([aca9b95](https://github.com/appium/appium-xcuitest-driver/commit/aca9b95ea3e91abde52c9e012c55697ba931a450))
+
 ## [13.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.0...v13.0.1) (2026-11-01)
 
 ### Miscellaneous Chores
