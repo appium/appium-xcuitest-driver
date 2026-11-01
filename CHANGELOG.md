@@ -1,3 +1,9 @@
+## [13.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.0...v13.0.1) (2026-11-01)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump webdriverio from 9.32.0 to 10.1.0 ([#3114](https://github.com/appium/appium-xcuitest-driver/issues/3114)) ([44309c2](https://github.com/appium/appium-xcuitest-driver/commit/44309c2a84dbe2557105c412447c9c96d642f18d))
+
 ## [13.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.22.8...v13.0.0) (2026-11-01)
 
 ### ⚠ BREAKING CHANGES
