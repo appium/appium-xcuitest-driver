@@ -370,8 +370,10 @@ One or more comma-separated [attribute names](./element-attributes.md) to be exc
 application source. Excluding certain expensive attributes (e.g. `visible`) may speed up page
 source retrieval.
 
-If used in combination with [`useJSONSource`](#usejsonsource), only `frame`, `enabled`, `visible`,
-`accessible` and `focused` attributes are supported.
+If used in combination with [`useJSONSource`](#usejsonsource), only `frame`, `nativeFrame`,
+`enabled`, `visible`, `accessible`, `nativeAccessibilityElement`, `focused`, `traits`,
+`placeholderValue`, `minValue`, `maxValue` and `customActions` (WebDriverAgent 16.17.6+)
+attributes can be excluded.
 
 ## reduceMotion
 
