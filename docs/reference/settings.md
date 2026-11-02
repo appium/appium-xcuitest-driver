@@ -104,33 +104,24 @@ explains the difference.
 | -- | -- |
 | `int` or `null` | `null` (the main display) |
 
-Selects the display for screenshots, W3C actions, WDA MJPEG, and new XCTest recordings.
-Use an `id` returned by [`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays).
-Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
-that no display has is an error. Setting it to `null` goes back to the main display. The value
-is reset for each new session.
+Identifier of the display that should be used for driver actions such as retrieving screenshots,
+W3C actions, MJPEG streams, and new XCTest recordings. Available values can be retrieved using the
+[`mobile: listDisplays`](./execute-methods.md#mobile-listdisplays) execute method.
 
-While this setting has a value, screenshots skip the MJPEG stream and use WebDriverAgent first.
-On simulators, failed WDA captures fall back to CoreSim using the same numeric display ID.
-If that capture also fails, the command returns an error without switching displays.
+If set to `null`, the display is reset to the default one.
 
-When this setting is `null`, the CoreSim fallback uses its default display. If the default is
-ambiguous, as on Duo, set an explicit display ID to use the fallback.
+This setting does not affect the page source and element lookup - the accessibility hierarchy
+belongs to the application rather than to a display.
 
-WDA MJPEG follows display changes and pauses if the display becomes unavailable.
-XCTest recordings retain their initial display; restart recording to change it.
-`mjpegFixOrientation` changes orientation, not display selection.
-
-W3C action coordinates are in points, relative to the selected display in the application's
-current orientation. Page source and element lookup are not affected, because the accessibility
-hierarchy belongs to the application rather than to a display.
-
-After changing this setting, screenshots bypass the MJPEG screenshot cache for the rest of the
-session, including after resetting the setting to `null`. MJPEG frames do not identify their
+If using MJPEG streaming, the stream follows display changes and pauses if the display becomes
+unavailable. After changing this setting, the MJPEG screenshot cache is bypassed for the rest of
+the session, including after resetting the setting to `null`. MJPEG frames do not identify their
 source display, so buffered frames cannot safely be reused after a display change.
 
-Folding or unfolding does not change this setting. See
-[iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
+If using XCTest recordings, they retain their initial display; restart the recording to change it.
+
+On foldable devices such as the iPhone Duo, changing the hinge angle does not affect this setting.
+See the [iPhone Duo Automation](../guides/duo.md) guide for more details.
 
 ## defaultActiveApplication
 

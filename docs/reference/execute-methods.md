@@ -1268,11 +1268,11 @@ The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"sc
 
 ### mobile: listDisplays
 
-Lists the displays of the device under test. Use a returned `id` as the
-[`currentDisplayId`](./settings.md#currentdisplayid) setting value to target that display.
-The command retrieves a fresh list without changing the selected display. After folding or
-unfolding, query the displays again rather than assuming the main display is the visible one.
-See [iPhone Duo Automation](../guides/duo.md) for setup and available session actions.
+Retrieves a list of all displays available on the device under test.
+
+For foldable devices, after changing the hinge angle, it is recommended to query the displays again,
+rather than assuming the main display is the visible one. See the [iPhone Duo Automation](../guides/duo.md)
+guide for more details.
 
 #### Returned Result
 
@@ -1280,7 +1280,7 @@ An array of display entries, where each entry contains:
 
 Name | Type | Description
 --- | --- | ---
-id | number | The display identifier, usable as the `currentDisplayId` setting value
+id | number | The display identifier. Used by the [`currentDisplayId`](./settings.md#currentdisplayid) setting
 isDefault | boolean | Whether this is the device's main display
 metrics | object | Display dimensions and scale, as described below
 
@@ -2176,15 +2176,11 @@ longitude | number | Measurement of distance east or west of the prime meridian.
 
 ### mobile: getSimulatedHingeAngle
 
-Reads the current hinge angle in degrees, including changes made outside Appium.
-Requires a WebDriverAgent build with hinge angle reading support and an iOS
-simulator or device with an available hinge. tvOS, watchOS, and devices without
-hinge angle reading support are unsupported. WDA determines support at runtime;
-the driver forwards the request and propagates WDA errors.
+Retrieves the current device hinge angle. Requires a device with an available hinge (iPhone Duo).
+Supported on both simulators and real devices.
 
-The command waits up to five seconds for a valid reading and returns an error if
-none arrives. A reading during folding may reflect an intermediate angle; it does
-not wait for the transition to finish or change the hinge angle or `currentDisplayId`.
+The command waits up to 5 seconds for a valid reading, and returns an error if none arrives.
+Calling this method during folding may reflect an intermediate angle.
 
 #### Returned Result
 
@@ -2192,17 +2188,15 @@ The current hinge angle as a number in degrees, for example `90.5`.
 
 ### mobile: setSimulatedHingeAngle
 
-Requests a simulated hinge angle change through the Mac-side CoreSimulator HID service.
-Requires an iPhone Duo Simulator on Xcode 27+ and a WebDriverAgent build with hinge
-angle reading support. The driver validates the angle and identifies Duo by its
-CoreSimulator device type, independently of hinge readings.
-Physical devices, tvOS, watchOS, and simulators without a hinge are unsupported.
+Changes the current simulated hinge angle of the device. Requires a device with an available hinge
+(iPhone Duo). Only supported on simulators.
 
-Successful completion does not guarantee that the requested angle was applied.
-Wait for the expected application
-layout before issuing subsequent commands because folding completes asynchronously.
-It does not change device orientation or the `currentDisplayId` setting. Enumerate
-available screens and select the appropriate display separately.
+This method does not wait for the device to transition to the requested hinge angle - use
+`mobile: getSimulatedHingeAngle` to check the current angle, and optionally wait for the
+application under test to update its layout.
+
+This method does not change the device orientation or the [`currentDisplayId`](./settings.md#currentdisplayid)
+setting. Enumerate available screens and select the appropriate display separately.
 
 #### Arguments
 
