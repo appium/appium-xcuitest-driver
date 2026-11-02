@@ -8,7 +8,7 @@ copyright: |
   <a href="#__consent">Change cookie settings</a>
 site_url: https://appium.github.io/appium-xcuitest-driver
 edit_uri: edit/master/docs
-site_description: Documentation for the Appium XCUITest driver for iOS automation
+site_description: Appium XCUITest Driver Documentation
 docs_dir: docs
 site_dir: site
 
