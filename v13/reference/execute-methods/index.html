@@ -13531,11 +13531,10 @@ requests, so this command cannot provide an atomic snapshot during a transition.
 <p><code>statusBarSize</code> contains status bar dimensions. It is the result of <a href="https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars">status bar</a>.
 <code>scale</code> is <a href="https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale">screen scale</a>.</p>
 <h3 id="mobile-listdisplays">mobile: listDisplays<a class="headerlink" href="#mobile-listdisplays" title="Permanent link">&para;</a></h3>
-<p>Lists the displays of the device under test. Use a returned <code>id</code> as the
-<a href="../settings/#currentdisplayid"><code>currentDisplayId</code></a> setting value to target that display.
-The command retrieves a fresh list without changing the selected display. After folding or
-unfolding, query the displays again rather than assuming the main display is the visible one.
-See <a href="../../guides/duo/">iPhone Duo Automation</a> for setup and available session actions.</p>
+<p>Retrieves a list of all displays available on the device under test.</p>
+<p>For foldable devices, after changing the hinge angle, it is recommended to query the displays again,
+rather than assuming the main display is the visible one. See the <a href="../../guides/duo/">iPhone Duo Automation</a>
+guide for more details.</p>
 <h4 id="returned-result_35">Returned Result<a class="headerlink" href="#returned-result_35" title="Permanent link">&para;</a></h4>
 <p>An array of display entries, where each entry contains:</p>
 <table>
@@ -13550,7 +13549,7 @@ See <a href="../../guides/duo/">iPhone Duo Automation</a> for setup and availabl
 <tr>
 <td>id</td>
 <td>number</td>
-<td>The display identifier, usable as the <code>currentDisplayId</code> setting value</td>
+<td>The display identifier. Used by the <a href="../settings/#currentdisplayid"><code>currentDisplayId</code></a> setting</td>
 </tr>
 <tr>
 <td>isDefault</td>
@@ -14834,27 +14833,20 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.</p>
 </tbody>
 </table>
 <h3 id="mobile-getsimulatedhingeangle">mobile: getSimulatedHingeAngle<a class="headerlink" href="#mobile-getsimulatedhingeangle" title="Permanent link">&para;</a></h3>
-<p>Reads the current hinge angle in degrees, including changes made outside Appium.
-Requires a WebDriverAgent build with hinge angle reading support and an iOS
-simulator or device with an available hinge. tvOS, watchOS, and devices without
-hinge angle reading support are unsupported. WDA determines support at runtime;
-the driver forwards the request and propagates WDA errors.</p>
-<p>The command waits up to five seconds for a valid reading and returns an error if
-none arrives. A reading during folding may reflect an intermediate angle; it does
-not wait for the transition to finish or change the hinge angle or <code>currentDisplayId</code>.</p>
+<p>Retrieves the current device hinge angle. Requires a device with an available hinge (iPhone Duo).
+Supported on both simulators and real devices.</p>
+<p>The command waits up to 5 seconds for a valid reading, and returns an error if none arrives.
+Calling this method during folding may reflect an intermediate angle.</p>
 <h4 id="returned-result_41">Returned Result<a class="headerlink" href="#returned-result_41" title="Permanent link">&para;</a></h4>
 <p>The current hinge angle as a number in degrees, for example <code>90.5</code>.</p>
 <h3 id="mobile-setsimulatedhingeangle">mobile: setSimulatedHingeAngle<a class="headerlink" href="#mobile-setsimulatedhingeangle" title="Permanent link">&para;</a></h3>
-<p>Requests a simulated hinge angle change through the Mac-side CoreSimulator HID service.
-Requires an iPhone Duo Simulator on Xcode 27+ and a WebDriverAgent build with hinge
-angle reading support. The driver validates the angle and identifies Duo by its
-CoreSimulator device type, independently of hinge readings.
-Physical devices, tvOS, watchOS, and simulators without a hinge are unsupported.</p>
-<p>Successful completion does not guarantee that the requested angle was applied.
-Wait for the expected application
-layout before issuing subsequent commands because folding completes asynchronously.
-It does not change device orientation or the <code>currentDisplayId</code> setting. Enumerate
-available screens and select the appropriate display separately.</p>
+<p>Changes the current simulated hinge angle of the device. Requires a device with an available hinge
+(iPhone Duo). Only supported on simulators.</p>
+<p>This method does not wait for the device to transition to the requested hinge angle - use
+<code>mobile: getSimulatedHingeAngle</code> to check the current angle, and optionally wait for the
+application under test to update its layout.</p>
+<p>This method does not change the device orientation or the <a href="../settings/#currentdisplayid"><code>currentDisplayId</code></a>
+setting. Enumerate available screens and select the appropriate display separately.</p>
 <h4 id="arguments_66">Arguments<a class="headerlink" href="#arguments_66" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -15583,7 +15575,7 @@ Does not work for real devices.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 31, 2026 19:25:01 UTC"><span class="timeago" datetime="2026-10-31T19:25:01+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 31, 2026 19:25:01 UTC">2026-10-31</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 2, 2026 13:52:07 UTC"><span class="timeago" datetime="2026-11-02T13:52:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 2, 2026 13:52:07 UTC">2026-11-02</span>
   </span>
 
     

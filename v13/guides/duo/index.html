@@ -3169,44 +3169,35 @@
 
   <h1>iPhone Duo Automation</h1>
 
-<p>The XCUITest driver supports automation of the iPhone Duo simulator.</p>
+<p>The XCUITest driver supports automation of the iPhone Duo. Both simulators and real devices are
+supported.</p>
 <p>Duo sessions have the following minimum requirements:</p>
 <ul>
 <li>XCUITest driver 12.17.0 or later (WebDriverAgent 16.14.2 or later)</li>
 <li>Xcode 27.1 or later</li>
 </ul>
-<p>Duo sessions use the standard iOS simulator setup with <code>platformName: iOS</code>.</p>
+<p>Duo sessions use the standard iOS setup with <code>platformName: iOS</code>.</p>
 <h2 id="session-actions">Session Actions<a class="headerlink" href="#session-actions" title="Permanent link">&para;</a></h2>
 <p>Duo apps are automated the same way as regular iOS/iPadOS apps - the standard
 <code>findElement</code>/<code>click</code> methods and other native element interactions work as usual.</p>
-<p>Available displays can be listed with
-<a href="../../reference/execute-methods/#mobile-listdisplays"><code>mobile: listDisplays</code></a>.
-Use the <a href="../../reference/settings/#currentdisplayid"><code>currentDisplayId</code> setting</a> to select the
-display for screenshots, W3C actions, WDA MJPEG, and new XCTest recordings.
-Folding does not update this setting: select the inner display when opening Duo and the outer
-display when closing it. Restart XCTest recording to change its display.</p>
-<p>The simulated hinge angle can be read and changed through the
-<a href="../../reference/execute-methods/#mobile-getsimulatedhingeangle"><code>mobile: getSimulatedHingeAngle</code></a> and
-<a href="../../reference/execute-methods/#mobile-setsimulatedhingeangle"><code>mobile: setSimulatedHingeAngle</code></a>
-extensions.</p>
-<p>Simulator Home, volume up/down, lock/unlock, and hinge changes use the Mac-side
-<code>@appium/coresim</code> HID service through <code>appium-ios-simulator</code>. Hinge readings remain
-in WDA. Orientation and rotation commands use WDA on both simulators and
-physical devices because WDA's internal animation-stability wait and orientation
-verification are required. Physical devices use XCTest for button commands;
-simulated hinge changes are unsupported.</p>
+<p>The hinge angle can be read and changed using the <a href="../../reference/execute-methods/#mobile-getsimulatedhingeangle"><code>mobile: getSimulatedHingeAngle</code></a>
+and <a href="../../reference/execute-methods/#mobile-setsimulatedhingeangle"><code>mobile: setSimulatedHingeAngle</code></a>
+execute methods. </p>
+<p>The driver does <em>not</em> automatically switch the active display when changing the hinge angle, since
+more than one display can be active at a time (e.g. when using the camera). The current display
+must be explicitly changed:</p>
+<ul>
+<li>The <a href="../../reference/execute-methods/#mobile-listdisplays"><code>mobile: listDisplays</code></a> execute method
+  can be used to retrieve all available displays</li>
+<li>The <a href="../../reference/settings/#currentdisplayid"><code>currentDisplayId</code></a> setting can be used to change
+  the active display at any time. This setting affects screenshots, W3C actions, MJPEG streams, and
+  new XCTest recordings. Any existing XCTest recordings must be restarted.</li>
+</ul>
 <h2 id="known-limitations">Known Limitations<a class="headerlink" href="#known-limitations" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>mobile: setSimulatedHingeAngle</code> only supports simulators. <code>mobile: getSimulatedHingeAngle</code>
-  supports both simulators and real devices with an available hinge sensor and CoreMotion readings.
-  The setter returns after submitting the event, without waiting for folding to finish. Poll the
-  getter when a subsequent operation depends on reaching a target angle. A matching angle does
-  not guarantee that the app has finished updating its layout.</li>
-<li>On Duo simulators, <code>mobile: pressButton</code> uses CoreSim for <code>home</code>, <code>volumeup</code>, and
-  <code>volumedown</code>; other names are unsupported. <code>mobile: performIoHidEvent</code> forwards all
-  valid HID page/usage values to CoreSim, including keyboard events. The runtime determines
-  which events have an effect; successful submission alone does not confirm application.</li>
-<li><code>mobile: performIoHidEvent</code> has been reported not to work on real Duo devices.</li>
+<li><code>mobile: setSimulatedHingeAngle</code> only works on simulators, while <code>mobile: getSimulatedHingeAngle</code>
+  works on both simulators and real devices</li>
+<li><code>mobile: performIoHidEvent</code> has been reported not to work on real devices</li>
 </ul>
 <h2 id="related-tickets">Related Tickets<a class="headerlink" href="#related-tickets" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3235,7 +3226,7 @@ simulated hinge changes are unsupported.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 27, 2026 01:50:09 UTC"><span class="timeago" datetime="2026-10-27T01:50:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 27, 2026 01:50:09 UTC">2026-10-27</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 2, 2026 13:52:07 UTC"><span class="timeago" datetime="2026-11-02T13:52:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 2, 2026 13:52:07 UTC">2026-11-02</span>
   </span>
 
     
