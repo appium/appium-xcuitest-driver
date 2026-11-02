@@ -1,3 +1,9 @@
+## [13.0.4](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.3...v13.0.4) (2026-11-02)
+
+### Bug Fixes
+
+* **deps:** bump appium-webdriveragent to ^16.17.8 ([#3123](https://github.com/appium/appium-xcuitest-driver/issues/3123)) ([b3df91d](https://github.com/appium/appium-xcuitest-driver/commit/b3df91d2156ade6b69849aeca16080db9dcb9745))
+
 ## [13.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.2...v13.0.3) (2026-11-01)
 
 ### Bug Fixes
