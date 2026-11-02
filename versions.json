@@ -10,46 +10,64 @@
   {
     "version": "v12",
     "title": "v12",
-    "aliases": ["12.22"]
+    "aliases": [
+      "12.22"
+    ]
   },
   {
     "version": "v11",
     "title": "v11",
-    "aliases": ["11.17"]
+    "aliases": [
+      "11.17"
+    ]
   },
   {
     "version": "v10",
     "title": "v10",
-    "aliases": ["10.43"]
+    "aliases": [
+      "10.43"
+    ]
   },
   {
     "version": "v9",
     "title": "v9",
-    "aliases": ["9.10"]
+    "aliases": [
+      "9.10"
+    ]
   },
   {
     "version": "v8",
     "title": "v8",
-    "aliases": ["8.4"]
+    "aliases": [
+      "8.4"
+    ]
   },
   {
     "version": "v7",
     "title": "v7",
-    "aliases": ["7.35"]
+    "aliases": [
+      "7.35"
+    ]
   },
   {
     "version": "v6",
     "title": "v6",
-    "aliases": ["6.2"]
+    "aliases": [
+      "6.2"
+    ]
   },
   {
     "version": "v5",
     "title": "v5",
-    "aliases": ["5.16"]
+    "aliases": [
+      "5.16"
+    ]
   },
   {
     "version": "v4",
     "title": "v4",
-    "aliases": ["4.35"]
+    "aliases": [
+      "4.35"
+    ]
   }
 ]
