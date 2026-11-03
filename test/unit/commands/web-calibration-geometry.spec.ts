@@ -240,7 +240,7 @@ describe('web calibration zoom', () => {
             },
           },
         };
-        const document = {createElement: () => overlay, body: {appendChild() {}}};
+        const document = {createElement: () => overlay, documentElement: {appendChild() {}}};
         const sandbox = sinon.createSandbox();
         try {
           sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
@@ -284,4 +284,71 @@ describe('web calibration zoom', () => {
       });
     }
   }
+});
+
+describe('web calibration overlay', () => {
+  it('attaches to the root element so a shadow root on body cannot hide it', async () => {
+    const driver = new XCUITestDriver({} as any);
+    driver.curContext = 'WEBVIEW_shadow';
+    const rect = {x: 20, y: 50, width: 400, height: 600};
+    const state = {
+      innerWidth: 400,
+      innerHeight: 600,
+      outerWidth: 400,
+      outerHeight: 600,
+      isScrolledToTop: true,
+      visualViewportWidth: 400,
+      visualViewportHeight: 600,
+      visualViewportOffsetLeft: 0,
+      visualViewportOffsetTop: 0,
+      visualViewportScale: 1,
+    };
+    const page: any = {};
+    let onClick!: (event: {clientX: number; clientY: number}) => void;
+    let parent: unknown;
+    const overlay = {
+      style: {},
+      setAttribute() {},
+      remove() {},
+      getBoundingClientRect: () => ({left: 0, top: 0}),
+      contentDocument: {
+        addEventListener: (_name: string, listener: typeof onClick) => {
+          onClick = listener;
+        },
+      },
+    };
+    // Body has an open shadow root, so its light DOM children are not rendered.
+    const body = {shadowRoot: {}, appendChild: () => (parent = body)};
+    const documentElement = {appendChild: () => (parent = documentElement)};
+    const document = {createElement: () => overlay, body, documentElement};
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+      sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+        if (parent === documentElement) {
+          onClick({clientX: x - rect.x, clientY: y - rect.y});
+        }
+      });
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('createElement')) {
+            runInNewContext(script, {window: page, document});
+            return;
+          }
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return page.__appiumCalibrationTaps;
+          }
+          return state;
+        },
+      } as any;
+
+      assert.deepEqual(await driver.translateWebCoords(100, 100), {x: 120, y: 150});
+      assert.equal(parent, documentElement);
+    } finally {
+      sandbox.restore();
+    }
+  });
 });
