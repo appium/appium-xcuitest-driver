@@ -216,10 +216,12 @@ export async function mobileScroll(
   if (name) {
     params.name = name;
   } else if (direction) {
-    if (!SUPPORTED_GESTURE_DIRECTIONS.includes(String(direction).toLowerCase() as any)) {
+    const normalizedDirection = String(direction).toLowerCase() as Direction;
+    if (!SUPPORTED_GESTURE_DIRECTIONS.includes(normalizedDirection)) {
       throw new errors.InvalidArgumentError(`'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS.join(', ')}`);
     }
-    params.direction = direction;
+    // WDA matches the scroll direction case-sensitively and silently does nothing otherwise
+    params.direction = normalizedDirection;
     // we can also optionally pass a distance which appears to be a ratio of
     // screen height, so 1.0 means a full screen's worth of scrolling
     if (distance != null) {

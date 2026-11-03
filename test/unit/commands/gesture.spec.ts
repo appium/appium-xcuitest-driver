@@ -74,6 +74,10 @@ describe('gesture commands', function () {
           distance: 0.6,
         });
       });
+      it('should send the direction in lower case', async function () {
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
+        await driver.execute('mobile: scroll', {element: 4, direction: 'Down'});
+      });
       it('should ignore distance for non-direction strategy', async function () {
         mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {name: 'something'});
         await driver.execute('mobile: scroll', {
