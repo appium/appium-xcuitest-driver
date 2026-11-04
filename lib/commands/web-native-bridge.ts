@@ -277,6 +277,17 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
+  // Calibration taps can dismiss the on-screen keyboard or trigger viewport changes.
+  // Prime calibration before querying element coordinates so that any viewport changes
+  // settle before we measure the element position.
+  if (this._remote) {
+    try {
+      await getOrCreateWebviewCalibration.call(this);
+    } catch (err) {
+      this.log.debug(`Could not prime web calibration prior to measuring element coordinates: ${toErrorMessage(err)}`);
+    }
+  }
+
   // Keep these atom requests sequential. Concurrent requests can leave one
   // response unresolved through the real-device Safari Web Inspector transport,
   // timing out before calibration or a native tap can run (also inside iframes).

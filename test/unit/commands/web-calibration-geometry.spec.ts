@@ -203,6 +203,87 @@ describe('native web tap atom requests', () => {
       sandbox.restore();
     }
   });
+
+  it('primes calibration before measuring element coordinates so viewport changes do not cause stale coordinates', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    driver.curContext = 'WEBVIEW_test';
+    const rect = {x: 0, y: 0, width: 400, height: 600};
+    let keyboardOpen = true;
+    let taps: {x: number; y: number}[] = [];
+    const order: string[] = [];
+
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+      sandbox.stub(driver, 'mobileTap').callsFake(async () => {
+        // Calibration tap dismisses the keyboard
+        keyboardOpen = false;
+      });
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('createElement')) {
+            order.push('calibration:inject');
+            taps = [
+              {x: 200, y: 300},
+              {x: 200, y: 300},
+            ];
+            return;
+          }
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return taps;
+          }
+          if (script.includes('delete window.__appiumCalibrationOverlay')) {
+            return;
+          }
+          order.push('calibration:viewport');
+          return {
+            innerWidth: 400,
+            innerHeight: keyboardOpen ? 300 : 600,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: keyboardOpen ? 300 : 600,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
+
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('get_size').callsFake(async () => {
+        order.push('atom:get_size');
+        return {width: 100, height: 50};
+      });
+      execute.withArgs('get_top_left_coordinates').callsFake(async () => {
+        order.push('atom:get_top_left_coordinates');
+        // If keyboard was closed during calibration, element is at y=400, otherwise y=200
+        return {x: 50, y: keyboardOpen ? 200 : 400};
+      });
+
+      const clickStub = sandbox.stub(driver, 'clickWebCoords').callsFake(async (x: number, y: number) => {
+        order.push(`clickWebCoords:${x},${y}`);
+      });
+
+      await driver.nativeWebTap('target');
+
+      assert.equal(keyboardOpen, false);
+      assert.ok(clickStub.calledOnceWithExactly(100, 425));
+      const firstCalibrationIdx = order.indexOf('calibration:viewport');
+      const sizeIdx = order.indexOf('atom:get_size');
+      const coordsIdx = order.indexOf('atom:get_top_left_coordinates');
+      const clickIdx = order.findIndex((item) => item.startsWith('clickWebCoords:'));
+      assert.ok(firstCalibrationIdx < sizeIdx, 'calibration should be primed before get_size');
+      assert.ok(sizeIdx < coordsIdx, 'get_size should precede get_top_left_coordinates');
+      assert.ok(coordsIdx < clickIdx, 'get_top_left_coordinates should precede clickWebCoords');
+    } finally {
+      sandbox.restore();
+    }
+  });
 });
 
 describe('web calibration zoom', () => {
