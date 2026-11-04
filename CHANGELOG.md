@@ -1,3 +1,9 @@
+## [13.0.6](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.5...v13.0.6) (2026-11-04)
+
+### Bug Fixes
+
+* attach the calibration overlay to the root element ([#3126](https://github.com/appium/appium-xcuitest-driver/issues/3126)) ([7bded0a](https://github.com/appium/appium-xcuitest-driver/commit/7bded0a7a8b07fbc91ef96e7cc70a78588f10fe2)), closes [#3125](https://github.com/appium/appium-xcuitest-driver/issues/3125)
+
 ## [13.0.5](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.4...v13.0.5) (2026-11-04)
 
 ### Bug Fixes
