@@ -69,7 +69,8 @@ const INJECT_CALIBRATION_OVERLAY_SCRIPT = `(function () {
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;' +
     'margin:0;padding:0;border:0;background:transparent;z-index:2147483647;';
   window.${CALIBRATION_TAPS_MARKER} = [];
-  (document.body || document.documentElement).appendChild(overlay);
+  // Not body: a shadow root on body hides its light DOM children.
+  document.documentElement.appendChild(overlay);
   var taps = window.${CALIBRATION_TAPS_MARKER};
   overlay.contentDocument.addEventListener('click', function (e) {
     // Match the parent-page client coordinates used by element geometry atoms.
