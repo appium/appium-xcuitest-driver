@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {getDuoSimulator, withDuoArgumentErrors} from './helpers/duo.js';
+import {getDuoSimulator} from './helpers/duo.js';
 import type {Viewport, ScreenInfo, DisplayInfo, WDADisplayInfo} from './types.js';
 
 declare module '../driver.js' {
@@ -105,10 +105,10 @@ export async function mobileGetSimulatedHingeAngle(this: XCUITestDriver): Promis
 }
 
 /**
- * Requests a simulated hinge angle through the host CoreSimulator HID service.
+ * Requests a simulated hinge angle through WDA, including its settling/correction logic.
  * Requires an iPhone Duo Simulator on Xcode 27+; CoreSimulator identifies the device type.
- * WDA supplies hinge angle readings.
- * The transition completes asynchronously. Select currentDisplayId separately.
+ * WDA supplies hinge angle readings. Its correction is best effort; application
+ * layout readiness and currentDisplayId selection remain separate.
  *
  * @param angle - Degrees from 0 (closed) to 180 (fully open), inclusive.
  */
@@ -117,5 +117,8 @@ export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: 
   if (!simulator) {
     throw new errors.UnsupportedOperationError('Setting the hinge angle requires an iPhone Duo Simulator on Xcode 27+');
   }
-  await withDuoArgumentErrors(() => simulator.setSimulatedHingeAngle(angle));
+  if (typeof angle !== 'number' || !Number.isFinite(angle) || angle < 0 || angle > 180) {
+    throw new errors.InvalidArgumentError("'angle' must be a finite number between 0 and 180 degrees");
+  }
+  await this.proxyCommand('/wda/device/hingeAngle', 'POST', {angle});
 }
