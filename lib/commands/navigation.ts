@@ -1,12 +1,12 @@
 import type {Element} from '@appium/types';
 import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver.js';
 import {WDA_CLASS_CHAIN_STRATEGY} from '../css/index.js';
+import type {XCUITestDriver} from '../driver.js';
 import {isTvOs, withoutImplicitWait} from '../utils/index.js';
 import {getDuoSimulator} from './helpers/duo.js';
 
-// Observed UIKit identifier in Duo's vertical toolbar; not a public API contract.
+// Observed UIKit identifier in Duo's toolbar/navigation bar; not a public API contract.
 const DUO_SYSTEM_BACK_BUTTON_IDENTIFIER = 'BackButton';
 
 declare module '../driver.js' {
@@ -88,7 +88,9 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
     const backButtons = await withoutImplicitWait(this, () =>
       this.findNativeElementOrElements(
         '-ios predicate string',
-        'type == "XCUIElementTypeButton" AND label == "Back"',
+        isDuoSimulator
+          ? `type == "XCUIElementTypeButton" AND (name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}" OR label == "Back") AND visible == 1 AND enabled == 1`
+          : 'type == "XCUIElementTypeButton" AND label == "Back"',
         true,
         navBar,
       ),

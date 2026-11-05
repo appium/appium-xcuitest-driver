@@ -77,6 +77,9 @@ describe('navigation commands', function () {
       await driver.nativeBack();
       assert.deepEqual(click.args, [[{ELEMENT: 'nav-back'}]]);
       assert.equal(proxy.callCount, 3);
+      const body = proxy.thirdCall.args[2] as {value: string};
+      assert.ok(body.value.includes('name == "BackButton" OR label == "Back"'));
+      assert.ok(body.value.includes('visible == 1 AND enabled == 1'));
     });
 
     it('does not guess an arbitrary Duo navigation-bar button when Back is missing', async function () {
