@@ -41,11 +41,18 @@ describe('Duo command routing', () => {
     sinon.assert.notCalled(proxy);
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
   });
-  it('rejects invalid angles before dispatch', async () => {
+  it('delegates angle validation to WDA and propagates its error', async () => {
     const {driver, device, proxy} = setup();
+    const failure = new errors.InvalidArgumentError('Invalid hinge angle from WDA');
+    proxy.rejects(failure);
     for (const angle of [-1, 181, NaN, Infinity, '90', true, null]) {
-      await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), errors.InvalidArgumentError);
+      await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), (err) => err === failure);
+      sinon.assert.calledWithExactly(proxy, '/wda/device/hingeAngle', 'POST', {angle});
     }
+    sinon.assert.notCalled(device.setSimulatedHingeAngle);
+  });
+  it('requires an angle argument in the mobile command', async () => {
+    const {driver, device, proxy} = setup();
     await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
     sinon.assert.notCalled(proxy);

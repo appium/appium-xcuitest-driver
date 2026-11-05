@@ -2191,14 +2191,9 @@ The current hinge angle as a number in degrees, for example `90.5`.
 Changes the current simulated hinge angle of the device. Requires a device with an available hinge
 (iPhone Duo). Only supported on simulators.
 
-The setter uses WDA's `POST /wda/device/hingeAngle` endpoint. WDA builds containing
-[appium-ios #152](https://github.com/appium/appium-ios/pull/152) wait for the sensor reading
-to settle and make bounded correction attempts for intermediate-angle undershoot observed
-on iOS 27.2 and 27.3 simulators. This correction is best effort, not a guarantee of the exact
-angle: for example, the simulator can snap a 175-degree request to 180 degrees.
-Use `mobile: getSimulatedHingeAngle` to verify the result, and wait separately for the
-application under test to update its layout. A custom/prebuilt WDA must contain the fix
-to benefit from correction; an unavailable endpoint or WDA error is propagated.
+This method makes a best-effort attempt to let the hinge angle settle and correct deviations
+from the requested angle. The exact angle is not guaranteed. Use `mobile: getSimulatedHingeAngle`
+to verify the result, and wait separately for the application under test to update its layout.
 
 This method does not change the device orientation or the [`currentDisplayId`](./settings.md#currentdisplayid)
 setting. Enumerate available screens and select the appropriate display separately.

@@ -117,8 +117,5 @@ export async function mobileSetSimulatedHingeAngle(this: XCUITestDriver, angle: 
   if (!simulator) {
     throw new errors.UnsupportedOperationError('Setting the hinge angle requires an iPhone Duo Simulator on Xcode 27+');
   }
-  if (typeof angle !== 'number' || !Number.isFinite(angle) || angle < 0 || angle > 180) {
-    throw new errors.InvalidArgumentError("'angle' must be a finite number between 0 and 180 degrees");
-  }
   await this.proxyCommand('/wda/device/hingeAngle', 'POST', {angle});
 }
