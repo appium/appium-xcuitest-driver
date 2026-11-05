@@ -6,7 +6,7 @@ import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
 
-describe('host simulator HID routing', () => {
+describe('Duo command routing', () => {
   afterEach(() => sinon.restore());
   function setup(isSimulator = true) {
     const driver = new XCUITestDriver({} as any);
@@ -27,13 +27,13 @@ describe('host simulator HID routing', () => {
       sinon.assert.calledWithExactly(proxy, '/wda/device/hingeAngle', 'GET');
     }
   });
-  it('checks Duo device type then sends fractional angles to the host', async () => {
+  it('sends fractional angles to WDA after checking Duo identity', async () => {
     const {driver, device, proxy} = setup();
     for (const angle of [0, 90.5, 180]) {
       await driver.execute('mobile: setSimulatedHingeAngle', [{angle}]);
-      sinon.assert.calledWithExactly(device.setSimulatedHingeAngle, angle);
+      sinon.assert.calledWithExactly(proxy, '/wda/device/hingeAngle', 'POST', {angle});
     }
-    assert.ok(proxy.args.every((args) => args[1] === 'GET'));
+    sinon.assert.notCalled(device.setSimulatedHingeAngle);
   });
   it('rejects physical-device writes without sending HID or probing WDA', async () => {
     const {driver, device, proxy} = setup(false);
@@ -41,18 +41,34 @@ describe('host simulator HID routing', () => {
     sinon.assert.notCalled(proxy);
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
   });
-  it('delegates angle validation and translates native TypeErrors', async () => {
+  it('delegates angle validation to WDA and propagates its error', async () => {
     const {driver, device, proxy} = setup();
-    const message = 'angle is outside the supported range';
-    device.setSimulatedHingeAngle.rejects(new TypeError(message));
-    await assert.rejects(driver.mobileSetSimulatedHingeAngle(181), {
-      name: 'InvalidArgumentError',
-      message,
-    });
-    sinon.assert.calledWithExactly(device.setSimulatedHingeAngle, 181);
-    sinon.assert.notCalled(proxy);
-    device.setSimulatedHingeAngle.resetHistory();
+    const failure = new errors.InvalidArgumentError('Invalid hinge angle from WDA');
+    proxy.rejects(failure);
+    for (const angle of [-1, 181, NaN, Infinity, '90', true, null]) {
+      await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), (err) => err === failure);
+      sinon.assert.calledWithExactly(proxy, '/wda/device/hingeAngle', 'POST', {angle});
+    }
+    sinon.assert.notCalled(device.setSimulatedHingeAngle);
+  });
+  it('requires an angle argument in the mobile command', async () => {
+    const {driver, device, proxy} = setup();
     await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
+    sinon.assert.notCalled(device.setSimulatedHingeAngle);
+    sinon.assert.notCalled(proxy);
+  });
+  it('rejects non-Duo simulators without dispatching', async () => {
+    const {driver, device, proxy} = setup();
+    device.isDuo.resolves(false);
+    await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), errors.UnsupportedOperationError);
+    sinon.assert.notCalled(proxy);
+    sinon.assert.notCalled(device.setSimulatedHingeAngle);
+  });
+  it('does not fall back to an uncorrected host setter when WDA fails', async () => {
+    const {driver, device, proxy} = setup();
+    const failure = new errors.UnknownCommandError('WDA route unavailable');
+    proxy.rejects(failure);
+    await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), (err) => err === failure);
     sinon.assert.notCalled(device.setSimulatedHingeAngle);
   });
   it('preserves ordinary simulator and physical button routes', async () => {
@@ -124,13 +140,13 @@ describe('host simulator HID routing', () => {
     }
   });
   it('does not hide probe or host transport errors', async () => {
-    const {driver, device} = setup();
+    const {driver, device, proxy} = setup();
     device.isDuo.rejects(new Error('Device lookup failed'));
     await assert.rejects(driver.mobilePressButton('home'), /Device lookup failed/);
     sinon.assert.notCalled(device.pressHidButton);
     device.isDuo.resolves(true);
-    device.setSimulatedHingeAngle.rejects(new Error('HID service missing'));
-    await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), /HID service missing/);
+    proxy.rejects(new Error('WDA disconnected'));
+    await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), /WDA disconnected/);
   });
   it('keeps rotation routes proxied to WDA for its internal wait logic', () => {
     for (const isSimulator of [true, false]) {

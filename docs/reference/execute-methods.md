@@ -2191,9 +2191,9 @@ The current hinge angle as a number in degrees, for example `90.5`.
 Changes the current simulated hinge angle of the device. Requires a device with an available hinge
 (iPhone Duo). Only supported on simulators.
 
-This method does not wait for the device to transition to the requested hinge angle - use
-`mobile: getSimulatedHingeAngle` to check the current angle, and optionally wait for the
-application under test to update its layout.
+This method makes a best-effort attempt to let the hinge angle settle and correct deviations
+from the requested angle. The exact angle is not guaranteed. Use `mobile: getSimulatedHingeAngle`
+to verify the result, and wait separately for the application under test to update its layout.
 
 This method does not change the device orientation or the [`currentDisplayId`](./settings.md#currentdisplayid)
 setting. Enumerate available screens and select the appropriate display separately.
