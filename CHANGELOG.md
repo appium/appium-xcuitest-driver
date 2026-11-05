@@ -1,3 +1,9 @@
+## [13.0.7](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.6...v13.0.7) (2026-11-05)
+
+### Bug Fixes
+
+* apply WDA hinge correction to simulated angle commands ([#3131](https://github.com/appium/appium-xcuitest-driver/issues/3131)) ([de0521e](https://github.com/appium/appium-xcuitest-driver/commit/de0521e3a7788d1c35491c5efd7b54096f83f32f))
+
 ## [13.0.6](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.5...v13.0.6) (2026-11-04)
 
 ### Bug Fixes
