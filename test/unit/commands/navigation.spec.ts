@@ -38,7 +38,7 @@ describe('navigation commands', function () {
         assert.equal(body.using, 'class chain');
         assert.ok(body.value.includes('XCUIElementTypeToolbar'));
         assert.ok(body.value.includes('name == "BackButton"'));
-        assert.ok(body.value.includes('visible == 1 AND enabled == 1'));
+        assert.doesNotMatch(body.value, /visible|enabled/);
         return [{ELEMENT: 'system-back'}];
       });
       const click = sandbox.stub(driver, 'nativeClick').resolves();
@@ -79,7 +79,7 @@ describe('navigation commands', function () {
       assert.equal(proxy.callCount, 3);
       const body = proxy.thirdCall.args[2] as {value: string};
       assert.ok(body.value.includes('name == "BackButton" OR label == "Back"'));
-      assert.ok(body.value.includes('visible == 1 AND enabled == 1'));
+      assert.doesNotMatch(body.value, /visible|enabled/);
     });
 
     it('does not guess an arbitrary Duo navigation-bar button when Back is missing', async function () {

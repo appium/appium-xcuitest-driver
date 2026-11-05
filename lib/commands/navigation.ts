@@ -73,10 +73,10 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
       // Probe once without changing the implicit wait or swallowing WDA errors.
       const toolbarBackButtons = (await this.proxyCommand('/elements', 'POST', {
         using: WDA_CLASS_CHAIN_STRATEGY,
-        value: `**/XCUIElementTypeToolbar/**/XCUIElementTypeButton[\`name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}" AND visible == 1 AND enabled == 1\`]`,
+        value: `**/XCUIElementTypeToolbar/**/XCUIElementTypeButton[\`name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}"\`]`,
       })) as Element<string>[];
       if (toolbarBackButtons.length > 1) {
-        throw new errors.InvalidElementStateError('Multiple actionable system Back buttons found in Duo toolbars');
+        throw new errors.InvalidElementStateError('Multiple system Back buttons found in Duo toolbars');
       }
       if (toolbarBackButtons.length === 1) {
         await this.nativeClick(toolbarBackButtons[0]);
@@ -89,7 +89,7 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
       this.findNativeElementOrElements(
         '-ios predicate string',
         isDuoSimulator
-          ? `type == "XCUIElementTypeButton" AND (name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}" OR label == "Back") AND visible == 1 AND enabled == 1`
+          ? `type == "XCUIElementTypeButton" AND (name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}" OR label == "Back")`
           : 'type == "XCUIElementTypeButton" AND label == "Back"',
         true,
         navBar,
