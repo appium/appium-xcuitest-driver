@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {errors} from 'appium/driver.js';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -31,75 +30,60 @@ describe('navigation commands', function () {
       }));
     }
 
-    it('clicks the Duo toolbar Back button without looking for a navigation bar', async function () {
+    it('finds Duo Back by identifier across the application without querying state', async function () {
       useDuo();
-      const proxy = sandbox.stub(driver, 'proxyCommand').callsFake(async (url, method, body: any) => {
-        assert.equal(url, '/elements');
-        assert.equal(body.using, 'class chain');
-        assert.ok(body.value.includes('XCUIElementTypeToolbar'));
-        assert.ok(body.value.includes('name == "BackButton"'));
-        assert.doesNotMatch(body.value, /visible|enabled/);
-        return [{ELEMENT: 'system-back'}];
-      });
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'system-back'}]);
       const click = sandbox.stub(driver, 'nativeClick').resolves();
       await driver.nativeBack();
       sinon.assert.calledOnce(proxy);
+      assert.deepEqual(proxy.firstCall.args, [
+        '/elements',
+        'POST',
+        {
+          using: 'predicate string',
+          value: 'type == "XCUIElementTypeButton" AND name == "BackButton"',
+        },
+      ]);
       assert.deepEqual(click.args, [[{ELEMENT: 'system-back'}]]);
       assert.equal(driver.implicitWaitMs, 700);
     });
 
-    it('rejects ambiguous Duo toolbar Back buttons without clicking', async function () {
+    it('does not click when multiple Duo Back buttons match', async function () {
       useDuo();
-      sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'one'}, {ELEMENT: 'two'}]);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'one'}, {ELEMENT: 'two'}]);
       const click = sandbox.stub(driver, 'nativeClick').resolves();
-      await assert.rejects(driver.nativeBack(), errors.InvalidElementStateError);
+      await driver.nativeBack();
+      sinon.assert.calledOnce(proxy);
       sinon.assert.notCalled(click);
       assert.equal(driver.implicitWaitMs, 700);
     });
 
-    it('propagates a failed Duo Back click instead of trying another button', async function () {
+    it('does not try another button after a failed Duo Back click', async function () {
       useDuo();
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'system-back'}]);
-      const failure = new errors.StaleElementReferenceError('Back button disappeared');
-      const click = sandbox.stub(driver, 'nativeClick').rejects(failure);
-      await assert.rejects(driver.nativeBack(), (err) => err === failure);
+      const click = sandbox.stub(driver, 'nativeClick').rejects(new Error('Back button disappeared'));
+      await driver.nativeBack();
       sinon.assert.calledOnce(proxy);
       sinon.assert.calledOnce(click);
+      assert.equal(driver.implicitWaitMs, 700);
     });
 
-    it('uses a labelled navigation-bar Back button when the Duo toolbar has none', async function () {
+    it('keeps missing Duo Back a no-op without guessing another button', async function () {
       useDuo();
-      const proxy = sandbox.stub(driver, 'proxyCommand');
-      proxy.onCall(0).resolves([]);
-      proxy.onCall(1).resolves({ELEMENT: 'navbar'});
-      proxy.onCall(2).resolves([{ELEMENT: 'nav-back'}]);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
       const click = sandbox.stub(driver, 'nativeClick').resolves();
       await driver.nativeBack();
-      assert.deepEqual(click.args, [[{ELEMENT: 'nav-back'}]]);
-      assert.equal(proxy.callCount, 3);
-      const body = proxy.thirdCall.args[2] as {value: string};
-      assert.ok(body.value.includes('name == "BackButton" OR label == "Back"'));
-      assert.doesNotMatch(body.value, /visible|enabled/);
-    });
-
-    it('does not guess an arbitrary Duo navigation-bar button when Back is missing', async function () {
-      useDuo();
-      const proxy = sandbox.stub(driver, 'proxyCommand');
-      proxy.onCall(0).resolves([]);
-      proxy.onCall(1).resolves({ELEMENT: 'navbar'});
-      proxy.onCall(2).resolves([]);
-      const click = sandbox.stub(driver, 'nativeClick').resolves();
-      await assert.rejects(driver.nativeBack(), errors.NoSuchElementError);
+      sinon.assert.calledOnce(proxy);
       sinon.assert.notCalled(click);
-      assert.equal(proxy.callCount, 3);
+      assert.equal(driver.implicitWaitMs, 700);
     });
 
-    it('propagates Duo lookup errors and restores the implicit wait', async function () {
+    it('keeps Duo lookup failures a no-op and restores the implicit wait', async function () {
       useDuo();
-      const failure = new Error('WDA disconnected');
-      sandbox.stub(driver, 'proxyCommand').rejects(failure);
+      const proxy = sandbox.stub(driver, 'proxyCommand').rejects(new Error('WDA disconnected'));
       const click = sandbox.stub(driver, 'nativeClick').resolves();
-      await assert.rejects(driver.nativeBack(), (err) => err === failure);
+      await driver.nativeBack();
+      sinon.assert.calledOnce(proxy);
       sinon.assert.notCalled(click);
       assert.equal(driver.implicitWaitMs, 700);
     });

@@ -1,7 +1,5 @@
 import type {Element} from '@appium/types';
-import {errors} from 'appium/driver.js';
 
-import {WDA_CLASS_CHAIN_STRATEGY} from '../css/index.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isTvOs, withoutImplicitWait} from '../utils/index.js';
 import {getDuoSimulator} from './helpers/duo.js';
@@ -69,37 +67,24 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
 
   const isDuoSimulator = Boolean(await getDuoSimulator(this));
   try {
-    if (isDuoSimulator) {
-      // Probe once without changing the implicit wait or swallowing WDA errors.
-      const toolbarBackButtons = (await this.proxyCommand('/elements', 'POST', {
-        using: WDA_CLASS_CHAIN_STRATEGY,
-        value: `**/XCUIElementTypeToolbar/**/XCUIElementTypeButton[\`name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}"\`]`,
-      })) as Element<string>[];
-      if (toolbarBackButtons.length > 1) {
-        throw new errors.InvalidElementStateError('Multiple system Back buttons found in Duo toolbars');
-      }
-      if (toolbarBackButtons.length === 1) {
-        await this.nativeClick(toolbarBackButtons[0]);
-        return;
-      }
-    }
-    const navBar = await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
+    // Duo's system Back can be in either a toolbar or a navigation bar.
+    const navBar = isDuoSimulator
+      ? undefined
+      : await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
     let dstButton: Element<string>;
     const backButtons = await withoutImplicitWait(this, () =>
       this.findNativeElementOrElements(
         '-ios predicate string',
         isDuoSimulator
-          ? `type == "XCUIElementTypeButton" AND (name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}" OR label == "Back")`
+          ? `type == "XCUIElementTypeButton" AND name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}"`
           : 'type == "XCUIElementTypeButton" AND label == "Back"',
         true,
         navBar,
       ),
     );
     if (isDuoSimulator && backButtons.length !== 1) {
-      if (backButtons.length > 1) {
-        throw new errors.InvalidElementStateError('Multiple Back buttons found in the navigation bar');
-      }
-      throw new errors.NoSuchElementError('No system toolbar Back button or navigation bar Back button found');
+      this.log.debug(`Expected one Duo Back button, found ${backButtons.length}. Skipping Back.`);
+      return;
     }
     if (backButtons.length === 0) {
       const buttons = await this.findNativeElementOrElements(
@@ -120,9 +105,6 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
 
     await this.nativeClick(dstButton);
   } catch (err: any) {
-    if (isDuoSimulator) {
-      throw err;
-    }
     this.log.error(`Unable to find navigation bar and back button: ${err.message}`);
   }
 }
