@@ -74,9 +74,9 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
         '-ios predicate string',
         `type == "XCUIElementTypeButton" AND ${
           isDuoSimulator
-          // Observed UIKit identifier in Duo's toolbar/navigation bar; not a public API contract.
-          ? `name == "BackButton"`
-          : 'label == "Back"'
+            ? // Observed UIKit identifier in Duo's toolbar/navigation bar; not a public API contract.
+              `name == "BackButton"`
+            : 'label == "Back"'
         }`,
         true,
         navBar,
