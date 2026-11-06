@@ -75,14 +75,17 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
     const backButtons = await withoutImplicitWait(this, () =>
       this.findNativeElementOrElements(
         '-ios predicate string',
-        isDuoSimulator
-          ? `type == "XCUIElementTypeButton" AND name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}"`
-          : 'type == "XCUIElementTypeButton" AND label == "Back"',
+        `type == "XCUIElementTypeButton" AND ${
+          isDuoSimulator
+          ? `name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}"`
+          : 'label == "Back"'
+        }`,
         true,
         navBar,
       ),
     );
     if (isDuoSimulator && backButtons.length !== 1) {
+      // The following behavior is not suitable for Duo, so we skip it if we don't find exactly one back button.
       this.log.debug(`Expected one Duo Back button, found ${backButtons.length}. Skipping Back.`);
       return;
     }
