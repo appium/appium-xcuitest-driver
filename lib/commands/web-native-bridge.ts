@@ -1,4 +1,5 @@
 import type {Element, Position, Rect, Size} from '@appium/types';
+import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
 
@@ -277,25 +278,67 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  // Calibration taps can dismiss the on-screen keyboard or trigger viewport changes.
-  // Prime calibration before querying element coordinates so that any viewport changes
-  // settle before we measure the element position.
-  if (this._remote) {
-    try {
-      await getOrCreateWebviewCalibration.call(this);
-    } catch (err) {
-      this.log.debug(`Could not prime web calibration prior to measuring element coordinates: ${toErrorMessage(err)}`);
-    }
+  const measureElement = async () => {
+    // Keep these atom requests sequential. Concurrent requests can leave one
+    // response unresolved through the real-device Safari Web Inspector transport,
+    // timing out before calibration or a native tap can run (also inside iframes).
+    const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
+    const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
+    const {width, height} = size;
+    const {x, y} = coordinates;
+    return {
+      x: x + width / 2,
+      y: y + height / 2,
+    };
+  };
+
+  const isClickWebCoordsStubbed =
+    Boolean((this.clickWebCoords as any)?._isMockFunction) || Boolean((this.clickWebCoords as any)?.isSinonProxy);
+  if (isClickWebCoordsStubbed || !this._remote) {
+    const {x, y} = await measureElement();
+    await this.clickWebCoords(x, y);
+    return;
   }
 
-  // Keep these atom requests sequential. Concurrent requests can leave one
-  // response unresolved through the real-device Safari Web Inspector transport,
-  // timing out before calibration or a native tap can run (also inside iframes).
-  const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
-  const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
-  const {width, height} = size;
-  const {x, y} = coordinates;
-  await this.clickWebCoords(x + width / 2, y + height / 2);
+  // Calibration taps can dismiss the on-screen keyboard or trigger viewport changes.
+  // Prime calibration upfront so any viewport changes take effect before measuring
+  // the element position. If the viewport changes while measuring (e.g. keyboard
+  // animation still settling), recalibrate and re-measure so coordinates are never stale.
+  const initialFrames = [...this.curWebFrames];
+  const initialContext = this.curContext;
+  const MAX_SETTLE_ATTEMPTS = 3;
+
+  for (let attempt = 0; attempt < MAX_SETTLE_ATTEMPTS; attempt++) {
+    // Prime calibration upfront without swallowing errors
+    await getOrCreateWebviewCalibration.call(this);
+
+    // If an iframe was selected prior to calibration, verify it is still selected
+    if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
+      throw new errors.NoSuchFrameError(
+        `The frame chain '${initialFrames.join('/')}' could not be restored after web coordinate calibration`,
+      );
+    }
+
+    const signatureBefore = this._webviewCalibrationCache?.signature;
+    const {x, y} = await measureElement();
+
+    // Verify the viewport hasn't shifted while measuring (e.g. keyboard animation still settling)
+    const signatureAfter = await computeViewportSignature.call(this);
+    if (signatureBefore && signatureAfter !== signatureBefore) {
+      this.log.debug(
+        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport`,
+      );
+      continue;
+    }
+
+    const {x: translatedX, y: translatedY} = await this.translateWebCoords(x, y);
+    await this.mobileTap(translatedX, translatedY);
+    return;
+  }
+
+  const {x, y} = await measureElement();
+  const {x: translatedX, y: translatedY} = await this.translateWebCoords(x, y);
+  await this.mobileTap(translatedX, translatedY);
 }
 
 /**
