@@ -4,9 +4,6 @@ import type {XCUITestDriver} from '../driver.js';
 import {isTvOs, withoutImplicitWait} from '../utils/index.js';
 import {getDuoSimulator} from './helpers/duo.js';
 
-// Observed UIKit identifier in Duo's toolbar/navigation bar; not a public API contract.
-const DUO_SYSTEM_BACK_BUTTON_IDENTIFIER = 'BackButton';
-
 declare module '../driver.js' {
   interface XCUITestDriver {
     back(...args: Parameters<typeof back>): ReturnType<typeof back>;
@@ -77,7 +74,8 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
         '-ios predicate string',
         `type == "XCUIElementTypeButton" AND ${
           isDuoSimulator
-          ? `name == "${DUO_SYSTEM_BACK_BUTTON_IDENTIFIER}"`
+          // Observed UIKit identifier in Duo's toolbar/navigation bar; not a public API contract.
+          ? `name == "BackButton"`
           : 'label == "Back"'
         }`,
         true,
