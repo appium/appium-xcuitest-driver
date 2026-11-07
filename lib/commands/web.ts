@@ -4,10 +4,9 @@ import type {Element, Cookie} from '@appium/types';
 import type {AtomName} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver.js';
 import {timing, util} from 'appium/support.js';
-import {ConditionUnmetError} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
-import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
+import {hasElementId, isConditionUnmetError, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
   limitTimeoutMs,
   requireAutomationSessionActive,
@@ -17,9 +16,6 @@ import {
   withTimeout,
 } from './helpers/index.js';
 import type {AtomsElement} from './types.js';
-
-// Message fallback for asyncbox < 6.6.0 (no `ConditionUnmetError`)
-const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -419,7 +415,7 @@ export async function findWebElementOrElements(
   try {
     await this.implicitWaitForCondition(doFind);
   } catch (err) {
-    if (err instanceof ConditionUnmetError || (err instanceof Error && LEGACY_CONDITION_UNMET_PATTERN.test(err.message))) {
+    if (isConditionUnmetError(err)) {
       // condition was not met setting res to empty array
       element = [];
     } else {

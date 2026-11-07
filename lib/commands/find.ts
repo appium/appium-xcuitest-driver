@@ -1,15 +1,11 @@
 import type {Element, AppiumLogger} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
-import {ConditionUnmetError} from 'asyncbox';
 
 import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css/index.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isEmpty} from '../utils/index.js';
+import {isConditionUnmetError, isEmpty} from '../utils/index.js';
 import type {AllowedHttpMethod} from './proxy-helper.js';
-
-// Message fallback for asyncbox < 6.6.0 (no `ConditionUnmetError`)
-const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -220,7 +216,7 @@ export async function doNativeFind(
       await this.implicitWaitForCondition(performLookup);
     }
   } catch (err: any) {
-    if (err instanceof ConditionUnmetError || LEGACY_CONDITION_UNMET_PATTERN.test(err.message ?? '')) {
+    if (isConditionUnmetError(err)) {
       els = [] as Element[];
     } else {
       throw err;
