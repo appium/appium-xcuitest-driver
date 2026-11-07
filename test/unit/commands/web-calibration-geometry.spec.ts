@@ -415,19 +415,23 @@ describe('native web tap atom requests', () => {
     }
   });
 
-  it('throws UnknownError if viewport geometry fails to settle after maximum attempts', async () => {
+  it('warns and proceeds with latest measured coordinates if viewport geometry fails to settle after maximum attempts', async () => {
     const driver = new XCUITestDriver({} as any);
     await driver.updateSettings({nativeWebTapStrict: true});
     driver.curContext = 'WEBVIEW_test';
     const rect = {x: 0, y: 0, width: 400, height: 600};
     let viewportHeight = 400;
+    const nativeTaps: {x: number; y: number}[] = [];
 
     const sandbox = sinon.createSandbox();
     try {
       sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
       sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
       sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
-      sandbox.stub(driver, 'mobileTap').resolves();
+      sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+        nativeTaps.push({x, y});
+      });
+      const warnSpy = sandbox.spy(driver.log, 'warn');
       driver._remote = {
         executeAtom: async () => true,
         execute: async (script: string) => {
@@ -454,15 +458,118 @@ describe('native web tap atom requests', () => {
       } as any;
 
       sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      let measurementCount = 0;
       const execute = sandbox.stub(driver, 'executeAtom');
       execute.withArgs('get_size').callsFake(async () => ({width: 100, height: 50}));
       execute.withArgs('get_top_left_coordinates').callsFake(async () => {
-        // Shift viewport on every measurement so it never settles
+        measurementCount++;
+        viewportHeight += 10;
+        return {x: 50, y: 200 + measurementCount * 10};
+      });
+
+      await driver.nativeWebTap('target');
+
+      assert.ok(warnSpy.calledWithMatch(/Viewport geometry did not settle after 3 attempts/));
+      // Tapped using the latest measured coordinates (measurement 3: y = 230 + 25 = 255)
+      const finalTap = nativeTaps[nativeTaps.length - 1];
+      assert.equal(finalTap.y, 255);
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('respects configurable nativeWebTapMaxSettleAttempts setting', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true, nativeWebTapMaxSettleAttempts: 1});
+    driver.curContext = 'WEBVIEW_test';
+    const rect = {x: 0, y: 0, width: 400, height: 600};
+    let viewportHeight = 400;
+
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+      sandbox.stub(driver, 'mobileTap').resolves();
+      const warnSpy = sandbox.spy(driver.log, 'warn');
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return [
+              {x: 193, y: 293},
+              {x: 207, y: 307},
+            ];
+          }
+          if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+            return;
+          }
+          return {
+            innerWidth: 400,
+            innerHeight: viewportHeight,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: viewportHeight,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
+
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      let measurementCount = 0;
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('get_size').callsFake(async () => ({width: 100, height: 50}));
+      execute.withArgs('get_top_left_coordinates').callsFake(async () => {
+        measurementCount++;
         viewportHeight += 10;
         return {x: 50, y: 200};
       });
 
-      await assert.rejects(driver.nativeWebTap('target'), errors.UnknownError);
+      await driver.nativeWebTap('target');
+
+      assert.equal(measurementCount, 1);
+      assert.ok(warnSpy.calledWithMatch(/Viewport geometry did not settle after 1 attempts/));
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('routes clickWebCoords with static numbers through measureAndTranslateWebCoords', async () => {
+    const driver = new XCUITestDriver({} as any);
+    driver.curContext = 'WEBVIEW_test';
+    const sandbox = sinon.createSandbox();
+    try {
+      const measureStub = sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn: any) => {
+        const coords = await fn();
+        assert.deepEqual(coords, {x: 50, y: 75});
+        return {x: 123, y: 456};
+      });
+      const mobileTapStub = sandbox.stub(driver, 'mobileTap').resolves();
+
+      await driver.clickWebCoords(50, 75);
+
+      assert.equal(measureStub.callCount, 1);
+      assert.ok(mobileTapStub.calledOnceWithExactly(123, 456));
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('nativeWebTap routes through clickWebCoords so overriding or stubbing it intercepts taps', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    driver.curContext = 'WEBVIEW_test';
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const clickWebCoordsStub = sandbox.stub(driver, 'clickWebCoords').resolves();
+
+      await driver.nativeWebTap('target');
+
+      assert.equal(clickWebCoordsStub.callCount, 1);
+      assert.equal(typeof clickWebCoordsStub.firstCall.args[0], 'function');
     } finally {
       sandbox.restore();
     }

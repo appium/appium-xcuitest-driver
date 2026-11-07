@@ -11,7 +11,9 @@ import type {AtomsElement} from './types.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
-    clickWebCoords(...args: Parameters<typeof clickWebCoords>): ReturnType<typeof clickWebCoords>;
+    clickWebCoords(x: number, y: number): Promise<void>;
+    clickWebCoords(measureFn: () => Promise<Position>): Promise<void>;
+    clickWebCoords(coordsOrMeasureFn: number | (() => Promise<Position>), y?: number): Promise<void>;
     nativeWebTap(...args: Parameters<typeof nativeWebTap>): ReturnType<typeof nativeWebTap>;
     translateWebCoords(...args: Parameters<typeof translateWebCoords>): ReturnType<typeof translateWebCoords>;
     measureAndTranslateWebCoords(
@@ -253,15 +255,24 @@ export function viewportSignature(state: ViewportState): string {
 }
 
 /**
- * Clicks at the specified web coordinates.
+ * Clicks at the specified web coordinates or dynamically measured web element position.
  *
- * Coordinates are automatically translated from web to native coordinates.
+ * Coordinates are automatically translated from web to native coordinates using
+ * validated calibration and viewport settling.
  *
- * @param x - X coordinate in web space
- * @param y - Y coordinate in web space
+ * @param coordsOrMeasureFn - Static web coordinates or an async function measuring web position
+ * @param y - Y coordinate in web space (when first argument is an X number)
  */
-export async function clickWebCoords(this: XCUITestDriver, x: number, y: number): Promise<void> {
-  const {x: translatedX, y: translatedY} = await this.translateWebCoords(x, y);
+export async function clickWebCoords(this: XCUITestDriver, x: number, y: number): Promise<void>;
+export async function clickWebCoords(this: XCUITestDriver, measureFn: () => Promise<Position>): Promise<void>;
+export async function clickWebCoords(
+  this: XCUITestDriver,
+  coordsOrMeasureFn: number | (() => Promise<Position>),
+  y?: number,
+): Promise<void> {
+  const measureFn =
+    typeof coordsOrMeasureFn === 'function' ? coordsOrMeasureFn : async () => ({x: coordsOrMeasureFn, y: y ?? 0});
+  const {x: translatedX, y: translatedY} = await this.measureAndTranslateWebCoords(measureFn);
   await this.mobileTap(translatedX, translatedY);
 }
 
@@ -281,7 +292,7 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  const {x: translatedX, y: translatedY} = await this.measureAndTranslateWebCoords(async () => {
+  await this.clickWebCoords(async () => {
     // Keep these atom requests sequential. Concurrent requests can leave one
     // response unresolved through the real-device Safari Web Inspector transport,
     // timing out before calibration or a native tap can run (also inside iframes).
@@ -294,7 +305,6 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
       y: y + height / 2,
     };
   });
-  await this.mobileTap(translatedX, translatedY);
 }
 
 /**
@@ -304,53 +314,64 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
  * If calibration (or its taps) dismisses the software keyboard or alters the viewport
  * geometry, the element is re-measured against the settled post-calibration viewport.
  * If the viewport changes while measuring (e.g. keyboard animation still settling),
- * it recalibrates and re-measures so that coordinates are never stale.
+ * it re-measures against the new viewport so that coordinates are never stale.
  *
  * The validated calibration is passed directly to coordinate translation, preventing
  * any secondary recalibration from creating a race between measurement and translation.
  *
+ * If the viewport fails to settle after the maximum number of attempts (e.g. due to
+ * continuous scroll animation or collapsing URL bar), it logs a warning and proceeds
+ * with the latest measured coordinates.
+ *
  * @param measureFn - Async function that queries the element position in web coordinates
  * @returns Translated position in native screen coordinates
  * @throws {errors.NoSuchFrameError} If the frame containing the element could not be restored after calibration
- * @throws {errors.UnknownError} If the viewport fails to settle after the maximum number of attempts
  */
 export async function measureAndTranslateWebCoords(
   this: XCUITestDriver,
   measureFn: () => Promise<Position>,
+  initialCoords?: Position,
 ): Promise<Position> {
   const initialFrames = [...this.curWebFrames];
   const initialContext = this.curContext;
-  const MAX_SETTLE_ATTEMPTS = 3;
+  const maxAttempts = Math.max(1, this.settings.getSettings().nativeWebTapMaxSettleAttempts ?? 3);
 
-  for (let attempt = 0; attempt < MAX_SETTLE_ATTEMPTS; attempt++) {
-    // Prime calibration upfront without swallowing errors
-    const calibration = await getOrCreateWebviewCalibration.call(this);
+  // Prime calibration upfront without swallowing errors
+  const calibration = await getOrCreateWebviewCalibration.call(this);
 
-    // If an iframe was selected prior to calibration, verify it is still selected
-    if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
-      throw new errors.NoSuchFrameError(
-        `The frame chain '${initialFrames.join('/')}' could not be restored after web coordinate calibration`,
-      );
-    }
+  // If an iframe was selected prior to calibration, verify it is still selected
+  if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
+    throw new errors.NoSuchFrameError(
+      `The frame chain '${initialFrames.join('/')}' could not be restored after web coordinate calibration`,
+    );
+  }
 
+  let latestCoords: Position = initialCoords ?? {x: 0, y: 0};
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const signatureBefore = this._webviewCalibrationCache?.signature;
-    const webCoords = await measureFn();
+    if (attempt > 0 || !initialCoords) {
+      latestCoords = await measureFn();
+    }
 
     // Verify the viewport hasn't shifted while measuring (e.g. keyboard animation still settling)
     const signatureAfter = await computeViewportSignature.call(this);
     if (signatureBefore && signatureAfter !== signatureBefore) {
       this.log.debug(
-        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${MAX_SETTLE_ATTEMPTS})`,
+        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${maxAttempts})`,
       );
-      continue;
+      if (attempt < maxAttempts - 1) {
+        continue;
+      }
+      this.log.warn(
+        `Viewport geometry did not settle after ${maxAttempts} attempts; proceeding with latest measured coordinates`,
+      );
     }
 
-    return await translateWebCoords.call(this, webCoords.x, webCoords.y, calibration);
+    return await translateWebCoords.call(this, latestCoords.x, latestCoords.y, calibration);
   }
 
-  throw new errors.UnknownError(
-    `Failed to resolve stable web coordinates: viewport geometry did not settle after ${MAX_SETTLE_ATTEMPTS} attempts`,
-  );
+  return await translateWebCoords.call(this, latestCoords.x, latestCoords.y, calibration);
 }
 
 /**

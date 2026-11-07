@@ -204,6 +204,7 @@ const defaultServerCaps = {
 const DEFAULT_SETTINGS = {
   nativeWebTap: false,
   nativeWebTapStrict: false,
+  nativeWebTapMaxSettleAttempts: 3,
   useJSONSource: false,
   webScreenshotMode: 'native',
   pageSourceExcludedAttributes: '',
@@ -821,7 +822,7 @@ export class XCUITestDriver
   private async onSettingsUpdate(key: string, value: any): Promise<any> {
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
-    if (['pageSourceExcludedAttributes'].includes(key)) {
+    if (['pageSourceExcludedAttributes', 'nativeWebTapMaxSettleAttempts'].includes(key)) {
       return;
     }
 

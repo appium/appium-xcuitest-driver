@@ -521,9 +521,9 @@ describe('AtomsBackend', function () {
     assert.strictEqual(proxiedAction.y, 205);
   });
 
-  it('performActions throws MoveTargetOutOfBoundsError for a web-element origin currently out of view', async function () {
+  it('performActions throws MoveTargetOutOfBoundsError for a web-element origin currently out of view without calibrating', async function () {
     sandbox.stub(driver, 'proxyCommand').resolves();
-    seedIdentityCalibration();
+    const measureSpy = sandbox.spy(driver, 'measureAndTranslateWebCoords');
     // the in-view center point script returns null when the element's clipped rectangle is empty
     executeAtomStub.withArgs('execute_script').resolves(null);
     driver.webElementsCache.set(':wdc:123', ':wdc:123');
@@ -536,6 +536,11 @@ describe('AtomsBackend', function () {
     ] as any;
 
     await assert.rejects(backend.performActions(actions), errors.MoveTargetOutOfBoundsError);
+    assert.strictEqual(
+      measureSpy.callCount,
+      0,
+      'should not prime calibration or touch the screen when element is out of view',
+    );
   });
 
   it('performActions resolves each web-element origin independently - a lookup that scrolled could invalidate an earlier one', async function () {
