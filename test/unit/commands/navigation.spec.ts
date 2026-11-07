@@ -3,18 +3,22 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import sinon from 'sinon';
 
+import {isDuo} from '../../../lib/commands/helpers/duo.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('navigation commands', function () {
   let driver: XCUITestDriver;
   let sandbox: sinon.SinonSandbox;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     driver = new XCUITestDriver({} as any);
     driver.sessionId = 'session-id';
     driver.implicitWaitMs = 700;
     sandbox = sinon.createSandbox();
     sandbox.stub(driver, 'isSimulator').returns(false);
+    const info = sandbox.stub(driver, 'proxyCommand').resolves({hasHinge: false});
+    await isDuo(driver);
+    info.restore();
   });
 
   afterEach(function () {
@@ -22,16 +26,16 @@ describe('navigation commands', function () {
   });
 
   describe('nativeBack', function () {
-    function useDuo() {
-      (driver.isSimulator as sinon.SinonStub).returns(true);
-      sandbox.stub(driver, 'device').get(() => ({
-        isDuo: async () => true,
-        setSimulatedHingeAngle: async () => {},
-      }));
+    async function useDuo(simulator = true) {
+      (driver.isSimulator as sinon.SinonStub).returns(simulator);
+      driver.sessionId = 'duo-session';
+      const info = sandbox.stub(driver, 'proxyCommand').resolves({hasHinge: true});
+      await isDuo(driver);
+      info.restore();
     }
 
     it('finds Duo Back by identifier across the application without querying state', async function () {
-      useDuo();
+      await useDuo();
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'system-back'}]);
       const click = sandbox.stub(driver, 'nativeClick').resolves();
       await driver.nativeBack();
@@ -48,8 +52,19 @@ describe('navigation commands', function () {
       assert.equal(driver.implicitWaitMs, 700);
     });
 
+    it('applies the same Back extension on a physical device with a hinge', async function () {
+      await useDuo(false);
+      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'back'}]);
+      const click = sandbox.stub(driver, 'nativeClick').resolves();
+      await driver.nativeBack();
+      sinon.assert.calledOnce(proxy);
+      assert.equal(proxy.firstCall.args[0], '/elements');
+      assert.equal((proxy.firstCall.args[2] as any).value, 'type == "XCUIElementTypeButton" AND name == "BackButton"');
+      sinon.assert.calledOnce(click);
+    });
+
     it('does not click when multiple Duo Back buttons match', async function () {
-      useDuo();
+      await useDuo();
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'one'}, {ELEMENT: 'two'}]);
       const click = sandbox.stub(driver, 'nativeClick').resolves();
       await driver.nativeBack();
@@ -59,7 +74,7 @@ describe('navigation commands', function () {
     });
 
     it('does not try another button after a failed Duo Back click', async function () {
-      useDuo();
+      await useDuo();
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([{ELEMENT: 'system-back'}]);
       const click = sandbox.stub(driver, 'nativeClick').rejects(new Error('Back button disappeared'));
       await driver.nativeBack();
@@ -69,7 +84,7 @@ describe('navigation commands', function () {
     });
 
     it('keeps missing Duo Back a no-op without guessing another button', async function () {
-      useDuo();
+      await useDuo();
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
       const click = sandbox.stub(driver, 'nativeClick').resolves();
       await driver.nativeBack();
@@ -79,7 +94,7 @@ describe('navigation commands', function () {
     });
 
     it('keeps Duo lookup failures a no-op and restores the implicit wait', async function () {
-      useDuo();
+      await useDuo();
       const proxy = sandbox.stub(driver, 'proxyCommand').rejects(new Error('WDA disconnected'));
       const click = sandbox.stub(driver, 'nativeClick').resolves();
       await driver.nativeBack();
