@@ -3,74 +3,43 @@ import {afterEach, describe, it} from 'node:test';
 
 import sinon from 'sinon';
 
-import {mobileGetDeviceInfo} from '../../../lib/commands/device-info.js';
 import {isDuo} from '../../../lib/commands/helpers/duo.js';
-import {LockdownClient} from '../../../lib/device/lockdown-client.js';
 import type {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('Duo identification from DeviceInfo', () => {
   afterEach(() => sinon.restore());
 
   function setup(hasHinge: unknown, simulator = true) {
-    const getInfo = sinon.stub().resolves({hasHinge});
+    const proxy = sinon.stub().resolves({hasHinge});
     const driver = {
       sessionId: 'first-session',
       device: {udid: 'device'},
       isSimulator: sinon.stub().returns(simulator),
-      mobileGetDeviceInfo: getInfo,
+      proxyCommand: proxy,
     } as unknown as XCUITestDriver;
-    return {driver, getInfo};
+    return {driver, proxy};
   }
 
   for (const simulator of [true, false]) {
-    it(`uses and caches DeviceInfo on ${simulator ? 'simulators' : 'physical devices'}`, async () => {
-      const {driver, getInfo} = setup(true, simulator);
+    it(`uses and caches WDA DeviceInfo on ${simulator ? 'simulators' : 'physical devices'}`, async () => {
+      const {driver, proxy} = setup(true, simulator);
       assert.deepEqual(await Promise.all([isDuo(driver), isDuo(driver)]), [true, true]);
       assert.equal(await isDuo(driver), true);
-      sinon.assert.calledOnceWithExactly(getInfo);
+      sinon.assert.calledOnceWithExactly(proxy, '/wda/device/info', 'GET');
       sinon.assert.notCalled(driver.isSimulator as sinon.SinonStub);
     });
   }
 
-  for (const realDevice of [false, true]) {
-    it(`delegates to mobileGetDeviceInfo once on ${realDevice ? 'physical devices' : 'simulators'}`, async () => {
-      const {driver} = setup(true, !realDevice);
-      const wda = sinon.stub().resolves({hasHinge: true});
-      const client = {
-        getDeviceInfo: sinon.stub().resolves({ProductType: 'device-model'}),
-        close: sinon.stub().resolves(),
-      };
-      const create = sinon.stub(LockdownClient, 'createForDevice').resolves(client as any);
-      (driver as any).remoteXPCFacade = {};
-      driver.isRealDevice = () => realDevice;
-      driver.proxyCommand = wda;
-      driver.mobileGetDeviceInfo = mobileGetDeviceInfo.bind(driver);
-
-      assert.deepEqual(await Promise.all([isDuo(driver), isDuo(driver)]), [true, true]);
-      assert.equal(await isDuo(driver), true);
-      sinon.assert.calledOnceWithExactly(wda, '/wda/device/info', 'GET');
-      if (realDevice) {
-        sinon.assert.calledOnceWithExactly(create, 'device', {facade: driver.remoteXPCFacade});
-        sinon.assert.calledOnce(client.getDeviceInfo);
-        sinon.assert.calledOnce(client.close);
-      } else {
-        sinon.assert.notCalled(create);
-        sinon.assert.notCalled(client.getDeviceInfo);
-        sinon.assert.notCalled(client.close);
-      }
-    });
-  }
-
   it('also caches a non-Duo result', async () => {
-    const {driver, getInfo} = setup(false);
+    const {driver, proxy} = setup(false);
     assert.equal(await isDuo(driver), false);
     assert.equal(await isDuo(driver), false);
-    sinon.assert.calledOnce(getInfo);
+    sinon.assert.calledOnce(proxy);
   });
 
   it('does not enable the extension when older WDA omits hasHinge', async () => {
-    const {driver, getInfo} = setup(undefined);
-    getInfo.resolves({});
+    const {driver, proxy} = setup(undefined);
+    proxy.resolves({});
     assert.equal(await isDuo(driver), false);
   });
 
@@ -81,35 +50,35 @@ describe('Duo identification from DeviceInfo', () => {
   });
 
   it('fetches DeviceInfo again for a new session', async () => {
-    const {driver, getInfo} = setup(true);
+    const {driver, proxy} = setup(true);
     assert.equal(await isDuo(driver), true);
     driver.sessionId = 'second-session';
-    getInfo.resolves({hasHinge: false});
+    proxy.resolves({hasHinge: false});
     assert.equal(await isDuo(driver), false);
-    sinon.assert.calledTwice(getInfo);
+    sinon.assert.calledTwice(proxy);
   });
 
   it("does not reuse another device's result", async () => {
-    const {driver, getInfo} = setup(true);
+    const {driver, proxy} = setup(true);
     assert.equal(await isDuo(driver), true);
     (driver as any).device = {udid: 'another-device'};
-    getInfo.resolves({hasHinge: false});
+    proxy.resolves({hasHinge: false});
     assert.equal(await isDuo(driver), false);
-    sinon.assert.calledTwice(getInfo);
+    sinon.assert.calledTwice(proxy);
   });
 
   it('retries failed lookups instead of caching them', async () => {
-    const {driver, getInfo} = setup(true);
-    getInfo.onFirstCall().rejects(new Error('WDA disconnected'));
+    const {driver, proxy} = setup(true);
+    proxy.onFirstCall().rejects(new Error('WDA disconnected'));
     await assert.rejects(isDuo(driver), /WDA disconnected/);
     assert.equal(await isDuo(driver), true);
-    sinon.assert.calledTwice(getInfo);
+    sinon.assert.calledTwice(proxy);
   });
 
   it("does not let an old session's failure clear the new session cache", async () => {
-    const {driver, getInfo} = setup(true);
+    const {driver, proxy} = setup(true);
     let rejectOld!: (err: Error) => void;
-    getInfo.onFirstCall().returns(
+    proxy.onFirstCall().returns(
       new Promise((_resolve, reject) => {
         rejectOld = reject;
       }),
@@ -121,6 +90,6 @@ describe('Duo identification from DeviceInfo', () => {
     rejectOld(new Error('Old session'));
     await rejected;
     assert.equal(await isDuo(driver), true);
-    sinon.assert.calledTwice(getInfo);
+    sinon.assert.calledTwice(proxy);
   });
 });

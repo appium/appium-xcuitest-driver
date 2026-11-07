@@ -2,6 +2,7 @@ import type {Simulator, SupportsDuo} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../../driver.js';
+import type {DeviceInfo} from '../types.js';
 
 const duoCache = new WeakMap<
   XCUITestDriver,
@@ -15,7 +16,7 @@ export async function isDuo(driver: XCUITestDriver): Promise<boolean> {
     return await cached.result;
   }
   const result = (async () => {
-    const {hasHinge} = await driver.mobileGetDeviceInfo();
+    const {hasHinge} = await driver.proxyCommand<unknown, DeviceInfo>('/wda/device/info', 'GET');
     return hasHinge === true;
   })();
   const entry = {sessionId: driver.sessionId, device: driver.device, result};
