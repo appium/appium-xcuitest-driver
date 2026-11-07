@@ -6,7 +6,6 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
-import {measureAndTranslateWebCoords, translateWebCoords} from '../commands/web-native-bridge.js';
 import {checkForAlert, createJSCookie, getScriptTimeoutMs} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
@@ -457,7 +456,7 @@ export class AtomsBackend implements WebExecutionBackend {
     offsetY: number,
   ): Promise<Position> {
     const atomsElement = this.driver.getAtomsElement(origin);
-    const measureCenter = async () => {
+    return await this.driver.measureAndTranslateWebCoords(async () => {
       const center = (await this.driver.executeAtom('execute_script', [
         IN_VIEW_CENTER_POINT_SCRIPT,
         [atomsElement],
@@ -471,13 +470,6 @@ export class AtomsBackend implements WebExecutionBackend {
         x: center.x + offsetX,
         y: center.y + offsetY,
       };
-    };
-
-    if (!this.driver._remote) {
-      const {x, y} = await measureCenter();
-      return await translateWebCoords.call(this.driver, x, y);
-    }
-
-    return await measureAndTranslateWebCoords.call(this.driver, measureCenter);
+    });
   }
 }

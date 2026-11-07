@@ -281,7 +281,7 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  const measureElement = async () => {
+  const {x: translatedX, y: translatedY} = await this.measureAndTranslateWebCoords(async () => {
     // Keep these atom requests sequential. Concurrent requests can leave one
     // response unresolved through the real-device Safari Web Inspector transport,
     // timing out before calibration or a native tap can run (also inside iframes).
@@ -293,17 +293,7 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
       x: x + width / 2,
       y: y + height / 2,
     };
-  };
-
-  const isClickWebCoordsStubbed =
-    Boolean((this.clickWebCoords as any)?._isMockFunction) || Boolean((this.clickWebCoords as any)?.isSinonProxy);
-  if (isClickWebCoordsStubbed || !this._remote) {
-    const {x, y} = await measureElement();
-    await this.clickWebCoords(x, y);
-    return;
-  }
-
-  const {x: translatedX, y: translatedY} = await measureAndTranslateWebCoords.call(this, measureElement);
+  });
   await this.mobileTap(translatedX, translatedY);
 }
 

@@ -149,7 +149,8 @@ describe('native web tap atom requests', () => {
       const execute = sandbox.stub(driver, 'executeAtom');
       execute.withArgs('get_size').returns(size);
       execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
-      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn) => await fn());
+      const tap = sandbox.stub(driver, 'mobileTap').resolves();
       const result = driver.nativeWebTap('target');
       try {
         assert.equal(execute.callCount, 1, 'the transport must not receive overlapping atom requests');
@@ -172,7 +173,8 @@ describe('native web tap atom requests', () => {
     try {
       sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
       const execute = sandbox.stub(driver, 'executeAtom').rejects(new Error('transport failed'));
-      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn) => await fn());
+      const tap = sandbox.stub(driver, 'mobileTap').resolves();
       await assert.rejects(driver.nativeWebTap('target'), /transport failed/);
       assert.equal(execute.callCount, 1);
       assert.equal(tap.callCount, 0);
@@ -193,7 +195,8 @@ describe('native web tap atom requests', () => {
       execute.withArgs('get_size').resolves({width: 100, height: 80});
       execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
-      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn) => await fn());
+      const tap = sandbox.stub(driver, 'mobileTap').resolves();
 
       await driver.nativeWebTap('target');
 
