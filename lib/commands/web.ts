@@ -6,7 +6,7 @@ import {errors, isErrorType} from 'appium/driver.js';
 import {timing, util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
+import {hasElementId, isConditionUnmetError, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
   limitTimeoutMs,
   requireAutomationSessionActive,
@@ -415,7 +415,7 @@ export async function findWebElementOrElements(
   try {
     await this.implicitWaitForCondition(doFind);
   } catch (err) {
-    if (err instanceof Error && /Condition unmet/.test(err.message)) {
+    if (isConditionUnmetError(err)) {
       // condition was not met setting res to empty array
       element = [];
     } else {

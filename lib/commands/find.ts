@@ -4,7 +4,7 @@ import {util} from 'appium/support.js';
 
 import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css/index.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isEmpty} from '../utils/index.js';
+import {isConditionUnmetError, isEmpty} from '../utils/index.js';
 import type {AllowedHttpMethod} from './proxy-helper.js';
 
 declare module '../driver.js' {
@@ -216,7 +216,7 @@ export async function doNativeFind(
       await this.implicitWaitForCondition(performLookup);
     }
   } catch (err: any) {
-    if (err.message?.match(/Condition unmet/)) {
+    if (isConditionUnmetError(err)) {
       els = [] as Element[];
     } else {
       throw err;

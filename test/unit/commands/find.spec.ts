@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
-import {describe, it, afterEach} from 'node:test';
+import {describe, it, afterEach, beforeEach} from 'node:test';
 
+import {errors} from 'appium/driver.js';
+import {ConditionUnmetError} from 'asyncbox';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -146,6 +148,36 @@ describe('general commands', function () {
       await verifyFind('xpath', `//*[@scrollable='true']`, singleSel, 'class chain');
       await verifyFind('xpath', `//*[@scrollable = 'true']`, singleSel, 'class chain');
       await verifyFind('xpath', '//*[@scrollable="true"]', multSel, 'class chain', true);
+    });
+  });
+
+  describe('doNativeFind when the implicit wait fails', function () {
+    let waitStub: sinon.SinonStub;
+
+    beforeEach(function () {
+      (driver as any).sessionId = 'session-id';
+      waitStub = sinon.stub(driver, 'implicitWaitForCondition');
+    });
+
+    afterEach(function () {
+      waitStub.restore();
+      (driver as any).sessionId = null;
+    });
+
+    it('should treat ConditionUnmetError as no elements found', async function () {
+      waitStub.rejects(new ConditionUnmetError('custom message'));
+      assert.deepStrictEqual(await driver.doNativeFind('id', 'foo', true), []);
+      await assert.rejects(driver.doNativeFind('id', 'foo', false), errors.NoSuchElementError);
+    });
+
+    it('should treat a legacy message-only error as no elements found', async function () {
+      waitStub.rejects(new Error('Condition unmet'));
+      assert.deepStrictEqual(await driver.doNativeFind('id', 'foo', true), []);
+    });
+
+    it('should rethrow unrelated errors', async function () {
+      waitStub.rejects(new Error('boom'));
+      await assert.rejects(driver.doNativeFind('id', 'foo', true), /boom/);
     });
   });
 });

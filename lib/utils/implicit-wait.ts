@@ -1,4 +1,8 @@
 import type {TimeoutValue} from '@appium/types';
+import {ConditionUnmetError} from 'asyncbox';
+
+// Message fallback for asyncbox < 6.6.0 (no `ConditionUnmetError`)
+const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 /**
  * Minimal driver surface needed to temporarily override the implicit wait.
@@ -28,4 +32,15 @@ export async function withoutImplicitWait<T>(driver: ImplicitWaitOwner, fn: () =
   } finally {
     driver.setImplicitWait(implicitWaitMs);
   }
+}
+
+/**
+ * Whether the error is the one thrown by `implicitWaitForCondition` when the condition is not met in time.
+ *
+ * @param err - Error to check
+ */
+export function isConditionUnmetError(err: unknown): boolean {
+  return (
+    err instanceof ConditionUnmetError || (err instanceof Error && LEGACY_CONDITION_UNMET_PATTERN.test(err.message))
+  );
 }

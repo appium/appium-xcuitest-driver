@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
 
+import {ConditionUnmetError} from 'asyncbox';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../lib/driver.js';
-import {withoutImplicitWait} from '../../lib/utils/index.js';
+import {isConditionUnmetError, withoutImplicitWait} from '../../lib/utils/index.js';
 
 describe('utils/implicit-wait', function () {
   describe('withoutImplicitWait', function () {
@@ -60,6 +61,22 @@ describe('utils/implicit-wait', function () {
       } finally {
         setImplicitWait.restore();
       }
+    });
+  });
+
+  describe('isConditionUnmetError', function () {
+    it('should match ConditionUnmetError regardless of its message', function () {
+      assert.strictEqual(isConditionUnmetError(new ConditionUnmetError('custom message')), true);
+    });
+
+    it('should match a legacy error by its message', function () {
+      assert.strictEqual(isConditionUnmetError(new Error('Condition unmet after 1000ms')), true);
+    });
+
+    it('should not match unrelated errors and non-errors', function () {
+      assert.strictEqual(isConditionUnmetError(new Error('boom')), false);
+      assert.strictEqual(isConditionUnmetError('Condition unmet'), false);
+      assert.strictEqual(isConditionUnmetError(undefined), false);
     });
   });
 });
