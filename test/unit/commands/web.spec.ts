@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {performance} from 'node:perf_hooks';
-import {describe, it, afterEach} from 'node:test';
+import {describe, it, afterEach, beforeEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
+import {ConditionUnmetError} from 'asyncbox';
 import sinon from 'sinon';
 
 import {fitAffineTransform, viewportSignature} from '../../../lib/commands/web-native-bridge.js';
@@ -52,6 +53,34 @@ describe('web commands', function () {
 
       assert.strictEqual(atomSpy.callCount, 1);
       assert.ok(elapsed < 500, `expected the lookup to resolve quickly, but it took ${elapsed}ms`);
+    });
+
+    describe('when the implicit wait fails', function () {
+      let waitStub: sinon.SinonStub;
+
+      beforeEach(function () {
+        waitStub = sinon.stub(driver, 'implicitWaitForCondition');
+      });
+
+      afterEach(function () {
+        waitStub.restore();
+      });
+
+      it('should treat ConditionUnmetError as no elements found', async function () {
+        waitStub.rejects(new ConditionUnmetError('custom message'));
+        assert.deepStrictEqual(await driver.findWebElementOrElements('id', 'foo', true), []);
+        await assert.rejects(driver.findWebElementOrElements('id', 'foo', false), errors.NoSuchElementError);
+      });
+
+      it('should treat a legacy message-only error as no elements found', async function () {
+        waitStub.rejects(new Error('Condition unmet'));
+        assert.deepStrictEqual(await driver.findWebElementOrElements('id', 'foo', true), []);
+      });
+
+      it('should rethrow unrelated errors', async function () {
+        waitStub.rejects(new Error('boom'));
+        await assert.rejects(driver.findWebElementOrElements('id', 'foo', true), /boom/);
+      });
     });
   });
 
