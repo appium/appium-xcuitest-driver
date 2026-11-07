@@ -204,7 +204,8 @@ Terminal, iTerm, or the CI agent), then restart that application:
 3. Quit and start the application again, and restart the Appium server from it.
 
 No action is needed if the DeviceHub container does not exist yet (DeviceHub has never been
-launched on this machine), or if you do not use the capabilities listed above.
+launched on this machine). Omitting the capabilities listed above does not avoid this requirement:
+the driver still requests their default values.
 
 ## Caching Issues During Build
 
