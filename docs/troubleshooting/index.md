@@ -174,6 +174,39 @@ When testing on simulators, the driver tries to leave the simulator state as it 
 You can use the `appium:noReset` capability to adjust this behavior: setting it to `true` will
 leave the simulator running at the end of a test session.
 
+## Simulator Preferences Are Not Applied (Full Disk Access)
+
+Xcode 27 replaces Simulator.app with DeviceHub, a sandboxed application that keeps its preferences
+in its own container (`~/Library/Containers/com.apple.dt.Devices`). Since macOS 27, access to the
+containers of other applications is denied by default. Because of this, the driver cannot apply
+the following capabilities to DeviceHub unless the process running Appium is allowed to access them:
+
+* [`appium:connectHardwareKeyboard`](../reference/capabilities.md#simulator)
+* [`appium:simulatorPasteboardAutomaticSync`](../reference/capabilities.md#simulator)
+
+The session is **not** aborted in this case. The driver logs a warning similar to the following
+and continues with the preferences left unchanged:
+
+```
+Cannot update DeviceHub preferences for <udid>: macOS denies access to the DeviceHub preferences
+at '<path>'. Grant Full Disk Access to the application running this process ...
+```
+
+On macOS 26 and older, macOS shows a permission prompt instead of denying access right away. If it
+is not answered, the driver gives up after one second and logs a similar warning
+(`macOS did not answer within 1000ms ...`). The prompt stays on the screen, so answer it.
+
+To fix this, grant Full Disk Access to the application that starts the Appium server (for example,
+Terminal, iTerm, or the CI agent), then restart that application:
+
+1. Open _System Settings_ > _Privacy & Security_ > _Full Disk Access_.
+2. Enable the application that runs Appium. Add it with the `+` button if it is not listed.
+3. Quit and start the application again, and restart the Appium server from it.
+
+No action is needed if the DeviceHub container does not exist yet (DeviceHub has never been
+launched on this machine). Omitting the capabilities listed above does not avoid this requirement:
+the driver still requests their default values.
+
 ## Caching Issues During Build
 
 Testing on iOS generates files that can sometimes get large. These include logs, temporary files,
