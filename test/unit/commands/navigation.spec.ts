@@ -16,7 +16,7 @@ describe('navigation commands', function () {
     driver.implicitWaitMs = 700;
     sandbox = sinon.createSandbox();
     sandbox.stub(driver, 'isSimulator').returns(false);
-    const info = sandbox.stub(driver, 'proxyCommand').resolves({hasHinge: false});
+    const info = sandbox.stub(driver, 'mobileGetDeviceInfo').resolves({hasHinge: false} as any);
     await isDuo(driver);
     info.restore();
   });
@@ -29,7 +29,7 @@ describe('navigation commands', function () {
     async function useDuo(simulator = true) {
       (driver.isSimulator as sinon.SinonStub).returns(simulator);
       driver.sessionId = 'duo-session';
-      const info = sandbox.stub(driver, 'proxyCommand').resolves({hasHinge: true});
+      const info = sandbox.stub(driver, 'mobileGetDeviceInfo').resolves({hasHinge: true} as any);
       await isDuo(driver);
       info.restore();
     }
