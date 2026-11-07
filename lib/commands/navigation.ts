@@ -2,6 +2,7 @@ import type {Element} from '@appium/types';
 
 import type {XCUITestDriver} from '../driver.js';
 import {isTvOs, withoutImplicitWait} from '../utils/index.js';
+import {isDuo} from './helpers/duo.js';
 
 declare module '../driver.js' {
   interface XCUITestDriver {
@@ -62,16 +63,30 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
   }
 
   try {
-    const navBar = await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
+    const duo = await isDuo(this);
+    // Duo's system Back can be in either a toolbar or a navigation bar.
+    const navBar = duo
+      ? undefined
+      : await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
     let dstButton: Element<string>;
     const backButtons = await withoutImplicitWait(this, () =>
       this.findNativeElementOrElements(
         '-ios predicate string',
-        'type == "XCUIElementTypeButton" AND label == "Back"',
+        `type == "XCUIElementTypeButton" AND ${
+          duo
+            ? // Observed UIKit identifier in Duo's toolbar/navigation bar; not a public API contract.
+              `name == "BackButton"`
+            : 'label == "Back"'
+        }`,
         true,
         navBar,
       ),
     );
+    if (duo && backButtons.length !== 1) {
+      // The following behavior is not suitable for Duo, so we skip it if we don't find exactly one back button.
+      this.log.debug(`Expected one Duo Back button, found ${backButtons.length}. Skipping Back.`);
+      return;
+    }
     if (backButtons.length === 0) {
       const buttons = await this.findNativeElementOrElements(
         '-ios predicate string',
