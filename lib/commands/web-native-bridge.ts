@@ -14,6 +14,9 @@ declare module '../driver.js' {
     clickWebCoords(...args: Parameters<typeof clickWebCoords>): ReturnType<typeof clickWebCoords>;
     nativeWebTap(...args: Parameters<typeof nativeWebTap>): ReturnType<typeof nativeWebTap>;
     translateWebCoords(...args: Parameters<typeof translateWebCoords>): ReturnType<typeof translateWebCoords>;
+    measureAndTranslateWebCoords(
+      ...args: Parameters<typeof measureAndTranslateWebCoords>
+    ): ReturnType<typeof measureAndTranslateWebCoords>;
     mobileCalibrateWebToRealCoordinatesTranslation(
       ...args: Parameters<typeof mobileCalibrateWebToRealCoordinatesTranslation>
     ): ReturnType<typeof mobileCalibrateWebToRealCoordinatesTranslation>;
@@ -300,17 +303,38 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
     return;
   }
 
-  // Calibration taps can dismiss the on-screen keyboard or trigger viewport changes.
-  // Prime calibration upfront so any viewport changes take effect before measuring
-  // the element position. If the viewport changes while measuring (e.g. keyboard
-  // animation still settling), recalibrate and re-measure so coordinates are never stale.
+  const {x: translatedX, y: translatedY} = await measureAndTranslateWebCoords.call(this, measureElement);
+  await this.mobileTap(translatedX, translatedY);
+}
+
+/**
+ * Safely measures element coordinates in the webview and translates them to native
+ * coordinates, ensuring that calibration is current and the viewport has settled.
+ *
+ * If calibration (or its taps) dismisses the software keyboard or alters the viewport
+ * geometry, the element is re-measured against the settled post-calibration viewport.
+ * If the viewport changes while measuring (e.g. keyboard animation still settling),
+ * it recalibrates and re-measures so that coordinates are never stale.
+ *
+ * The validated calibration is passed directly to coordinate translation, preventing
+ * any secondary recalibration from creating a race between measurement and translation.
+ *
+ * @param measureFn - Async function that queries the element position in web coordinates
+ * @returns Translated position in native screen coordinates
+ * @throws {errors.NoSuchFrameError} If the frame containing the element could not be restored after calibration
+ * @throws {errors.UnknownError} If the viewport fails to settle after the maximum number of attempts
+ */
+export async function measureAndTranslateWebCoords(
+  this: XCUITestDriver,
+  measureFn: () => Promise<Position>,
+): Promise<Position> {
   const initialFrames = [...this.curWebFrames];
   const initialContext = this.curContext;
   const MAX_SETTLE_ATTEMPTS = 3;
 
   for (let attempt = 0; attempt < MAX_SETTLE_ATTEMPTS; attempt++) {
     // Prime calibration upfront without swallowing errors
-    await getOrCreateWebviewCalibration.call(this);
+    const calibration = await getOrCreateWebviewCalibration.call(this);
 
     // If an iframe was selected prior to calibration, verify it is still selected
     if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
@@ -320,25 +344,23 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
     }
 
     const signatureBefore = this._webviewCalibrationCache?.signature;
-    const {x, y} = await measureElement();
+    const webCoords = await measureFn();
 
     // Verify the viewport hasn't shifted while measuring (e.g. keyboard animation still settling)
     const signatureAfter = await computeViewportSignature.call(this);
     if (signatureBefore && signatureAfter !== signatureBefore) {
       this.log.debug(
-        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport`,
+        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${MAX_SETTLE_ATTEMPTS})`,
       );
       continue;
     }
 
-    const {x: translatedX, y: translatedY} = await this.translateWebCoords(x, y);
-    await this.mobileTap(translatedX, translatedY);
-    return;
+    return await translateWebCoords.call(this, webCoords.x, webCoords.y, calibration);
   }
 
-  const {x, y} = await measureElement();
-  const {x: translatedX, y: translatedY} = await this.translateWebCoords(x, y);
-  await this.mobileTap(translatedX, translatedY);
+  throw new errors.UnknownError(
+    `Failed to resolve stable web coordinates: viewport geometry did not settle after ${MAX_SETTLE_ATTEMPTS} attempts`,
+  );
 }
 
 /**
@@ -350,20 +372,30 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
  * is fitted against the top-level page, so `x`/`y` are first shifted by the
  * current sub-frame's offset (see {@linkcode getFrameChainOffset}), if any.
  *
+ * When an already-validated `calibration` is provided, it is used directly
+ * without re-reading the viewport signature or triggering a secondary fit.
+ *
  * @param x - X coordinate in web space
  * @param y - Y coordinate in web space
+ * @param calibration - Optional pre-validated calibration data to reuse
  * @returns Translated position in native coordinates
  * @throws {Error} If no WebView is found, if calibration fails, or if the
  *   current frame (or one of its ancestors) has a different origin than the
  *   top-level page
  */
-export async function translateWebCoords(this: XCUITestDriver, x: number, y: number): Promise<Position> {
+export async function translateWebCoords(
+  this: XCUITestDriver,
+  x: number,
+  y: number,
+  calibration?: CalibrationData,
+): Promise<Position> {
   this.log.debug(`Translating web coordinates (${JSON.stringify({x, y})}) to native coordinates`);
 
-  const [{offsetX, offsetY, pixelRatioX, pixelRatioY}, frameOffset] = await Promise.all([
-    getOrCreateWebviewCalibration.call(this),
+  const [calibrationData, frameOffset] = await Promise.all([
+    calibration ? Promise.resolve(calibration) : getOrCreateWebviewCalibration.call(this),
     getFrameChainOffset.call(this),
   ]);
+  const {offsetX, offsetY, pixelRatioX, pixelRatioY} = calibrationData;
   if (frameOffset.crossOrigin) {
     throw new Error(
       'Cannot translate coordinates for the current frame: it (or one of its ancestor frames) has a ' +

@@ -6,7 +6,7 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
-import {translateWebCoords} from '../commands/web-native-bridge.js';
+import {measureAndTranslateWebCoords, translateWebCoords} from '../commands/web-native-bridge.js';
 import {checkForAlert, createJSCookie, getScriptTimeoutMs} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
@@ -457,15 +457,27 @@ export class AtomsBackend implements WebExecutionBackend {
     offsetY: number,
   ): Promise<Position> {
     const atomsElement = this.driver.getAtomsElement(origin);
-    const center = (await this.driver.executeAtom('execute_script', [
-      IN_VIEW_CENTER_POINT_SCRIPT,
-      [atomsElement],
-    ])) as Position | null;
-    if (!center) {
-      throw new errors.MoveTargetOutOfBoundsError(
-        'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
-      );
+    const measureCenter = async () => {
+      const center = (await this.driver.executeAtom('execute_script', [
+        IN_VIEW_CENTER_POINT_SCRIPT,
+        [atomsElement],
+      ])) as Position | null;
+      if (!center) {
+        throw new errors.MoveTargetOutOfBoundsError(
+          'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
+        );
+      }
+      return {
+        x: center.x + offsetX,
+        y: center.y + offsetY,
+      };
+    };
+
+    if (!this.driver._remote) {
+      const {x, y} = await measureCenter();
+      return await translateWebCoords.call(this.driver, x, y);
     }
-    return await translateWebCoords.call(this.driver, center.x + offsetX, center.y + offsetY);
+
+    return await measureAndTranslateWebCoords.call(this.driver, measureCenter);
   }
 }

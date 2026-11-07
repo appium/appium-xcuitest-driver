@@ -411,6 +411,87 @@ describe('native web tap atom requests', () => {
       sandbox.restore();
     }
   });
+
+  it('throws UnknownError if viewport geometry fails to settle after maximum attempts', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    driver.curContext = 'WEBVIEW_test';
+    const rect = {x: 0, y: 0, width: 400, height: 600};
+    let viewportHeight = 400;
+
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+      sandbox.stub(driver, 'mobileTap').resolves();
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return [
+              {x: 193, y: 293},
+              {x: 207, y: 307},
+            ];
+          }
+          if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+            return;
+          }
+          return {
+            innerWidth: 400,
+            innerHeight: viewportHeight,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: viewportHeight,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
+
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('get_size').callsFake(async () => ({width: 100, height: 50}));
+      execute.withArgs('get_top_left_coordinates').callsFake(async () => {
+        // Shift viewport on every measurement so it never settles
+        viewportHeight += 10;
+        return {x: 50, y: 200};
+      });
+
+      await assert.rejects(driver.nativeWebTap('target'), errors.UnknownError);
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('reuses validated calibration during translation without secondary recalibration', async () => {
+    const driver = new XCUITestDriver({} as any);
+    driver.curContext = 'WEBVIEW_test';
+    const calibration = {
+      offsetX: 10,
+      offsetY: 20,
+      pixelRatioX: 2,
+      pixelRatioY: 2,
+    };
+
+    const sandbox = sinon.createSandbox();
+    try {
+      driver._remote = {
+        execute: async () => {
+          throw new Error('remote.execute should not be called when calibration is provided');
+        },
+      } as any;
+
+      const result = await driver.translateWebCoords(15, 25, calibration);
+      assert.deepEqual(result, {
+        x: 10 + 15 * 2, // 40
+        y: 20 + 25 * 2, // 70
+      });
+    } finally {
+      sandbox.restore();
+    }
+  });
 });
 
 describe('web calibration zoom', () => {

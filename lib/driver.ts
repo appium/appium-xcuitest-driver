@@ -1581,6 +1581,7 @@ Object.assign(XCUITestDriver.prototype, {
   clickWebCoords: webNativeBridgeCommands.clickWebCoords,
   nativeWebTap: webNativeBridgeCommands.nativeWebTap,
   translateWebCoords: webNativeBridgeCommands.translateWebCoords,
+  measureAndTranslateWebCoords: webNativeBridgeCommands.measureAndTranslateWebCoords,
   mobileCalibrateWebToRealCoordinatesTranslation:
     webNativeBridgeCommands.mobileCalibrateWebToRealCoordinatesTranslation,
 
