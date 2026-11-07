@@ -3143,6 +3143,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#simulator-preferences-are-not-applied-full-disk-access" class="md-nav__link">
+    <span class="md-ellipsis"> Simulator Preferences Are Not Applied (Full Disk Access) </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#caching-issues-during-build" class="md-nav__link">
     <span class="md-ellipsis"> Caching Issues During Build </span>
   </a>
@@ -3521,12 +3556,39 @@ keychain to WebDriverAgent.</p>
 </ul>
 <p>You can use the <code>appium:noReset</code> capability to adjust this behavior: setting it to <code>true</code> will
 leave the simulator running at the end of a test session.</p>
+<h2 id="simulator-preferences-are-not-applied-full-disk-access">Simulator Preferences Are Not Applied (Full Disk Access)<a class="headerlink" href="#simulator-preferences-are-not-applied-full-disk-access" title="Permanent link">&para;</a></h2>
+<p>Xcode 27 replaces Simulator.app with DeviceHub, a sandboxed application that keeps its preferences
+in its own container (<code>~/Library/Containers/com.apple.dt.Devices</code>). Since macOS 27, access to the
+containers of other applications is denied by default. Because of this, the driver cannot apply
+the following capabilities to DeviceHub unless the process running Appium is allowed to access them:</p>
+<ul>
+<li><a href="../reference/capabilities/#simulator"><code>appium:connectHardwareKeyboard</code></a></li>
+<li><a href="../reference/capabilities/#simulator"><code>appium:simulatorPasteboardAutomaticSync</code></a></li>
+</ul>
+<p>The session is <strong>not</strong> aborted in this case. The driver logs a warning similar to the following
+and continues with the preferences left unchanged:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Cannot update DeviceHub preferences for &lt;udid&gt;: macOS denies access to the DeviceHub preferences
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>at &#39;&lt;path&gt;&#39;. Grant Full Disk Access to the application running this process ...
+</span></code></pre></div>
+<p>On macOS 26 and older, macOS shows a permission prompt instead of denying access right away. If it
+is not answered, the driver gives up after one second and logs a similar warning
+(<code>macOS did not answer within 1000ms ...</code>). The prompt stays on the screen, so answer it.</p>
+<p>To fix this, grant Full Disk Access to the application that starts the Appium server (for example,
+Terminal, iTerm, or the CI agent), then restart that application:</p>
+<ol>
+<li>Open <em>System Settings</em> &gt; <em>Privacy &amp; Security</em> &gt; <em>Full Disk Access</em>.</li>
+<li>Enable the application that runs Appium. Add it with the <code>+</code> button if it is not listed.</li>
+<li>Quit and start the application again, and restart the Appium server from it.</li>
+</ol>
+<p>No action is needed if the DeviceHub container does not exist yet (DeviceHub has never been
+launched on this machine). Omitting the capabilities listed above does not avoid this requirement:
+the driver still requests their default values.</p>
 <h2 id="caching-issues-during-build">Caching Issues During Build<a class="headerlink" href="#caching-issues-during-build" title="Permanent link">&para;</a></h2>
 <p>Testing on iOS generates files that can sometimes get large. These include logs, temporary files,
 and derived data from Xcode runs, all of which are safe to delete if any issues arise. The files are
 usually found in the following locations, should they need to be deleted:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$HOME/Library/Logs/CoreSimulator/*
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$HOME/Library/Developer/Xcode/DerivedData/*
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$HOME/Library/Logs/CoreSimulator/*
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$HOME/Library/Developer/Xcode/DerivedData/*
 </span></code></pre></div>
 <h2 id="frequent-disconnecting-from-remote-debugger-error-in-ios-17">Frequent <code>Disconnecting from remote debugger</code> error in iOS 17<a class="headerlink" href="#frequent-disconnecting-from-remote-debugger-error-in-ios-17" title="Permanent link">&para;</a></h2>
 <p>Please try out iOS 17.6 or a newer version which includes <a href="https://developer.apple.com/documentation/safari-release-notes/safari-17_6-release-notes#Web-Inspector">a possible fix by Apple</a>.</p>
@@ -3591,7 +3653,7 @@ application developer as follows:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="August 12, 2026 21:27:02 UTC"><span class="timeago" datetime="2026-08-12T21:27:02+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 12, 2026 21:27:02 UTC">2026-08-12</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 7, 2026 15:37:41 UTC"><span class="timeago" datetime="2026-11-07T15:37:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 7, 2026 15:37:41 UTC">2026-11-07</span>
   </span>
 
     
