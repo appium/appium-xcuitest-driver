@@ -37,6 +37,10 @@ const CALIBRATION_RETRY_INTERVAL_MS = 500;
 const CALIBRATION_TAP_READBACK_RETRIES = 10;
 const CALIBRATION_TAP_READBACK_INTERVAL_MS = 100;
 
+// Maximum number of attempts to allow viewport geometry to settle before
+// proceeding with the latest measured coordinates.
+const MAX_SETTLE_ATTEMPTS = 3;
+
 // Window-scoped property names the calibration overlay uses to stash its
 // state across the several `execute_script` round trips a calibration takes.
 const CALIBRATION_OVERLAY_MARKER = '__appiumCalibrationOverlay';
@@ -320,47 +324,45 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
  * any secondary recalibration from creating a race between measurement and translation.
  *
  * If the viewport fails to settle after the maximum number of attempts (e.g. due to
- * continuous scroll animation or collapsing URL bar), it logs a warning and proceeds
- * with the latest measured coordinates.
+ * continuous scroll animation or collapsing URL bar), it logs a warning, refreshes
+ * calibration to match the latest viewport, and proceeds with the latest measured coordinates.
  *
  * @param measureFn - Async function that queries the element position in web coordinates
+ * @param initial - Optional initial measurement and the viewport signature it was taken against; reused if calibration did not alter the viewport
  * @returns Translated position in native screen coordinates
  * @throws {errors.NoSuchFrameError} If the frame containing the element could not be restored after calibration
  */
 export async function measureAndTranslateWebCoords(
   this: XCUITestDriver,
   measureFn: () => Promise<Position>,
-  initialCoords?: Position,
-  initialSignature?: string,
+  initial?: {coords: Position; signature: string},
 ): Promise<Position> {
   const initialFrames = [...this.curWebFrames];
   const initialContext = this.curContext;
-  const maxAttempts = Math.max(1, this.settings.getSettings().nativeWebTapMaxSettleAttempts ?? 3);
+
+  const verifyFrameChainRestored = () => {
+    if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
+      throw new errors.NoSuchFrameError(
+        `The frame chain '${initialFrames.join('/')}' could not be restored after web coordinate calibration`,
+      );
+    }
+  };
 
   // Prime calibration upfront without swallowing errors
   const cacheBefore = this._webviewCalibrationCache;
   let calibration = await getOrCreateWebviewCalibration.call(this);
   const calibrationRan = this._webviewCalibrationCache !== cacheBefore;
-
-  // If an iframe was selected prior to calibration, verify it is still selected
-  if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
-    throw new errors.NoSuchFrameError(
-      `The frame chain '${initialFrames.join('/')}' could not be restored after web coordinate calibration`,
-    );
-  }
+  verifyFrameChainRestored();
 
   // An initial measurement can only be reused if calibration did not need to run
   // and the cached signature matches the exact viewport signature it was measured against.
   const canUseInitial =
-    !calibrationRan &&
-    initialCoords !== undefined &&
-    initialSignature !== undefined &&
-    this._webviewCalibrationCache?.signature === initialSignature;
+    !calibrationRan && initial !== undefined && this._webviewCalibrationCache?.signature === initial.signature;
 
-  let latestCoords: Position = canUseInitial && initialCoords ? initialCoords : {x: 0, y: 0};
+  let latestCoords: Position = canUseInitial ? initial.coords : {x: 0, y: 0};
   let shouldMeasure = !canUseInitial;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  for (let attempt = 0; attempt < MAX_SETTLE_ATTEMPTS; attempt++) {
     const signatureBefore = this._webviewCalibrationCache?.signature;
     if (shouldMeasure) {
       latestCoords = await measureFn();
@@ -371,15 +373,17 @@ export async function measureAndTranslateWebCoords(
     const signatureAfter = await computeViewportSignature.call(this);
     if (signatureBefore && signatureAfter !== signatureBefore) {
       this.log.debug(
-        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${maxAttempts})`,
+        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${MAX_SETTLE_ATTEMPTS})`,
       );
-      if (attempt < maxAttempts - 1) {
-        // Refresh calibration for the new viewport signature before the next measurement
-        calibration = await getOrCreateWebviewCalibration.call(this);
+      // Refresh calibration for the new viewport signature before retrying or falling back
+      calibration = await getOrCreateWebviewCalibration.call(this);
+      verifyFrameChainRestored();
+
+      if (attempt < MAX_SETTLE_ATTEMPTS - 1) {
         continue;
       }
       this.log.warn(
-        `Viewport geometry did not settle after ${maxAttempts} attempts; proceeding with latest measured coordinates`,
+        `Viewport geometry did not settle after ${MAX_SETTLE_ATTEMPTS} attempts; proceeding with latest measured coordinates`,
       );
     }
 

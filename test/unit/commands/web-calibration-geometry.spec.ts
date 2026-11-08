@@ -478,11 +478,12 @@ describe('native web tap atom requests', () => {
     }
   });
 
-  it('respects configurable nativeWebTapMaxSettleAttempts setting', async () => {
+  it('refreshes calibration on the final attempt when viewport does not settle, using the latest transform for the fallback tap', async () => {
     const driver = new XCUITestDriver({} as any);
-    await driver.updateSettings({nativeWebTapStrict: true, nativeWebTapMaxSettleAttempts: 1});
+    await driver.updateSettings({nativeWebTapStrict: true});
     driver.curContext = 'WEBVIEW_test';
-    const rect = {x: 0, y: 0, width: 400, height: 600};
+    const rect = {x: 0, y: 50, width: 400, height: 600};
+    const nativeTaps: {x: number; y: number}[] = [];
     let viewportHeight = 400;
 
     const sandbox = sinon.createSandbox();
@@ -490,7 +491,9 @@ describe('native web tap atom requests', () => {
       sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
       sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
       sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
-      sandbox.stub(driver, 'mobileTap').resolves();
+      sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+        nativeTaps.push({x, y});
+      });
       const warnSpy = sandbox.spy(driver.log, 'warn');
       driver._remote = {
         executeAtom: async () => true,
@@ -524,13 +527,92 @@ describe('native web tap atom requests', () => {
       execute.withArgs('get_top_left_coordinates').callsFake(async () => {
         measurementCount++;
         viewportHeight += 10;
+        if (measurementCount === 3) {
+          // Viewport moves native offset to Y=150 on the 3rd (final) measurement
+          rect.y = 150;
+        }
         return {x: 50, y: 200};
       });
 
       await driver.nativeWebTap('target');
 
-      assert.equal(measurementCount, 1);
-      assert.ok(warnSpy.calledWithMatch(/Viewport geometry did not settle after 1 attempts/));
+      assert.equal(measurementCount, 3);
+      assert.ok(warnSpy.calledWithMatch(/Viewport geometry did not settle after 3 attempts/));
+      // Fallback tap uses refreshed calibration for attempt 3 (rect.y = 150) + web center (200 + 25 = 225) = 375
+      const finalTap = nativeTaps[nativeTaps.length - 1];
+      assert.equal(finalTap.y, 375);
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('throws NoSuchFrameError if in-loop recalibration fails to restore iframe selection', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    driver.curContext = 'WEBVIEW_test';
+    driver.curWebFrames = ['frame-1'];
+    const rect = {x: 0, y: 50, width: 400, height: 600};
+    let viewportHeight = 400;
+
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+      sandbox.stub(driver, 'mobileTap').resolves();
+
+      let calibrationCalls = 0;
+      driver._remote = {
+        executeAtom: async () => {
+          if (calibrationCalls > 1) {
+            // Frame restoration throws on subsequent in-loop recalibration
+            throw new Error('Frame detached');
+          }
+          return true;
+        },
+        execute: async (script: string) => {
+          if (script.includes('createElement')) {
+            calibrationCalls++;
+            return;
+          }
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return [
+              {x: 193, y: 293},
+              {x: 207, y: 307},
+            ];
+          }
+          if (script.includes('delete window.__appiumCalibrationOverlay')) {
+            if (calibrationCalls > 1) {
+              // Context listener cleared frame chain and restore failed
+              driver.curWebFrames = [];
+            }
+            return;
+          }
+          return {
+            innerWidth: 400,
+            innerHeight: viewportHeight,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: viewportHeight,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
+
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('get_size').callsFake(async () => ({width: 100, height: 50}));
+      execute.withArgs('get_top_left_coordinates').callsFake(async () => {
+        viewportHeight += 10;
+        return {x: 50, y: 200};
+      });
+
+      await assert.rejects(
+        async () => await driver.nativeWebTap('target'),
+        /The frame chain 'frame-1' could not be restored after web coordinate calibration/,
+      );
     } finally {
       sandbox.restore();
     }

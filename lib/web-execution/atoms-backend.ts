@@ -482,8 +482,12 @@ export class AtomsBackend implements WebExecutionBackend {
           y: currentCenter.y + offsetY,
         };
       },
-      signatureBefore ? {x: center.x + offsetX, y: center.y + offsetY} : undefined,
-      signatureBefore,
+      signatureBefore
+        ? {
+            coords: {x: center.x + offsetX, y: center.y + offsetY},
+            signature: signatureBefore,
+          }
+        : undefined,
     );
   }
 }
