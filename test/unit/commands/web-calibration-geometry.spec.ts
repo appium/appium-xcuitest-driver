@@ -536,6 +536,74 @@ describe('native web tap atom requests', () => {
     }
   });
 
+  it('refreshes calibration and comparison signature when viewport shifts and then stabilizes', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    driver.curContext = 'WEBVIEW_test';
+    const rect = {x: 0, y: 50, width: 400, height: 600};
+    const nativeTaps: {x: number; y: number}[] = [];
+    let measurements = 0;
+
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
+      sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
+        nativeTaps.push({x, y});
+      });
+      const warnSpy = sandbox.spy(driver.log, 'warn');
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+            return;
+          }
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return [
+              {x: 193, y: 293},
+              {x: 207, y: 307},
+            ];
+          }
+          return {
+            innerWidth: 400,
+            innerHeight: 600,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: 600,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
+
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('get_size').callsFake(async () => ({width: 100, height: 50}));
+      execute.withArgs('get_top_left_coordinates').callsFake(async () => {
+        measurements++;
+        if (measurements === 1) {
+          // Native webview shifts from Y=50 to Y=100 during first measurement and stays at 100
+          rect.y = 100;
+        }
+        return {x: 50, y: 175};
+      });
+
+      await driver.nativeWebTap('target');
+
+      // Verified it re-measured and recalibrated
+      assert.equal(measurements, 2);
+      // No false settling warning because viewport stabilized at Y=100
+      assert.ok(warnSpy.neverCalledWithMatch(/Viewport geometry did not settle/));
+      // Final tap uses refreshed calibration (offset Y=100) + web coords (175 + 25 = 200) = 300
+      const finalTap = nativeTaps[nativeTaps.length - 1];
+      assert.equal(finalTap.y, 300);
+    } finally {
+      sandbox.restore();
+    }
+  });
+
   it('routes clickWebCoords with static numbers through measureAndTranslateWebCoords', async () => {
     const driver = new XCUITestDriver({} as any);
     driver.curContext = 'WEBVIEW_test';

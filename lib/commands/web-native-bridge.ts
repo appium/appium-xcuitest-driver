@@ -331,13 +331,16 @@ export async function measureAndTranslateWebCoords(
   this: XCUITestDriver,
   measureFn: () => Promise<Position>,
   initialCoords?: Position,
+  initialSignature?: string,
 ): Promise<Position> {
   const initialFrames = [...this.curWebFrames];
   const initialContext = this.curContext;
   const maxAttempts = Math.max(1, this.settings.getSettings().nativeWebTapMaxSettleAttempts ?? 3);
 
   // Prime calibration upfront without swallowing errors
-  const calibration = await getOrCreateWebviewCalibration.call(this);
+  const cacheBefore = this._webviewCalibrationCache;
+  let calibration = await getOrCreateWebviewCalibration.call(this);
+  const calibrationRan = this._webviewCalibrationCache !== cacheBefore;
 
   // If an iframe was selected prior to calibration, verify it is still selected
   if (initialFrames.length && this.curContext === initialContext && isEmpty(this.curWebFrames)) {
@@ -346,13 +349,23 @@ export async function measureAndTranslateWebCoords(
     );
   }
 
-  let latestCoords: Position = initialCoords ?? {x: 0, y: 0};
+  // An initial measurement can only be reused if calibration did not need to run
+  // and the cached signature matches the exact viewport signature it was measured against.
+  const canUseInitial =
+    !calibrationRan &&
+    initialCoords !== undefined &&
+    initialSignature !== undefined &&
+    this._webviewCalibrationCache?.signature === initialSignature;
+
+  let latestCoords: Position = canUseInitial && initialCoords ? initialCoords : {x: 0, y: 0};
+  let shouldMeasure = !canUseInitial;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const signatureBefore = this._webviewCalibrationCache?.signature;
-    if (attempt > 0 || !initialCoords) {
+    if (shouldMeasure) {
       latestCoords = await measureFn();
     }
+    shouldMeasure = true;
 
     // Verify the viewport hasn't shifted while measuring (e.g. keyboard animation still settling)
     const signatureAfter = await computeViewportSignature.call(this);
@@ -361,6 +374,8 @@ export async function measureAndTranslateWebCoords(
         `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${maxAttempts})`,
       );
       if (attempt < maxAttempts - 1) {
+        // Refresh calibration for the new viewport signature before the next measurement
+        calibration = await getOrCreateWebviewCalibration.call(this);
         continue;
       }
       this.log.warn(

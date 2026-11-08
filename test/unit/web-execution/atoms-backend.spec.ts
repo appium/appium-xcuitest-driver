@@ -637,6 +637,64 @@ describe('AtomsBackend', function () {
     assert.strictEqual(proxiedAction.y, 355);
   });
 
+  it('performActions discards initialCoords and re-measures when cache was warmed but calibration had to run due to open keyboard', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    driver.webElementsCache.set(':wdc:target', ':wdc:target');
+    let keyboardOpen = true;
+
+    // Seed cache with closed-keyboard signature
+    seedIdentityCalibration();
+
+    sandbox.stub(driver, 'mobileTap').callsFake(async () => {
+      keyboardOpen = false;
+    });
+
+    remoteStub.execute.callsFake(async (script: string) => {
+      if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+        return;
+      }
+      if (script.includes('return window.__appiumCalibrationTaps')) {
+        return [
+          {x: 193, y: 293},
+          {x: 207, y: 307},
+        ];
+      }
+      return {
+        innerWidth: 400,
+        innerHeight: keyboardOpen ? 300 : 600,
+        isScrolledToTop: true,
+        visualViewportWidth: 400,
+        visualViewportHeight: keyboardOpen ? 300 : 600,
+        visualViewportOffsetLeft: 0,
+        visualViewportOffsetTop: 0,
+        visualViewportScale: 1,
+      };
+    });
+
+    proxyStub.withArgs('/element/webview/rect', 'GET').resolves({x: 0, y: 0, width: 400, height: 600});
+
+    executeAtomStub.withArgs('execute_script').callsFake(async () => ({
+      // Element is at y=150 while keyboard is open, y=350 after keyboard closes
+      x: 50,
+      y: keyboardOpen ? 150 : 350,
+    }));
+
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:target'}, x: 5, y: 5}],
+      },
+    ] as any;
+
+    await backend.performActions(actions);
+
+    const proxiedAction = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions[0];
+    assert.strictEqual(proxiedAction.x, 55);
+    // Verifies it tapped the settled position (350 + 5 = 355), NOT the stale pre-calibration position (150 + 5 = 155)
+    assert.strictEqual(proxiedAction.y, 355);
+  });
+
   it('performActions leaves a native element origin untouched - it is shaped just like a web element, but is not one', async function () {
     const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
     // never cached via the web-execution machinery, so this is a native element, not a web one

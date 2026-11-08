@@ -483,6 +483,7 @@ export class AtomsBackend implements WebExecutionBackend {
         };
       },
       signatureBefore ? {x: center.x + offsetX, y: center.y + offsetY} : undefined,
+      signatureBefore,
     );
   }
 }
