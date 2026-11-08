@@ -1,3 +1,13 @@
+## [13.0.8](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.7...v13.0.8) (2026-11-08)
+
+### Bug Fixes
+
+* handle native Back across Duo navigation layouts ([#3132](https://github.com/appium/appium-xcuitest-driver/issues/3132)) ([e0d3da6](https://github.com/appium/appium-xcuitest-driver/commit/e0d3da647cc1167f50a1d64d83df5cf73531ede8))
+
+### Code Refactoring
+
+* use ConditionUnmetError instead of message matching ([#3134](https://github.com/appium/appium-xcuitest-driver/issues/3134)) ([fb061a9](https://github.com/appium/appium-xcuitest-driver/commit/fb061a9eef165057bc7f0d4a5db2b593bfe29f22))
+
 ## [13.0.7](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.6...v13.0.7) (2026-11-05)
 
 ### Bug Fixes
