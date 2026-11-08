@@ -110,6 +110,10 @@
   "optionalDependencies": {
     "sharp": "^0.x"
   },
+  "overrides": {
+    "glob": "14.0.4",
+    "minimatch": "11.0.5"
+  },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"
