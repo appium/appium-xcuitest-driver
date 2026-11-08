@@ -276,6 +276,8 @@ export interface CertificateList {
  * Returned by `mobile: deviceInfo` command.
  */
 export interface DeviceInfo {
+  /** Hinge-reading support reported by WDA. Absent in older WDA builds. */
+  hasHinge?: boolean;
   currentLocale: string;
   timeZone: string;
   name: string;

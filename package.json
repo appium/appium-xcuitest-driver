@@ -75,7 +75,7 @@
     "appium-ios-remotexpc": "^5.28.5",
     "appium-ios-simulator": "^10.10.0",
     "appium-remote-debugger": "^18.0.3",
-    "appium-webdriveragent": "^16.17.10",
+    "appium-webdriveragent": "^16.18.0",
     "appium-xcode": "^7.1.1",
     "asyncbox": "^6.6.0",
     "axios": "^1.18.0",
