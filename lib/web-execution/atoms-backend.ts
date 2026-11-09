@@ -6,6 +6,7 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
+import {measureAndTranslateWebCoords} from '../commands/web-native-bridge.js';
 import {checkForAlert, createJSCookie, getScriptTimeoutMs} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
@@ -445,7 +446,7 @@ export class AtomsBackend implements WebExecutionBackend {
   /**
    * Converts a single web element origin (plus its action's own `x`/`y` offset from the element's
    * W3C "in-view center point" - its bounding rectangle, clipped to the current viewport) into
-   * native screen coordinates via {@linkcode translateWebCoords}'s calibrated transform.
+   * native screen coordinates via {@linkcode measureAndTranslateWebCoords}'s calibrated transform.
    *
    * @see {@linkcode resolveWebElementActionOrigins}
    * @throws {errors.MoveTargetOutOfBoundsError} If the element is currently entirely out of view
@@ -456,38 +457,28 @@ export class AtomsBackend implements WebExecutionBackend {
     offsetY: number,
   ): Promise<Position> {
     const atomsElement = this.driver.getAtomsElement(origin);
+    const measure = async (): Promise<Position> => {
+      const center = (await this.driver.executeAtom('execute_script', [
+        IN_VIEW_CENTER_POINT_SCRIPT,
+        [atomsElement],
+      ])) as Position | null;
+      if (!center) {
+        throw new errors.MoveTargetOutOfBoundsError(
+          'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
+        );
+      }
+      return {
+        x: center.x + offsetX,
+        y: center.y + offsetY,
+      };
+    };
+
     const signatureBefore = this.driver._webviewCalibrationCache?.signature;
-    const center = (await this.driver.executeAtom('execute_script', [
-      IN_VIEW_CENTER_POINT_SCRIPT,
-      [atomsElement],
-    ])) as Position | null;
-    if (!center) {
-      throw new errors.MoveTargetOutOfBoundsError(
-        'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
-      );
-    }
-    return await this.driver.measureAndTranslateWebCoords(
-      async () => {
-        const currentCenter = (await this.driver.executeAtom('execute_script', [
-          IN_VIEW_CENTER_POINT_SCRIPT,
-          [atomsElement],
-        ])) as Position | null;
-        if (!currentCenter) {
-          throw new errors.MoveTargetOutOfBoundsError(
-            'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
-          );
-        }
-        return {
-          x: currentCenter.x + offsetX,
-          y: currentCenter.y + offsetY,
-        };
-      },
-      signatureBefore
-        ? {
-            coords: {x: center.x + offsetX, y: center.y + offsetY},
-            signature: signatureBefore,
-          }
-        : undefined,
+    const initialCoords = await measure();
+    return await measureAndTranslateWebCoords.call(
+      this.driver,
+      measure,
+      signatureBefore ? {coords: initialCoords, signature: signatureBefore} : undefined,
     );
   }
 }

@@ -1,7 +1,7 @@
 import type {Element, Position, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
-import {retryInterval} from 'asyncbox';
+import {retry, retryInterval} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
 import type {CalibrationCacheEntry, CalibrationData, CalibrationSample, ViewportState} from '../types.js';
@@ -16,9 +16,6 @@ declare module '../driver.js' {
     clickWebCoords(coordsOrMeasureFn: number | (() => Promise<Position>), y?: number): Promise<void>;
     nativeWebTap(...args: Parameters<typeof nativeWebTap>): ReturnType<typeof nativeWebTap>;
     translateWebCoords(...args: Parameters<typeof translateWebCoords>): ReturnType<typeof translateWebCoords>;
-    measureAndTranslateWebCoords(
-      ...args: Parameters<typeof measureAndTranslateWebCoords>
-    ): ReturnType<typeof measureAndTranslateWebCoords>;
     mobileCalibrateWebToRealCoordinatesTranslation(
       ...args: Parameters<typeof mobileCalibrateWebToRealCoordinatesTranslation>
     ): ReturnType<typeof mobileCalibrateWebToRealCoordinatesTranslation>;
@@ -276,7 +273,7 @@ export async function clickWebCoords(
 ): Promise<void> {
   const measureFn =
     typeof coordsOrMeasureFn === 'function' ? coordsOrMeasureFn : async () => ({x: coordsOrMeasureFn, y: y ?? 0});
-  const {x: translatedX, y: translatedY} = await this.measureAndTranslateWebCoords(measureFn);
+  const {x: translatedX, y: translatedY} = await measureAndTranslateWebCoords.call(this, measureFn);
   await this.mobileTap(translatedX, translatedY);
 }
 
@@ -310,6 +307,8 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
     };
   });
 }
+
+class ViewportUnsettledError extends Error {}
 
 /**
  * Safely measures element coordinates in the webview and translates them to native
@@ -362,35 +361,37 @@ export async function measureAndTranslateWebCoords(
   let latestCoords: Position = canUseInitial ? initial.coords : {x: 0, y: 0};
   let shouldMeasure = !canUseInitial;
 
-  for (let attempt = 0; attempt < MAX_SETTLE_ATTEMPTS; attempt++) {
-    const signatureBefore = this._webviewCalibrationCache?.signature;
-    if (shouldMeasure) {
-      latestCoords = await measureFn();
-    }
-    shouldMeasure = true;
-
-    // Verify the viewport hasn't shifted while measuring (e.g. keyboard animation still settling)
-    const signatureAfter = await computeViewportSignature.call(this);
-    if (signatureBefore && signatureAfter !== signatureBefore) {
-      this.log.debug(
-        `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport (attempt ${attempt + 1}/${MAX_SETTLE_ATTEMPTS})`,
-      );
-      // Refresh calibration for the new viewport signature before retrying or falling back
-      calibration = await getOrCreateWebviewCalibration.call(this);
-      verifyFrameChainRestored();
-
-      if (attempt < MAX_SETTLE_ATTEMPTS - 1) {
-        continue;
+  try {
+    return (await retry(MAX_SETTLE_ATTEMPTS, async () => {
+      const signatureBefore = this._webviewCalibrationCache?.signature;
+      if (shouldMeasure) {
+        latestCoords = await measureFn();
       }
-      this.log.warn(
-        `Viewport geometry did not settle after ${MAX_SETTLE_ATTEMPTS} attempts; proceeding with latest measured coordinates`,
-      );
-    }
+      shouldMeasure = true;
 
+      // Verify the viewport hasn't shifted while measuring (e.g. keyboard animation still settling)
+      const signatureAfter = await computeViewportSignature.call(this);
+      if (signatureBefore && signatureAfter !== signatureBefore) {
+        this.log.debug(
+          `Viewport signature changed from '${signatureBefore}' to '${signatureAfter}' while measuring element; settling viewport`,
+        );
+        // Refresh calibration for the new viewport signature before retrying or falling back
+        calibration = await getOrCreateWebviewCalibration.call(this);
+        verifyFrameChainRestored();
+        throw new ViewportUnsettledError('Viewport geometry has not settled');
+      }
+
+      return await translateWebCoords.call(this, latestCoords.x, latestCoords.y, calibration);
+    })) as Position;
+  } catch (err) {
+    if (!(err instanceof ViewportUnsettledError)) {
+      throw err;
+    }
+    this.log.warn(
+      `Viewport geometry did not settle after ${MAX_SETTLE_ATTEMPTS} attempts; proceeding with latest measured coordinates`,
+    );
     return await translateWebCoords.call(this, latestCoords.x, latestCoords.y, calibration);
   }
-
-  return await translateWebCoords.call(this, latestCoords.x, latestCoords.y, calibration);
 }
 
 /**

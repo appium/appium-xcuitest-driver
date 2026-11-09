@@ -149,7 +149,10 @@ describe('native web tap atom requests', () => {
       const execute = sandbox.stub(driver, 'executeAtom');
       execute.withArgs('get_size').returns(size);
       execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
-      sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn) => await fn());
+      sandbox.stub(driver, 'clickWebCoords').callsFake(async (fn: any) => {
+        const coords = typeof fn === 'function' ? await fn() : {x: fn, y: 0};
+        await driver.mobileTap(coords.x, coords.y);
+      });
       const tap = sandbox.stub(driver, 'mobileTap').resolves();
       const result = driver.nativeWebTap('target');
       try {
@@ -173,7 +176,11 @@ describe('native web tap atom requests', () => {
     try {
       sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
       const execute = sandbox.stub(driver, 'executeAtom').rejects(new Error('transport failed'));
-      sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn) => await fn());
+      sandbox.stub(driver, 'clickWebCoords').callsFake(async (fn: any) => {
+        if (typeof fn === 'function') {
+          await fn();
+        }
+      });
       const tap = sandbox.stub(driver, 'mobileTap').resolves();
       await assert.rejects(driver.nativeWebTap('target'), /transport failed/);
       assert.equal(execute.callCount, 1);
@@ -195,7 +202,10 @@ describe('native web tap atom requests', () => {
       execute.withArgs('get_size').resolves({width: 100, height: 80});
       execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
       const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
-      sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn) => await fn());
+      sandbox.stub(driver, 'clickWebCoords').callsFake(async (fn: any) => {
+        const coords = typeof fn === 'function' ? await fn() : {x: fn, y: 0};
+        await driver.mobileTap(coords.x, coords.y);
+      });
       const tap = sandbox.stub(driver, 'mobileTap').resolves();
 
       await driver.nativeWebTap('target');
@@ -686,22 +696,40 @@ describe('native web tap atom requests', () => {
     }
   });
 
-  it('routes clickWebCoords with static numbers through measureAndTranslateWebCoords', async () => {
+  it('routes clickWebCoords with static numbers through calibration and taps the translated position', async () => {
     const driver = new XCUITestDriver({} as any);
     driver.curContext = 'WEBVIEW_test';
     const sandbox = sinon.createSandbox();
     try {
-      const measureStub = sandbox.stub(driver, 'measureAndTranslateWebCoords').callsFake(async (fn: any) => {
-        const coords = await fn();
-        assert.deepEqual(coords, {x: 50, y: 75});
-        return {x: 123, y: 456};
-      });
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').resolves({x: 10, y: 20, width: 400, height: 600});
       const mobileTapStub = sandbox.stub(driver, 'mobileTap').resolves();
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return [
+              {x: 193, y: 293},
+              {x: 207, y: 307},
+            ];
+          }
+          return {
+            innerWidth: 400,
+            innerHeight: 600,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: 600,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
 
       await driver.clickWebCoords(50, 75);
 
-      assert.equal(measureStub.callCount, 1);
-      assert.ok(mobileTapStub.calledOnceWithExactly(123, 456));
+      assert.deepStrictEqual(mobileTapStub.lastCall.args, [60, 95]);
     } finally {
       sandbox.restore();
     }
