@@ -463,6 +463,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     logAllCommunication: this.opts.safariLogAllCommunication,
     logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
     webInspectorMaxFrameLength: this.opts.safariWebInspectorMaxFrameLength,
+    webInspectorSettings: this.settings.getSettings().webInspectorSettings,
     pageLoadStrategy: this.caps.pageLoadStrategy,
   };
 

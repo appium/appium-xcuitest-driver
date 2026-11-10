@@ -507,6 +507,66 @@ Setting this value to `0` disables idling checks completely (not recommended).
 
 This property can also be set using the [`appium:waitForIdleTimeout`](./capabilities.md) capability.
 
+## webInspectorSettings
+
+| Type | Default |
+| -- | -- |
+| `object` | `{}` |
+
+Overrides Web Inspector page settings, CSS user preferences, and the User-Agent for Safari and
+inspectable webviews. The policy applies to currently tracked pages, new and provisional page
+targets, and subsequent debugger connections. It can be set before switching to a web context.
+
+The object accepts the following optional groups. Names and values are case-sensitive; unknown
+keys, invalid values, and `null` are rejected.
+
+| Group | Keys | Values |
+| -- | -- | -- |
+| `pageSettings` | `AuthorAndUserStylesEnabled`, `ImagesEnabled`, `ScriptEnabled`, `WebSecurityEnabled`, `MediaCaptureRequiresSecureConnection`, `ICECandidateFilteringEnabled` | Boolean |
+| `userPreferences` | `PrefersReducedMotion` | `Reduce`, `NoPreference` |
+| `userPreferences` | `PrefersContrast` | `More`, `NoPreference` |
+| `userPreferences` | `PrefersColorScheme` | `Light`, `Dark` |
+| `userAgent` | — | String |
+
+For example, using WebdriverIO:
+
+```js
+await driver.updateSettings({
+  webInspectorSettings: {
+    pageSettings: {WebSecurityEnabled: false},
+    userPreferences: {PrefersColorScheme: 'Dark'},
+    userAgent: 'MyTestBrowser/1.0',
+  },
+});
+```
+
+Setting `WebSecurityEnabled` to `false` allows cross-origin iframe automation by disabling the
+inspected page's same-origin security checks. Use it only for pages whose security restrictions
+you intend to disable during testing.
+
+Each update replaces the **entire** `webInspectorSettings` object. Omitted entries restore browser
+or system defaults; they do not retain the previous override. Pass the complete object to keep
+other overrides, or clear all overrides managed by this setting with:
+
+```js
+await driver.updateSettings({webInspectorSettings: {}});
+```
+
+Reload or navigate after changing document/resource-dependent page settings. CSS preferences
+update immediately. User-Agent changes affect subsequent requests; reload to refresh an
+already-read `navigator.userAgent`. Updating this setting does not reload pages automatically.
+`NoPreference` is an explicit CSS value; omit the preference to restore the system preference.
+
+Support depends on the device and OS version. Before attachment, a successful update confirms
+input validation and storage only. Unsupported overrides during target initialization log warnings
+and allow attachment to continue. A rejected runtime update retains the previous policy and
+attempts to roll back changes already applied; rollback failures can leave individual pages with
+different values. Await each update before issuing commands that depend on it.
+
+See the remote debugger's [Web Inspector settings documentation](https://github.com/appium/appium-ios/blob/main/packages/remote-debugger/docs/web-inspector-settings.md)
+for device verification scope, timeout recovery, and interactions with page-scoped User-Agent
+overrides.
+
 ## webScreenshotMode
 
 | Type | Default |
