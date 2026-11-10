@@ -828,6 +828,8 @@ export class XCUITestDriver
         new RemoteDebugger({
           // RemoteDebugger's older logger type requires errorAndThrow, removed in
           // Appium 4. It does not call that method; keep the session logger intact.
+          // TODO: Remove this cast and the matching test casts once appium-remote-debugger
+          // adopts Appium 4 dependencies (@appium/types 2.x) and we require that release.
           log: this.log as unknown as RemoteDebuggerOptions['log'],
         });
       await remote.setWebInspectorPageSettings(value);
