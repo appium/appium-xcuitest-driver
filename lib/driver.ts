@@ -823,7 +823,7 @@ export class XCUITestDriver
     if (key === 'webInspectorSettings') {
       // Validate even before a webview is attached. Future debugger instances receive
       // the saved setting in getNewRemoteDebugger; no connection is opened here.
-      const remote = this._remote ?? new RemoteDebugger({log: this.log});
+      const remote = this._remote ?? new RemoteDebugger();
       await remote.setWebInspectorPageSettings(value);
       return;
     }

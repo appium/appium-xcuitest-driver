@@ -32,7 +32,7 @@ describe('webInspectorSettings', function () {
   it('replaces and clears the policy on an existing debugger without sending it to WDA', async function () {
     const driver = new XCUITestDriver({} as any);
     const proxy = sinon.stub(driver, 'proxyCommand');
-    driver._remote = new RemoteDebugger({log: driver.log});
+    driver._remote = new RemoteDebugger();
     const setter = sinon.spy(driver._remote, 'setWebInspectorPageSettings');
     await driver.updateSettings({webInspectorSettings: {pageSettings: {ImagesEnabled: false}}});
     await driver.updateSettings({webInspectorSettings: {userPreferences: {PrefersColorScheme: 'Dark'}}});
@@ -64,7 +64,7 @@ describe('webInspectorSettings', function () {
     const driver = new XCUITestDriver({} as any);
     const previous = {pageSettings: {ImagesEnabled: false}};
     await driver.updateSettings({webInspectorSettings: previous});
-    driver._remote = new RemoteDebugger({log: driver.log, webInspectorSettings: previous});
+    driver._remote = new RemoteDebugger({webInspectorSettings: previous});
     sinon.stub(driver._remote, 'setWebInspectorPageSettings').rejects(new Error('Unsupported override'));
     await assert.rejects(driver.updateSettings({webInspectorSettings: {userAgent: 'Test'}}), /Unsupported override/);
     assert.deepEqual((await driver.getSettings()).webInspectorSettings, previous);
