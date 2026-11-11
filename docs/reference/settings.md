@@ -515,18 +515,60 @@ This property can also be set using the [`appium:waitForIdleTimeout`](./capabili
 
 Overrides Web Inspector page settings, CSS user preferences, and the User-Agent for Safari and
 inspectable webviews. The policy applies to currently tracked pages, new and provisional page
-targets, and subsequent debugger connections. It can be set before switching to a web context.
+targets, and subsequent debugger connections. This is one policy per Appium session, not a separate
+setting for each webview. Switching webviews does not require submitting the policy again: tracked
+targets receive updates, and newly attached targets receive the retained policy during initialization.
+
+Updates are allowed in `NATIVE_APP` context. Before a remote debugger exists, the driver validates
+and saves the policy without opening a connection; this allows overrides to be present when the
+first webview attaches. If a debugger already exists, the update is forwarded to it even while the
+current context is native. Native application UI settings are not changed. An existing disconnected
+debugger can reject the update; reconnect before retrying.
+
+`getSettings()` returns the last successfully saved `webInspectorSettings` policy, regardless of the
+current context. It does not query each webview's effective values or confirm that every override
+was applied. Unsupported settings, failed rollback, or timed-out targets can leave a page's actual
+state different from the saved policy. Web Inspector does not provide corresponding getters for
+these overrides.
 
 The object accepts the following optional groups. Names and values are case-sensitive; unknown
 keys, invalid values, and `null` are rejected.
 
-| Group | Keys | Values |
-| -- | -- | -- |
-| `pageSettings` | `AuthorAndUserStylesEnabled`, `ImagesEnabled`, `ScriptEnabled`, `WebSecurityEnabled`, `MediaCaptureRequiresSecureConnection`, `ICECandidateFilteringEnabled` | Boolean |
-| `userPreferences` | `PrefersReducedMotion` | `Reduce`, `NoPreference` |
-| `userPreferences` | `PrefersContrast` | `More`, `NoPreference` |
-| `userPreferences` | `PrefersColorScheme` | `Light`, `Dark` |
-| `userAgent` | — | String |
+### Page settings
+
+Each key below belongs inside `pageSettings` and accepts a boolean. `true` or `false` explicitly
+forces the described behavior; omitting the key restores the browser default, which need not be
+`true`. Reload or navigate after changing these settings to observe document/resource effects.
+
+| Key | Effect |
+| -- | -- |
+| `AuthorAndUserStylesEnabled` | `true` enables author and user styles; `false` disables them, leaving browser default styling. Useful for inspecting content without the page's CSS. |
+| `ImagesEnabled` | `true` enables image loading; `false` disables it. Already loaded images may require a reload to observe the change. |
+| `ScriptEnabled` | `true` enables page JavaScript; `false` disables it. Disabling scripts can also prevent JavaScript-based Appium web commands from working. |
+| `WebSecurityEnabled` | `true` enables WebKit's web security checks; `false` relaxes them, allowing cross-origin iframe automation. |
+| `MediaCaptureRequiresSecureConnection` | `true` requires a secure connection for media capture; `false` relaxes that requirement. This does not grant camera/microphone permission or guarantee that capture is available. |
+| `ICECandidateFilteringEnabled` | `true` enables WebRTC ICE candidate filtering; `false` disables that filtering and may expose additional network address candidates to the page. It does not guarantee a successful WebRTC connection. |
+
+### CSS user preferences
+
+Each key below belongs inside `userPreferences`. These overrides affect the preferences exposed
+to the page, rather than changing the device's system settings. CSS media queries and
+`matchMedia()` can respond to them; the page must implement the corresponding styles or behavior.
+
+| Key | Values and effect |
+| -- | -- |
+| `PrefersReducedMotion` | `Reduce` requests reduced motion through `prefers-reduced-motion`; `NoPreference` reports no such preference. This does not itself stop all animations. |
+| `PrefersContrast` | `More` requests higher contrast through `prefers-contrast`; `NoPreference` reports no contrast preference. |
+| `PrefersColorScheme` | `Light` or `Dark` selects the corresponding `prefers-color-scheme` preference. This does not automatically recolor a page that lacks support for it. |
+
+### User-Agent
+
+The top-level `userAgent` key accepts a string used to override the inspected page's User-Agent.
+It affects subsequent requests; reload to refresh an already-read `navigator.userAgent`.
+Changing this string does not emulate another browser engine or add its features. Omit the key
+in the next complete policy to remove this override.
+
+### Updating and clearing the policy
 
 For example, using WebdriverIO:
 
