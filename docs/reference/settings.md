@@ -570,29 +570,13 @@ in the next complete policy to remove this override.
 
 ### Updating and clearing the policy
 
-For example, using WebdriverIO:
-
-```js
-await driver.updateSettings({
-  webInspectorSettings: {
-    pageSettings: {WebSecurityEnabled: false},
-    userPreferences: {PrefersColorScheme: 'Dark'},
-    userAgent: 'MyTestBrowser/1.0',
-  },
-});
-```
-
 Setting `WebSecurityEnabled` to `false` allows cross-origin iframe automation by disabling the
 inspected page's same-origin security checks. Use it only for pages whose security restrictions
 you intend to disable during testing.
 
 Each update replaces the **entire** `webInspectorSettings` object. Omitted entries restore browser
 or system defaults; they do not retain the previous override. Pass the complete object to keep
-other overrides, or clear all overrides managed by this setting with:
-
-```js
-await driver.updateSettings({webInspectorSettings: {}});
-```
+other overrides. Set `webInspectorSettings` to `{}` to clear all overrides managed by this setting.
 
 Reload or navigate after changing document/resource-dependent page settings. CSS preferences
 update immediately. User-Agent changes affect subsequent requests; reload to refresh an
