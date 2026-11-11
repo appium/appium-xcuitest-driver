@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {afterEach, describe, it} from 'node:test';
 
-import {RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
+import {RemoteDebugger} from 'appium-remote-debugger';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../lib/driver.js';
@@ -34,7 +34,7 @@ describe('webInspectorSettings', function () {
   it('replaces and clears the policy on an existing debugger without sending it to WDA', async function () {
     const driver = new XCUITestDriver({} as any);
     const proxy = sinon.stub(driver, 'proxyCommand');
-    driver._remote = new RemoteDebugger({log: driver.log as unknown as RemoteDebuggerOptions['log']});
+    driver._remote = new RemoteDebugger({log: driver.log});
     const setter = sinon.spy(driver._remote, 'setWebInspectorPageSettings');
     await driver.updateSettings({webInspectorSettings: {pageSettings: {ImagesEnabled: false}}});
     await driver.updateSettings({webInspectorSettings: {userPreferences: {PrefersColorScheme: 'Dark'}}});
@@ -67,7 +67,7 @@ describe('webInspectorSettings', function () {
     const previous = {pageSettings: {ImagesEnabled: false}};
     await driver.updateSettings({webInspectorSettings: previous});
     driver._remote = new RemoteDebugger({
-      log: driver.log as unknown as RemoteDebuggerOptions['log'],
+      log: driver.log,
       webInspectorSettings: previous,
     });
     sinon.stub(driver._remote, 'setWebInspectorPageSettings').rejects(new Error('Unsupported override'));

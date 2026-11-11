@@ -12,7 +12,7 @@ import type {
   TimeoutValue,
 } from '@appium/types';
 import {BaseSimulator, type Simulator} from 'appium-ios-simulator';
-import {RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
+import {RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
 import {BaseDriver, DeviceSettings} from 'appium/driver.js';
@@ -823,15 +823,7 @@ export class XCUITestDriver
     if (key === 'webInspectorSettings') {
       // Validate even before a webview is attached. Future debugger instances receive
       // the saved setting in getNewRemoteDebugger; no connection is opened here.
-      const remote =
-        this._remote ??
-        new RemoteDebugger({
-          // RemoteDebugger's older logger type requires errorAndThrow, removed in
-          // Appium 4. It does not call that method; keep the session logger intact.
-          // TODO: Remove this cast and the matching test casts once appium-remote-debugger
-          // adopts Appium 4 dependencies (@appium/types 2.x) and we require that release.
-          log: this.log as unknown as RemoteDebuggerOptions['log'],
-        });
+      const remote = this._remote ?? new RemoteDebugger({log: this.log});
       await remote.setWebInspectorPageSettings(value);
       return;
     }
