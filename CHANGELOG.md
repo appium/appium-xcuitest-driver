@@ -1,3 +1,9 @@
+## [13.0.9](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.8...v13.0.9) (2026-11-12)
+
+### Bug Fixes
+
+* **deps:** bump iOS dependencies to their Appium 4 releases ([#3139](https://github.com/appium/appium-xcuitest-driver/issues/3139)) ([3e38908](https://github.com/appium/appium-xcuitest-driver/commit/3e38908acda9e87431787e0ea89ddeba04887882))
+
 ## [13.0.8](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.7...v13.0.8) (2026-11-08)
 
 ### Bug Fixes
