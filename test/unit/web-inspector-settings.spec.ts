@@ -3,6 +3,7 @@ import {afterEach, describe, it, mock} from 'node:test';
 
 import * as remoteDebuggerModule from 'appium-remote-debugger';
 import {RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
+import {errors} from 'appium/driver.js';
 import sinon from 'sinon';
 
 const createRemoteDebugger = sinon.stub().callsFake((opts: RemoteDebuggerOptions) => new RemoteDebugger(opts));
@@ -33,8 +34,9 @@ describe('webInspectorSettings', function () {
       const policy = {pageSettings: {WebSecurityEnabled: false}, userAgent: 'Test/1.0'};
 
       await driver.updateSettings({webInspectorSettings: policy});
-      sinon.assert.calledOnceWithExactly(setter, policy);
-      assert.equal(setter.firstCall.thisValue.log, driver.log);
+      sinon.assert.notCalled(setter);
+      sinon.assert.notCalled(createRemoteDebugger);
+      assert.deepEqual((await driver.getSettings()).webInspectorSettings, policy);
       assert.equal(driver._remote, null);
       for (let i = 0; i < 2; i++) {
         await driver.getNewRemoteDebugger();
@@ -98,23 +100,41 @@ describe('webInspectorSettings', function () {
     {userPreferences: {PrefersColorScheme: 'dark'}},
     {unknown: true},
   ]) {
-    it(`rejects invalid input before attachment: ${JSON.stringify(value)}`, async function () {
-      const driver = new XCUITestDriver({} as any);
-      await assert.rejects(driver.updateSettings({webInspectorSettings: value}), TypeError);
-      assert.deepEqual((await driver.getSettings()).webInspectorSettings, {});
-    });
+    for (const attached of [false, true]) {
+      it(`rejects invalid input with invalid argument (attached: ${attached}): ${JSON.stringify(value)}`, async function () {
+        const driver = new XCUITestDriver({} as any);
+        const previous = {userAgent: 'Retained/1.0'};
+        await driver.updateSettings({webInspectorSettings: previous});
+        if (attached) {
+          driver._remote = new RemoteDebugger({webInspectorSettings: previous});
+        }
+        const setter = sinon.spy(RemoteDebugger.prototype, 'setWebInspectorPageSettings');
+        await assert.rejects(driver.updateSettings({webInspectorSettings: value}), (err: unknown) => {
+          assert.ok(err instanceof errors.InvalidArgumentError);
+          assert.equal(err.w3cStatus, 400);
+          assert.equal(err.error, 'invalid argument');
+          assert.ok(err.cause instanceof TypeError);
+          assert.equal(err.message, err.cause.message);
+          return true;
+        });
+        sinon.assert.notCalled(setter);
+        assert.deepEqual((await driver.getSettings()).webInspectorSettings, previous);
+      });
+    }
   }
 
-  it('keeps the previous setting when the debugger rejects an update', async function () {
-    const driver = new XCUITestDriver({} as any);
-    const previous = {pageSettings: {ImagesEnabled: false}};
-    await driver.updateSettings({webInspectorSettings: previous});
-    driver._remote = new RemoteDebugger({
-      log: driver.log,
-      webInspectorSettings: previous,
+  for (const failure of [new Error('Unsupported override'), new TypeError('Transport failure')]) {
+    it(`preserves runtime ${failure.name} and the previous setting when application fails`, async function () {
+      const driver = new XCUITestDriver({} as any);
+      const previous = {pageSettings: {ImagesEnabled: false}};
+      await driver.updateSettings({webInspectorSettings: previous});
+      driver._remote = new RemoteDebugger({log: driver.log, webInspectorSettings: previous});
+      sinon.stub(driver._remote, 'setWebInspectorPageSettings').rejects(failure);
+      await assert.rejects(driver.updateSettings({webInspectorSettings: {userAgent: 'Test'}}), (err: unknown) => {
+        assert.equal(err, failure);
+        return true;
+      });
+      assert.deepEqual((await driver.getSettings()).webInspectorSettings, previous);
     });
-    sinon.stub(driver._remote, 'setWebInspectorPageSettings').rejects(new Error('Unsupported override'));
-    await assert.rejects(driver.updateSettings({webInspectorSettings: {userAgent: 'Test'}}), /Unsupported override/);
-    assert.deepEqual((await driver.getSettings()).webInspectorSettings, previous);
-  });
+  }
 });

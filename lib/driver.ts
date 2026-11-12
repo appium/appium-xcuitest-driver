@@ -12,10 +12,10 @@ import type {
   TimeoutValue,
 } from '@appium/types';
 import {BaseSimulator, type Simulator} from 'appium-ios-simulator';
-import {RemoteDebugger} from 'appium-remote-debugger';
+import {validateWebInspectorPageSettings, type RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
-import {BaseDriver, DeviceSettings} from 'appium/driver.js';
+import {BaseDriver, DeviceSettings, errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
@@ -821,10 +821,17 @@ export class XCUITestDriver
   // Core driver methods
   private async onSettingsUpdate(key: string, value: any): Promise<any> {
     if (key === 'webInspectorSettings') {
-      // Validate even before a webview is attached. Future debugger instances receive
-      // the saved setting in getNewRemoteDebugger; no connection is opened here.
-      const remote = this._remote ?? new RemoteDebugger({log: this.log});
-      await remote.setWebInspectorPageSettings(value);
+      try {
+        validateWebInspectorPageSettings(value);
+      } catch (err) {
+        if (err instanceof TypeError) {
+          throw new errors.InvalidArgumentError(err.message, err);
+        }
+        throw err;
+      }
+      // Future debugger instances receive the saved setting in getNewRemoteDebugger.
+      // Keep device/transport failures separate from local validation errors.
+      await this._remote?.setWebInspectorPageSettings(value);
       return;
     }
 
