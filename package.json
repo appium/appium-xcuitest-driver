@@ -72,7 +72,7 @@
   "dependencies": {
     "@appium/css-locator-to-native": "^1.0.1",
     "@appium/strongbox": "^3.0.0-beta.1",
-    "appium-ios-remotexpc": "^6.0.0",
+    "appium-ios-remotexpc": "^6.0.2",
     "appium-ios-simulator": "^11.0.0",
     "appium-remote-debugger": "^19.0.0",
     "appium-webdriveragent": "^17.0.0",
