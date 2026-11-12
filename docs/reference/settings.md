@@ -513,85 +513,37 @@ This property can also be set using the [`appium:waitForIdleTimeout`](./capabili
 | -- | -- |
 | `object` | `{}` |
 
-Overrides Web Inspector page settings, CSS user preferences, and the User-Agent for Safari and
-inspectable webviews. The policy applies to currently tracked pages, new and provisional page
-targets, and subsequent debugger connections. This is one policy per Appium session, not a separate
-setting for each webview. Switching webviews does not require submitting the policy again: tracked
-targets receive updates, and newly attached targets receive the retained policy during initialization.
+Overrides Web Inspector page settings, CSS preferences, and the User-Agent for Safari and
+inspectable webviews. One policy applies to the session's tracked pages, newly attached targets,
+and subsequent debugger connections; switching webviews does not require setting it again.
 
-Updates are allowed in `NATIVE_APP` context. Before a remote debugger exists, the driver validates
-and saves the policy without opening a connection; this allows overrides to be present when the
-first webview attaches. If a debugger already exists, the update is forwarded to it even while the
-current context is native. Native application UI settings are not changed. An existing disconnected
-debugger can reject the update; reconnect before retrying.
+Updates are allowed in `NATIVE_APP`: before attachment they are validated and saved without
+connecting; otherwise they are forwarded to the existing debugger. Native UI settings are unaffected.
+`getSettings()` returns the saved policy, not each webview's effective values or application status.
 
-`getSettings()` returns the last successfully saved `webInspectorSettings` policy, regardless of the
-current context. It does not query each webview's effective values or confirm that every override
-was applied. Unsupported settings, failed rollback, or timed-out targets can leave a page's actual
-state different from the saved policy. Web Inspector does not provide corresponding getters for
-these overrides.
+The optional groups and keys below are case-sensitive. Invalid input returns an `invalid argument`
+error. Each update replaces the **entire** object: omitted entries restore browser/system defaults,
+and `{}` clears the policy.
 
-The object accepts the following optional groups. Names and values are case-sensitive; unknown
-keys, invalid values, and `null` are rejected.
+| Group | Key | Values and effect |
+| -- | -- | -- |
+| `pageSettings` | `AuthorAndUserStylesEnabled` | Boolean; enables/disables author and user CSS, leaving browser default styles when disabled. |
+| `pageSettings` | `ImagesEnabled` | Boolean; enables/disables image loading. |
+| `pageSettings` | `ScriptEnabled` | Boolean; enables/disables page JavaScript. Disabling it can affect JavaScript-based Appium commands. |
+| `pageSettings` | `WebSecurityEnabled` | Boolean; `false` relaxes web security checks, allowing cross-origin iframe automation. |
+| `pageSettings` | `MediaCaptureRequiresSecureConnection` | Boolean; requires/relaxes a secure connection for media capture, without granting capture permissions. |
+| `pageSettings` | `ICECandidateFilteringEnabled` | Boolean; enables/disables WebRTC ICE candidate filtering. Disabling it may expose additional network addresses. |
+| `userPreferences` | `PrefersReducedMotion` | `Reduce` or `NoPreference` for the `prefers-reduced-motion` media query. |
+| `userPreferences` | `PrefersContrast` | `More` or `NoPreference` for the `prefers-contrast` media query. |
+| `userPreferences` | `PrefersColorScheme` | `Light` or `Dark` for the `prefers-color-scheme` media query. |
+| `userAgent` | — | String overriding the page's User-Agent; does not emulate another browser engine. |
 
-### Page settings
+Reload or navigate after document/resource-dependent changes; CSS preferences update immediately.
+Updates do not reload pages automatically. Device support varies, and a saved policy does not
+guarantee that every target accepted it.
 
-Each key below belongs inside `pageSettings` and accepts a boolean. `true` or `false` explicitly
-forces the described behavior; omitting the key restores the browser default, which need not be
-`true`. Reload or navigate after changing these settings to observe document/resource effects.
-
-| Key | Effect |
-| -- | -- |
-| `AuthorAndUserStylesEnabled` | `true` enables author and user styles; `false` disables them, leaving browser default styling. Useful for inspecting content without the page's CSS. |
-| `ImagesEnabled` | `true` enables image loading; `false` disables it. Already loaded images may require a reload to observe the change. |
-| `ScriptEnabled` | `true` enables page JavaScript; `false` disables it. Disabling scripts can also prevent JavaScript-based Appium web commands from working. |
-| `WebSecurityEnabled` | `true` enables WebKit's web security checks; `false` relaxes them, allowing cross-origin iframe automation. |
-| `MediaCaptureRequiresSecureConnection` | `true` requires a secure connection for media capture; `false` relaxes that requirement. This does not grant camera/microphone permission or guarantee that capture is available. |
-| `ICECandidateFilteringEnabled` | `true` enables WebRTC ICE candidate filtering; `false` disables that filtering and may expose additional network address candidates to the page. It does not guarantee a successful WebRTC connection. |
-
-### CSS user preferences
-
-Each key below belongs inside `userPreferences`. These overrides affect the preferences exposed
-to the page, rather than changing the device's system settings. CSS media queries and
-`matchMedia()` can respond to them; the page must implement the corresponding styles or behavior.
-
-| Key | Values and effect |
-| -- | -- |
-| `PrefersReducedMotion` | `Reduce` requests reduced motion through `prefers-reduced-motion`; `NoPreference` reports no such preference. This does not itself stop all animations. |
-| `PrefersContrast` | `More` requests higher contrast through `prefers-contrast`; `NoPreference` reports no contrast preference. |
-| `PrefersColorScheme` | `Light` or `Dark` selects the corresponding `prefers-color-scheme` preference. This does not automatically recolor a page that lacks support for it. |
-
-### User-Agent
-
-The top-level `userAgent` key accepts a string used to override the inspected page's User-Agent.
-It affects subsequent requests; reload to refresh an already-read `navigator.userAgent`.
-Changing this string does not emulate another browser engine or add its features. Omit the key
-in the next complete policy to remove this override.
-
-### Updating and clearing the policy
-
-Setting `WebSecurityEnabled` to `false` allows cross-origin iframe automation by disabling the
-inspected page's same-origin security checks. Use it only for pages whose security restrictions
-you intend to disable during testing.
-
-Each update replaces the **entire** `webInspectorSettings` object. Omitted entries restore browser
-or system defaults; they do not retain the previous override. Pass the complete object to keep
-other overrides. Set `webInspectorSettings` to `{}` to clear all overrides managed by this setting.
-
-Reload or navigate after changing document/resource-dependent page settings. CSS preferences
-update immediately. User-Agent changes affect subsequent requests; reload to refresh an
-already-read `navigator.userAgent`. Updating this setting does not reload pages automatically.
-`NoPreference` is an explicit CSS value; omit the preference to restore the system preference.
-
-Support depends on the device and OS version. Before attachment, a successful update confirms
-input validation and storage only. Unsupported overrides during target initialization log warnings
-and allow attachment to continue. A rejected runtime update retains the previous policy and
-attempts to roll back changes already applied; rollback failures can leave individual pages with
-different values. Await each update before issuing commands that depend on it.
-
-See the remote debugger's [Web Inspector settings documentation](https://github.com/appium/appium-ios/blob/main/packages/remote-debugger/docs/web-inspector-settings.md)
-for device verification scope, timeout recovery, and interactions with page-scoped User-Agent
-overrides.
+See the remote debugger's [Web Inspector settings guide](https://github.com/appium/appium-ios/blob/main/packages/remote-debugger/docs/web-inspector-settings.md)
+for input rules, reset and reload semantics, User-Agent interactions, device support, and error recovery.
 
 ## webScreenshotMode
 
