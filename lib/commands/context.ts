@@ -463,12 +463,14 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     logAllCommunication: this.opts.safariLogAllCommunication,
     logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
     webInspectorMaxFrameLength: this.opts.safariWebInspectorMaxFrameLength,
-    webInspectorSettings: structuredClone(this.settings.getSettings().webInspectorSettings),
     pageLoadStrategy: this.caps.pageLoadStrategy,
   };
 
   if (!isRealDevice) {
-    return createRemoteDebugger(baseOpts, false);
+    return createRemoteDebugger(
+      {...baseOpts, webInspectorSettings: structuredClone(this.settings.getSettings().webInspectorSettings)},
+      false,
+    );
   }
 
   if (util.hasValue(this.opts.safariWebInspectorMaxFrameLength)) {
@@ -476,7 +478,16 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
   }
   // The tunnel is preferred; the tier falls back to usbmux only when no tunnel is available
   const transport = await this.remoteXPCFacade.getTier();
-  return createRemoteDebugger({...baseOpts, udid: this.opts.udid as string, transport}, true);
+  return createRemoteDebugger(
+    {
+      ...baseOpts,
+      udid: this.opts.udid as string,
+      transport,
+      // Settings may have changed while transport discovery was pending.
+      webInspectorSettings: structuredClone(this.settings.getSettings().webInspectorSettings),
+    },
+    true,
+  );
 }
 
 /**

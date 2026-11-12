@@ -61,6 +61,39 @@ describe('webInspectorSettings', function () {
     });
   }
 
+  for (const policy of [{userAgent: 'Updated/1.0'}, {}]) {
+    it(`uses settings updated during real-device transport discovery: ${JSON.stringify(policy)}`, async function () {
+      const driver = new XCUITestDriver({} as any);
+      sinon.stub(driver, 'isRealDevice').returns(true);
+      sinon.stub(driver, 'isSafari').returns(true);
+      const entered = Promise.withResolvers<void>();
+      const discovery = Promise.withResolvers<object>();
+      const transport = {};
+      sinon.stub(driver, 'remoteXPCFacade').get(() => ({
+        getTier: async () => {
+          entered.resolve();
+          return await discovery.promise;
+        },
+      }));
+      await driver.updateSettings({webInspectorSettings: {userAgent: 'Previous/1.0'}});
+      const pending = driver.getNewRemoteDebugger();
+      await entered.promise;
+      try {
+        sinon.assert.notCalled(createRemoteDebugger);
+        await driver.updateSettings({webInspectorSettings: policy});
+      } finally {
+        discovery.resolve(transport);
+      }
+      await pending;
+      const [opts, realDevice] = createRemoteDebugger.firstCall.args;
+      assert.equal(realDevice, true);
+      assert.equal(opts.transport, transport);
+      assert.deepEqual(opts.webInspectorSettings, policy);
+      assert.notEqual(opts.webInspectorSettings, policy);
+      assert.deepEqual((await driver.getSettings()).webInspectorSettings, policy);
+    });
+  }
+
   it('isolates the default policy from consumers and other sessions', async function () {
     const first = new XCUITestDriver({} as any);
     const second = new XCUITestDriver({} as any);
