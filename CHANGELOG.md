@@ -1,3 +1,9 @@
+## [13.0.10](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.9...v13.0.10) (2026-11-12)
+
+### Bug Fixes
+
+* pass the device certificate to the lockdown tunnel ([#3141](https://github.com/appium/appium-xcuitest-driver/issues/3141)) ([46449a4](https://github.com/appium/appium-xcuitest-driver/commit/46449a4d7884cc9d05df3202b41f3b63f1f94670))
+
 ## [13.0.9](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.8...v13.0.9) (2026-11-12)
 
 ### Bug Fixes
