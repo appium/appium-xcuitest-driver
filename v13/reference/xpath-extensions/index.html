@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
   
@@ -3610,21 +3610,21 @@ WDA build includes this release.</p>
 <div class="tabbed-block">
 <div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Case-insensitive label match</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="s">&quot;//XCUIElementTypeButton[matches(@label, &#39;^alerts$&#39;, &#39;i&#39;)]&quot;</span><span class="p">));</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="s">"//XCUIElementTypeButton[matches(@label, '^alerts$', 'i')]"</span><span class="p">));</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// Case-normalized equality</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="s">&quot;//XCUIElementTypeButton[lower-case(@label) = &#39;alerts&#39;]&quot;</span><span class="p">));</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="s">"//XCUIElementTypeButton[lower-case(@label) = 'alerts']"</span><span class="p">));</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-javascript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;//XCUIElementTypeButton[ends-with(@label, &quot;ing&quot;)]&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">$</span><span class="p">(</span><span class="s1">'//XCUIElementTypeButton[ends-with(@label, "ing")]'</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">AppiumBy</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s1">&#39;//XCUIElementTypeButton[replace(@label, &quot; &quot;, &quot;&quot;) = &quot;Deadlockapp&quot;]&#39;</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s1">'//XCUIElementTypeButton[replace(@label, " ", "") = "Deadlockapp"]'</span><span class="p">,</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span>
 </span></code></pre></div>
 </div>
@@ -3656,21 +3656,21 @@ WDA build includes this release.</p>
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>//XCUIElementTypeButton[matches(@label, &#39;^Alerts$&#39;)]
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>//XCUIElementTypeButton[matches(@label, &#39;^alerts$&#39;, &#39;i&#39;)]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>//XCUIElementTypeButton[matches(@label, '^Alerts$')]
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>//XCUIElementTypeButton[matches(@label, '^alerts$', 'i')]
 </span></code></pre></div>
 <h2 id="ends-with"><code>ends-with</code><a class="headerlink" href="#ends-with" title="Permanent link">&para;</a></h2>
 <p>Tests whether a string ends with a given suffix (literal suffix, not a regex).</p>
 <p><strong>Signature:</strong> <code>ends-with(input, suffix)</code></p>
 <p><strong>Returns:</strong> <code>boolean</code></p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>//XCUIElementTypeButton[ends-with(@label, &#39;ing&#39;)]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>//XCUIElementTypeButton[ends-with(@label, 'ing')]
 </span></code></pre></div>
 <h2 id="lower-case-upper-case"><code>lower-case</code> / <code>upper-case</code><a class="headerlink" href="#lower-case-upper-case" title="Permanent link">&para;</a></h2>
 <p>Convert a string to lowercase or uppercase using the system locale rules.</p>
 <p><strong>Signature:</strong> <code>lower-case(input)</code> / <code>upper-case(input)</code></p>
 <p><strong>Returns:</strong> <code>string</code></p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>//XCUIElementTypeButton[lower-case(@label) = &#39;alerts&#39;]
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>//XCUIElementTypeButton[upper-case(@label) = &#39;TOUCH&#39;]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>//XCUIElementTypeButton[lower-case(@label) = 'alerts']
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>//XCUIElementTypeButton[upper-case(@label) = 'TOUCH']
 </span></code></pre></div>
 <h2 id="replace"><code>replace</code><a class="headerlink" href="#replace" title="Permanent link">&para;</a></h2>
 <p>Replaces substrings that match a regular expression with a replacement template.</p>
@@ -3702,8 +3702,8 @@ WDA build includes this release.</p>
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>//XCUIElementTypeButton[replace(@label, &#39; &#39;, &#39;&#39;) = &#39;Deadlockapp&#39;]
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>replace(//XCUIElementTypeOther/@value, &#39;-&#39;, &#39;_&#39;)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>//XCUIElementTypeButton[replace(@label, ' ', '') = 'Deadlockapp']
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>replace(//XCUIElementTypeOther/@value, '-', '_')
 </span></code></pre></div>
 <h2 id="tokenize-and-string-join"><code>tokenize</code> and <code>string-join</code><a class="headerlink" href="#tokenize-and-string-join" title="Permanent link">&para;</a></h2>
 <p>Split a string into parts and join them with a separator. These are intended to be used together:
@@ -3734,8 +3734,8 @@ XML node-sets in the XPath 1.0 engine).</p>
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>string-join(tokenize(//XCUIElementTypeOther/@value, &#39;-&#39;), &#39;|&#39;)
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>//XCUIElementTypeButton[string-join(tokenize(@label, &#39; &#39;), &#39;-&#39;) = &#39;Deadlock-app&#39;]
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>string-join(tokenize(//XCUIElementTypeOther/@value, '-'), '|')
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>//XCUIElementTypeButton[string-join(tokenize(@label, ' '), '-') = 'Deadlock-app']
 </span></code></pre></div>
 <h2 id="regular-expression-flags">Regular expression flags<a class="headerlink" href="#regular-expression-flags" title="Permanent link">&para;</a></h2>
 <table>
@@ -3962,10 +3962,10 @@ these helpers.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
   
@@ -2695,6 +2695,41 @@
 <li class="md-nav__item">
   <a href="#waitforidletimeout" class="md-nav__link">
     <span class="md-ellipsis"> waitForIdleTimeout </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#webinspectorsettings" class="md-nav__link">
+    <span class="md-ellipsis"> webInspectorSettings </span>
   </a>
 
   <!-- Table of contents list -->
@@ -5647,6 +5682,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#webinspectorsettings" class="md-nav__link">
+    <span class="md-ellipsis"> webInspectorSettings </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#webscreenshotmode" class="md-nav__link">
     <span class="md-ellipsis"> webScreenshotMode </span>
   </a>
@@ -6539,6 +6609,96 @@ the app's main thread to be idling in order to execute any action on it, so WebD
 not even start/freeze if the app under test is constantly hogging the main thread.</p>
 <p>Setting this value to <code>0</code> disables idling checks completely (not recommended).</p>
 <p>This property can also be set using the <a href="../capabilities/"><code>appium:waitForIdleTimeout</code></a> capability.</p>
+<h2 id="webinspectorsettings">webInspectorSettings<a class="headerlink" href="#webinspectorsettings" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>object</code></td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Overrides Web Inspector page settings, CSS preferences, and the User-Agent for Safari and
+inspectable webviews. One policy applies to the session's tracked pages, newly attached targets,
+and subsequent debugger connections; switching webviews does not require setting it again.</p>
+<p>Updates are allowed in <code>NATIVE_APP</code>: before attachment they are validated and saved without
+connecting; otherwise they are forwarded to the existing debugger. Native UI settings are unaffected.
+<code>getSettings()</code> returns the saved policy, not each webview's effective values or application status.</p>
+<p>The optional groups and keys below are case-sensitive. Invalid input returns an <code>invalid argument</code>
+error. Each update replaces the <strong>entire</strong> object: omitted entries restore browser/system defaults,
+and <code>{}</code> clears the policy.</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Key</th>
+<th>Values and effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pageSettings</code></td>
+<td><code>AuthorAndUserStylesEnabled</code></td>
+<td>Boolean; enables/disables author and user CSS, leaving browser default styles when disabled.</td>
+</tr>
+<tr>
+<td><code>pageSettings</code></td>
+<td><code>ImagesEnabled</code></td>
+<td>Boolean; enables/disables image loading.</td>
+</tr>
+<tr>
+<td><code>pageSettings</code></td>
+<td><code>ScriptEnabled</code></td>
+<td>Boolean; enables/disables page JavaScript. Disabling it can affect JavaScript-based Appium commands.</td>
+</tr>
+<tr>
+<td><code>pageSettings</code></td>
+<td><code>WebSecurityEnabled</code></td>
+<td>Boolean; <code>false</code> relaxes web security checks, allowing cross-origin iframe automation.</td>
+</tr>
+<tr>
+<td><code>pageSettings</code></td>
+<td><code>MediaCaptureRequiresSecureConnection</code></td>
+<td>Boolean; requires/relaxes a secure connection for media capture, without granting capture permissions.</td>
+</tr>
+<tr>
+<td><code>pageSettings</code></td>
+<td><code>ICECandidateFilteringEnabled</code></td>
+<td>Boolean; enables/disables WebRTC ICE candidate filtering. Disabling it may expose additional network addresses.</td>
+</tr>
+<tr>
+<td><code>userPreferences</code></td>
+<td><code>PrefersReducedMotion</code></td>
+<td><code>Reduce</code> or <code>NoPreference</code> for the <code>prefers-reduced-motion</code> media query.</td>
+</tr>
+<tr>
+<td><code>userPreferences</code></td>
+<td><code>PrefersContrast</code></td>
+<td><code>More</code> or <code>NoPreference</code> for the <code>prefers-contrast</code> media query.</td>
+</tr>
+<tr>
+<td><code>userPreferences</code></td>
+<td><code>PrefersColorScheme</code></td>
+<td><code>Light</code> or <code>Dark</code> for the <code>prefers-color-scheme</code> media query.</td>
+</tr>
+<tr>
+<td><code>userAgent</code></td>
+<td>—</td>
+<td>String overriding the page's User-Agent; does not emulate another browser engine.</td>
+</tr>
+</tbody>
+</table>
+<p>Reload or navigate after document/resource-dependent changes; CSS preferences update immediately.
+Updates do not reload pages automatically. Device support varies, and a saved policy does not
+guarantee that every target accepted it.</p>
+<p>See the remote debugger's <a href="https://github.com/appium/appium-ios/blob/main/packages/remote-debugger/docs/web-inspector-settings.md">Web Inspector settings guide</a>
+for input rules, reset and reload semantics, User-Agent interactions, device support, and error recovery.</p>
 <h2 id="webscreenshotmode">webScreenshotMode<a class="headerlink" href="#webscreenshotmode" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -6581,7 +6741,7 @@ not even start/freeze if the app under test is constantly hogging the main threa
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 2, 2026 13:52:07 UTC"><span class="timeago" datetime="2026-11-02T13:52:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 2, 2026 13:52:07 UTC">2026-11-02</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 13, 2026 08:59:15 UTC"><span class="timeago" datetime="2026-11-13T08:59:15+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 13, 2026 08:59:15 UTC">2026-11-13</span>
   </span>
 
     
@@ -6726,10 +6886,10 @@ not even start/freeze if the app under test is constantly hogging the main threa
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       
