@@ -134,6 +134,11 @@ currently active application if multiple such applications are found. The settin
 useful for automating split-screen apps, but also applies when dealing with native system alerts
 or overlays (see [Element Lookup Troubleshooting](../troubleshooting/element-lookup.md#select-the-correct-active-application)).
 
+For system permission dialogs, use `com.apple.springboard` on iOS or `com.apple.PineBoard`
+on tvOS. Set the value back to `auto` after handling the dialog. See
+[System Dialog Troubleshooting](../troubleshooting/index.md#interact-with-dialogs-managed-by-comapplespringboard)
+for examples and alternatives.
+
 ## dismissAlertButtonSelector
 
 | Type | Default |
@@ -380,8 +385,9 @@ Changes the system-wide "Reduce Motion" option (_Settings -> Accessibility -> Mo
 | -- | -- |
 | `boolean` | `false` |
 
-Whether to automatically switch the active application to the system springboard if a native alert
-element is detected. Decreases the performance of the active app detection.
+Whether to automatically switch the active application to the system application
+(SpringBoard on iOS or PineBoard on tvOS) if a native alert element is detected. Decreases the
+performance of the active app detection.
 
 Currently the driver sets the app under test as active if XCTest identifies it as running in
 foreground. The presence of a native alert element does not change the value returned by XCTest,

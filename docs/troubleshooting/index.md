@@ -23,6 +23,12 @@ System dialogs, such as permission dialogs, might not be interactable directly w
 Despite a similar look, dialogs belonging to the active session application (e.g. initially passed as `appium:app` or `appium:bundleId` capability value)
 do not require such adjustment.
 
+On tvOS, the system application is `com.apple.PineBoard` instead of `com.apple.springboard`.
+For example, if a TV Provider permission dialog is visible in a screenshot but missing from the
+page source, set `defaultActiveApplication` to `com.apple.PineBoard`, or enable
+[`respectSystemAlerts`](../reference/settings.md#respectsystemalerts). Reset
+`defaultActiveApplication` to `auto` after handling the dialog.
+
 XCUITest driver offers a couple of approaches to handle them:
 
 - Set the [respectSystemAlerts setting](../reference/settings.md#respectsystemalerts) to `true`. It
@@ -37,7 +43,7 @@ XCUITest driver offers a couple of approaches to handle them:
 - `defaultActiveApplication` setting in [Settings](../reference/settings.md#defaultactiveapplication).
     - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
         ```ruby
-        # Interacting with the test target
+        # Use "com.apple.PineBoard" on tvOS
         driver.settings.update({defaultActiveApplication: "com.apple.springboard"})
         # to accept the alert
         driver.find_element("accessibility_id", "Allow Once").click
