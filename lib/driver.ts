@@ -837,7 +837,7 @@ export class XCUITestDriver
 
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
-    if (['pageSourceExcludedAttributes'].includes(key)) {
+    if (key === 'pageSourceExcludedAttributes') {
       return;
     }
 
