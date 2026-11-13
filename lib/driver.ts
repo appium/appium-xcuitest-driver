@@ -339,7 +339,7 @@ export class XCUITestDriver
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
   // a plain value, not a command function
-  supportedLogTypes = logCommands.supportedLogTypes;
+  override supportedLogTypes = logCommands.supportedLogTypes;
 
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
