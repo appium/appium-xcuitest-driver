@@ -55,6 +55,7 @@ export class FixedIntervalRetryPolicy extends RetryPolicy {
    * @override
    * @param {number} _attempt - 1-based number of the attempt about to be made
    * @returns {number}
+   * @override
    */
   getDelayMs(_attempt) {
     return this._intervalMs;
@@ -93,6 +94,7 @@ export class ExponentialBackoffRetryPolicy extends RetryPolicy {
    * @override
    * @param {number} attempt - 1-based number of the attempt about to be made
    * @returns {number}
+   * @override
    */
   getDelayMs(attempt) {
     const delayMs = this._intervalMs * this._backoffMultiplier ** (attempt - 1);
