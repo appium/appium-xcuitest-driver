@@ -1,3 +1,13 @@
+## [13.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.10...v13.1.0) (2026-11-13)
+
+### Features
+
+* expose retained Web Inspector settings ([#3138](https://github.com/appium/appium-xcuitest-driver/issues/3138)) ([edd09a7](https://github.com/appium/appium-xcuitest-driver/commit/edd09a7a34f947e8cf84f05af77ac5185ab50ad3))
+
+### Bug Fixes
+
+* add required override annotations ([#3144](https://github.com/appium/appium-xcuitest-driver/issues/3144)) ([c0b9689](https://github.com/appium/appium-xcuitest-driver/commit/c0b96893975c5a3de0c15de14fbf2b0fea5a6693))
+
 ## [13.0.10](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.9...v13.0.10) (2026-11-12)
 
 ### Bug Fixes
