@@ -2,9 +2,8 @@ import type {Socket} from 'node:net';
 
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
-import {util, timing} from 'appium/support.js';
+import {util, timing, net} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
-import {checkPortStatus} from 'portscanner';
 
 import {isEmpty} from '../utils/index.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
@@ -276,7 +275,7 @@ export class DeviceConnectionsFactory {
   }
 
   private async _ensureForwardingPortIsFree(port: number, connectionsOnPort: string[]): Promise<void> {
-    let isPortBusy = (await checkPortStatus(port, LOCALHOST)) === 'open';
+    let isPortBusy = (await net.checkPortStatus(port, {host: LOCALHOST})) === 'open';
     if (isPortBusy) {
       this.log.warn(`Port #${port} is busy. Did you quit the previous driver session(s) properly?`);
       if (!isEmpty(connectionsOnPort)) {
@@ -289,7 +288,7 @@ export class DeviceConnectionsFactory {
           await waitForCondition(
             async () => {
               try {
-                if ((await checkPortStatus(port, LOCALHOST)) !== 'open') {
+                if ((await net.checkPortStatus(port, {host: LOCALHOST})) !== 'open') {
                   this.log.info(
                     `Port #${port} has been successfully released after ` +
                       `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
