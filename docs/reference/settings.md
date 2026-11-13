@@ -507,6 +507,44 @@ Setting this value to `0` disables idling checks completely (not recommended).
 
 This property can also be set using the [`appium:waitForIdleTimeout`](./capabilities.md) capability.
 
+## webInspectorSettings
+
+| Type | Default |
+| -- | -- |
+| `object` | `{}` |
+
+Overrides Web Inspector page settings, CSS preferences, and the User-Agent for Safari and
+inspectable webviews. One policy applies to the session's tracked pages, newly attached targets,
+and subsequent debugger connections; switching webviews does not require setting it again.
+
+Updates are allowed in `NATIVE_APP`: before attachment they are validated and saved without
+connecting; otherwise they are forwarded to the existing debugger. Native UI settings are unaffected.
+`getSettings()` returns the saved policy, not each webview's effective values or application status.
+
+The optional groups and keys below are case-sensitive. Invalid input returns an `invalid argument`
+error. Each update replaces the **entire** object: omitted entries restore browser/system defaults,
+and `{}` clears the policy.
+
+| Group | Key | Values and effect |
+| -- | -- | -- |
+| `pageSettings` | `AuthorAndUserStylesEnabled` | Boolean; enables/disables author and user CSS, leaving browser default styles when disabled. |
+| `pageSettings` | `ImagesEnabled` | Boolean; enables/disables image loading. |
+| `pageSettings` | `ScriptEnabled` | Boolean; enables/disables page JavaScript. Disabling it can affect JavaScript-based Appium commands. |
+| `pageSettings` | `WebSecurityEnabled` | Boolean; `false` relaxes web security checks, allowing cross-origin iframe automation. |
+| `pageSettings` | `MediaCaptureRequiresSecureConnection` | Boolean; requires/relaxes a secure connection for media capture, without granting capture permissions. |
+| `pageSettings` | `ICECandidateFilteringEnabled` | Boolean; enables/disables WebRTC ICE candidate filtering. Disabling it may expose additional network addresses. |
+| `userPreferences` | `PrefersReducedMotion` | `Reduce` or `NoPreference` for the `prefers-reduced-motion` media query. |
+| `userPreferences` | `PrefersContrast` | `More` or `NoPreference` for the `prefers-contrast` media query. |
+| `userPreferences` | `PrefersColorScheme` | `Light` or `Dark` for the `prefers-color-scheme` media query. |
+| `userAgent` | — | String overriding the page's User-Agent; does not emulate another browser engine. |
+
+Reload or navigate after document/resource-dependent changes; CSS preferences update immediately.
+Updates do not reload pages automatically. Device support varies, and a saved policy does not
+guarantee that every target accepted it.
+
+See the remote debugger's [Web Inspector settings guide](https://github.com/appium/appium-ios/blob/main/packages/remote-debugger/docs/web-inspector-settings.md)
+for input rules, reset and reload semantics, User-Agent interactions, device support, and error recovery.
+
 ## webScreenshotMode
 
 | Type | Default |

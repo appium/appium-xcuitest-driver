@@ -12,10 +12,10 @@ import type {
   TimeoutValue,
 } from '@appium/types';
 import {BaseSimulator, type Simulator} from 'appium-ios-simulator';
-import type {RemoteDebugger} from 'appium-remote-debugger';
+import {validateWebInspectorPageSettings, type RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
-import {BaseDriver, DeviceSettings} from 'appium/driver.js';
+import {BaseDriver, DeviceSettings, errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
@@ -206,6 +206,7 @@ const DEFAULT_SETTINGS = {
   nativeWebTapStrict: false,
   useJSONSource: false,
   webScreenshotMode: 'native',
+  webInspectorSettings: {},
   pageSourceExcludedAttributes: '',
   // `null` targets the main display
   currentDisplayId: null,
@@ -819,6 +820,21 @@ export class XCUITestDriver
 
   // Core driver methods
   private async onSettingsUpdate(key: string, value: any): Promise<any> {
+    if (key === 'webInspectorSettings') {
+      try {
+        validateWebInspectorPageSettings(value);
+      } catch (err) {
+        if (err instanceof TypeError) {
+          throw new errors.InvalidArgumentError(err.message, err);
+        }
+        throw err;
+      }
+      // Future debugger instances receive the saved setting in getNewRemoteDebugger.
+      // Keep device/transport failures separate from local validation errors.
+      await this._remote?.setWebInspectorPageSettings(value);
+      return;
+    }
+
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
     if (['pageSourceExcludedAttributes'].includes(key)) {
