@@ -1,3 +1,9 @@
+## [13.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.0...v13.1.1) (2026-11-13)
+
+### Miscellaneous Chores
+
+* **deps:** bump appium to 4.0.0-beta.8 ([#3143](https://github.com/appium/appium-xcuitest-driver/issues/3143)) ([614be47](https://github.com/appium/appium-xcuitest-driver/commit/614be472b52f52befa03fc24f8b0ae9d83d2444f))
+
 ## [13.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.0.10...v13.1.0) (2026-11-13)
 
 ### Features
