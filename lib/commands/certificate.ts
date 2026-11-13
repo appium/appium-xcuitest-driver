@@ -5,9 +5,8 @@ import {setTimeout as delay} from 'node:timers/promises';
 
 import type {Element} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {fs, plist, tempDir, util} from 'appium/support.js';
+import {fs, plist, tempDir, util, net} from 'appium/support.js';
 import {retryInterval, retry, waitForCondition} from 'asyncbox';
-import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {exec} from 'teen_process';
 
 import {CertificateClient} from '../device/certificate-client.js';
@@ -31,7 +30,7 @@ declare module '../driver.js' {
 }
 
 const CONFIG_EXTENSION = 'mobileconfig';
-const HOST_PORT_RANGE = [38200, 38299];
+const HOST_PORT_RANGE: [number, number] = [38200, 38299];
 const TMPSERVER_STARTUP_TIMEOUT = 5000;
 const Settings = /** @type {const} */ {
   General: {
@@ -137,7 +136,7 @@ export async function mobileInstallCertificate(
   }
 
   const tmpRoot = await tempDir.openDir();
-  const tmpPort = await findAPortNotInUse(HOST_PORT_RANGE[0], HOST_PORT_RANGE[1]);
+  const tmpPort = await net.getFreePort({port: HOST_PORT_RANGE});
   const configName = `appium.${CONFIG_EXTENSION}`;
   const configPath = path.resolve(tmpRoot, configName);
   const tmpServer = http.createServer(async function (_, res) {
@@ -167,7 +166,7 @@ export async function mobileInstallCertificate(
         await waitForCondition(
           async () => {
             try {
-              return (await checkPortStatus(tmpPort, host)) === 'open';
+              return (await net.checkPortStatus(tmpPort, {host})) === 'open';
             } catch {
               return false;
             }
