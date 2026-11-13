@@ -247,7 +247,7 @@ class TunnelCreator {
     log.info(`Lockdown service created for device: ${lockdownDevice.Properties.SerialNumber}`);
 
     log.info('Starting CoreDeviceProxy (raw TCP, native OpenSSL forwarder)...');
-    const {socket, cert, key} = await startCoreDeviceProxyTcp(
+    const {socket, cert, key, deviceCert} = await startCoreDeviceProxyTcp(
       lockdownService,
       lockdownDevice.DeviceID,
       lockdownDevice.Properties.SerialNumber,
@@ -259,7 +259,7 @@ class TunnelCreator {
     const lifecycle = {notify: null};
     const tunnelConnection = await TunnelManager.getTunnel(
       socket,
-      {cert, key},
+      {cert, key, deviceCert},
       {
         onDead: (reason) => lifecycle.notify?.(reason),
       },
