@@ -52,6 +52,7 @@ export class RetryPolicy {
  */
 export class FixedIntervalRetryPolicy extends RetryPolicy {
   /**
+   * @override
    * @param {number} _attempt - 1-based number of the attempt about to be made
    * @returns {number}
    * @override
@@ -90,6 +91,7 @@ export class ExponentialBackoffRetryPolicy extends RetryPolicy {
   }
 
   /**
+   * @override
    * @param {number} attempt - 1-based number of the attempt about to be made
    * @returns {number}
    * @override

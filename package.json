@@ -74,7 +74,7 @@
     "@appium/strongbox": "^3.0.0-beta.1",
     "appium-ios-remotexpc": "^6.0.2",
     "appium-ios-simulator": "^11.0.0",
-    "appium-remote-debugger": "^19.0.0",
+    "appium-remote-debugger": "^19.1.0",
     "appium-webdriveragent": "^17.0.0",
     "appium-xcode": "^8.0.0",
     "asyncbox": "^6.6.0",
