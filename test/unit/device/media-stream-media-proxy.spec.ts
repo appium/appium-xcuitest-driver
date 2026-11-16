@@ -38,11 +38,11 @@ describe('explainEncoderError', function () {
 
 describe('describeMissingH264Encoder', function () {
   it('is undefined when an encoder is available', function () {
-    assert.equal(describeMissingH264Encoder({getH264Encoders: () => ['h264_videotoolbox']}), undefined);
+    assert.equal(describeMissingH264Encoder({listH264Encoders: () => ['h264_videotoolbox']}), undefined);
   });
 
   it('says what to do when there is none', function () {
-    const message = describeMissingH264Encoder({getH264Encoders: () => []});
+    const message = describeMissingH264Encoder({listH264Encoders: () => []});
     assert.match(message ?? '', /^No H\.264 encoder is available\./);
     assert.match(message ?? '', /kind 'jpeg'/);
     assert.match(message ?? '', /OpenH264 2\.6\.0/);

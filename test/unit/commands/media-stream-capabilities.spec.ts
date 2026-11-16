@@ -4,7 +4,7 @@ import {describe, it, mock} from 'node:test';
 
 import * as mediaProxyModule from '../../../lib/device/media-stream/media-proxy.js';
 
-let currentLoadMediaProxy: () => Promise<unknown> = async () => ({getH264Encoders: () => ['h264_videotoolbox']});
+let currentLoadMediaProxy: () => Promise<unknown> = async () => ({listH264Encoders: () => ['h264_videotoolbox']});
 
 mock.module('../../../lib/device/media-stream/media-proxy.js', {
   namedExports: {
@@ -33,7 +33,7 @@ const capabilitiesWith = (loadMediaProxy: () => Promise<unknown>) => {
 
 describe('mobile: getMediaStreamCapabilities on a real device with media-proxy', function () {
   it('offers video, jpeg and audio when an H.264 encoder is available', async function () {
-    const caps = await capabilitiesWith(async () => ({getH264Encoders: () => ['h264_videotoolbox']}));
+    const caps = await capabilitiesWith(async () => ({listH264Encoders: () => ['h264_videotoolbox']}));
     assert.deepEqual(caps, {
       supported: true,
       source: 'device',
@@ -44,7 +44,7 @@ describe('mobile: getMediaStreamCapabilities on a real device with media-proxy',
   });
 
   it('offers only jpeg, with a reason, when there is no H.264 encoder', async function () {
-    const caps = await capabilitiesWith(async () => ({getH264Encoders: () => []}));
+    const caps = await capabilitiesWith(async () => ({listH264Encoders: () => []}));
     assert.deepEqual([caps.supported, caps.kinds, caps.codecs, caps.audio], [true, ['jpeg'], [], false]);
     assert.equal(caps.reason?.code, 'h264_encoder_unavailable');
     assert.match(caps.reason?.message ?? '', /OpenH264 2\.6\.0/);
@@ -52,7 +52,7 @@ describe('mobile: getMediaStreamCapabilities on a real device with media-proxy',
 
   it('is unsupported when the addon cannot be loaded', async function () {
     const caps = await capabilitiesWith(async () => ({
-      getH264Encoders: () => {
+      listH264Encoders: () => {
         throw new Error('No usable @appium/media-proxy addon for linux-x64');
       },
     }));

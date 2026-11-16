@@ -28,8 +28,8 @@ const OPENH264_HINT =
   `and set MEDIA_PROXY_OPENH264_PATH to the library. Download links and steps: ${OPENH264_DOCS}`;
 
 /** Why H.264 can't be streamed here, or `undefined` if an encoder is available. */
-export function describeMissingH264Encoder(mediaProxy: Pick<MediaProxyModule, 'getH264Encoders'>): string | undefined {
-  return mediaProxy.getH264Encoders().length === 0 ? `No H.264 encoder is available. ${OPENH264_HINT}` : undefined;
+export function describeMissingH264Encoder(mediaProxy: Pick<MediaProxyModule, 'listH264Encoders'>): string | undefined {
+  return mediaProxy.listH264Encoders().length === 0 ? `No H.264 encoder is available. ${OPENH264_HINT}` : undefined;
 }
 
 /** Rewords media-proxy's "no H.264 encoder" error (written for its own options) for the driver's. */
