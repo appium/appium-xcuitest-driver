@@ -3,7 +3,7 @@ import type {AppiumLogger} from '@appium/types';
 
 import type {RemoteXPCFacade} from '../remote-xpc/facade.js';
 import {loadRemoteXPCModule} from '../remote-xpc/module-loader.js';
-import {loadMediaProxy, type MediaProxyModule} from './media-proxy.js';
+import {explainEncoderError, loadMediaProxy, type MediaProxyModule} from './media-proxy.js';
 import {parseDisplayGeometry, type DisplayGeometry, type Rotation} from './orientation.js';
 import type {MediaSource, SourceUnit, StartMediaStreamOpts} from './types.js';
 
@@ -94,22 +94,27 @@ export class DeviceMediaSource implements MediaSource {
     };
     this.rotation = input.rotation;
     // Fails here, before the device starts streaming, if the addon or an encoder is missing
-    const transcoder: Transcoder =
-      opts.kind === 'video'
-        ? mediaProxy.createTranscoder({
-            codec: 'h264',
-            fps: opts.fps,
-            bitrate: opts.bitrate,
-            ...(withAudio ? {audio: true, audioSpecificConfig: AAC_ELD_FORMAT.audioSpecificConfig} : {}),
-            ...input,
-          })
-        : mediaProxy.createTranscoder({
-            codec: 'mjpeg',
-            fps: opts.fps,
-            quality: opts.quality,
-            scale: opts.scale,
-            ...input,
-          });
+    let transcoder: Transcoder;
+    try {
+      transcoder =
+        opts.kind === 'video'
+          ? mediaProxy.createTranscoder({
+              codec: 'h264',
+              fps: opts.fps,
+              bitrate: opts.bitrate,
+              ...(withAudio ? {audio: true, audioSpecificConfig: AAC_ELD_FORMAT.audioSpecificConfig} : {}),
+              ...input,
+            })
+          : mediaProxy.createTranscoder({
+              codec: 'mjpeg',
+              fps: opts.fps,
+              quality: opts.quality,
+              scale: opts.scale,
+              ...input,
+            });
+    } catch (e) {
+      throw explainEncoderError(e);
+    }
     this.transcoder = transcoder;
     try {
       const display = (await this.facade.requireTunnelService('media streaming', (services) =>

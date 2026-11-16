@@ -41,6 +41,11 @@ Notes:
 A real device needs a [RemoteXPC tunnel](remotexpc-tunnels-real-devices.md) and the optional `@appium/media-proxy`
 package. The device streams HEVC, which the driver transcodes to H.264 or JPEG, so on a device:
 
+- H.264 is encoded by VideoToolbox on macOS and Media Foundation on Windows. On Linux (and where those fail to open)
+  it needs Cisco's OpenH264, which the driver doesn't install: download exactly version 2.6.0 from Cisco and set
+  `MEDIA_PROXY_OPENH264_PATH` to the library, as described in the
+  [media-proxy docs](https://github.com/appium/appium-ios/tree/main/packages/media-proxy#software-h264-openh264).
+  Without it, starting an H.264 stream fails with an error that says so; `kind: 'jpeg'` needs no encoder.
 - Only the `h264` codec is available. With `audio: true` the device's AAC-ELD audio is transcoded to AAC-LC (48 kHz
   stereo, ADTS), as on a simulator.
 - The stream is upright and cropped to the visible display: the device always sends the display's native portrait
