@@ -73,6 +73,7 @@ nav:
           - guides/parallel-tests.md
           - guides/hybrid.md
           - guides/mjpeg.md
+          - guides/media-stream.md
       - Driver Actions:
           - guides/audio-capture.md
           - guides/file-transfer.md

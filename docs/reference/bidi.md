@@ -97,6 +97,107 @@ appium:xcuitest.contextUpdated = (
 | `name` | The name of the new context |
 | `type` | The type of the currently active context. Supported values are `NATIVE` or `WEB`. |
 
+### appium:mediaStream.started
+
+Indicates that a stream started by [`mobile: startMediaStream`](./execute-methods.md#mobile-startmediastream)
+is producing output. All the `appium:mediaStream.*` events are only emitted while a client is subscribed
+to the event or to the whole `appium:mediaStream` module. They are not emitted at all for a stream that
+fails to start.
+
+A video stream sends this event when the encoder produces its first keyframe, just before the execute
+method returns. A JPEG stream sends it right after it starts.
+
+```cddl
+appium:mediaStream.started = (
+  context: text,
+  method: "appium:mediaStream.started",
+  params: {
+    streamId: text,
+    kind: "video" / "jpeg",
+    tracks: [+ ("video" / "audio" / "jpeg")],
+    codec: "h264" / "hevc" / "jpeg",
+    event: "appium:mediaStream",
+    ? width: js-uint,
+    ? height: js-uint,
+    ? audio: {sampleRate: js-uint, channels: js-uint},
+  },
+)
+```
+
+### appium:mediaStream.units
+
+Carries the media data of a stream.
+
+```cddl
+appium:mediaStream.units = (
+  context: text,
+  method: "appium:mediaStream.units",
+  params: {
+    streamId: text,
+    units: [+ {
+      track: "video" / "audio" / "jpeg",
+      seq: js-uint,
+      ts: js-uint,
+      key: bool,
+      data: text,
+    }],
+    dropped: js-uint,
+  },
+)
+```
+
+| Parameter | Description |
+| -- | -- |
+| `track` | `video`, `audio` or `jpeg`. Each event holds units of a single track. |
+| `seq` | Sequence number of the unit, counted per track |
+| `ts` | Timestamp in microseconds, on one clock shared by all the tracks of a stream |
+| `key` | Whether this is a video keyframe. Always `true` for audio and JPEG units |
+| `data` | Base64-encoded data of the unit |
+| `dropped` | The number of units that were skipped for a slow client before this event. It is advisory. |
+
+Video units are Annex-B H.264/HEVC. The codec configuration (SPS/PPS/VPS) is part of every keyframe, so a client can start decoding at any keyframe. A keyframe always starts a
+new event. Audio units are ADTS AAC-LC frames (48 kHz, stereo on Simulators), and a JPEG unit is a complete frame.
+
+Video units are held back until a keyframe arrives after the subscription started. If a client cannot keep up with the stream, Appium skips video
+units until the next keyframe and delivers audio units reliably.
+
+### appium:mediaStream.formatChanged
+
+Indicates that the frame size of a stream has changed. For a video stream this happens after the Simulator
+rotates, and the events with the units of the previous size are always delivered before it. A JPEG stream
+sends it with the first frame and whenever the size changes. The `width` and `height` are omitted if the size
+is not known.
+
+```cddl
+appium:mediaStream.formatChanged = (
+  context: text,
+  method: "appium:mediaStream.formatChanged",
+  params: {
+    streamId: text,
+    ? width: js-uint,
+    ? height: js-uint,
+  },
+)
+```
+
+### appium:mediaStream.ended
+
+Indicates that a stream has ended, for any reason.
+
+```cddl
+appium:mediaStream.ended = (
+  context: text,
+  method: "appium:mediaStream.ended",
+  params: {
+    streamId: text,
+    reason: text,
+  },
+)
+```
+
+The `reason` is `stopped` if the stream was stopped by [`mobile: stopMediaStream`](./execute-methods.md#mobile-stopmediastream),
+`ended` if the source ended the stream, or `error: <message>`. Appium closes the BiDi connection when the session is deleted, so the event is not delivered then.
+
 ### appium:xcuitest.networkMonitor
 
 Indicates that a new network event is available for consumption.

@@ -514,6 +514,22 @@ export const executeMethodMap = {
   'mobile: stopSystemMonitor': {
     command: 'mobileStopSystemMonitor',
   },
+  'mobile: startMediaStream': {
+    command: 'mobileStartMediaStream',
+    params: {
+      required: ['kind'],
+      optional: ['codec', 'fps', 'bitrate', 'quality', 'scale', 'audio', 'displayId', 'batchMs', 'idleHeartbeatMs'],
+    },
+  },
+  'mobile: stopMediaStream': {
+    command: 'mobileStopMediaStream',
+    params: {
+      required: ['streamId'],
+    },
+  },
+  'mobile: getMediaStreamCapabilities': {
+    command: 'mobileGetMediaStreamCapabilities',
+  },
   'mobile: listConditionInducers': {
     command: 'listConditionInducers',
   },
