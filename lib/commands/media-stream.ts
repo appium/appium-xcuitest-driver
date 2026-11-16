@@ -9,7 +9,7 @@ import {
   MIN_SIMULATOR_XCODE_MAJOR,
 } from '../device/media-stream/constants.js';
 import {DeviceMediaSource} from '../device/media-stream/device-source.js';
-import {loadMediaProxy} from '../device/media-stream/media-proxy.js';
+import {describeMissingH264Encoder, loadMediaProxy} from '../device/media-stream/media-proxy.js';
 import {SimulatorMediaSource} from '../device/media-stream/simulator-source.js';
 import {MediaStream} from '../device/media-stream/stream.js';
 import type {
@@ -176,10 +176,22 @@ async function getDeviceCapabilities(driver: XCUITestDriver): Promise<MediaStrea
       message: 'Real device media streaming requires a RemoteXPC tunnel',
     });
   }
+  let noH264: string | undefined;
   try {
-    await loadMediaProxy();
+    noH264 = describeMissingH264Encoder(await loadMediaProxy());
   } catch (e) {
     return unsupported(source, {code: 'media_proxy_unavailable', message: (e as Error).message});
+  }
+  if (noH264) {
+    // Still usable as JPEG; the reason says what H.264 (and the audio that rides on it) needs
+    return {
+      supported: true,
+      source,
+      kinds: ['jpeg'],
+      codecs: [],
+      audio: false,
+      reason: {code: 'h264_encoder_unavailable', message: noH264},
+    };
   }
   // media-proxy encodes H.264 only; the device's AAC-ELD audio is transcoded to AAC-LC
   return {supported: true, source, kinds: ['video', 'jpeg'], codecs: ['h264'], audio: true};

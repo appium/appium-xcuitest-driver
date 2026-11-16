@@ -47,7 +47,10 @@ export interface MediaStreamInfo {
 
 export interface MediaStreamCapabilities {
   supported: boolean;
-  reason?: {code: 'xcode_too_old' | 'os_too_old' | 'tunnel_required' | 'media_proxy_unavailable'; message: string};
+  reason?: {
+    code: 'xcode_too_old' | 'os_too_old' | 'tunnel_required' | 'media_proxy_unavailable' | 'h264_encoder_unavailable';
+    message: string;
+  };
   source: 'simulator' | 'device';
   kinds: MediaKind[];
   codecs: VideoCodec[];

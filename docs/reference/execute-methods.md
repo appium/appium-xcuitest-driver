@@ -1175,7 +1175,9 @@ streamId | string | yes | The id returned by `mobile: startMediaStream` | 5df617
 
 Reports whether media streaming is available in the current session. The result has `supported`, the `source`
 (`simulator` or `device`), the available `kinds` and `codecs`, whether `audio` is available and, if
-`supported` is false, a `reason` with a `code` and a `message`.
+`supported` is false, a `reason` with a `code` and a `message`. On a real device without an H.264 encoder (Linux
+without OpenH264, see the [guide](../guides/media-stream.md#real-devices)), `supported` stays true with only the `jpeg`
+kind, no codecs and no audio, and `reason.code` is `h264_encoder_unavailable`.
 
 ### mobile: startNetworkMonitor
 

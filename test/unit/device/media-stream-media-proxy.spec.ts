@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 
 import {errors} from 'appium/driver.js';
 
-import {explainEncoderError} from '../../../lib/device/media-stream/media-proxy.js';
+import {describeMissingH264Encoder, explainEncoderError} from '../../../lib/device/media-stream/media-proxy.js';
 
 function mediaProxyError(name: string, message: string): Error {
   return Object.assign(new Error(message), {name});
@@ -33,5 +33,19 @@ describe('explainEncoderError', function () {
     assert.equal(explainEncoderError(other), other);
     const option = mediaProxyError('MediaProxyOptionError', 'No H.264 encoder');
     assert.equal(explainEncoderError(option), option);
+  });
+});
+
+describe('describeMissingH264Encoder', function () {
+  it('is undefined when an encoder is available', function () {
+    assert.equal(describeMissingH264Encoder({getH264Encoders: () => ['h264_videotoolbox']}), undefined);
+  });
+
+  it('says what to do when there is none', function () {
+    const message = describeMissingH264Encoder({getH264Encoders: () => []});
+    assert.match(message ?? '', /^No H\.264 encoder is available\./);
+    assert.match(message ?? '', /kind 'jpeg'/);
+    assert.match(message ?? '', /OpenH264 2\.6\.0/);
+    assert.match(message ?? '', /packages\/media-proxy#software-h264-openh264/);
   });
 });
