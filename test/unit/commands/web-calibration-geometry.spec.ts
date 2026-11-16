@@ -623,6 +623,53 @@ describe('native web tap atom requests', () => {
         async () => await driver.nativeWebTap('target'),
         /The frame chain 'frame-1' could not be restored after web coordinate calibration/,
       );
+      // Must fail immediately without retrying into the top-level frame
+      assert.equal(execute.withArgs('get_size').callCount, 1);
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('propagates non-settling measurement errors immediately without retrying', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    driver.curContext = 'WEBVIEW_test';
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+      sandbox.stub(driver, 'proxyCommand').resolves({x: 0, y: 50, width: 400, height: 600});
+      sandbox.stub(driver, 'mobileTap').resolves();
+      driver._remote = {
+        executeAtom: async () => true,
+        execute: async (script: string) => {
+          if (script.includes('return window.__appiumCalibrationTaps')) {
+            return [
+              {x: 193, y: 293},
+              {x: 207, y: 307},
+            ];
+          }
+          if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+            return;
+          }
+          return {
+            innerWidth: 400,
+            innerHeight: 600,
+            isScrolledToTop: true,
+            visualViewportWidth: 400,
+            visualViewportHeight: 600,
+            visualViewportOffsetLeft: 0,
+            visualViewportOffsetTop: 0,
+            visualViewportScale: 1,
+          };
+        },
+      } as any;
+
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom').rejects(new Error('element stale'));
+
+      await assert.rejects(async () => await driver.nativeWebTap('target'), /element stale/);
+      assert.equal(execute.callCount, 1);
     } finally {
       sandbox.restore();
     }
@@ -696,10 +743,11 @@ describe('native web tap atom requests', () => {
     }
   });
 
-  it('routes clickWebCoords with static numbers through calibration and taps the translated position', async () => {
+  it('routes clickWebCoords with static numbers through calibration without entering the settle loop', async () => {
     const driver = new XCUITestDriver({} as any);
     driver.curContext = 'WEBVIEW_test';
     const sandbox = sinon.createSandbox();
+    let viewportReads = 0;
     try {
       sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
       sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
@@ -714,6 +762,10 @@ describe('native web tap atom requests', () => {
               {x: 207, y: 307},
             ];
           }
+          if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+            return;
+          }
+          viewportReads++;
           return {
             innerWidth: 400,
             innerHeight: 600,
@@ -730,9 +782,20 @@ describe('native web tap atom requests', () => {
       await driver.clickWebCoords(50, 75);
 
       assert.deepStrictEqual(mobileTapStub.lastCall.args, [60, 95]);
+      // Two reads happen inside getOrCreateWebviewCalibration (cache lookup + post-fit signature),
+      // with zero extra reads from the settle loop.
+      assert.equal(viewportReads, 2);
     } finally {
       sandbox.restore();
     }
+  });
+
+  it('rejects clickWebCoords with static x when y is missing', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await assert.rejects(
+      async () => await (driver as any).clickWebCoords(100),
+      /Both numeric 'x' and 'y' web coordinates must be provided/,
+    );
   });
 
   it('nativeWebTap routes through clickWebCoords so overriding or stubbing it intercepts taps', async () => {

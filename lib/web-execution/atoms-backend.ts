@@ -474,6 +474,9 @@ export class AtomsBackend implements WebExecutionBackend {
     };
 
     const signatureBefore = this.driver._webviewCalibrationCache?.signature;
+    // Doubles as an upfront out-of-view check so MoveTargetOutOfBoundsError fails fast
+    // before calibration injects an overlay or sends synthetic taps, even on a cold cache
+    // where calibration will discard initialCoords and re-measure afterward.
     const initialCoords = await measure();
     return await measureAndTranslateWebCoords.call(
       this.driver,

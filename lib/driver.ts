@@ -821,7 +821,7 @@ export class XCUITestDriver
   private async onSettingsUpdate(key: string, value: any): Promise<any> {
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
-    if (key === 'pageSourceExcludedAttributes') {
+    if (['pageSourceExcludedAttributes'].includes(key)) {
       return;
     }
 
