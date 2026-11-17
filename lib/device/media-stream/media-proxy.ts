@@ -24,8 +24,8 @@ export async function loadMediaProxy(): Promise<MediaProxyModule> {
 
 const OPENH264_DOCS = 'https://github.com/appium/appium-ios/tree/main/packages/media-proxy#software-h264-openh264';
 const OPENH264_HINT =
-  `Request kind 'jpeg' (it needs no encoder), or install Cisco's OpenH264 2.6.0 (exactly this version) ` +
-  `and set MEDIA_PROXY_OPENH264_PATH to the library. Download links and steps: ${OPENH264_DOCS}`;
+  `Request kind 'jpeg' (it needs no encoder), or install Cisco's OpenH264 ` +
+  `and set MEDIA_PROXY_OPENH264_PATH to the library. The required version, download links and steps: ${OPENH264_DOCS}`;
 
 /** Why H.264 can't be streamed here, or `undefined` if an encoder is available. */
 export function describeMissingH264Encoder(mediaProxy: Pick<MediaProxyModule, 'listH264Encoders'>): string | undefined {

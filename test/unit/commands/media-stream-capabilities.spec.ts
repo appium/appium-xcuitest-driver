@@ -48,7 +48,7 @@ describe('mobile: getMediaStreamCapabilities on a real device with media-proxy',
     const caps = await capabilitiesWith(async () => ({listH264Encoders: () => []}));
     assert.deepEqual([caps.supported, caps.kinds, caps.codecs, caps.audio], [true, ['jpeg'], [], false]);
     assert.equal(caps.reason?.code, 'h264_encoder_unavailable');
-    assert.match(caps.reason?.message ?? '', /OpenH264 2\.6\.0/);
+    assert.match(caps.reason?.message ?? '', /MEDIA_PROXY_OPENH264_PATH/);
   });
 
   it('is unsupported when the addon cannot be loaded', async function () {
@@ -66,7 +66,7 @@ describe('mobile: startMediaStream on a real device', function () {
     currentLoadMediaProxy = async () => ({listH264Encoders: () => []});
     await assert.rejects(
       (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(realDevice(), 'video'),
-      /Kind 'video' is not available for device streaming: .*OpenH264 2\.6\.0/,
+      /Kind 'video' is not available for device streaming: .*MEDIA_PROXY_OPENH264_PATH/,
     );
   });
 

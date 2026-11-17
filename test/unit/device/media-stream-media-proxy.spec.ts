@@ -22,7 +22,7 @@ describe('explainEncoderError', function () {
     assert.ok(e instanceof errors.UnsupportedOperationError);
     assert.match(e.message, /^No H\.264 encoder is available \(libopenh264: OpenH264 is not configured/);
     assert.match(e.message, /kind 'jpeg'/);
-    assert.match(e.message, /OpenH264 2\.6\.0/);
+    assert.match(e.message, /MEDIA_PROXY_OPENH264_PATH/);
     assert.match(e.message, /MEDIA_PROXY_OPENH264_PATH/);
     assert.match(e.message, /packages\/media-proxy#software-h264-openh264/);
     assert.doesNotMatch(e.message, /codec 'mjpeg'/);
@@ -45,7 +45,7 @@ describe('describeMissingH264Encoder', function () {
     const message = describeMissingH264Encoder({listH264Encoders: () => []});
     assert.match(message ?? '', /^No H\.264 encoder is available\./);
     assert.match(message ?? '', /kind 'jpeg'/);
-    assert.match(message ?? '', /OpenH264 2\.6\.0/);
+    assert.match(message ?? '', /MEDIA_PROXY_OPENH264_PATH/);
     assert.match(message ?? '', /packages\/media-proxy#software-h264-openh264/);
   });
 });
