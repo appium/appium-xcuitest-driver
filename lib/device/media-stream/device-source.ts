@@ -12,9 +12,7 @@ type AccessUnit = Parameters<Transcoder['push']>[0];
 type Capture = {
   accessUnits(): AsyncIterable<AccessUnit>;
   stop(): Promise<void>;
-  // remotexpc keeps these private, but the RTCP socket is the only way to talk to the device
-  answer: {streamConfig: Record<string, unknown>};
-  receiver: {send(data: Buffer, host: string, port: number): Promise<void>};
+  requestKeyFrame(): Promise<boolean>;
 };
 type AudioCapture = {
   accessUnits(): AsyncIterable<Parameters<Transcoder['pushAudio']>[0]>;
@@ -23,7 +21,6 @@ type AudioCapture = {
 type Display = {
   close(): Promise<void>;
   isStreamingSupported(): Promise<boolean>;
-  getDeviceAddress(): Promise<string>;
 };
 
 type InfoService = {getDisplayInfo(): Promise<unknown>; close?(): Promise<void> | void};
@@ -31,25 +28,8 @@ type InfoService = {getDisplayInfo(): Promise<unknown>; close?(): Promise<void> 
 /** How often the display's orientation is read; a rotation shows up within this time (plus its animation) */
 const ORIENTATION_POLL_MS = 1000;
 
-/**
- * The device encodes an endless GOP (`KeyFrameInterval: 0`) and its picture drifts into corruption during
- * large screen changes (app launches, rotation) without ever recovering, so the host asks for a keyframe.
- */
-const KEYFRAME_INTERVAL_MS = 2000;
-
 /** The device's video RTP clock (400 ticks per frame at 60 fps), not the 90 kHz of RFC 7798 */
 const VIDEO_CLOCK_RATE = 24_000;
-
-/** RTCP Picture Loss Indication (RFC 4585): the device answers with a full IDR within ~50 ms. */
-function buildPli(senderSsrc: number, mediaSsrc: number): Buffer {
-  const pli = Buffer.alloc(12);
-  pli.writeUInt8(0x81, 0); // version 2, FMT 1 (PLI)
-  pli.writeUInt8(206, 1); // payload-specific feedback
-  pli.writeUInt16BE(2, 2);
-  pli.writeUInt32BE(senderSsrc >>> 0, 4);
-  pli.writeUInt32BE(mediaSsrc >>> 0, 8);
-  return pli;
-}
 
 /**
  * Real device (iOS/tvOS 27+): remotexpc captures the HEVC screen stream over the tunnel and
@@ -62,12 +42,10 @@ export class DeviceMediaSource implements MediaSource {
   private audioFeeder?: Promise<void>;
   private transcoder?: Transcoder;
   private feeder?: Promise<void>;
-  private keyFrameTimer?: NodeJS.Timeout;
   private orientationTimer?: NodeJS.Timeout;
   private infoService?: InfoService;
   private rotation: Rotation = 0;
   private polling = false;
-  private pli?: {packet: Buffer; host: string; port: number};
   private failure?: Error;
   private stopping?: Promise<void>;
 
@@ -135,7 +113,6 @@ export class DeviceMediaSource implements MediaSource {
           clientSessionId,
         })) as unknown as AudioCapture;
       }
-      await this.setUpKeyFrameRequests(this.capture, display);
       this.orientationTimer = setInterval(() => void this.pollOrientation(displayId), ORIENTATION_POLL_MS);
     } catch (e) {
       await this.stop();
@@ -181,25 +158,6 @@ export class DeviceMediaSource implements MediaSource {
     }
   }
 
-  private async setUpKeyFrameRequests(capture: Capture, display: Display): Promise<void> {
-    const {RemoteSSRC, LocalSSRC, SourcePort} = capture.answer.streamConfig as Record<string, number>;
-    if (typeof RemoteSSRC !== 'number' || typeof LocalSSRC !== 'number' || !SourcePort) {
-      this.log.warn('The device did not report its RTCP identity, so keyframes cannot be requested');
-      return;
-    }
-    this.pli = {packet: buildPli(RemoteSSRC, LocalSSRC), host: await display.getDeviceAddress(), port: SourcePort};
-    this.keyFrameTimer = setInterval(() => void this.sendPli(), KEYFRAME_INTERVAL_MS);
-  }
-
-  private async sendPli(): Promise<boolean> {
-    const {pli, capture} = this;
-    if (!pli || !capture) {
-      return false;
-    }
-    await capture.receiver.send(pli.packet, pli.host, pli.port);
-    return true;
-  }
-
   async *units(): AsyncGenerator<SourceUnit> {
     const {transcoder} = this;
     if (!transcoder) {
@@ -224,12 +182,11 @@ export class DeviceMediaSource implements MediaSource {
   }
 
   async requestKeyFrame(): Promise<boolean> {
-    return await this.sendPli();
+    return (await this.capture?.requestKeyFrame()) ?? false;
   }
 
   async stop(): Promise<void> {
     this.stopping ??= (async () => {
-      clearInterval(this.keyFrameTimer);
       clearInterval(this.orientationTimer);
       // The capture's own stop() also tells the device to stop streaming
       await this.capture?.stop().catch((e: Error) => this.log.debug(`Cannot stop the capture: ${e.message}`));
