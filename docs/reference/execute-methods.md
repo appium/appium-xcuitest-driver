@@ -1161,6 +1161,34 @@ displayId | string | no | The id of the display to stream. The primary display b
 batchMs | number | no | How long to collect `video` and `audio` units into one event. 40 by default, 0 disables batching | 40
 idleHeartbeatMs | number | no | Repeat the last `jpeg` frame after this idle time in milliseconds. 1000 by default, 0 disables | 1000
 
+#### Returned Result
+
+An object describing the started stream:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+streamId | string | The id to pass to `mobile: stopMediaStream`, also present in every event of the stream | 5df61795-119c-4f33-a45e-8f141e3cc8a4
+kind | string | `video` or `jpeg`, as requested | video
+tracks | string[] | The tracks the stream carries: `video` (with `audio` if requested) or `jpeg` | ["video", "audio"]
+codec | string | `h264` or `hevc` for `video`, `jpeg` for `jpeg` | h264
+event | string | The BiDi module the events are sent in | appium:mediaStream
+width | number | The frame width in pixels, if known | 1170
+height | number | The frame height in pixels, if known | 2532
+audio | object | `sampleRate` (Hz) and `channels` of the audio track, if known | {"sampleRate": 48000, "channels": 2}
+
+```json
+{
+  "streamId": "5df61795-119c-4f33-a45e-8f141e3cc8a4",
+  "kind": "video",
+  "tracks": ["video", "audio"],
+  "codec": "h264",
+  "event": "appium:mediaStream",
+  "width": 1170,
+  "height": 2532,
+  "audio": {"sampleRate": 48000, "channels": 2}
+}
+```
+
 ### mobile: stopMediaStream
 
 Stops a stream started by [mobile: startMediaStream](#mobile-startmediastream). Stopping a stream that has already ended does nothing.
@@ -1178,6 +1206,27 @@ Reports whether media streaming is available in the current session. The result 
 `supported` is false, a `reason` with a `code` and a `message`. On a real device without an H.264 encoder (Linux
 without OpenH264, see the [guide](../guides/media-stream.md#real-devices)), `supported` stays true with only the `jpeg`
 kind, no codecs and no audio, and `reason.code` is `h264_encoder_unavailable`.
+
+#### Returned Result
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+supported | boolean | Whether the session can stream at all | true
+source | string | `simulator` or `device` | device
+kinds | string[] | The `kind` values that can be requested: `video` and/or `jpeg` | ["video", "jpeg"]
+codecs | string[] | The `codec` values available for `video`: `h264` and/or `hevc` | ["h264"]
+audio | boolean | Whether `audio` can be requested | true
+reason | object | Why streaming is unavailable or limited. Present when `supported` is false or a kind is missing. `code` is one of `xcode_too_old`, `os_too_old`, `tunnel_required`, `media_proxy_unavailable` or `h264_encoder_unavailable`, and `message` says what to do | {"code": "os_too_old", "message": "Real device media streaming requires iOS/tvOS 27+, found 26.4"}
+
+```json
+{
+  "supported": true,
+  "source": "device",
+  "kinds": ["video", "jpeg"],
+  "codecs": ["h264"],
+  "audio": true
+}
+```
 
 ### mobile: startNetworkMonitor
 
