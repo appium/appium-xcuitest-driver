@@ -3,6 +3,7 @@ import type {EventEmitter} from 'node:events';
 
 import type {AppiumLogger, BiDiBackpressureEvent, BiDiEvent} from '@appium/types';
 
+import {NATIVE_WIN} from '../../commands/constants.js';
 import {UnitBatcher} from './batcher.js';
 import {
   BACKPRESSURE_EVENT_NAME,
@@ -129,7 +130,7 @@ export class MediaStream {
       return;
     }
     this.announced = true;
-    this.deps.emit({method: MEDIA_STARTED_EVENT, params: {...this.info()}});
+    this.send({method: MEDIA_STARTED_EVENT, params: {...this.info()}});
   }
 
   // Must not await the pump: it is also called from inside the pump itself
@@ -148,7 +149,7 @@ export class MediaStream {
       this.deps.log.warn(`Cannot stop the ${this.kind} stream source: ${(e as Error).message}`);
     }
     if (this.announced) {
-      this.deps.emit({method: MEDIA_ENDED_EVENT, params: {streamId: this.streamId, reason}});
+      this.send({method: MEDIA_ENDED_EVENT, params: {streamId: this.streamId, reason}});
     }
   }
 
@@ -240,7 +241,7 @@ export class MediaStream {
     if (!isFirst) {
       // Units of the previous format must reach clients before the new format is announced
       this.batcher.flush();
-      this.deps.emit({method: MEDIA_FORMAT_CHANGED_EVENT, params: {streamId: this.streamId, ...size}});
+      this.send({method: MEDIA_FORMAT_CHANGED_EVENT, params: {streamId: this.streamId, ...size}});
     }
   }
 
@@ -283,7 +284,7 @@ export class MediaStream {
       return;
     }
     this.size = size;
-    this.deps.emit({method: MEDIA_FORMAT_CHANGED_EVENT, params: {streamId: this.streamId, ...size}});
+    this.send({method: MEDIA_FORMAT_CHANGED_EVENT, params: {streamId: this.streamId, ...size}});
   }
 
   private emitUnits(units: MediaUnit[]): void {
@@ -296,11 +297,16 @@ export class MediaStream {
           : {policy: 'droppable', chain: this.videoChain, syncPoint: first.key};
     const dropped = this.dropped;
     this.dropped = 0;
-    this.deps.emit({
+    this.send({
       method: MEDIA_UNITS_EVENT,
       params: {streamId: this.streamId, units: units.map(toWireUnit), dropped},
       delivery,
     });
+  }
+
+  // Every media event belongs to the native context, like the other custom events
+  private send(event: BiDiEvent): void {
+    this.deps.emit({context: NATIVE_WIN, ...event});
   }
 
   private requestKeyFrame(): void {

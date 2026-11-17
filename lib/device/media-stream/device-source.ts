@@ -28,6 +28,9 @@ type InfoService = {getDisplayInfo(): Promise<unknown>; close?(): Promise<void> 
 /** How often the display's orientation is read; a rotation shows up within this time (plus its animation) */
 const ORIENTATION_POLL_MS = 1000;
 
+/** The device sends one IDR and its picture drifts after large screen changes, so remotexpc asks for new ones */
+const KEYFRAME_INTERVAL_MS = 2000;
+
 /** The device's video RTP clock (400 ticks per frame at 60 fps), not the 90 kHz of RFC 7798 */
 const VIDEO_CLOCK_RATE = 24_000;
 
@@ -112,6 +115,7 @@ export class DeviceMediaSource implements MediaSource {
       const clientSessionId = withAudio ? XPCUUID.random() : undefined;
       this.capture = (await ScreenStreamCapture.start(display as never, {
         displayId,
+        keyFrameIntervalMs: KEYFRAME_INTERVAL_MS,
         ...(clientSessionId ? {clientSessionId} : {}),
       })) as unknown as Capture;
       if (clientSessionId) {

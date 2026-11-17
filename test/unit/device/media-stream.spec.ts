@@ -183,6 +183,9 @@ describe('MediaStream', function () {
     assert.equal(evs[1].delivery?.syncPoint, false);
     assert.equal(events.filter((e) => e.method === 'appium:mediaStream.started').length, 1);
     await stream.stop();
+    const media = events.filter((e) => e.method.startsWith('appium:mediaStream.'));
+    assert.ok(media.length > 1);
+    assert.ok(media.every((e) => e.context === 'NATIVE_APP'));
   });
 
   it('flushes the pending batch when the source ends', async function () {
