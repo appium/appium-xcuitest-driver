@@ -89,6 +89,26 @@ describe('mobile: startMediaStream', function () {
     await assert.rejects(start(fakeDriver({xcodeVersion: {major: 25}}), 'jpeg'), /requires Xcode 26/);
   });
 
+  it('keeps accepting a stop for an ended stream after another one started', async function () {
+    const stream = () => {
+      let end!: () => void;
+      const ended = new Promise<void>((resolve) => (end = resolve));
+      return {
+        async *frames() {
+          await ended;
+          yield* [];
+        },
+        stop: async () => end(),
+      };
+    };
+    const driver = fakeDriver({device: {startJpegStream: async () => stream()}});
+    const first = (await start(driver, 'jpeg')) as {streamId: string};
+    await mobileStopMediaStream.call(driver, first.streamId);
+    const second = (await start(driver, 'jpeg')) as {streamId: string};
+    await mobileStopMediaStream.call(driver, first.streamId);
+    await mobileStopMediaStream.call(driver, second.streamId);
+  });
+
   it('rejects stopping an unknown stream', async function () {
     await assert.rejects(mobileStopMediaStream.call(fakeDriver(), 'nope'), /Unknown media stream id/);
   });

@@ -140,6 +140,7 @@ export class MediaStream {
     this.stopped = true;
     clearInterval(this.heartbeat);
     this.batcher.close();
+    this.lastJpeg = undefined;
     this.deps.emitter.off(BACKPRESSURE_EVENT_NAME, this.onBackpressure);
     try {
       await this.source.stop();
@@ -179,6 +180,10 @@ export class MediaStream {
       reason = `error: ${(e as Error).message}`;
     }
     this.endReason = reason;
+    // Units already batched are still valid; finish() drops whatever is pending
+    if (!this.stopped) {
+      this.batcher.flush();
+    }
     await this.finish(reason);
   }
 

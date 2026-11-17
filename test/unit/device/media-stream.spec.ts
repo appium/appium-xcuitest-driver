@@ -185,6 +185,18 @@ describe('MediaStream', function () {
     await stream.stop();
   });
 
+  it('flushes the pending batch when the source ends', async function () {
+    const {source, events, stream, tick, begin} = setup('video', true, {batchMs: 1000});
+    await begin();
+    source.push(su('video', 1));
+    await source.stop();
+    await tick();
+    await tick();
+    assert.ok(stream.isStopped);
+    const sent = unitEvents(events).flatMap((e) => e.params!.units.map((u: {seq: number}) => u.seq));
+    assert.equal(sent.length, 2);
+  });
+
   it('announces a format change when a later keyframe has another size', async function () {
     const {source, events, stream, tick, begin} = setup('video');
     await begin();

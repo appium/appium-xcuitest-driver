@@ -1142,7 +1142,7 @@ Starts streaming the screen as `appium:mediaStream.*` [BiDi events](./bidi.md#ap
 Subscribe to the `appium:mediaStream` module before calling it, since events are only emitted while a client is subscribed.
 
 Simulators with Xcode 26+ and real devices running iOS/tvOS 27+ with a RemoteXPC tunnel are supported (on a device: `h264`
-only, no audio). Only one stream per `kind` can run in a session, but a `jpeg`
+only, with optional audio). Only one stream per `kind` can run in a session, but a `jpeg`
 and a `video` stream can run at the same time. The result carries the `streamId`, the `tracks`, the `codec` and, if known,
 the frame size and the audio format.
 

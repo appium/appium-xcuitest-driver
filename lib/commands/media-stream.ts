@@ -104,12 +104,8 @@ export async function mobileStartMediaStream(
     : new DeviceMediaSource(this.remoteXPCFacade, opts, this.log);
 
   const streams = (this._mediaStreams ??= new Map());
-  for (const [id, s] of streams) {
-    if (s.isStopped) {
-      streams.delete(id);
-    }
-  }
-  if ([...streams.values()].some((s) => s.kind === kind)) {
+  // Ended streams stay registered so that a later stop call is a no-op
+  if ([...streams.values()].some((s) => s.kind === kind && !s.isStopped)) {
     throw new errors.InvalidArgumentError(`A ${kind} media stream is already running in this session`);
   }
 
