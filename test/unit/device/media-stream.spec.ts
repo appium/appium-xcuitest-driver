@@ -67,7 +67,7 @@ function setup(kind: 'video' | 'jpeg', subscribed = true, extra: Record<string, 
   const stream = new MediaStream(
     source,
     {kind, batchMs: 0, idleHeartbeatMs: 0, ...extra},
-    {emit: (e) => events.push(e), emitter, hasSubscribers: () => state.subscribed, log, onEnded: () => {}},
+    {emit: (e) => events.push(e), emitter, hasSubscribers: () => state.subscribed, log},
   );
   const tick = () => new Promise((r) => setImmediate(r));
   // A video stream is only started once the encoder produced its first keyframe
@@ -118,6 +118,24 @@ describe('UnitBatcher', function () {
     assert.deepEqual(
       batches.map((x) => x.map((u) => `${u.track}${u.seq}`)),
       [['video1', 'video2'], ['video3'], ['audio1', 'audio2']],
+    );
+    b.close();
+  });
+
+  it('batches interleaved tracks independently', function () {
+    const batches: MediaUnit[][] = [];
+    const b = new UnitBatcher(1000, (u) => batches.push(u));
+    b.push(unit('video', 1, true));
+    b.push(unit('audio', 1, true));
+    b.push(unit('video', 2));
+    b.push(unit('audio', 2, true));
+    b.flush();
+    assert.deepEqual(
+      batches.map((x) => x.map((u) => `${u.track}${u.seq}`)),
+      [
+        ['video1', 'video2'],
+        ['audio1', 'audio2'],
+      ],
     );
     b.close();
   });
@@ -324,7 +342,6 @@ describe('MediaStream', function () {
         emitter: new EventEmitter(),
         hasSubscribers: () => true,
         log,
-        onEnded: () => {},
       },
     );
     await failed.start();

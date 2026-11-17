@@ -1,11 +1,11 @@
-import type {MediaUnit} from './types.js';
+import type {MediaTrack, MediaUnit} from './types.js';
 
 /**
- * Groups units into events that are homogeneous by track and cut at video
- * keyframes (a keyframe always starts a new batch).
+ * Groups units into events that are homogeneous by track, batching each track on its own
+ * (a video keyframe always starts a new batch).
  */
 export class UnitBatcher {
-  private pending: MediaUnit[] = [];
+  private pending = new Map<MediaTrack, MediaUnit[]>();
   private timer?: NodeJS.Timeout;
 
   constructor(
@@ -14,13 +14,14 @@ export class UnitBatcher {
   ) {}
 
   push(unit: MediaUnit): void {
-    const [first] = this.pending;
-    if (first && (first.track !== unit.track || (unit.track === 'video' && unit.key))) {
-      this.flush();
+    if (unit.track === 'video' && unit.key) {
+      this.flushTrack(unit.track);
     }
-    this.pending.push(unit);
+    const units = this.pending.get(unit.track) ?? [];
+    units.push(unit);
+    this.pending.set(unit.track, units);
     if (this.batchMs <= 0 || unit.track === 'jpeg') {
-      this.flush();
+      this.flushTrack(unit.track);
     } else if (!this.timer) {
       this.timer = setTimeout(() => this.flush(), this.batchMs);
     }
@@ -29,16 +30,22 @@ export class UnitBatcher {
   flush(): void {
     clearTimeout(this.timer);
     this.timer = undefined;
-    if (this.pending.length) {
-      const batch = this.pending;
-      this.pending = [];
-      this.onBatch(batch);
+    for (const track of this.pending.keys()) {
+      this.flushTrack(track);
     }
   }
 
   close(): void {
     clearTimeout(this.timer);
     this.timer = undefined;
-    this.pending = [];
+    this.pending.clear();
+  }
+
+  private flushTrack(track: MediaTrack): void {
+    const units = this.pending.get(track);
+    if (units?.length) {
+      this.pending.delete(track);
+      this.onBatch(units);
+    }
   }
 }

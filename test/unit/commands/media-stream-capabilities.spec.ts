@@ -13,7 +13,8 @@ mock.module('../../../lib/device/media-stream/media-proxy.js', {
   },
 });
 
-const {mobileGetMediaStreamCapabilities} = await import('../../../lib/commands/media-stream.js');
+const {mobileGetMediaStreamCapabilities, mobileStartMediaStream} =
+  await import('../../../lib/commands/media-stream.js');
 
 const realDevice = () =>
   ({
@@ -57,5 +58,28 @@ describe('mobile: getMediaStreamCapabilities on a real device with media-proxy',
       },
     }));
     assert.deepEqual([caps.supported, caps.reason?.code], [false, 'media_proxy_unavailable']);
+  });
+});
+
+describe('mobile: startMediaStream on a real device', function () {
+  it('explains how to get an H.264 encoder when video is requested without one', async function () {
+    currentLoadMediaProxy = async () => ({listH264Encoders: () => []});
+    await assert.rejects(
+      (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(realDevice(), 'video'),
+      /Kind 'video' is not available for device streaming: .*OpenH264 2\.6\.0/,
+    );
+  });
+
+  it('rejects a non-numeric display id', async function () {
+    currentLoadMediaProxy = async () => ({listH264Encoders: () => ['h264_videotoolbox']});
+    await assert.rejects(
+      (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(
+        realDevice(),
+        'video',
+        ...Array(6).fill(undefined),
+        'abc',
+      ),
+      /'displayId' must be a numeric display id/,
+    );
   });
 });

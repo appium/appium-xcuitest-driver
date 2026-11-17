@@ -1,5 +1,3 @@
-import type {BiDiEvent} from '@appium/types';
-
 export type MediaKind = 'video' | 'jpeg';
 export type MediaTrack = 'video' | 'audio' | 'jpeg';
 export type VideoCodec = 'h264' | 'hevc';
@@ -76,5 +74,3 @@ export interface MediaSource {
   /** Idempotent */
   stop(): Promise<void>;
 }
-
-export type MediaBiDiEvent = BiDiEvent;

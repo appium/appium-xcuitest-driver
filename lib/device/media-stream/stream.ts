@@ -23,7 +23,6 @@ export interface MediaStreamDeps {
   emitter: EventEmitter;
   hasSubscribers: () => boolean;
   log: AppiumLogger;
-  onEnded: (streamId: string) => void;
 }
 
 /**
@@ -150,7 +149,6 @@ export class MediaStream {
     if (this.announced) {
       this.deps.emit({method: MEDIA_ENDED_EVENT, params: {streamId: this.streamId, reason}});
     }
-    this.deps.onEnded(this.streamId);
   }
 
   info(): MediaStreamInfo {

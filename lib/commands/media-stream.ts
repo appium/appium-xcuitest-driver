@@ -79,13 +79,21 @@ export async function mobileStartMediaStream(
     idleHeartbeatMs,
   };
   validateOpts(opts);
+  if (!this.isSimulator() && displayId !== undefined && !/^\d+$/.test(displayId)) {
+    throw new errors.InvalidArgumentError(`'displayId' must be a numeric display id, got '${displayId}'`);
+  }
   const caps = await getCapabilities(this);
   if (!caps.supported) {
     throw new errors.InvalidArgumentError(`Media streaming is not available: ${caps.reason?.message}`);
   }
-  if (!caps.codecs.includes(codec ?? 'h264') && kind === 'video') {
+  if (!caps.kinds.includes(kind)) {
     throw new errors.InvalidArgumentError(
-      `Codec '${codec}' is not available for ${caps.source} streaming, use one of: ${caps.codecs.join(', ')}`,
+      `Kind '${kind}' is not available for ${caps.source} streaming${caps.reason ? `: ${caps.reason.message}` : ''}`,
+    );
+  }
+  if (kind === 'video' && !caps.codecs.includes(codec ?? 'h264')) {
+    throw new errors.InvalidArgumentError(
+      `Codec '${codec ?? 'h264'}' is not available for ${caps.source} streaming, use one of: ${caps.codecs.join(', ')}`,
     );
   }
   if (audio && !caps.audio) {
@@ -115,8 +123,6 @@ export async function mobileStartMediaStream(
     emitter: this.eventEmitter,
     hasSubscribers: () => hasSubscribers(this, MEDIA_UNITS_EVENT),
     log: this.log,
-    // Ended streams stay registered so that a later stop call is a no-op
-    onEnded: () => {},
   });
   streams.set(stream.streamId, stream);
   try {
@@ -217,6 +223,7 @@ function hasSubscribers(driver: XCUITestDriver, method: string): boolean {
 function validateOpts({
   kind,
   codec,
+  fps,
   bitrate,
   quality,
   scale,
@@ -233,6 +240,22 @@ function validateOpts({
     throw new errors.InvalidArgumentError(
       `${offending.map(([k]) => `'${k}'`).join(', ')} not supported for kind '${kind}'`,
     );
+  }
+  if (codec !== undefined && codec !== 'h264' && codec !== 'hevc') {
+    throw new errors.InvalidArgumentError(`'codec' must be either 'h264' or 'hevc', got '${String(codec)}'`);
+  }
+  const ranges: [string, number | undefined, number, number][] = [
+    ['fps', fps, 1, Infinity],
+    ['bitrate', bitrate, 1, Infinity],
+    ['quality', quality, 0, 100],
+    ['scale', scale, 1, 100],
+  ];
+  for (const [name, value, min, max] of ranges) {
+    if (value !== undefined && !(Number.isFinite(value) && value >= min && value <= max)) {
+      throw new errors.InvalidArgumentError(
+        `'${name}' must be a number ${max === Infinity ? `>= ${min}` : `between ${min} and ${max}`}, got '${String(value)}'`,
+      );
+    }
   }
   if (!Number.isInteger(batchMs) || batchMs < 0 || !Number.isInteger(idleHeartbeatMs) || idleHeartbeatMs < 0) {
     throw new errors.InvalidArgumentError(`'batchMs' and 'idleHeartbeatMs' must be non-negative integers`);

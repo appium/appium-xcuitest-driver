@@ -8,6 +8,7 @@ import type {MediaSource, SourceUnit, StartMediaStreamOpts} from './types.js';
 /** coresim encodes at the source (VideoToolbox / JPEG), so there is nothing to transcode. */
 export class SimulatorMediaSource implements MediaSource {
   private stream?: {video: VideoStream} | {jpeg: JpegStream};
+  private starting?: Promise<void>;
   private stopping?: Promise<void>;
 
   constructor(
@@ -16,6 +17,11 @@ export class SimulatorMediaSource implements MediaSource {
   ) {}
 
   async start(): Promise<void> {
+    this.starting = this.open();
+    await this.starting;
+  }
+
+  private async open(): Promise<void> {
     const {opts, sim} = this;
     const common = {fps: opts.fps, displayId: opts.displayId};
     const stream =
@@ -40,6 +46,8 @@ export class SimulatorMediaSource implements MediaSource {
   }
 
   async stop(): Promise<void> {
+    // A stop that arrives while start() is pending must not miss the stream it creates
+    await this.starting?.catch(() => {});
     const {stream} = this;
     this.stopping ??= stream ? ('video' in stream ? stream.video : stream.jpeg).stop() : Promise.resolve();
     await this.stopping;

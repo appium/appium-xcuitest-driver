@@ -67,6 +67,20 @@ describe('mobile: startMediaStream', function () {
     await assert.rejects(start(fakeDriver(), 'jpeg', 'hevc'), /'codec'.*'jpeg'/);
   });
 
+  it('rejects out-of-range numeric options', async function () {
+    await assert.rejects(start(fakeDriver(), 'video', 5 as any), /'codec' must be either/);
+    await assert.rejects(start(fakeDriver(), 'video', undefined, 0), /'fps' must be a number >= 1/);
+    await assert.rejects(start(fakeDriver(), 'video', undefined, undefined, 'abc'), /'bitrate' must be a number/);
+    await assert.rejects(
+      start(fakeDriver(), 'jpeg', undefined, undefined, undefined, 101),
+      /'quality' must be.*0 and 100/,
+    );
+    await assert.rejects(
+      start(fakeDriver(), 'jpeg', undefined, undefined, undefined, undefined, 0),
+      /'scale' must be.*1 and 100/,
+    );
+  });
+
   it('rejects a non-integer batch window', async function () {
     await assert.rejects(start(fakeDriver(), 'video', ...Array(7).fill(undefined), -1 as any), /non-negative/);
   });

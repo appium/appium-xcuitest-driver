@@ -47,6 +47,7 @@ export class DeviceMediaSource implements MediaSource {
   private rotation: Rotation = 0;
   private polling = false;
   private failure?: Error;
+  private starting?: Promise<void>;
   private stopping?: Promise<void>;
 
   constructor(
@@ -56,6 +57,11 @@ export class DeviceMediaSource implements MediaSource {
   ) {}
 
   async start(): Promise<void> {
+    this.starting = this.open();
+    await this.starting;
+  }
+
+  private async open(): Promise<void> {
     const {opts} = this;
     const mediaProxy = await loadMediaProxy();
     const {ScreenStreamCapture, AudioStreamCapture, XPCUUID, AAC_ELD_FORMAT} = await loadRemoteXPCModule();
@@ -115,7 +121,7 @@ export class DeviceMediaSource implements MediaSource {
       }
       this.orientationTimer = setInterval(() => void this.pollOrientation(displayId), ORIENTATION_POLL_MS);
     } catch (e) {
-      await this.stop();
+      await this.teardown();
       throw e;
     }
     this.feeder = this.feed(this.capture, transcoder);
@@ -186,6 +192,12 @@ export class DeviceMediaSource implements MediaSource {
   }
 
   async stop(): Promise<void> {
+    // A stop that arrives while start() is pending must not miss what it creates
+    await this.starting?.catch(() => {});
+    await this.teardown();
+  }
+
+  private async teardown(): Promise<void> {
     this.stopping ??= (async () => {
       clearInterval(this.orientationTimer);
       // The capture's own stop() also tells the device to stop streaming
