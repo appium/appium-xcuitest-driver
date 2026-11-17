@@ -58,4 +58,5 @@ package. The device streams HEVC, which the driver transcodes to H.264 or JPEG, 
   large screen changes (an app launch, a rotation) and stay that way. The driver therefore asks the device for a keyframe
   every 2 seconds, which is also what gives a late subscriber a keyframe within about 100 ms.
 - The animation iOS plays while rotating is part of the stream, so a few tilted or briefly glitchy frames follow a rotation.
-- Decoding the device's HEVC stream is done in software and costs roughly half a CPU core at 60 fps.
+- The device's HEVC stream is decoded in software, and the H.264 or JPEG output is encoded on the host. On a Mac the H.264
+  path takes roughly 0.4 CPU cores at 60 fps. `jpeg` and the OpenH264 fallback cost more.
