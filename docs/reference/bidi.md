@@ -71,6 +71,27 @@ Event emission of all of these log types is supported for both real devices and 
     * `context` is always set to `NATIVE_APP`
     * Events are only emitted if the [`get_server_logs`](./security-flags.md) insecure feature is enabled
 
+#### Usage
+
+Start the session with the `webSocketUrl` capability set to `true` and subscribe to the `log.entryAdded` event
+(or to the whole `log` module). The events arrive over the BiDi connection of the session, so there is no need
+for direct access to the host and port of the Appium server.
+
+=== "Java"
+
+    ```java
+    // Requires the java-client-selenium-bridge artifact, see
+    // https://github.com/appium/java-client/blob/master/docs/selenium-bridge.md
+    var driver = new IOSDriver(serverUrl, options.enableBiDi());
+    var selenium = SeleniumBridge.asRemoteWebDriver(driver);
+    try (var logInspector = new LogInspector(selenium)) {
+        logInspector.onLog(entry -> System.out.println(entry.getText()));
+        // ... run the test
+    } finally {
+        selenium.closeBiDi();
+    }
+    ```
+
 ### appium:xcuitest.contextUpdated
 
 Indicates a change in the current Appium context.

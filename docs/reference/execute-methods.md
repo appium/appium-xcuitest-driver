@@ -544,17 +544,22 @@ Returns map of certificates installed on the real device. The response looks lik
 
 ### mobile: startLogsBroadcast
 
-Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. The method will return immediately if the web socket is already listening.
-Each connected webcoket listener will receive syslog lines as soon as they are visible to Appium.
-Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Appium](https://www.headspin.io/blog/using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium) article for more details on this feature.
+!!! warning "Deprecated"
+    This method is deprecated and will be removed in a future version. Subscribe to the
+    [`log.entryAdded`](./bidi.md#logentryadded) BiDi event instead, which does not need direct
+    access to the Appium server host and port.
 
-Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this extension.
+Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/device/syslog` endpoint. The method will return immediately if the web socket is already listening.
+Each connected websocket listener will receive syslog lines as soon as they are visible to Appium.
+Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Appium](https://www.headspin.io/blog/using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium) article for more details on this feature.
 
 ### mobile: stopLogsBroadcast
 
-Stops the syslog broadcasting wesocket server previously started by `mobile: startLogsBroadcast`. This method will return immediately if no server is running.
+!!! warning "Deprecated"
+    This method is deprecated and will be removed in a future version. Unsubscribe from the
+    [`log.entryAdded`](./bidi.md#logentryadded) BiDi event instead.
 
-Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this extension.
+Stops the syslog broadcasting websocket server previously started by `mobile: startLogsBroadcast`. This method will return immediately if no server is running.
 
 ### mobile: batteryInfo
 
