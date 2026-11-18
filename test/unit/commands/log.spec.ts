@@ -163,6 +163,32 @@ describe('assignBiDiLogListener', function () {
     assert.strictEqual(emitted.length, 1);
   });
 
+  it('stops and resumes emitting as BiDi clients subscribe and unsubscribe', async function () {
+    const transformer = sinon.stub().returnsArg(0);
+    const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {
+      type: 'syslog',
+      entryTransformer: transformer,
+    });
+    const emit = () => logEmitter.emit('output', entry);
+
+    emit();
+    assert.strictEqual(emitted.length, 0);
+
+    const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
+    emit();
+    assert.strictEqual(emitted.length, 1);
+
+    await driver.bidiUnsubscribe(undefined, undefined, [subscription]);
+    emit();
+    assert.strictEqual(emitted.length, 1);
+    assert.strictEqual(transformer.callCount, 1);
+
+    await driver.bidiSubscribe(['log']);
+    emit();
+    assert.strictEqual(emitted.length, 2);
+    assert.strictEqual(logEmitter.listenerCount('output'), 1);
+  });
+
   it('does not apply the transformer while nobody is subscribed', function () {
     const entryTransformer = sinon.stub().returnsArg(0);
     const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog', entryTransformer});
