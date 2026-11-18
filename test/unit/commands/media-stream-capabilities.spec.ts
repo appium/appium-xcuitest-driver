@@ -13,6 +13,29 @@ mock.module('../../../lib/device/media-stream/media-proxy.js', {
   },
 });
 
+let releaseTeardown: () => void = () => {};
+let teardownStarted = false;
+
+// Starts fine but never produces a unit; its teardown waits until the test releases it
+class StuckDeviceSource {
+  private closed!: () => void;
+  private readonly isClosed = new Promise<void>((resolve) => (this.closed = resolve));
+  async start() {}
+  async *units() {
+    await this.isClosed;
+    yield* [];
+  }
+  async stop() {
+    teardownStarted = true;
+    this.closed();
+    await new Promise<void>((resolve) => (releaseTeardown = resolve));
+  }
+}
+
+mock.module('../../../lib/device/media-stream/device-source.js', {
+  namedExports: {DeviceMediaSource: StuckDeviceSource},
+});
+
 const {mobileGetMediaStreamCapabilities, mobileStartMediaStream} =
   await import('../../../lib/commands/media-stream.js');
 
@@ -93,5 +116,31 @@ describe('mobile: startMediaStream on a real device with a stream running', func
       (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(driver, 'jpeg'),
       /runs one media stream at a time/,
     );
+  });
+});
+
+describe('mobile: startMediaStream after a failed start on a real device', function () {
+  it('rejects another start until the failed one is torn down', async function (t) {
+    currentLoadMediaProxy = async () => ({listH264Encoders: () => ['h264_videotoolbox']});
+    t.mock.timers.enable({apis: ['setTimeout']});
+    const driver = realDevice();
+    const startCmd = () => (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(driver, 'jpeg');
+    // A video stream waits for its first unit, so the start fails with the timeout
+    const startVideo = () => (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(driver, 'video');
+    const first = startVideo().then(
+      () => assert.fail('expected the start to fail'),
+      (e: Error) => e,
+    );
+    for (let i = 0; i < 10; i++) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+    t.mock.timers.tick(5000);
+    for (let i = 0; i < 10 && !teardownStarted; i++) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+    assert.ok(teardownStarted);
+    await assert.rejects(startCmd(), /runs one media stream at a time/);
+    releaseTeardown();
+    assert.match(String(await first), /produced no output within 5000ms/);
   });
 });

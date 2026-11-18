@@ -136,7 +136,7 @@ export async function mobileStartMediaStream(
   try {
     return await stream.start();
   } catch (e) {
-    streams.delete(stream.streamId);
+    // Stay registered until the teardown is done: it stops the whole device, so nothing may start meanwhile
     await stream.stop('failed to start');
     throw e instanceof TypeError || e instanceof RangeError ? new errors.InvalidArgumentError(e.message) : e;
   }
@@ -255,6 +255,9 @@ function validateOpts({
   }
   if (codec !== undefined && codec !== 'h264' && codec !== 'hevc') {
     throw new errors.InvalidArgumentError(`'codec' must be either 'h264' or 'hevc', got '${String(codec)}'`);
+  }
+  if (audio !== undefined && typeof audio !== 'boolean') {
+    throw new errors.InvalidArgumentError(`'audio' must be a boolean, got '${String(audio)}'`);
   }
   const ranges: [string, number | undefined, number, number][] = [
     ['fps', fps, 1, Infinity],

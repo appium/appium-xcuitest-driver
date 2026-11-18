@@ -81,6 +81,13 @@ describe('mobile: startMediaStream', function () {
     );
   });
 
+  it('rejects a non-boolean audio flag', async function () {
+    await assert.rejects(
+      start(fakeDriver(), 'video', undefined, undefined, undefined, undefined, undefined, 'false' as any),
+      /'audio' must be a boolean/,
+    );
+  });
+
   it('rejects a non-integer batch window', async function () {
     await assert.rejects(start(fakeDriver(), 'video', ...Array(7).fill(undefined), -1 as any), /non-negative/);
   });
