@@ -1,3 +1,9 @@
+## [13.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.2...v13.1.3) (2026-11-18)
+
+### Miscellaneous Chores
+
+* deprecate mobile: startLogsBroadcast and mobile: stopLogsBroadcast ([#3150](https://github.com/appium/appium-xcuitest-driver/issues/3150)) ([4a72cd5](https://github.com/appium/appium-xcuitest-driver/commit/4a72cd593c7cdf989a886393648a60368ba14f75))
+
 ## [13.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.1...v13.1.2) (2026-11-18)
 
 ### Bug Fixes
