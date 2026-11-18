@@ -6,6 +6,9 @@ import {
 } from './commands/recordscreen.js';
 import type {XCUITestDriver} from './driver.js';
 
+const LOGS_BROADCAST_DEPRECATION_INFO =
+  `Use the BiDi 'log.entryAdded' event (requires the 'webSocketUrl' capability) to receive logs instead.`;
+
 export const executeMethodMap = {
   'mobile: tap': {
     command: 'mobileTap',
@@ -268,9 +271,13 @@ export const executeMethodMap = {
   },
   'mobile: startLogsBroadcast': {
     command: 'mobileStartLogsBroadcast',
+    deprecated: true,
+    info: LOGS_BROADCAST_DEPRECATION_INFO,
   },
   'mobile: stopLogsBroadcast': {
     command: 'mobileStopLogsBroadcast',
+    deprecated: true,
+    info: LOGS_BROADCAST_DEPRECATION_INFO,
   },
   'mobile: batteryInfo': {
     command: 'mobileGetBatteryInfo',

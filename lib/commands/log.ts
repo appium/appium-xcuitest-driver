@@ -23,9 +23,11 @@ declare module '../driver.js' {
   interface XCUITestDriver {
     extractLogs(...args: Parameters<typeof extractLogs>): ReturnType<typeof extractLogs>;
     startLogCapture(...args: Parameters<typeof startLogCapture>): ReturnType<typeof startLogCapture>;
+    /** @deprecated Subscribe to the BiDi `log.entryAdded` event instead. */
     mobileStartLogsBroadcast(
       ...args: Parameters<typeof mobileStartLogsBroadcast>
     ): ReturnType<typeof mobileStartLogsBroadcast>;
+    /** @deprecated Unsubscribe from the BiDi `log.entryAdded` event instead. */
     mobileStopLogsBroadcast(
       ...args: Parameters<typeof mobileStopLogsBroadcast>
     ): ReturnType<typeof mobileStopLogsBroadcast>;
@@ -237,6 +239,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
  *
  * Each connected websocket listener will receive syslog lines as soon as they are visible to Appium.
  * @see https://www.headspin.io/blog/using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium
+ * @deprecated Subscribe to the BiDi `log.entryAdded` event instead.
  */
 export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
@@ -299,6 +302,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
  * Stops the syslog broadcasting websocket server previously started by `mobile: startLogsBroadcast`.
  *
  * If no websocket server is running, this command does nothing.
+ * @deprecated Unsubscribe from the BiDi `log.entryAdded` event instead.
  */
 export async function mobileStopLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
