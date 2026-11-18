@@ -714,7 +714,7 @@ async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipRe
 async function startPerformanceLog(this: XCUITestDriver, context: string): Promise<void> {
   this.log.debug(`Starting performance log on '${context}'`);
   this.logs.performance = assignBiDiLogListener(
-    this.eventEmitter,
+    this,
     new IOSPerformanceLog({
       remoteDebugger: this.remote,
       log: this.log,

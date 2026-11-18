@@ -90,9 +90,10 @@ describe('context', function () {
           },
         } as any;
         const networkLog = new SafariNetworkLog({showLogs: false, log: driver.log});
-        driver.logs.safariNetwork = assignBiDiLogListener(driver.eventEmitter, networkLog, {
+        driver.logs.safariNetwork = assignBiDiLogListener(driver, networkLog, {
           type: 'safariNetwork',
         })[0];
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['']};
         const bidiEvents: LogEntryAddedEvent[] = [];
         driver.eventEmitter.on(BIDI_EVENT_NAME, (event: LogEntryAddedEvent) => {
           if (event.method === LOG_ENTRY_ADDED_EVENT) {
@@ -144,16 +145,17 @@ describe('context', function () {
         driver._remote = remote;
 
         driver.logs.safariConsole = assignBiDiLogListener(
-          driver.eventEmitter,
+          driver,
           new SafariConsoleLog({showLogs: false, log: driver.log}),
           {type: 'safariConsole'},
         )[0];
         driver.logs.safariNetwork = assignBiDiLogListener(
-          driver.eventEmitter,
+          driver,
           new SafariNetworkLog({showLogs: false, log: driver.log}),
           {type: 'safariNetwork'},
         )[0];
 
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['']};
         const bidiEvents: LogEntryAddedEvent[] = [];
         driver.eventEmitter.on(BIDI_EVENT_NAME, (event: LogEntryAddedEvent) => {
           if (event.method === LOG_ENTRY_ADDED_EVENT) {

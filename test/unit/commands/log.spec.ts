@@ -5,6 +5,8 @@ import {describe, it, beforeEach, afterEach} from 'node:test';
 import sinon from 'sinon';
 import {WebSocket} from 'ws';
 
+import {BIDI_EVENT_NAME} from '../../../lib/commands/bidi/constants.js';
+import {assignBiDiLogListener} from '../../../lib/commands/log.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('logs broadcast', function () {
@@ -116,5 +118,55 @@ describe('logs broadcast', function () {
     client.emit('close', 1001, Buffer.from('going away'));
 
     assert.ok(debugSpy.calledWith('System logs listener web socket is closed. Code: 1001. Reason: going away.'));
+  });
+});
+
+describe('assignBiDiLogListener', function () {
+  let driver: XCUITestDriver;
+  let emitted: any[];
+  const entry = {timestamp: 1, level: 'ALL', message: 'hello'};
+
+  beforeEach(function () {
+    driver = new XCUITestDriver({} as any);
+    emitted = [];
+    driver.eventEmitter.on(BIDI_EVENT_NAME, (e) => emitted.push(e));
+  });
+
+  it('does not emit events while nobody is subscribed', function () {
+    const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog'});
+    logEmitter.emit('output', entry);
+    assert.deepStrictEqual(emitted, []);
+  });
+
+  for (const sub of ['log.entryAdded', 'log']) {
+    it(`emits events for a '${sub}' subscription`, function () {
+      driver.bidiEventSubs = {[sub]: ['']};
+      const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog'});
+      logEmitter.emit('output', entry);
+      assert.strictEqual(emitted.length, 1);
+      assert.strictEqual(emitted[0].method, 'log.entryAdded');
+      assert.strictEqual(emitted[0].params.text, 'hello');
+    });
+  }
+
+  it('does not emit events if the subscription is scoped to another context', function () {
+    driver.bidiEventSubs = {'log.entryAdded': ['WEBVIEW_1']};
+    const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog'});
+    logEmitter.emit('output', entry);
+    assert.deepStrictEqual(emitted, []);
+  });
+
+  it('emits events if the subscription is scoped to the event context', function () {
+    driver.bidiEventSubs = {log: ['NATIVE_APP']};
+    const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog'});
+    logEmitter.emit('output', entry);
+    assert.strictEqual(emitted.length, 1);
+  });
+
+  it('does not apply the transformer while nobody is subscribed', function () {
+    const entryTransformer = sinon.stub().returnsArg(0);
+    const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog', entryTransformer});
+    logEmitter.emit('output', entry);
+    assert.strictEqual(entryTransformer.called, false);
   });
 });

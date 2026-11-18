@@ -54,6 +54,7 @@ Event emission of all of these log types is supported for both real devices and 
 * `syslog`
     * Each event contains a single device system log line
     * `context` is always set to `NATIVE_APP`
+    * `level` is derived from the severity of the line, and falls back to `info` if it cannot be determined
 * `safariConsole`
     * Each event contains a single Safari console log line
     * `context` is always set to the appropriate web context name
@@ -74,7 +75,8 @@ Event emission of all of these log types is supported for both real devices and 
 #### Usage
 
 Start the session with the `webSocketUrl` capability set to `true` and subscribe to the `log.entryAdded` event
-(or to the whole `log` module). The events arrive over the BiDi connection of the session, so there is no need
+(or to the whole `log` module). The driver only emits the event while a client is subscribed to it.
+The events arrive over the BiDi connection of the session, so there is no need
 for direct access to the host and port of the Appium server.
 
 === "Java"
