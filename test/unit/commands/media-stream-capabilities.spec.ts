@@ -142,5 +142,6 @@ describe('mobile: startMediaStream after a failed start on a real device', funct
     await assert.rejects(startCmd(), /runs one media stream at a time/);
     releaseTeardown();
     assert.match(String(await first), /produced no output within 5000ms/);
+    assert.equal(driver._endedMediaStreams?.size ?? 0, 0);
   });
 });

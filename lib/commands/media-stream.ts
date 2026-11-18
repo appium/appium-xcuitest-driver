@@ -138,6 +138,8 @@ export async function mobileStartMediaStream(
   } catch (e) {
     // Stay registered until the teardown is done: it stops the whole device, so nothing may start meanwhile
     await stream.stop('failed to start');
+    // The client never got this id, so there is nothing for a late stop to be a no-op for
+    this._endedMediaStreams?.delete(stream.streamId);
     throw e instanceof TypeError || e instanceof RangeError ? new errors.InvalidArgumentError(e.message) : e;
   }
 }
