@@ -24,6 +24,8 @@ export interface MediaStreamDeps {
   emitter: EventEmitter;
   hasSubscribers: () => boolean;
   log: AppiumLogger;
+  /** Called once the stream is torn down, so the owner can release it */
+  onEnded: (streamId: string) => void;
 }
 
 /**
@@ -151,6 +153,7 @@ export class MediaStream {
     if (this.announced) {
       this.send({method: MEDIA_ENDED_EVENT, params: {streamId: this.streamId, reason}});
     }
+    this.deps.onEnded(this.streamId);
   }
 
   info(): MediaStreamInfo {
@@ -200,6 +203,9 @@ export class MediaStream {
       }
     } else if (au.isKeyFrame) {
       this.checkVideoSize(au.data);
+    } else if (!this.announced) {
+      // `started` carries the size, which only a keyframe has, and a delta frame is not decodable alone
+      return;
     }
     this.announce();
     this.firstUnitSeen();

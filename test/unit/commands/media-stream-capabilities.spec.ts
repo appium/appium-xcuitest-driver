@@ -83,3 +83,15 @@ describe('mobile: startMediaStream on a real device', function () {
     );
   });
 });
+
+describe('mobile: startMediaStream on a real device with a stream running', function () {
+  it('rejects a second stream', async function () {
+    currentLoadMediaProxy = async () => ({listH264Encoders: () => ['h264_videotoolbox']});
+    const driver = realDevice();
+    driver._mediaStreams = new Map([['running', {kind: 'jpeg', isStopped: false}]]);
+    await assert.rejects(
+      (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(driver, 'jpeg'),
+      /runs one media stream at a time/,
+    );
+  });
+});

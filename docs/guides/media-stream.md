@@ -47,6 +47,8 @@ package. The device streams HEVC, which the driver transcodes to H.264 or JPEG, 
   [media-proxy docs](https://github.com/appium/appium-ios/tree/main/packages/media-proxy#software-h264-openh264).
   Without it, `mobile: getMediaStreamCapabilities` offers only the `jpeg` kind (with a `reason`), and starting an H.264
   stream fails with an error that says what to install.
+- Only one stream can run at a time, because stopping the device's capture stops everything it streams. Stop the running
+  stream before starting another.
 - Only the `h264` codec is available. With `audio: true` the device's AAC-ELD audio is transcoded to AAC-LC (48 kHz
   stereo, ADTS), as on a simulator.
 - The stream is upright and cropped to the visible display: the device always sends the display's native portrait

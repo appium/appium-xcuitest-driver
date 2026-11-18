@@ -104,9 +104,13 @@ describe('mobile: startMediaStream', function () {
     const driver = fakeDriver({device: {startJpegStream: async () => stream()}});
     const first = (await start(driver, 'jpeg')) as {streamId: string};
     await mobileStopMediaStream.call(driver, first.streamId);
+    assert.equal(driver._mediaStreams.size, 0);
     const second = (await start(driver, 'jpeg')) as {streamId: string};
     await mobileStopMediaStream.call(driver, first.streamId);
+    assert.equal(driver._mediaStreams.size, 1);
     await mobileStopMediaStream.call(driver, second.streamId);
+    assert.equal(driver._mediaStreams.size, 0);
+    await assert.rejects(mobileStopMediaStream.call(driver, 'nope'), /Unknown media stream id/);
   });
 
   it('rejects stopping an unknown stream', async function () {

@@ -104,7 +104,14 @@ export async function mobileStartMediaStream(
     : new DeviceMediaSource(this.remoteXPCFacade, opts, this.log);
 
   const streams = (this._mediaStreams ??= new Map());
-  // Ended streams stay registered so that a later stop call is a no-op
+  // Only streams that are still running stay here; ended ids move to `_endedMediaStreams`.
+  // Stopping a device capture stops everything streaming on the device, so streams must not overlap (a
+  // stream that is still tearing down is still registered)
+  if (!this.isSimulator() && streams.size > 0) {
+    throw new errors.InvalidArgumentError(
+      'A real device runs one media stream at a time, stop the running one first and retry',
+    );
+  }
   if ([...streams.values()].some((s) => s.kind === kind && !s.isStopped)) {
     throw new errors.InvalidArgumentError(`A ${kind} media stream is already running in this session`);
   }
@@ -119,6 +126,11 @@ export async function mobileStartMediaStream(
     emitter: this.eventEmitter,
     hasSubscribers: () => hasSubscribers(this, MEDIA_UNITS_EVENT),
     log: this.log,
+    onEnded: (id) => {
+      if (this._mediaStreams?.delete(id)) {
+        (this._endedMediaStreams ??= new Set()).add(id);
+      }
+    },
   });
   streams.set(stream.streamId, stream);
   try {
@@ -134,6 +146,9 @@ export async function mobileStartMediaStream(
 export async function mobileStopMediaStream(this: XCUITestDriver, streamId: string): Promise<void> {
   const stream = this._mediaStreams?.get(streamId);
   if (!stream) {
+    if (this._endedMediaStreams?.has(streamId)) {
+      return;
+    }
     throw new errors.InvalidArgumentError(`Unknown media stream id '${streamId}'`);
   }
   await stream.stop();
@@ -210,6 +225,7 @@ function unsupported(
 export async function stopAllMediaStreams(this: XCUITestDriver): Promise<void> {
   await Promise.all([...(this._mediaStreams?.values() ?? [])].map((s) => s.stop('session ended')));
   this._mediaStreams = undefined;
+  this._endedMediaStreams = undefined;
 }
 
 function hasSubscribers(driver: XCUITestDriver, method: string): boolean {

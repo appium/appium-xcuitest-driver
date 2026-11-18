@@ -316,6 +316,7 @@ export class XCUITestDriver
   xcodeVersion: XcodeVersion | undefined;
   _networkMonitorSession: NetworkMonitorSession | null;
   _mediaStreams?: Map<string, MediaStream>;
+  _endedMediaStreams?: Set<string>;
   _systemMonitorSession: SystemMonitorSession | null;
   _remoteXPCFacade: RemoteXPCFacade | null;
   _recentScreenRecorder!: ScreenRecorder | null;

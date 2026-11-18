@@ -67,7 +67,7 @@ function setup(kind: 'video' | 'jpeg', subscribed = true, extra: Record<string, 
   const stream = new MediaStream(
     source,
     {kind, batchMs: 0, idleHeartbeatMs: 0, ...extra},
-    {emit: (e) => events.push(e), emitter, hasSubscribers: () => state.subscribed, log},
+    {emit: (e) => events.push(e), emitter, hasSubscribers: () => state.subscribed, log, onEnded() {}},
   );
   const tick = () => new Promise((r) => setImmediate(r));
   // A video stream is only started once the encoder produced its first keyframe
@@ -198,6 +198,34 @@ describe('MediaStream', function () {
     assert.ok(stream.isStopped);
     const sent = unitEvents(events).flatMap((e) => e.params!.units.map((u: {seq: number}) => u.seq));
     assert.equal(sent.length, 2);
+  });
+
+  it('does not announce or finish starting on a delta frame', async function () {
+    const {source, events, stream} = setup('video');
+    source.push(su('video', 0));
+    const starting = stream.start();
+    await source.stop();
+    await assert.rejects(starting, /ended before producing any output/);
+    assert.deepEqual(
+      events.filter((e) => e.method.startsWith('appium:mediaStream.') && !e.method.endsWith('.units')),
+      [],
+    );
+    assert.equal(unitEvents(events).length, 0);
+  });
+
+  it('calls onEnded once when the stream ends', async function () {
+    const ended: string[] = [];
+    const source = fakeSource();
+    const stream = new MediaStream(
+      source,
+      {kind: 'video', batchMs: 0, idleHeartbeatMs: 0},
+      {emit() {}, emitter: new EventEmitter(), hasSubscribers: () => true, log, onEnded: (id) => ended.push(id)},
+    );
+    source.push(su('video', 0, {isKeyFrame: true, data: keyFrameData()}));
+    await stream.start();
+    await stream.stop();
+    await stream.stop();
+    assert.deepEqual(ended, [stream.streamId]);
   });
 
   it('announces a format change when a later keyframe has another size', async function () {
@@ -357,6 +385,7 @@ describe('MediaStream', function () {
         emitter: new EventEmitter(),
         hasSubscribers: () => true,
         log,
+        onEnded() {},
       },
     );
     await failed.start();
