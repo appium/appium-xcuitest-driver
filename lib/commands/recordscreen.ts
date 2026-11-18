@@ -71,6 +71,24 @@ const DEFAULT_MJPEG_SERVER_PORT = 9100;
 const DEFAULT_VCODEC = 'mjpeg';
 const MP4_EXT = '.mp4';
 const FFMPEG_BINARY = 'ffmpeg';
+// Some ffmpeg filters read or write host files (e.g. `movie=`, `metadata=...:file=`),
+// so user-supplied filtergraphs may only use filters that cannot.
+const SAFE_VIDEO_FILTERS = new Set([
+  'scale',
+  'transpose',
+  'hflip',
+  'vflip',
+  'crop',
+  'pad',
+  'rotate',
+  'fps',
+  'format',
+  'setsar',
+  'setdar',
+  'drawbox',
+]);
+// ffmpeg unquotes and unescapes filter names and options, which could hide a filter from the check
+const FORBIDDEN_FILTERGRAPH_CHARS = /['"\\]/;
 const ffmpegLogger = logger.getLogger(FFMPEG_BINARY);
 const QUALITY_MAPPING: Record<string, number> = {
   low: 10,
@@ -381,6 +399,19 @@ export async function startRecordingScreen(
     hardwareAcceleration,
   } = options;
 
+  // Only the user-supplied part is checked: the driver picks the hardware scale filter itself.
+  // videoScale is ignored when videoFilters is set.
+  const [filterOptionName, filterOptionValue, userFiltergraph] = videoFilters
+    ? ['videoFilters', videoFilters, videoFilters]
+    : ['videoScale', videoScale, videoScale && `scale=${videoScale}`];
+  const unsafeFiltergraphPart = userFiltergraph ? findUnsafeFiltergraphPart(userFiltergraph) : null;
+  if (unsafeFiltergraphPart) {
+    throw this.log.errorWithException(
+      `The ${filterOptionName} value '${filterOptionValue}' is not allowed: ${unsafeFiltergraphPart}. ` +
+        `Only these ffmpeg filters are supported: ${[...SAFE_VIDEO_FILTERS].join(', ')}`,
+    );
+  }
+
   let result = '';
   if (!forceRestart) {
     this.log.info(
@@ -541,4 +572,36 @@ function optionsFromFlattenedExecuteArgs<T extends object>(keys: readonly string
     }
   }
   return out as T;
+}
+
+/**
+ * Explains why a user-supplied ffmpeg filtergraph is not allowed, or returns null if it only uses
+ * filters from {@link SAFE_VIDEO_FILTERS}.
+ */
+function findUnsafeFiltergraphPart(graph: string): string | null {
+  if (FORBIDDEN_FILTERGRAPH_CHARS.test(graph)) {
+    return 'quotes and backslashes are not supported';
+  }
+  for (const filter of graph.split(/[,;]/)) {
+    const unlabeled = filter.replace(/\[[^[\]]*\]/g, '');
+    if (/[[\]]/.test(unlabeled)) {
+      return `'${filter}' has unbalanced brackets`;
+    }
+    const [name, ...rest] = unlabeled.split('=');
+    // `scale@main` is an instance of the `scale` filter
+    const filterName = name.trim().split('@')[0];
+    if (!SAFE_VIDEO_FILTERS.has(filterName)) {
+      return `the '${name.trim()}' filter is not supported`;
+    }
+    // ffmpeg loads the value of an option whose name starts with '/' from that file
+    if (
+      rest
+        .join('=')
+        .split(':')
+        .some((option) => option.trim().startsWith('/'))
+    ) {
+      return `filter options starting with '/' are not supported`;
+    }
+  }
+  return null;
 }
