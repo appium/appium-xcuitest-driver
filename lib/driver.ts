@@ -497,7 +497,11 @@ export class XCUITestDriver
       await recorder.interrupt(true);
       await recorder.cleanup();
     }
-    await mediaStreamCommands.stopAllMediaStreams.call(this);
+    try {
+      await mediaStreamCommands.stopAllMediaStreams.call(this);
+    } catch (err) {
+      this.log.warn(`Cannot stop the media streams: ${(err as Error).message}`);
+    }
     await this._networkMonitorSession?.interrupt();
     this._networkMonitorSession = null;
     await this._systemMonitorSession?.interrupt();

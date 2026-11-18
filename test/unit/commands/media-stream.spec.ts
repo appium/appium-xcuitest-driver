@@ -69,7 +69,7 @@ describe('mobile: startMediaStream', function () {
 
   it('rejects out-of-range numeric options', async function () {
     await assert.rejects(start(fakeDriver(), 'video', 5 as any), /'codec' must be either/);
-    await assert.rejects(start(fakeDriver(), 'video', undefined, 0), /'fps' must be a number >= 1/);
+    await assert.rejects(start(fakeDriver(), 'video', undefined, 0), /'fps' must be a number between 1 and 120/);
     await assert.rejects(start(fakeDriver(), 'video', undefined, undefined, 'abc'), /'bitrate' must be a number/);
     await assert.rejects(
       start(fakeDriver(), 'jpeg', undefined, undefined, undefined, 101),
@@ -88,8 +88,27 @@ describe('mobile: startMediaStream', function () {
     );
   });
 
-  it('rejects a non-integer batch window', async function () {
-    await assert.rejects(start(fakeDriver(), 'video', ...Array(7).fill(undefined), -1 as any), /non-negative/);
+  it('rejects a batch window that is not an integer in range', async function () {
+    const withBatch = (batchMs: unknown) => start(fakeDriver(), 'video', ...Array(7).fill(undefined), batchMs);
+    await assert.rejects(withBatch(-1), /'batchMs' must be an integer between 0 and 1000/);
+    await assert.rejects(withBatch(1.5), /'batchMs'/);
+    await assert.rejects(withBatch(2 ** 31), /'batchMs'/);
+  });
+
+  it('rejects an idle heartbeat that would flood the client', async function () {
+    const withHeartbeat = (ms: unknown) => start(fakeDriver(), 'jpeg', ...Array(8).fill(undefined), ms);
+    await assert.rejects(withHeartbeat(1), /'idleHeartbeatMs' must be 0 or/);
+    await assert.rejects(withHeartbeat(99), /'idleHeartbeatMs'/);
+    await assert.rejects(withHeartbeat(2 ** 31), /'idleHeartbeatMs'/);
+    await assert.rejects(withHeartbeat(-1), /'idleHeartbeatMs'/);
+  });
+
+  it('rejects fps and bitrate above the limits', async function () {
+    await assert.rejects(start(fakeDriver(), 'video', undefined, 121), /'fps' must be.*between 1 and 120/);
+    await assert.rejects(
+      start(fakeDriver(), 'video', undefined, undefined, 100_000_001),
+      /'bitrate' must be.*between 1 and 100000000/,
+    );
   });
 
   it('fails with the capability reason when unsupported', async function () {

@@ -1152,14 +1152,14 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 kind | string | yes | `video` (H.264/HEVC, optionally with audio) or `jpeg` | jpeg
 codec | string | no | `h264` (default) or `hevc`. `video` only | hevc
-fps | number | no | The maximum frames per second, 60 by default. An unchanged screen is never re-encoded | 30
-bitrate | number | no | The video bitrate in bits per second, 4000000 by default. `video` only | 2000000
+fps | number | no | The maximum frames per second, 60 by default, 120 at most. An unchanged screen is never re-encoded | 30
+bitrate | number | no | The video bitrate in bits per second, 4000000 by default, 100000000 at most. `video` only | 2000000
 quality | number | no | The JPEG quality in percent, 80 by default. `jpeg` only | 70
 scale | number | no | The JPEG scale in percent, 100 by default. `jpeg` only | 50
 audio | boolean | no | Whether to add an AAC audio track. `video` only, false by default | true
-displayId | string | no | The id of the display to stream. The primary display by default | 1
-batchMs | number | no | How long to collect `video` and `audio` units into one event. 40 by default, 0 disables batching | 40
-idleHeartbeatMs | number | no | Repeat the last `jpeg` frame after this idle time in milliseconds. 1000 by default, 0 disables | 1000
+displayId | string | no | The id of the display to stream (a numeric id on real devices). The primary display by default | 1
+batchMs | number | no | How long to collect `video` and `audio` units into one event. 40 by default, 0 disables batching, 1000 at most | 40
+idleHeartbeatMs | number | no | Repeat the last `jpeg` frame after this idle time in milliseconds. 1000 by default, 0 disables, otherwise 100-60000 | 1000
 
 #### Returned Result
 

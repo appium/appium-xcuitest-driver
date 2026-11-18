@@ -14,6 +14,8 @@ import {
   MEDIA_STARTED_EVENT,
   MEDIA_STREAM_MODULE,
   MEDIA_UNITS_EVENT,
+  SOURCE_START_TIMEOUT_MS,
+  SOURCE_STOP_TIMEOUT_MS,
 } from './constants.js';
 import {readJpegSize} from './jpeg.js';
 import {parseVideoSize} from './sps.js';
@@ -76,13 +78,13 @@ export class MediaStream {
       throw new Error('The stream was stopped before it started');
     }
     try {
-      await this.source.start();
+      await withTimeout(this.source.start(), SOURCE_START_TIMEOUT_MS, `The ${this.kind} source did not start`);
     } catch (e) {
-      await this.source.stop().catch(() => {});
+      await this.stopSource();
       throw e;
     }
     if (this.stopped) {
-      await this.source.stop().catch(() => {});
+      await this.stopSource();
       throw new Error('The stream was stopped while it was starting');
     }
 
@@ -103,7 +105,19 @@ export class MediaStream {
   /** Idempotent; resolves once the stream is torn down and its pump has finished. */
   async stop(reason = 'stopped'): Promise<void> {
     await this.finish(reason);
-    await this.pump?.catch(() => {});
+    if (this.pump) {
+      // A source that never ends its units must not hang the caller (and the session teardown)
+      await withTimeout(this.pump, SOURCE_STOP_TIMEOUT_MS, 'The stream pump did not end').catch(() => {});
+    }
+  }
+
+  // Bounded, so a hung source cannot block the session teardown
+  private async stopSource(): Promise<void> {
+    try {
+      await withTimeout(this.source.stop(), SOURCE_STOP_TIMEOUT_MS, `The ${this.kind} source did not stop`);
+    } catch (e) {
+      this.deps.log.warn(`Cannot stop the ${this.kind} stream source: ${(e as Error).message}`);
+    }
   }
 
   // Fails fast if the source never produces anything or ends right away
@@ -145,11 +159,7 @@ export class MediaStream {
     this.batcher.close();
     this.lastJpeg = undefined;
     this.deps.emitter.off(BACKPRESSURE_EVENT_NAME, this.onBackpressure);
-    try {
-      await this.source.stop();
-    } catch (e) {
-      this.deps.log.warn(`Cannot stop the ${this.kind} stream source: ${(e as Error).message}`);
-    }
+    await this.stopSource();
     if (this.announced) {
       this.send({method: MEDIA_ENDED_EVENT, params: {streamId: this.streamId, reason}});
     }
@@ -347,6 +357,20 @@ export class MediaStream {
     this.dropped = Math.max(this.dropped, ev.dropped);
     this.deps.log.debug(`BiDi backpressure for stream ${this.streamId}: ${ev.state} (dropped=${ev.dropped})`);
   };
+}
+
+async function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new Error(`${message} within ${ms}ms`)), ms);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function toWireUnit(u: MediaUnit): WireUnit {

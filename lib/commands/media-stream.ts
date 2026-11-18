@@ -4,8 +4,14 @@ import {errors} from 'appium/driver.js';
 import {
   DEFAULT_BATCH_MS,
   DEFAULT_IDLE_HEARTBEAT_MS,
+  MAX_BATCH_MS,
+  MAX_BITRATE,
+  MAX_DISPLAY_ID,
+  MAX_FPS,
+  MAX_IDLE_HEARTBEAT_MS,
   MEDIA_STREAM_MODULE,
   MEDIA_UNITS_EVENT,
+  MIN_IDLE_HEARTBEAT_MS,
   MIN_SIMULATOR_XCODE_MAJOR,
 } from '../device/media-stream/constants.js';
 import {DeviceMediaSource} from '../device/media-stream/device-source.js';
@@ -79,7 +85,11 @@ export async function mobileStartMediaStream(
     idleHeartbeatMs,
   };
   validateOpts(opts);
-  if (!this.isSimulator() && displayId !== undefined && !/^\d+$/.test(displayId)) {
+  if (
+    !this.isSimulator() &&
+    displayId !== undefined &&
+    !(/^\d{1,10}$/.test(displayId) && Number(displayId) <= MAX_DISPLAY_ID)
+  ) {
     throw new errors.InvalidArgumentError(`'displayId' must be a numeric display id, got '${displayId}'`);
   }
   const caps = await getCapabilities(this);
@@ -262,8 +272,8 @@ function validateOpts({
     throw new errors.InvalidArgumentError(`'audio' must be a boolean, got '${String(audio)}'`);
   }
   const ranges: [string, number | undefined, number, number][] = [
-    ['fps', fps, 1, Infinity],
-    ['bitrate', bitrate, 1, Infinity],
+    ['fps', fps, 1, MAX_FPS],
+    ['bitrate', bitrate, 1, MAX_BITRATE],
     ['quality', quality, 0, 100],
     ['scale', scale, 1, 100],
   ];
@@ -274,7 +284,17 @@ function validateOpts({
       );
     }
   }
-  if (!Number.isInteger(batchMs) || batchMs < 0 || !Number.isInteger(idleHeartbeatMs) || idleHeartbeatMs < 0) {
-    throw new errors.InvalidArgumentError(`'batchMs' and 'idleHeartbeatMs' must be non-negative integers`);
+  if (!Number.isInteger(batchMs) || batchMs < 0 || batchMs > MAX_BATCH_MS) {
+    throw new errors.InvalidArgumentError(
+      `'batchMs' must be an integer between 0 and ${MAX_BATCH_MS}, got '${String(batchMs)}'`,
+    );
+  }
+  if (
+    !Number.isInteger(idleHeartbeatMs) ||
+    (idleHeartbeatMs !== 0 && (idleHeartbeatMs < MIN_IDLE_HEARTBEAT_MS || idleHeartbeatMs > MAX_IDLE_HEARTBEAT_MS))
+  ) {
+    throw new errors.InvalidArgumentError(
+      `'idleHeartbeatMs' must be 0 or an integer between ${MIN_IDLE_HEARTBEAT_MS} and ${MAX_IDLE_HEARTBEAT_MS}, got '${String(idleHeartbeatMs)}'`,
+    );
   }
 }

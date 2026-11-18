@@ -105,6 +105,21 @@ describe('mobile: startMediaStream on a real device', function () {
       /'displayId' must be a numeric display id/,
     );
   });
+
+  it('rejects a display id that is not a 32-bit integer', async function () {
+    currentLoadMediaProxy = async () => ({listH264Encoders: () => ['h264_videotoolbox']});
+    for (const id of ['4294967296', '9'.repeat(400)]) {
+      await assert.rejects(
+        (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(
+          realDevice(),
+          'video',
+          ...Array(6).fill(undefined),
+          id,
+        ),
+        /'displayId' must be a numeric display id/,
+      );
+    }
+  });
 });
 
 describe('mobile: startMediaStream on a real device with a stream running', function () {

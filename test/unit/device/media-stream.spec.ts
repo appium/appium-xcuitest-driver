@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
-import {describe, it} from 'node:test';
+import {describe, it, mock} from 'node:test';
 
 import type {BiDiEvent} from '@appium/types';
 
@@ -393,5 +393,61 @@ describe('MediaStream', function () {
     await failed.stop();
     assert.equal(events.find((e) => e.method === 'appium:mediaStream.ended')?.params?.reason, 'error: encoder died');
     await stream.stop();
+  });
+});
+
+describe('MediaStream with a hung source', function () {
+  const hang = () => new Promise<void>(() => {});
+
+  it('stops without waiting for a source that never stops, and releases the stream', async function () {
+    mock.timers.enable({apis: ['setTimeout']});
+    try {
+      const source = fakeSource();
+      source.stop = hang;
+      const ended: string[] = [];
+      const stream = new MediaStream(source, {kind: 'jpeg', batchMs: 0, idleHeartbeatMs: 0} as any, {
+        emit() {},
+        emitter: new EventEmitter(),
+        hasSubscribers: () => true,
+        log,
+        onEnded: (id) => ended.push(id),
+      });
+      await stream.start();
+      const stopped = stream.stop();
+      // First the source stop times out, then the wait for the pump that never ends
+      for (let i = 0; i < 2; i++) {
+        await new Promise((r) => setImmediate(r));
+        mock.timers.tick(15_000);
+      }
+      await stopped;
+      assert.deepEqual(ended, [stream.streamId]);
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  it('fails to start if the source never starts', async function () {
+    mock.timers.enable({apis: ['setTimeout']});
+    try {
+      const source = fakeSource();
+      source.start = hang;
+      source.stop = hang;
+      const stream = new MediaStream(source, {kind: 'jpeg', batchMs: 0, idleHeartbeatMs: 0} as any, {
+        emit() {},
+        emitter: new EventEmitter(),
+        hasSubscribers: () => true,
+        log,
+        onEnded() {},
+      });
+      const started = assert.rejects(stream.start(), /did not start within 60000ms/);
+      await new Promise((r) => setImmediate(r));
+      mock.timers.tick(60_000);
+      // Then the stop of the source that never started is bounded too
+      await new Promise((r) => setImmediate(r));
+      mock.timers.tick(15_000);
+      await started;
+    } finally {
+      mock.timers.reset();
+    }
   });
 });
