@@ -127,6 +127,7 @@ export async function mobileStartMediaStream(
   }
 
   // No await between the check above and the registration below, or concurrent starts could both pass
+  let handedOut = false;
   const stream = new MediaStream(source, opts, {
     emit: (event) => {
       if (hasSubscribers(this, event.method)) {
@@ -137,19 +138,20 @@ export async function mobileStartMediaStream(
     hasSubscribers: () => hasSubscribers(this, MEDIA_UNITS_EVENT),
     log: this.log,
     onEnded: (id) => {
-      if (this._mediaStreams?.delete(id)) {
+      // Only ids the client received need to stay known for a late stop
+      if (this._mediaStreams?.delete(id) && handedOut) {
         (this._endedMediaStreams ??= new Set()).add(id);
       }
     },
   });
   streams.set(stream.streamId, stream);
   try {
-    return await stream.start();
+    const info = await stream.start();
+    handedOut = true;
+    return info;
   } catch (e) {
     // Stay registered until the teardown is done: it stops the whole device, so nothing may start meanwhile
     await stream.stop('failed to start');
-    // The client never got this id, so there is nothing for a late stop to be a no-op for
-    this._endedMediaStreams?.delete(stream.streamId);
     throw e instanceof TypeError || e instanceof RangeError ? new errors.InvalidArgumentError(e.message) : e;
   }
 }

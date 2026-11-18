@@ -55,6 +55,7 @@ export class MediaStream {
   private firstUnitSeen!: () => void;
   private readonly firstUnit = new Promise<void>((resolve) => (this.firstUnitSeen = resolve));
   private stopped = false;
+  private sourceStopped?: Promise<void>;
   private get videoChain(): string {
     return `${this.streamId}:video`;
   }
@@ -111,10 +112,19 @@ export class MediaStream {
     }
   }
 
-  // Bounded, so a hung source cannot block the session teardown
+  // The wait is bounded so a hung source cannot block the caller, but `sourceStopped` tracks the real stop
   private async stopSource(): Promise<void> {
+    this.sourceStopped ??= this.runSourceStop();
     try {
-      await withTimeout(this.source.stop(), SOURCE_STOP_TIMEOUT_MS, `The ${this.kind} source did not stop`);
+      await withTimeout(this.sourceStopped, SOURCE_STOP_TIMEOUT_MS, `The ${this.kind} source did not stop`);
+    } catch (e) {
+      this.deps.log.warn(`Cannot stop the ${this.kind} stream source: ${(e as Error).message}`);
+    }
+  }
+
+  private async runSourceStop(): Promise<void> {
+    try {
+      await this.source.stop();
     } catch (e) {
       this.deps.log.warn(`Cannot stop the ${this.kind} stream source: ${(e as Error).message}`);
     }
@@ -163,6 +173,12 @@ export class MediaStream {
     if (this.announced) {
       this.send({method: MEDIA_ENDED_EVENT, params: {streamId: this.streamId, reason}});
     }
+    // A source that is still stopping may stop the whole device later, so keep the stream owned until then
+    void this.releaseOnceStopped();
+  }
+
+  private async releaseOnceStopped(): Promise<void> {
+    await this.sourceStopped;
     this.deps.onEnded(this.streamId);
   }
 

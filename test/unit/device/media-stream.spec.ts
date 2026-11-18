@@ -399,11 +399,12 @@ describe('MediaStream', function () {
 describe('MediaStream with a hung source', function () {
   const hang = () => new Promise<void>(() => {});
 
-  it('stops without waiting for a source that never stops, and releases the stream', async function () {
+  it('stops without waiting for a slow source, and releases the stream only once it has stopped', async function () {
     mock.timers.enable({apis: ['setTimeout']});
     try {
       const source = fakeSource();
-      source.stop = hang;
+      let finishStop!: () => void;
+      source.stop = () => new Promise<void>((resolve) => (finishStop = resolve));
       const ended: string[] = [];
       const stream = new MediaStream(source, {kind: 'jpeg', batchMs: 0, idleHeartbeatMs: 0} as any, {
         emit() {},
@@ -420,6 +421,9 @@ describe('MediaStream with a hung source', function () {
         mock.timers.tick(15_000);
       }
       await stopped;
+      assert.deepEqual(ended, []);
+      finishStop();
+      await new Promise((r) => setImmediate(r));
       assert.deepEqual(ended, [stream.streamId]);
     } finally {
       mock.timers.reset();
