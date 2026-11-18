@@ -77,7 +77,7 @@
     "appium-remote-debugger": "^19.1.0",
     "appium-webdriveragent": "^17.0.0",
     "appium-xcode": "^8.0.0",
-    "asyncbox": "^6.6.0",
+    "asyncbox": "^7.1.0",
     "axios": "^1.18.0",
     "commander": "^15.0.0",
     "dayjs": "^1.11.21",
