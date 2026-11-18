@@ -1,7 +1,7 @@
 import type {TimeoutValue} from '@appium/types';
+import {ConditionUnmetError} from 'asyncbox';
 
-const CONDITION_UNMET_CODE = 'ERR_ASYNCBOX_CONDITION_UNMET';
-// `instanceof` fails across asyncbox copies; the message covers asyncbox < 6.6.0 (no `code`)
+// The message covers errors of asyncbox < 6.6.0 (no `code`)
 const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 /**
@@ -40,8 +40,5 @@ export async function withoutImplicitWait<T>(driver: ImplicitWaitOwner, fn: () =
  * @param err - Error to check
  */
 export function isConditionUnmetError(err: unknown): boolean {
-  return (
-    (err as {code?: unknown} | null)?.code === CONDITION_UNMET_CODE ||
-    (err instanceof Error && LEGACY_CONDITION_UNMET_PATTERN.test(err.message))
-  );
+  return ConditionUnmetError.is(err) || (err instanceof Error && LEGACY_CONDITION_UNMET_PATTERN.test(err.message));
 }
