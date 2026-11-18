@@ -1,3 +1,18 @@
+## [13.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.1...v13.1.2) (2026-11-18)
+
+### Bug Fixes
+
+* match asyncbox condition-unmet errors by code ([#3151](https://github.com/appium/appium-xcuitest-driver/issues/3151)) ([257e6a3](https://github.com/appium/appium-xcuitest-driver/commit/257e6a3c4dde5f2f134dda7cc2a4d23e47d28e8d))
+
+### Miscellaneous Chores
+
+* **deps:** bump @appium/css-locator-to-native from 1.0.7 to 2.0.1 ([#3152](https://github.com/appium/appium-xcuitest-driver/issues/3152)) ([d787a1f](https://github.com/appium/appium-xcuitest-driver/commit/d787a1f1b0645c06a5e4f60e5ff4e95ceff17587))
+* **deps:** bump teen_process from 4.2.2 to 5.0.1 ([#3153](https://github.com/appium/appium-xcuitest-driver/issues/3153)) ([3b09866](https://github.com/appium/appium-xcuitest-driver/commit/3b098668ce5a138b6bb3f9ecab1e03682c40ab52))
+
+### Code Refactoring
+
+* use port helpers from appium/support instead of portscanner ([#3146](https://github.com/appium/appium-xcuitest-driver/issues/3146)) ([bd36d4f](https://github.com/appium/appium-xcuitest-driver/commit/bd36d4f7f5c048db067ffb6c2a32a6eca21ca4f4))
+
 ## [13.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.0...v13.1.1) (2026-11-13)
 
 ### Miscellaneous Chores
