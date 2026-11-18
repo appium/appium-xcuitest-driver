@@ -75,9 +75,7 @@ Event emission of all of these log types is supported for both real devices and 
 
 Start the session with the `webSocketUrl` capability set to `true` and subscribe to the `log.entryAdded` event
 (or to the whole `log` module). The events arrive over the BiDi connection of the session, so there is no need
-for direct access to the host and port of the Appium server. This replaces the deprecated
-[`mobile: startLogsBroadcast`](./execute-methods.md#mobile-startlogsbroadcast) and
-[`mobile: stopLogsBroadcast`](./execute-methods.md#mobile-stoplogsbroadcast) execute methods.
+for direct access to the host and port of the Appium server.
 
 === "Java"
 

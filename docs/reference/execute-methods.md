@@ -545,7 +545,7 @@ Returns map of certificates installed on the real device. The response looks lik
 ### mobile: startLogsBroadcast
 
 !!! warning "Deprecated"
-    This extension is deprecated and will be removed in a future version. Subscribe to the
+    This method is deprecated and will be removed in a future version. Subscribe to the
     [`log.entryAdded`](./bidi.md#logentryadded) BiDi event instead, which does not need direct
     access to the Appium server host and port.
 
@@ -556,7 +556,7 @@ Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Ap
 ### mobile: stopLogsBroadcast
 
 !!! warning "Deprecated"
-    This extension is deprecated and will be removed in a future version. Unsubscribe from the
+    This method is deprecated and will be removed in a future version. Unsubscribe from the
     [`log.entryAdded`](./bidi.md#logentryadded) BiDi event instead.
 
 Stops the syslog broadcasting websocket server previously started by `mobile: startLogsBroadcast`. This method will return immediately if no server is running.
