@@ -69,6 +69,11 @@ describe('utils/implicit-wait', function () {
       assert.strictEqual(isConditionUnmetError(new ConditionUnmetError('custom message')), true);
     });
 
+    it('should match an error from another asyncbox copy by its code', function () {
+      const foreign = Object.assign(new Error('custom message'), {code: 'ERR_ASYNCBOX_CONDITION_UNMET'});
+      assert.strictEqual(isConditionUnmetError(foreign), true);
+    });
+
     it('should match a legacy error by its message', function () {
       assert.strictEqual(isConditionUnmetError(new Error('Condition unmet after 1000ms')), true);
     });
