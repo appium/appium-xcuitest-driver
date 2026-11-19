@@ -1,3 +1,9 @@
+## [13.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.3...v13.2.0) (2026-11-19)
+
+### Features
+
+* use base-driver's bundleId validation ([#3156](https://github.com/appium/appium-xcuitest-driver/issues/3156)) ([a1fcb2a](https://github.com/appium/appium-xcuitest-driver/commit/a1fcb2a29e82ccd5d65b44fccf6583a45b10d7d8))
+
 ## [13.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.2...v13.1.3) (2026-11-18)
 
 ### Miscellaneous Chores
