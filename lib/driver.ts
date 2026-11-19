@@ -1132,20 +1132,16 @@ export class XCUITestDriver
   }
 
   private async configureApp(): Promise<void> {
-    function appIsPackageOrBundle(app: string | undefined): boolean {
-      return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app ?? '');
-    }
-
     // the app name is a bundleId assign it to the bundleId property
-    if (!this.opts.bundleId && appIsPackageOrBundle(this.opts.app)) {
+    if (!this.opts.bundleId && this.helpers.isPackageOrBundle(this.opts.app ?? '')) {
       this.opts.bundleId = this.opts.app;
       this.opts.app = '';
     }
     // we have a bundle ID, but no app, or app is also a bundle
     if (
       this.opts.bundleId &&
-      appIsPackageOrBundle(this.opts.bundleId) &&
-      (this.opts.app === '' || appIsPackageOrBundle(this.opts.app))
+      this.helpers.isPackageOrBundle(this.opts.bundleId) &&
+      (this.opts.app === '' || this.helpers.isPackageOrBundle(this.opts.app ?? ''))
     ) {
       this.log.debug('App is an iOS bundle, will attempt to run as pre-existing');
       return;
