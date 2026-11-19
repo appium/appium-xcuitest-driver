@@ -12,8 +12,9 @@ import type {XCUITestDriver} from '../driver.js';
 import type {Page} from '../types.js';
 import {isEmpty} from '../utils/index.js';
 import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {getCurrentContextName} from './bidi/helpers.js';
 import {makeContextUpdatedEvent} from './bidi/models.js';
-import {NATIVE_WIN} from './constants.js';
+import {NATIVE_WIN, WEBVIEW_BASE} from './constants.js';
 import {assignBiDiLogListener} from './log.js';
 import type {ViewContext, FullContext, PageChangeNotification} from './types.js';
 
@@ -42,8 +43,6 @@ declare module '../driver.js' {
   }
 }
 
-const WEBVIEW_WIN = 'WEBVIEW';
-export const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
 const DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS = 5000;
 const DEFAULT_LIST_WEB_FRAMES_RETRIES = 20;
 
@@ -496,10 +495,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
  * @returns The context identifier (e.g., 'NATIVE_APP' or 'WEBVIEW_xxx')
  */
 export async function getCurrentContext(this: XCUITestDriver): Promise<string> {
-  if (this.curContext && this.curContext !== NATIVE_WIN) {
-    return `${WEBVIEW_BASE}${this.curContext}`;
-  }
-  return NATIVE_WIN;
+  return getCurrentContextName(this);
 }
 
 /**
@@ -721,7 +717,7 @@ async function startPerformanceLog(this: XCUITestDriver, context: string): Promi
     }),
     {
       type: 'performance',
-      context,
+      context: `${WEBVIEW_BASE}${context}`,
     },
   )[0];
   await this.logs.performance?.startCapture();

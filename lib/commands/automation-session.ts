@@ -1,5 +1,5 @@
 import type {XCUITestDriver} from '../driver.js';
-import {WEBVIEW_BASE} from './context.js';
+import {WEBVIEW_BASE} from './constants.js';
 import {requireSimulator, requireWebContext} from './helpers/index.js';
 import {getScriptTimeoutMs} from './web.js';
 

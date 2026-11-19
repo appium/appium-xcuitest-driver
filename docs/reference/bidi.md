@@ -76,6 +76,9 @@ Event emission of all of these log types is supported for both real devices and 
 
 Start the session with the `webSocketUrl` capability set to `true` and subscribe to the `log.entryAdded` event
 (or to the whole `log` module). The driver only emits the event while a client is subscribed to it.
+Subscriptions may be scoped to contexts. The `safariConsole`, `safariNetwork` and `performance` events are
+reported with the name of the webview context they come from, e.g. `WEBVIEW_5191.1`, and all the other
+types with `NATIVE_APP`. Omit the contexts to receive the events of all of them.
 The events arrive over the BiDi connection of the session, so there is no need
 for direct access to the host and port of the Appium server.
 

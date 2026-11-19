@@ -5,6 +5,7 @@ import {describe, it} from 'node:test';
 import {RemoteDebugger} from 'appium-remote-debugger';
 
 import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from '../../../lib/commands/bidi/constants.js';
+import {getCurrentContextName} from '../../../lib/commands/bidi/helpers.js';
 import type {LogEntryAddedEvent} from '../../../lib/commands/bidi/types.js';
 import {assignBiDiLogListener} from '../../../lib/commands/log.js';
 import type {IOSPerformanceLog} from '../../../lib/device/log/ios-performance-log.js';
@@ -147,12 +148,12 @@ describe('context', function () {
         driver.logs.safariConsole = assignBiDiLogListener(
           driver,
           new SafariConsoleLog({showLogs: false, log: driver.log}),
-          {type: 'safariConsole'},
+          {type: 'safariConsole', context: () => getCurrentContextName(driver)},
         )[0];
         driver.logs.safariNetwork = assignBiDiLogListener(
           driver,
           new SafariNetworkLog({showLogs: false, log: driver.log}),
-          {type: 'safariNetwork'},
+          {type: 'safariNetwork', context: () => getCurrentContextName(driver)},
         )[0];
 
         driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['']};
@@ -227,8 +228,32 @@ describe('context', function () {
         assert.strictEqual(byType('performance').length, 1, 'performance BiDi events');
         assert.deepStrictEqual(
           byType('performance').map(({params}) => params.source.context),
-          ['5191.2'],
+          ['WEBVIEW_5191.2'],
         );
+      });
+
+      it('scopes webview log events to the public id of the current webview', async function () {
+        const {driver, rpcClient, bidiEvents} = buildDriver();
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.1']};
+
+        await driver.setContext('WEBVIEW_5191.1');
+        rpcClient.emit('Console.messageAdded', undefined, consoleEntry);
+        rpcClient.emit('NetworkEvent', undefined, networkEntry, 'Network.requestWillBeSent');
+        rpcClient.emit('Timeline.eventRecorded', timelineEntry);
+        assert.deepStrictEqual(
+          bidiEvents.map(({params}) => [params.type, params.source.context]),
+          [
+            ['safariConsole', 'WEBVIEW_5191.1'],
+            ['safariNetwork', 'WEBVIEW_5191.1'],
+            ['performance', 'WEBVIEW_5191.1'],
+          ],
+        );
+
+        await driver.setContext('WEBVIEW_5191.2');
+        rpcClient.emit('Console.messageAdded', undefined, consoleEntry);
+        rpcClient.emit('NetworkEvent', undefined, networkEntry, 'Network.requestWillBeSent');
+        rpcClient.emit('Timeline.eventRecorded', timelineEntry);
+        assert.strictEqual(bidiEvents.length, 3);
       });
     });
   });

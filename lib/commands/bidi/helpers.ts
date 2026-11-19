@@ -1,4 +1,5 @@
 import type {XCUITestDriver} from '../../driver.js';
+import {NATIVE_WIN, WEBVIEW_BASE} from '../constants.js';
 
 /**
  * Checks whether any BiDi client is subscribed to the event or to its whole module.
@@ -13,4 +14,9 @@ export function hasSubscribers(driver: XCUITestDriver, method: string, context?:
     const contexts = driver.bidiEventSubs[e];
     return Boolean(contexts?.length) && (context === undefined || contexts.includes('') || contexts.includes(context));
   });
+}
+
+/** Returns the public name of the current context, e.g. `NATIVE_APP` or `WEBVIEW_5191.1`. */
+export function getCurrentContextName(driver: XCUITestDriver): string {
+  return driver.curContext && driver.curContext !== NATIVE_WIN ? `${WEBVIEW_BASE}${driver.curContext}` : NATIVE_WIN;
 }

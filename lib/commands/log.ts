@@ -15,7 +15,7 @@ import {SafariNetworkLog} from '../device/log/safari-network-log.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty} from '../utils/index.js';
 import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from './bidi/constants.js';
-import {hasSubscribers} from './bidi/helpers.js';
+import {getCurrentContextName, hasSubscribers} from './bidi/helpers.js';
 import {makeLogEntryAddedEvent} from './bidi/models.js';
 import {makeSyslogLevelTransformer} from './bidi/syslog-level.js';
 import {NATIVE_WIN} from './constants.js';
@@ -54,7 +54,8 @@ type XCUITestDriverLogTypes = keyof typeof SUPPORTED_LOG_TYPES;
 interface BiDiListenerProperties {
   type: string;
   srcEventName?: string;
-  context?: string;
+  /** A function is resolved per entry, for logs that follow the current context. */
+  context?: string | (() => string);
   entryTransformer?: (x: any) => LogEntry;
 }
 
@@ -193,6 +194,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         }),
         {
           type: 'safariConsole',
+          context: () => getCurrentContextName(this),
         },
       )[0];
     }
@@ -205,6 +207,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         }),
         {
           type: 'safariNetwork',
+          context: () => getCurrentContextName(this),
         },
       )[0];
     }
@@ -333,8 +336,9 @@ export function assignBiDiLogListener<EE extends EventEmitter>(
   logEmitter: EE,
   properties: BiDiListenerProperties,
 ): [EE, LogListener] {
-  const {type, context = NATIVE_WIN, srcEventName = 'output', entryTransformer} = properties;
+  const {type, context: contextOrGetter = NATIVE_WIN, srcEventName = 'output', entryTransformer} = properties;
   const listener: LogListener = (logEntry: LogEntry) => {
+    const context = typeof contextOrGetter === 'function' ? contextOrGetter() : contextOrGetter;
     if (!hasSubscribers(driver, LOG_ENTRY_ADDED_EVENT, context)) {
       return;
     }
