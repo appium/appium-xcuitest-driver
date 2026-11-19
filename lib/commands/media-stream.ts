@@ -14,7 +14,7 @@ import {
   MIN_IDLE_HEARTBEAT_MS,
   MIN_SIMULATOR_XCODE_MAJOR,
 } from '../device/media-stream/constants.js';
-import {DeviceMediaSource} from '../device/media-stream/device-source.js';
+import {DeviceMediaSource, isDeviceStreamingSupported} from '../device/media-stream/device-source.js';
 import {describeMissingH264Encoder, loadMediaProxy} from '../device/media-stream/media-proxy.js';
 import {SimulatorMediaSource} from '../device/media-stream/simulator-source.js';
 import {MediaStream} from '../device/media-stream/stream.js';
@@ -205,6 +205,19 @@ async function getDeviceCapabilities(driver: XCUITestDriver): Promise<MediaStrea
     return unsupported(source, {
       code: 'tunnel_required',
       message: 'Real device media streaming requires a RemoteXPC tunnel',
+    });
+  }
+  try {
+    if (!(await isDeviceStreamingSupported(driver.remoteXPCFacade))) {
+      return unsupported(source, {
+        code: 'device_streaming_unsupported',
+        message: 'The device does not support media streaming (requires iOS/tvOS 27+)',
+      });
+    }
+  } catch (e) {
+    return unsupported(source, {
+      code: 'device_unreachable',
+      message: `Cannot ask the device whether it supports media streaming: ${(e as Error).message}`,
     });
   }
   let noH264: string | undefined;

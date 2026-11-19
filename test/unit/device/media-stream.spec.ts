@@ -200,6 +200,18 @@ describe('MediaStream', function () {
     assert.equal(sent.length, 2);
   });
 
+  it('flushes the pending batch before `ended` on an explicit stop', async function () {
+    const {source, events, stream, tick, begin} = setup('video', true, {batchMs: 1000});
+    await begin();
+    source.push(su('video', 1));
+    await tick();
+    await stream.stop();
+    const methods = events.map((e) => e.method);
+    assert.equal(methods.at(-1), 'appium:mediaStream.ended');
+    const sent = unitEvents(events).flatMap((e) => e.params!.units.map((u: {seq: number}) => u.seq));
+    assert.equal(sent.length, 2);
+  });
+
   it('does not announce or finish starting on a delta frame', async function () {
     const {source, events, stream} = setup('video');
     source.push(su('video', 0));

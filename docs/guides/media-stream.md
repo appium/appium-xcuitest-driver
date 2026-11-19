@@ -26,6 +26,10 @@ Every unit is base64-encoded into a JSON message, so this costs more CPU and ban
 [WDA MJPEG server](mjpeg.md). A full resolution `jpeg` stream of a modern iPhone is about 250 KB per frame, so
 pick a lower `scale` and `fps`, or prefer `video` for long or high resolution streams.
 
+Media events share the session's BiDi WebSocket with command responses and other events. If the stream saturates
+the downstream connection, those messages can be delayed by seconds, even when video frames are dropped. For
+latency-sensitive tests, lower the video bitrate or reduce the JPEG `scale` and `fps`.
+
 Notes:
 
 - Subscribe first and only then start the stream, since events are only emitted while a client is subscribed.

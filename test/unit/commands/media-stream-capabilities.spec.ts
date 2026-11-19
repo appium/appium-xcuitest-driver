@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
-import {describe, it, mock} from 'node:test';
+import {afterEach, describe, it, mock} from 'node:test';
 
 import * as mediaProxyModule from '../../../lib/device/media-stream/media-proxy.js';
 
@@ -32,8 +32,10 @@ class StuckDeviceSource {
   }
 }
 
+let currentStreamingSupported: () => Promise<boolean> = async () => true;
+
 mock.module('../../../lib/device/media-stream/device-source.js', {
-  namedExports: {DeviceMediaSource: StuckDeviceSource},
+  namedExports: {DeviceMediaSource: StuckDeviceSource, isDeviceStreamingSupported: () => currentStreamingSupported()},
 });
 
 const {mobileGetMediaStreamCapabilities, mobileStartMediaStream} =
@@ -56,6 +58,26 @@ const capabilitiesWith = (loadMediaProxy: () => Promise<unknown>) => {
 };
 
 describe('mobile: getMediaStreamCapabilities on a real device with media-proxy', function () {
+  afterEach(() => {
+    currentStreamingSupported = async () => true;
+  });
+
+  it('reports a typed reason when the device cannot stream', async function () {
+    currentStreamingSupported = async () => false;
+    const caps = await capabilitiesWith(async () => ({listH264Encoders: () => ['h264_videotoolbox']}));
+    assert.deepEqual([caps.supported, caps.kinds, caps.reason?.code], [false, [], 'device_streaming_unsupported']);
+  });
+
+  it('reports a typed reason when the device cannot be asked', async function () {
+    currentStreamingSupported = async () => {
+      throw new Error('tunnel lost');
+    };
+    const caps = await capabilitiesWith(async () => ({listH264Encoders: () => ['h264_videotoolbox']}));
+    assert.equal(caps.supported, false);
+    assert.equal(caps.reason?.code, 'device_unreachable');
+    assert.match(caps.reason?.message ?? '', /tunnel lost/);
+  });
+
   it('offers video, jpeg and audio when an H.264 encoder is available', async function () {
     const caps = await capabilitiesWith(async () => ({listH264Encoders: () => ['h264_videotoolbox']}));
     assert.deepEqual(caps, {

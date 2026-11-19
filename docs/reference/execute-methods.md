@@ -1216,7 +1216,7 @@ source | string | `simulator` or `device` | device
 kinds | string[] | The `kind` values that can be requested: `video` and/or `jpeg` | ["video", "jpeg"]
 codecs | string[] | The `codec` values available for `video`: `h264` and/or `hevc` | ["h264"]
 audio | boolean | Whether `audio` can be requested | true
-reason | object | Why streaming is unavailable or limited. Present when `supported` is false or a kind is missing. `code` is one of `xcode_too_old`, `os_too_old`, `tunnel_required`, `media_proxy_unavailable` or `h264_encoder_unavailable`, and `message` says what to do | {"code": "os_too_old", "message": "Real device media streaming requires iOS/tvOS 27+, found 26.4"}
+reason | object | Why streaming is unavailable or limited. Present when `supported` is false or a kind is missing. `code` is one of `xcode_too_old`, `os_too_old`, `tunnel_required`, `device_streaming_unsupported`, `device_unreachable`, `media_proxy_unavailable` or `h264_encoder_unavailable`, and `message` says what to do | {"code": "os_too_old", "message": "Real device media streaming requires iOS/tvOS 27+, found 26.4"}
 
 ```json
 {

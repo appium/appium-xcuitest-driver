@@ -34,6 +34,18 @@ const KEYFRAME_INTERVAL_MS = 2000;
 /** The device's video RTP clock (400 ticks per frame at 60 fps), not the 90 kHz of RFC 7798 */
 const VIDEO_CLOCK_RATE = 24_000;
 
+/** Asks the device whether it can stream its screen; opens and closes a display service for that */
+export async function isDeviceStreamingSupported(facade: RemoteXPCFacade): Promise<boolean> {
+  const display = (await facade.requireTunnelService('media streaming', (services) =>
+    services.startDisplayService(facade.udid),
+  )) as unknown as Display;
+  try {
+    return await display.isStreamingSupported();
+  } finally {
+    await display.close().catch(() => {});
+  }
+}
+
 /**
  * Real device (iOS/tvOS 27+): remotexpc captures the HEVC screen stream over the tunnel and
  * media-proxy transcodes it to H.264 or MJPEG.
