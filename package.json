@@ -103,7 +103,7 @@
     "webdriverio": "^10.1.0"
   },
   "peerDependencies": {
-    "appium": "^4.0.0-beta.8"
+    "appium": "^4.0.0"
   },
   "optionalDependencies": {
     "sharp": "^0.x"
