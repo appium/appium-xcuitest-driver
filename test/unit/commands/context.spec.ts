@@ -5,7 +5,7 @@ import {describe, it} from 'node:test';
 import {RemoteDebugger} from 'appium-remote-debugger';
 
 import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from '../../../lib/commands/bidi/constants.js';
-import {getCurrentContextName} from '../../../lib/commands/bidi/helpers.js';
+import {getLogWebviewContextName} from '../../../lib/commands/bidi/helpers.js';
 import type {LogEntryAddedEvent} from '../../../lib/commands/bidi/types.js';
 import {assignBiDiLogListener} from '../../../lib/commands/log.js';
 import type {IOSPerformanceLog} from '../../../lib/device/log/ios-performance-log.js';
@@ -148,12 +148,12 @@ describe('context', function () {
         driver.logs.safariConsole = assignBiDiLogListener(
           driver,
           new SafariConsoleLog({showLogs: false, log: driver.log}),
-          {type: 'safariConsole', context: () => getCurrentContextName(driver)},
+          {type: 'safariConsole', context: () => getLogWebviewContextName(driver)},
         )[0];
         driver.logs.safariNetwork = assignBiDiLogListener(
           driver,
           new SafariNetworkLog({showLogs: false, log: driver.log}),
-          {type: 'safariNetwork', context: () => getCurrentContextName(driver)},
+          {type: 'safariNetwork', context: () => getLogWebviewContextName(driver)},
         )[0];
 
         driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['']};
@@ -254,6 +254,24 @@ describe('context', function () {
         rpcClient.emit('NetworkEvent', undefined, networkEntry, 'Network.requestWillBeSent');
         rpcClient.emit('Timeline.eventRecorded', timelineEntry);
         assert.strictEqual(bidiEvents.length, 3);
+      });
+
+      it('keeps reporting webview logs in their webview after a switch to the native context', async function () {
+        const {driver, rpcClient, bidiEvents} = buildDriver();
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.1']};
+
+        await driver.setContext('WEBVIEW_5191.1');
+        await driver.setContext('NATIVE_APP');
+        rpcClient.emit('Console.messageAdded', undefined, consoleEntry);
+        rpcClient.emit('NetworkEvent', undefined, networkEntry, 'Network.requestWillBeSent');
+
+        assert.deepStrictEqual(
+          bidiEvents.map(({params}) => [params.type, params.source.context]),
+          [
+            ['safariConsole', 'WEBVIEW_5191.1'],
+            ['safariNetwork', 'WEBVIEW_5191.1'],
+          ],
+        );
       });
     });
   });

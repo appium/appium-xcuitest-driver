@@ -296,6 +296,8 @@ export class XCUITestDriver
   selectingNewPage: boolean | undefined;
   contexts: string[] = [];
   curContext: string | null = null;
+  /** The last selected webview, which keeps owning the Safari log streams after a switch to native. */
+  _lastWebviewContext: string | null = null;
   curWebFrames: string[];
   /** `curContext` before `mobile: startAutomationSession`, to restore it on stop. */
   _preAutomationSessionContext: string | null = null;

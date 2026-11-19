@@ -15,7 +15,7 @@ import {SafariNetworkLog} from '../device/log/safari-network-log.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty} from '../utils/index.js';
 import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from './bidi/constants.js';
-import {getCurrentContextName, hasSubscribers} from './bidi/helpers.js';
+import {getLogWebviewContextName, hasSubscribers} from './bidi/helpers.js';
 import {makeLogEntryAddedEvent} from './bidi/models.js';
 import {makeSyslogLevelTransformer} from './bidi/syslog-level.js';
 import {NATIVE_WIN} from './constants.js';
@@ -194,7 +194,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         }),
         {
           type: 'safariConsole',
-          context: () => getCurrentContextName(this),
+          context: () => getLogWebviewContextName(this),
         },
       )[0];
     }
@@ -207,7 +207,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         }),
         {
           type: 'safariNetwork',
-          context: () => getCurrentContextName(this),
+          context: () => getLogWebviewContextName(this),
         },
       )[0];
     }

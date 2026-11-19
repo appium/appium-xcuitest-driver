@@ -20,3 +20,8 @@ export function hasSubscribers(driver: XCUITestDriver, method: string, context?:
 export function getCurrentContextName(driver: XCUITestDriver): string {
   return driver.curContext && driver.curContext !== NATIVE_WIN ? `${WEBVIEW_BASE}${driver.curContext}` : NATIVE_WIN;
 }
+
+/** Returns the name of the webview that owns the Safari log streams, or `NATIVE_APP` if none was selected yet. */
+export function getLogWebviewContextName(driver: XCUITestDriver): string {
+  return driver._lastWebviewContext ? `${WEBVIEW_BASE}${driver._lastWebviewContext}` : NATIVE_WIN;
+}

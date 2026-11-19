@@ -579,6 +579,9 @@ export async function getContexts(this: XCUITestDriver): Promise<string[] | Full
  * @see https://github.com/appium/appium/issues/20741
  */
 export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<void> {
+  if (this.curContext && this.curContext !== NATIVE_WIN) {
+    this._lastWebviewContext = this.curContext;
+  }
   const name = await this.getCurrentContext();
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
 }
