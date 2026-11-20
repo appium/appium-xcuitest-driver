@@ -272,6 +272,27 @@ describe('context', function () {
         );
       });
 
+      it('attributes performance logs to the page selected by an automatic page change', async function () {
+        const {driver, rpcClient, bidiEvents} = buildDriver();
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.3']};
+
+        await driver.setContext('WEBVIEW_5191.1');
+        await driver.onPageChange({
+          appIdKey: '5191',
+          pageArray: [
+            {id: 1, url: 'http://a.example', isKey: false},
+            {id: 3, url: 'http://b.example', isKey: true},
+          ],
+        });
+        rpcClient.emit('Timeline.eventRecorded', timelineEntry);
+
+        assert.strictEqual(driver.curContext, '5191.3');
+        assert.deepStrictEqual(
+          bidiEvents.map(({params}) => [params.type, params.source.context]),
+          [['performance', 'WEBVIEW_5191.3']],
+        );
+      });
+
       it('restores the log webview if selecting a webview fails', async function () {
         const {driver, rpcClient, bidiEvents} = buildDriver();
         driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.1']};

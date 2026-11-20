@@ -12,7 +12,7 @@ import type {XCUITestDriver} from '../driver.js';
 import type {Page} from '../types.js';
 import {isEmpty} from '../utils/index.js';
 import {BIDI_EVENT_NAME} from './bidi/constants.js';
-import {getCurrentContextName} from './bidi/helpers.js';
+import {getCurrentContextName, getLogWebviewContextName} from './bidi/helpers.js';
 import {makeContextUpdatedEvent} from './bidi/models.js';
 import {NATIVE_WIN, WEBVIEW_BASE} from './constants.js';
 import {assignBiDiLogListener} from './log.js';
@@ -722,7 +722,7 @@ async function startPerformanceLog(this: XCUITestDriver, context: string): Promi
     }),
     {
       type: 'performance',
-      context: `${WEBVIEW_BASE}${context}`,
+      context: () => getLogWebviewContextName(this),
     },
   )[0];
   await this.logs.performance?.startCapture();
