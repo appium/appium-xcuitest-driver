@@ -1,3 +1,9 @@
+## [13.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.2.0...v13.3.0) (2026-11-20)
+
+### Features
+
+* stream the screen and audio over the appium:mediaStream BiDi module ([#3149](https://github.com/appium/appium-xcuitest-driver/issues/3149)) ([899c90b](https://github.com/appium/appium-xcuitest-driver/commit/899c90bfaf2bff3faa81c72d01cedd0edb47d01e))
+
 ## [13.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.1.3...v13.2.0) (2026-11-19)
 
 ### Features
