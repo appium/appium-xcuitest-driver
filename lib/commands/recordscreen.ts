@@ -1,5 +1,6 @@
 import {WDA_BASE_URL} from 'appium-webdriveragent';
 import type {WDASettings} from 'appium-webdriveragent';
+import {errors} from 'appium/driver.js';
 import {fs, tempDir, logger, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 import {exec, SubProcess} from 'teen_process';
@@ -71,24 +72,55 @@ const DEFAULT_MJPEG_SERVER_PORT = 9100;
 const DEFAULT_VCODEC = 'mjpeg';
 const MP4_EXT = '.mp4';
 const FFMPEG_BINARY = 'ffmpeg';
-// Some ffmpeg filters read or write host files (e.g. `movie=`, `metadata=...:file=`),
-// so user-supplied filtergraphs may only use filters that cannot.
+// Some ffmpeg filters read or write host files (e.g. `movie=`, `metadata=...:file=`) or load
+// libraries, so user-supplied filtergraphs may only use filters that cannot.
 const SAFE_VIDEO_FILTERS = new Set([
-  'scale',
-  'transpose',
-  'hflip',
-  'vflip',
+  'boxblur',
+  'colorchannelmixer',
   'crop',
+  'drawbox',
+  'eq',
+  'fade',
+  'format',
+  'fps',
+  'gblur',
+  'hflip',
+  'hue',
+  'lut',
+  'lutrgb',
+  'lutyuv',
+  'negate',
+  'null',
   'pad',
   'rotate',
-  'fps',
-  'format',
-  'setsar',
+  'scale',
+  'select',
   'setdar',
-  'drawbox',
+  'setpts',
+  'setsar',
+  'tpad',
+  'transpose',
+  'trim',
+  'unsharp',
+  'vflip',
 ]);
-// ffmpeg unquotes and unescapes filter names and options, which could hide a filter from the check
-const FORBIDDEN_FILTERGRAPH_CHARS = /['"\\]/;
+// Filters for frames kept on the GPU, only allowed with hardwareAcceleration
+const SAFE_HARDWARE_VIDEO_FILTERS = new Set([
+  'hwdownload',
+  'hwmap',
+  'hwupload',
+  'pad_vaapi',
+  'scale_cuda',
+  'scale_qsv',
+  'scale_vaapi',
+  'scale_vt',
+  'transpose_vaapi',
+  'transpose_vt',
+  'vpp_qsv',
+]);
+// Same as WHITESPACES in ffmpeg's av_get_token
+const FILTERGRAPH_WHITESPACE = ' \n\t\r';
+const FILTERGRAPH_LABEL_PATTERN = /^[\w.:-]+$/;
 const ffmpegLogger = logger.getLogger(FFMPEG_BINARY);
 const QUALITY_MAPPING: Record<string, number> = {
   low: 10,
@@ -399,7 +431,7 @@ export async function startRecordingScreen(
     hardwareAcceleration,
   } = options;
 
-  assertSafeUserFilters.call(this, videoFilters, videoScale);
+  assertSafeUserFilters(options);
 
   let result = '';
   if (!forceRestart) {
@@ -568,47 +600,120 @@ function optionsFromFlattenedExecuteArgs<T extends object>(keys: readonly string
  * access host files. Only the user-supplied part is checked: the driver picks the hardware scale
  * filter itself, and `videoScale` is ignored when `videoFilters` is set.
  */
-function assertSafeUserFilters(this: XCUITestDriver, videoFilters?: string, videoScale?: string): void {
+function assertSafeUserFilters({videoFilters, videoScale, hardwareAcceleration}: StartRecordingScreenOptions): void {
+  for (const [optionName, optionValue] of [
+    ['videoFilters', videoFilters],
+    ['videoScale', videoScale],
+  ] as const) {
+    if (optionValue && typeof optionValue !== 'string') {
+      throw new errors.InvalidArgumentError(
+        `The ${optionName} value must be a string. ${JSON.stringify(optionValue)} has been passed instead`,
+      );
+    }
+  }
   const [optionName, optionValue, filtergraph] = videoFilters
     ? ['videoFilters', videoFilters, videoFilters]
     : ['videoScale', videoScale, videoScale && `scale=${videoScale}`];
-  const unsafePart = filtergraph ? findUnsafeFiltergraphPart(filtergraph) : null;
+  if (!filtergraph) {
+    return;
+  }
+  const allowedFilters = HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration ?? '']
+    ? new Set([...SAFE_VIDEO_FILTERS, ...SAFE_HARDWARE_VIDEO_FILTERS])
+    : SAFE_VIDEO_FILTERS;
+  const unsafePart = findUnsafeFiltergraphPart(filtergraph, allowedFilters);
   if (unsafePart) {
-    throw this.log.errorWithException(
+    throw new errors.InvalidArgumentError(
       `The ${optionName} value '${optionValue}' is not allowed: ${unsafePart}. ` +
-        `Only these ffmpeg filters are supported: ${[...SAFE_VIDEO_FILTERS].join(', ')}`,
+        `Only these ffmpeg filters are supported: ${[...allowedFilters].join(', ')}`,
     );
   }
 }
 
 /**
  * Explains why a user-supplied ffmpeg filtergraph is not allowed, or returns null if it only uses
- * filters from {@link SAFE_VIDEO_FILTERS}.
+ * `allowedFilters`. Filter names and options are read the way ffmpeg reads them, after removing
+ * single quotes, so a quoted value like `scale='min(iw,1280)':-2` can contain `,` or `;`.
  */
-function findUnsafeFiltergraphPart(graph: string): string | null {
-  if (FORBIDDEN_FILTERGRAPH_CHARS.test(graph)) {
-    return 'quotes and backslashes are not supported';
+function findUnsafeFiltergraphPart(graph: string, allowedFilters: ReadonlySet<string>): string | null {
+  // With escapes, ffmpeg would unquote and unescape options a second time,
+  // so the options it uses would differ from the ones checked here
+  if (graph.includes('\\')) {
+    return 'backslashes are not supported, use single quotes instead';
   }
-  for (const filter of graph.split(/[,;]/)) {
-    const unlabeled = filter.replace(/\[[^[\]]*\]/g, '');
-    if (/[[\]]/.test(unlabeled)) {
-      return `'${filter}' has unbalanced brackets`;
+  let pos = 0;
+  const skipWhitespace = () => {
+    while (pos < graph.length && FILTERGRAPH_WHITESPACE.includes(graph[pos])) {
+      pos++;
     }
-    const [name, ...rest] = unlabeled.split('=');
+  };
+  // Mirrors ffmpeg's av_get_token without escapes: reads up to an unquoted terminator,
+  // removing quotes and the whitespace around the token
+  const readToken = (terminators: string): string | null => {
+    skipWhitespace();
+    let token = '';
+    let quotedLength = 0;
+    while (pos < graph.length && !terminators.includes(graph[pos])) {
+      if (graph[pos] === "'") {
+        const closingPos = graph.indexOf("'", pos + 1);
+        if (closingPos < 0) {
+          return null;
+        }
+        token += graph.slice(pos + 1, closingPos);
+        quotedLength = token.length;
+        pos = closingPos + 1;
+      } else {
+        token += graph[pos++];
+      }
+    }
+    let end = token.length;
+    while (end > quotedLength && FILTERGRAPH_WHITESPACE.includes(token[end - 1])) {
+      end--;
+    }
+    return token.slice(0, end);
+  };
+  const skipLabels = (): boolean => {
+    skipWhitespace();
+    while (graph[pos] === '[') {
+      const closingPos = graph.indexOf(']', pos);
+      if (closingPos < 0 || !FILTERGRAPH_LABEL_PATTERN.test(graph.slice(pos + 1, closingPos))) {
+        return false;
+      }
+      pos = closingPos + 1;
+      skipWhitespace();
+    }
+    return true;
+  };
+
+  while (true) {
+    if (!skipLabels()) {
+      return 'labels must be in brackets and only contain letters, digits, _ . : -';
+    }
+    const name = readToken('=,;[]');
+    let options: string | null = '';
+    if (name !== null && graph[pos] === '=') {
+      pos++;
+      options = readToken('[],;');
+    }
+    if (name === null || options === null) {
+      return 'quotes must be closed';
+    }
     // `scale@main` is an instance of the `scale` filter
-    const filterName = name.trim().split('@')[0];
-    if (!SAFE_VIDEO_FILTERS.has(filterName)) {
-      return `the '${name.trim()}' filter is not supported`;
+    if (!allowedFilters.has(name.split('@')[0])) {
+      return `the '${name}' filter is not supported`;
     }
     // ffmpeg loads the value of an option whose name starts with '/' from that file
-    if (
-      rest
-        .join('=')
-        .split(':')
-        .some((option) => option.trim().startsWith('/'))
-    ) {
+    if (options.split(':').some((option) => option.trimStart().startsWith('/'))) {
       return `filter options starting with '/' are not supported`;
     }
+    if (!skipLabels()) {
+      return 'labels must be in brackets and only contain letters, digits, _ . : -';
+    }
+    if (pos >= graph.length) {
+      return null;
+    }
+    if (graph[pos] !== ',' && graph[pos] !== ';') {
+      return `unexpected '${graph[pos]}'`;
+    }
+    pos++;
   }
-  return null;
 }

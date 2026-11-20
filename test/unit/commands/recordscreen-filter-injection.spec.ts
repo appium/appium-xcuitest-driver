@@ -8,6 +8,7 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 import {promisify} from 'node:util';
 
+import {errors} from 'appium/driver.js';
 import sharp from 'sharp';
 import sinon from 'sinon';
 
@@ -111,7 +112,8 @@ describe('startRecordingScreen ffmpeg filtergraph injection', () => {
         await driver._recentScreenRecorder.interrupt(true);
       }
       assert.equal(await exists(target), false, `ffmpeg wrote the attacker-chosen host file ${target}`);
-      assert.ok(error, `A hostile ${name} value must be rejected`);
+      assert.ok(error instanceof errors.InvalidArgumentError, `A hostile ${name} value must be rejected`);
+      assert.match(error.message, new RegExp(`${name} value .* is not allowed: the 'metadata' filter`));
     });
   }
 });
@@ -140,6 +142,8 @@ describe('startRecordingScreen filter option validation', () => {
     'scale=w=iw/2:h=-2:flags=bicubic,setsar=1',
     '[in] scale@main = 320:-2 [scaled]; [scaled] vflip [out]',
     'crop=iw:ih/2:0:0,pad=iw:ih*2:0:(oh-ih)/2,drawbox=x=10:y=10:w=20:h=20:color=red',
+    "scale='min(1280,iw)':-2",
+    "scale=w='min(iw,1280)':h=-2,setpts=0.5*PTS,eq=brightness=0.1",
   ]) {
     it(`accepts videoFilters ${videoFilters}`, async () => {
       await driver.startRecordingScreen({forceRestart: true, videoFilters});
@@ -152,17 +156,26 @@ describe('startRecordingScreen filter option validation', () => {
     ['scale=320:-2,metadata=mode=print:file=/tmp/x', /'metadata' filter/],
     ['metadata=print:::same_str::/tmp/x', /'metadata' filter/],
     ['sws_flags=bicubic;scale=1:1', /'sws_flags' filter/],
-    ['meta\\data=print', /quotes and backslashes/],
-    ["'metadata'=print", /quotes and backslashes/],
-    ['"metadata"=print', /quotes and backslashes/],
+    ['meta\\data=print', /backslashes are not supported/],
+    ['scale=w=min(iw\\,1280):h=-2', /backslashes are not supported/],
+    ["'metadata'=print", /'metadata' filter/],
+    ['"metadata"=print', /'"metadata"' filter/],
+    ["scale='1:1", /quotes must be closed/],
     ['scale=/w=/etc/passwd:h=32', /starting with '\/'/],
     ['scale=h=32: /w=/etc/passwd', /starting with '\/'/],
+    ["scale=' /w'=/etc/passwd:h=32", /starting with '\/'/],
     ['drawbox=/color=/etc/passwd', /starting with '\/'/],
-    ['scale=1:1[out', /unbalanced brackets/],
+    ['scale=1:1[out', /labels must be in brackets/],
+    ["[a'],metadata=print,'b]scale=1:1", /labels must be in brackets/],
     ['@scale=1:1', /'@scale' filter/],
+    ['scale_vt=w=720:h=1280', /'scale_vt' filter/],
   ] as const) {
     it(`rejects videoFilters ${videoFilters}`, async () => {
-      await assert.rejects(driver.startRecordingScreen({forceRestart: true, videoFilters}), reason);
+      await assert.rejects(driver.startRecordingScreen({forceRestart: true, videoFilters}), (e: Error) => {
+        assert.ok(e instanceof errors.InvalidArgumentError);
+        assert.match(e.message, reason);
+        return true;
+      });
       sinon.assert.notCalled(start);
     });
   }
@@ -175,6 +188,7 @@ describe('startRecordingScreen filter option validation', () => {
     'w=1280:h=720',
     '1:1:flags=bicubic',
     '1:1,hflip',
+    "'min(1280,iw)':-2",
   ]) {
     it(`accepts videoScale ${videoScale}`, async () => {
       await driver.startRecordingScreen({forceRestart: true, videoScale});
@@ -186,7 +200,7 @@ describe('startRecordingScreen filter option validation', () => {
     '1:1,metadata=mode=print',
     '/w=/etc/passwd:h=32',
     '1:1;[in]movie=/etc/passwd',
-    "1:'1'",
+    "1:'1",
     '1:1\\,hflip',
   ]) {
     it(`rejects videoScale ${videoScale}`, async () => {
@@ -203,6 +217,25 @@ describe('startRecordingScreen filter option validation', () => {
     });
     sinon.assert.calledOnce(start);
   });
+
+  it('accepts hardware filters with hardwareAcceleration', async () => {
+    await driver.startRecordingScreen({
+      forceRestart: true,
+      videoFilters: 'hwdownload,format=nv12,transpose=1,hwupload,scale_vt=w=720:h=1280',
+      hardwareAcceleration: 'videoToolbox',
+    });
+    sinon.assert.calledOnce(start);
+  });
+
+  for (const options of [{videoFilters: ['hflip']}, {videoFilters: {}}, {videoScale: 1280}]) {
+    it(`rejects non-string ${JSON.stringify(options)}`, async () => {
+      await assert.rejects(
+        driver.startRecordingScreen({forceRestart: true, ...(options as any)}),
+        (e: Error) => e instanceof errors.InvalidArgumentError && /must be a string/.test(e.message),
+      );
+      sinon.assert.notCalled(start);
+    });
+  }
 
   it('only checks videoFilters when videoScale is ignored', async () => {
     await driver.startRecordingScreen({forceRestart: true, videoFilters: 'hflip', videoScale: '1:1,movie=/x'});
