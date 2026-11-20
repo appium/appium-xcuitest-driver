@@ -3,8 +3,10 @@ import type {LogEntry} from '../types.js';
 
 // Simulator `log stream --style compact` line: `<date> <time> <type> process[pid:tid] ...`
 const SIMULATOR_TYPE_PATTERN = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\s+(Db|Df|I|E|F)\s/;
-// Real device syslog relay line: `<Mon> <day> <time> <host> process(lib)[pid] <Level>: ...`
-const DEVICE_LEVEL_PATTERN = /^\w{3}\s+\d+\s+\d{2}:\d{2}:\d{2}\s+\S+\s+[^<]*?\[\d+\]\s+<(\w+)>:/;
+// Real device lines: `<Mon> <day> <time> <host> process(lib)[pid] <Level>: ...` (syslog relay) or
+// `<date> <time> process{image}[pid] <LEVEL>: ...` (os_trace relay)
+const DEVICE_LEVEL_PATTERN =
+  /^(?:\w{3}\s+\d+\s+\d{2}:\d{2}:\d{2}|\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?)\s+[^<]*?\[\d+\]\s+<(\w+)>:/;
 
 const SIMULATOR_LEVELS: Readonly<Record<string, string>> = {
   Db: 'debug',
@@ -14,14 +16,16 @@ const SIMULATOR_LEVELS: Readonly<Record<string, string>> = {
   F: 'error',
 };
 const DEVICE_LEVELS: Readonly<Record<string, string>> = {
-  Debug: 'debug',
-  Info: 'info',
-  Notice: 'info',
-  Warning: 'warn',
-  Error: 'error',
-  Critical: 'error',
-  Alert: 'error',
-  Emergency: 'error',
+  debug: 'debug',
+  info: 'info',
+  notice: 'info',
+  user_action: 'info',
+  warning: 'warn',
+  error: 'error',
+  critical: 'error',
+  alert: 'error',
+  emergency: 'error',
+  fault: 'error',
 };
 
 /**
@@ -35,7 +39,8 @@ export function makeSyslogLevelTransformer(isRealDevice: boolean): (entry: LogEn
     ? [DEVICE_LEVEL_PATTERN, DEVICE_LEVELS]
     : [SIMULATOR_TYPE_PATTERN, SIMULATOR_LEVELS];
   return (entry) => {
-    const level = levels[pattern.exec(entry.message)?.[1] ?? ''];
+    const key = pattern.exec(entry.message)?.[1];
+    const level = key && levels[isRealDevice ? key.toLowerCase() : key];
     return level ? toLogEntry(entry.message, entry.timestamp, level) : entry;
   };
 }

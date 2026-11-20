@@ -27,6 +27,11 @@ describe('makeSyslogLevelTransformer', function () {
     ['Nov 18 10:00:00 iPhone SpringBoard(UIKit)[1] <Warning>: msg', 'warn'],
     ['Nov 18 10:00:00 iPhone Some App(UIKit)[12] <Error>: msg', 'error'],
     ['Nov 18 10:00:00 iPhone kernel[0] <Critical>: msg', 'error'],
+    ['2026-11-18 10:00:00.123456 locationd{CoreFoundation}[67] <NOTICE>: msg [com.apple.x][cat]', 'info'],
+    ['2026-11-18 10:00:00.123456 SpringBoard{UIKit}[1] <DEBUG>: msg', 'debug'],
+    ['2026-11-18 10:00:00.123456 Some App{UIKit}[12] <ERROR>: msg', 'error'],
+    ['2026-11-18 10:00:00.123456 kernel{kernel}[0] <FAULT>: msg', 'error'],
+    ['2026-11-18 10:00:00.123456 proc{img}[5] <USER_ACTION>: msg', 'info'],
   ];
   for (const [line, level] of deviceCases) {
     it(`should map the device line '${line}' to ${level}`, function () {

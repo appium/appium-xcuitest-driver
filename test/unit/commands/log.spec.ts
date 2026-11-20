@@ -189,6 +189,12 @@ describe('assignBiDiLogListener', function () {
     assert.strictEqual(logEmitter.listenerCount('output'), 1);
   });
 
+  it('forgets the last webview when the session properties are reset', function () {
+    driver._lastWebviewContext = '5191.1';
+    (driver as any).resetProperties();
+    assert.strictEqual(driver._lastWebviewContext, null);
+  });
+
   it('does not apply the transformer while nobody is subscribed', function () {
     const entryTransformer = sinon.stub().returnsArg(0);
     const [logEmitter] = assignBiDiLogListener(driver, new EventEmitter(), {type: 'syslog', entryTransformer});

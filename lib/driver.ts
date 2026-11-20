@@ -1224,6 +1224,7 @@ export class XCUITestDriver
     this.curWebFrames = [];
     this._currentUrl = null;
     this.curContext = null;
+    this._lastWebviewContext = null;
     this.xcodeVersion = undefined;
     this.contexts = [];
     this.landscapeWebCoordsOffset = 0;
