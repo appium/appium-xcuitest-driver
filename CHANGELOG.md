@@ -1,3 +1,9 @@
+## [13.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.4.0...v13.5.0) (2026-11-20)
+
+### Features
+
+* add handling for new rotation/orientation routes ([#3157](https://github.com/appium/appium-xcuitest-driver/issues/3157)) ([8835e06](https://github.com/appium/appium-xcuitest-driver/commit/8835e06a80c3742437f91b518fa324279aecda16))
+
 ## [13.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.3.0...v13.4.0) (2026-11-20)
 
 ### Features
