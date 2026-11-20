@@ -14,8 +14,10 @@ import {SafariConsoleLog} from '../device/log/safari-console-log.js';
 import {SafariNetworkLog} from '../device/log/safari-network-log.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty} from '../utils/index.js';
-import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from './bidi/constants.js';
+import {getLogWebviewContextName, hasSubscribers} from './bidi/helpers.js';
 import {makeLogEntryAddedEvent} from './bidi/models.js';
+import {makeSyslogLevelTransformer} from './bidi/syslog-level.js';
 import {NATIVE_WIN} from './constants.js';
 import type {LogEntry, LogListener} from './types.js';
 
@@ -52,7 +54,8 @@ type XCUITestDriverLogTypes = keyof typeof SUPPORTED_LOG_TYPES;
 interface BiDiListenerProperties {
   type: string;
   srcEventName?: string;
-  context?: string;
+  /** A function is resolved per entry, for logs that follow the current context. */
+  context?: string | (() => string);
   entryTransformer?: (x: any) => LogEntry;
 }
 
@@ -149,7 +152,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
 
   if (this.logs.syslog === undefined) {
     this.logs.crashlog = assignBiDiLogListener(
-      this.eventEmitter,
+      this,
       new IOSCrashLog({
         sim: this.device as Simulator,
         udid: this.isRealDevice() ? this.opts.udid : undefined,
@@ -161,7 +164,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
       },
     )[0];
     this.logs.syslog = assignBiDiLogListener(
-      this.eventEmitter,
+      this,
       this.isRealDevice()
         ? new IOSDeviceLog({
             udid: this.opts.udid as string,
@@ -179,34 +182,37 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
           }),
       {
         type: 'syslog',
+        entryTransformer: makeSyslogLevelTransformer(this.isRealDevice()),
       },
     )[0];
     if (typeof this.opts.showSafariConsoleLog === 'boolean') {
       this.logs.safariConsole = assignBiDiLogListener(
-        this.eventEmitter,
+        this,
         new SafariConsoleLog({
           showLogs: this.opts.showSafariConsoleLog,
           log: this.log,
         }),
         {
           type: 'safariConsole',
+          context: () => getLogWebviewContextName(this),
         },
       )[0];
     }
     if (typeof this.opts.showSafariNetworkLog === 'boolean') {
       this.logs.safariNetwork = assignBiDiLogListener(
-        this.eventEmitter,
+        this,
         new SafariNetworkLog({
           showLogs: this.opts.showSafariNetworkLog,
           log: this.log,
         }),
         {
           type: 'safariNetwork',
+          context: () => getLogWebviewContextName(this),
         },
       )[0];
     }
     if (this.isFeatureEnabled(GET_SERVER_LOGS_FEATURE)) {
-      this._bidiServerLogListener = assignBiDiLogListener(this.eventEmitter, this.log.unwrap(), {
+      this._bidiServerLogListener = assignBiDiLogListener(this, this.log.unwrap(), {
         type: 'server',
         srcEventName: 'log',
         entryTransformer: nativeLogEntryToSeleniumEntry,
@@ -320,19 +326,24 @@ export async function mobileStopLogsBroadcast(this: XCUITestDriver): Promise<voi
  * https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
  *
  * @template EE extends EventEmitter
+ * @param driver - The driver instance
  * @param logEmitter - The event emitter to attach the listener to
  * @param properties - Configuration for the BiDi listener
  * @returns A tuple containing the log emitter and the listener function
  */
 export function assignBiDiLogListener<EE extends EventEmitter>(
-  driverEventEmitter: EventEmitter,
+  driver: XCUITestDriver,
   logEmitter: EE,
   properties: BiDiListenerProperties,
 ): [EE, LogListener] {
-  const {type, context = NATIVE_WIN, srcEventName = 'output', entryTransformer} = properties;
+  const {type, context: contextOrGetter = NATIVE_WIN, srcEventName = 'output', entryTransformer} = properties;
   const listener: LogListener = (logEntry: LogEntry) => {
+    const context = typeof contextOrGetter === 'function' ? contextOrGetter() : contextOrGetter;
+    if (!hasSubscribers(driver, LOG_ENTRY_ADDED_EVENT, context)) {
+      return;
+    }
     const finalEntry = entryTransformer ? entryTransformer(logEntry) : logEntry;
-    driverEventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
   };
   logEmitter.on(srcEventName, listener);
   return [logEmitter, listener];

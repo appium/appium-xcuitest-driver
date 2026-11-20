@@ -12,8 +12,9 @@ import type {XCUITestDriver} from '../driver.js';
 import type {Page} from '../types.js';
 import {isEmpty} from '../utils/index.js';
 import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {getCurrentContextName, getLogWebviewContextName} from './bidi/helpers.js';
 import {makeContextUpdatedEvent} from './bidi/models.js';
-import {NATIVE_WIN} from './constants.js';
+import {NATIVE_WIN, WEBVIEW_BASE} from './constants.js';
 import {assignBiDiLogListener} from './log.js';
 import type {ViewContext, FullContext, PageChangeNotification} from './types.js';
 
@@ -42,8 +43,6 @@ declare module '../driver.js' {
   }
 }
 
-const WEBVIEW_WIN = 'WEBVIEW';
-export const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
 const DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS = 5000;
 const DEFAULT_LIST_WEB_FRAMES_RETRIES = 20;
 
@@ -332,13 +331,15 @@ export async function onPageChange(
   if (util.hasValue(newPage)) {
     this.selectingNewPage = true;
     const oldContext = this.curContext;
-    this.curContext = `${appIdKey}.${newPage}`;
+    const oldWebviewContext = this._lastWebviewContext;
+    this.curContext = this._lastWebviewContext = `${appIdKey}.${newPage}`;
     try {
       await this.remote.selectPage(appIdKey, parseInt(newPage, 10));
       await notifyBiDiContextChange.bind(this)();
     } catch (e: any) {
       this.log.warn(`Failed to select page: ${e.message}`);
       this.curContext = oldContext;
+      this._lastWebviewContext = oldWebviewContext;
     } finally {
       this.selectingNewPage = false;
     }
@@ -496,10 +497,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
  * @returns The context identifier (e.g., 'NATIVE_APP' or 'WEBVIEW_xxx')
  */
 export async function getCurrentContext(this: XCUITestDriver): Promise<string> {
-  if (this.curContext && this.curContext !== NATIVE_WIN) {
-    return `${WEBVIEW_BASE}${this.curContext}`;
-  }
-  return NATIVE_WIN;
+  return getCurrentContextName(this);
 }
 
 /**
@@ -691,7 +689,9 @@ async function stopPerformanceLog(this: XCUITestDriver): Promise<void> {
  */
 async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipReadyCheck: boolean): Promise<void> {
   const oldContext = this.curContext;
-  this.curContext = this.curWindowHandle = contextId;
+  const oldWebviewContext = this._lastWebviewContext;
+  // Assigned before selecting the page, so logs emitted while it is being selected get its context
+  this.curContext = this.curWindowHandle = this._lastWebviewContext = contextId;
 
   const [appIdKey, pageIdKey] = contextId.split('.').map((id) => parseInt(id, 10));
   try {
@@ -700,6 +700,7 @@ async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipRe
     await notifyBiDiContextChange.bind(this)();
   } catch (err) {
     this.curContext = this.curWindowHandle = oldContext;
+    this._lastWebviewContext = oldWebviewContext;
     throw err;
   } finally {
     this.selectingNewPage = false;
@@ -714,14 +715,14 @@ async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipRe
 async function startPerformanceLog(this: XCUITestDriver, context: string): Promise<void> {
   this.log.debug(`Starting performance log on '${context}'`);
   this.logs.performance = assignBiDiLogListener(
-    this.eventEmitter,
+    this,
     new IOSPerformanceLog({
       remoteDebugger: this.remote,
       log: this.log,
     }),
     {
       type: 'performance',
-      context,
+      context: () => getLogWebviewContextName(this),
     },
   )[0];
   await this.logs.performance?.startCapture();
