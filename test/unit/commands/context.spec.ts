@@ -256,6 +256,39 @@ describe('context', function () {
         assert.strictEqual(bidiEvents.length, 3);
       });
 
+      it('attributes logs emitted while a webview is being selected to that webview', async function () {
+        const {driver, rpcClient, bidiEvents} = buildDriver();
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.2']};
+
+        await driver.setContext('WEBVIEW_5191.1');
+        rpcClient.selectPage = async () => {
+          rpcClient.emit('Console.messageAdded', undefined, consoleEntry);
+        };
+        await driver.setContext('WEBVIEW_5191.2');
+
+        assert.deepStrictEqual(
+          bidiEvents.map(({params}) => [params.type, params.source.context]),
+          [['safariConsole', 'WEBVIEW_5191.2']],
+        );
+      });
+
+      it('restores the log webview if selecting a webview fails', async function () {
+        const {driver, rpcClient, bidiEvents} = buildDriver();
+        driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.1']};
+
+        await driver.setContext('WEBVIEW_5191.1');
+        rpcClient.selectPage = async () => {
+          throw new Error('boom');
+        };
+        await assert.rejects(driver.setContext('WEBVIEW_5191.2'), /boom/);
+        rpcClient.emit('Console.messageAdded', undefined, consoleEntry);
+
+        assert.deepStrictEqual(
+          bidiEvents.map(({params}) => params.source.context),
+          ['WEBVIEW_5191.1'],
+        );
+      });
+
       it('keeps reporting webview logs in their webview after a switch to the native context', async function () {
         const {driver, rpcClient, bidiEvents} = buildDriver();
         driver.bidiEventSubs = {[LOG_ENTRY_ADDED_EVENT]: ['WEBVIEW_5191.1']};

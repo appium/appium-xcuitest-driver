@@ -331,13 +331,15 @@ export async function onPageChange(
   if (util.hasValue(newPage)) {
     this.selectingNewPage = true;
     const oldContext = this.curContext;
-    this.curContext = `${appIdKey}.${newPage}`;
+    const oldWebviewContext = this._lastWebviewContext;
+    this.curContext = this._lastWebviewContext = `${appIdKey}.${newPage}`;
     try {
       await this.remote.selectPage(appIdKey, parseInt(newPage, 10));
       await notifyBiDiContextChange.bind(this)();
     } catch (e: any) {
       this.log.warn(`Failed to select page: ${e.message}`);
       this.curContext = oldContext;
+      this._lastWebviewContext = oldWebviewContext;
     } finally {
       this.selectingNewPage = false;
     }
@@ -579,9 +581,6 @@ export async function getContexts(this: XCUITestDriver): Promise<string[] | Full
  * @see https://github.com/appium/appium/issues/20741
  */
 export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<void> {
-  if (this.curContext && this.curContext !== NATIVE_WIN) {
-    this._lastWebviewContext = this.curContext;
-  }
   const name = await this.getCurrentContext();
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
 }
@@ -690,7 +689,9 @@ async function stopPerformanceLog(this: XCUITestDriver): Promise<void> {
  */
 async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipReadyCheck: boolean): Promise<void> {
   const oldContext = this.curContext;
-  this.curContext = this.curWindowHandle = contextId;
+  const oldWebviewContext = this._lastWebviewContext;
+  // Assigned before selecting the page, so logs emitted while it is being selected get its context
+  this.curContext = this.curWindowHandle = this._lastWebviewContext = contextId;
 
   const [appIdKey, pageIdKey] = contextId.split('.').map((id) => parseInt(id, 10));
   try {
@@ -699,6 +700,7 @@ async function selectWebviewPage(this: XCUITestDriver, contextId: string, skipRe
     await notifyBiDiContextChange.bind(this)();
   } catch (err) {
     this.curContext = this.curWindowHandle = oldContext;
+    this._lastWebviewContext = oldWebviewContext;
     throw err;
   } finally {
     this.selectingNewPage = false;
