@@ -1140,6 +1140,99 @@ Stops recording of the audio input. If no audio recording process is running the
 
 Base64-encoded content of the recorded media file or an empty string if no audio recording has been started before.
 
+### mobile: startMediaStream
+
+Starts streaming the screen as `appium:mediaStream.*` [BiDi events](./bidi.md#appiummediastreamstarted), either as
+`jpeg` frames or as H.264/HEVC `video` with optional AAC audio. See the [guide](../guides/media-stream.md) for usage.
+Subscribe to the `appium:mediaStream` module before calling it, since events are only emitted while a client is subscribed.
+
+Simulators with Xcode 26+ and real devices running iOS/tvOS 27+ with a RemoteXPC tunnel are supported (on a device: `h264`
+only, with optional audio). On a simulator only one stream per `kind` can run in a session, but a `jpeg`
+and a `video` stream can run at the same time. A real device runs one stream at a time, since stopping its capture stops everything it streams. The result carries the `streamId`, the `tracks`, the `codec` and, if known,
+the frame size and the audio format.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+kind | string | yes | `video` (H.264/HEVC, optionally with audio) or `jpeg` | jpeg
+codec | string | no | `h264` (default) or `hevc`. `video` only | hevc
+fps | number | no | The maximum frames per second, 60 by default, 120 at most. An unchanged screen is never re-encoded | 30
+bitrate | number | no | The video bitrate in bits per second, 4000000 by default, 100000000 at most. `video` only | 2000000
+quality | number | no | The JPEG quality in percent, 80 by default. `jpeg` only | 70
+scale | number | no | The JPEG scale in percent, 100 by default. `jpeg` only | 50
+audio | boolean | no | Whether to add an AAC audio track. `video` only, false by default | true
+displayId | string | no | The id of the display to stream (a numeric id on real devices). The primary display by default | 1
+batchMs | number | no | How long to collect `video` and `audio` units into one event. 40 by default, 0 disables batching, 1000 at most | 40
+idleHeartbeatMs | number | no | Repeat the last `jpeg` frame after this idle time in milliseconds. 1000 by default, 0 disables, otherwise 100-60000 | 1000
+
+#### Returned Result
+
+An object describing the started stream:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+streamId | string | The id to pass to `mobile: stopMediaStream`, also present in every event of the stream | 5df61795-119c-4f33-a45e-8f141e3cc8a4
+kind | string | `video` or `jpeg`, as requested | video
+tracks | string[] | The tracks the stream carries: `video` (with `audio` if requested) or `jpeg` | ["video", "audio"]
+codec | string | `h264` or `hevc` for `video`, `jpeg` for `jpeg` | h264
+event | string | The BiDi module the events are sent in | appium:mediaStream
+width | number | The frame width in pixels, if known | 1170
+height | number | The frame height in pixels, if known | 2532
+audio | object | `sampleRate` (Hz) and `channels` of the audio track, if known | {"sampleRate": 48000, "channels": 2}
+
+```json
+{
+  "streamId": "5df61795-119c-4f33-a45e-8f141e3cc8a4",
+  "kind": "video",
+  "tracks": ["video", "audio"],
+  "codec": "h264",
+  "event": "appium:mediaStream",
+  "width": 1170,
+  "height": 2532,
+  "audio": {"sampleRate": 48000, "channels": 2}
+}
+```
+
+### mobile: stopMediaStream
+
+Stops a stream started by [mobile: startMediaStream](#mobile-startmediastream). Stopping a stream that has already ended does nothing.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+streamId | string | yes | The id returned by `mobile: startMediaStream` | 5df61795-119c-4f33-a45e-8f141e3cc8a4
+
+### mobile: getMediaStreamCapabilities
+
+Reports whether media streaming is available in the current session. The result has `supported`, the `source`
+(`simulator` or `device`), the available `kinds` and `codecs`, whether `audio` is available and, if
+`supported` is false, a `reason` with a `code` and a `message`. On a real device without an H.264 encoder (Linux
+without OpenH264, see the [guide](../guides/media-stream.md#real-devices)), `supported` stays true with only the `jpeg`
+kind, no codecs and no audio, and `reason.code` is `h264_encoder_unavailable`.
+
+#### Returned Result
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+supported | boolean | Whether the session can stream at all | true
+source | string | `simulator` or `device` | device
+kinds | string[] | The `kind` values that can be requested: `video` and/or `jpeg` | ["video", "jpeg"]
+codecs | string[] | The `codec` values available for `video`: `h264` and/or `hevc` | ["h264"]
+audio | boolean | Whether `audio` can be requested | true
+reason | object | Why streaming is unavailable or limited. Present when `supported` is false or a kind is missing. `code` is one of `xcode_too_old`, `os_too_old`, `tunnel_required`, `device_streaming_unsupported`, `device_unreachable`, `media_proxy_unavailable` or `h264_encoder_unavailable`, and `message` says what to do | {"code": "os_too_old", "message": "Real device media streaming requires iOS/tvOS 27+, found 26.4"}
+
+```json
+{
+  "supported": true,
+  "source": "device",
+  "kinds": ["video", "jpeg"],
+  "codecs": ["h264"],
+  "audio": true
+}
+```
+
 ### mobile: startNetworkMonitor
 
 Starts streaming DVT networking instrument events from the device. Each sample is published on the WebDriver BiDi bus as **`appium:xcuitest.networkMonitor`** with a `params.event` object (discriminated by `event.type`: interface `0`, new connection `1`, per-flow stats `2`). This is **not** a Wireshark-style PCAP; see [BiDi: networkMonitor](./bidi.md#appiumxcuitestnetworkmonitor) for full examples and field meanings.

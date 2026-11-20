@@ -71,6 +71,7 @@ import * as locationCommands from './commands/location.js';
 import * as lockCommands from './commands/lock.js';
 import * as logCommands from './commands/log.js';
 import type {DriverLogs} from './commands/log.js';
+import * as mediaStreamCommands from './commands/media-stream.js';
 import * as memoryCommands from './commands/memory.js';
 import * as navigationCommands from './commands/navigation.js';
 import * as networkMonitorCommands from './commands/network-monitor.js';
@@ -104,6 +105,7 @@ import * as xctestCommands from './commands/xctest.js';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps.js';
 import {DeviceConnectionsFactory} from './device/device-connections-factory.js';
 import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery.js';
+import type {MediaStream} from './device/media-stream/stream.js';
 import type {NetworkMonitorSession} from './device/network-monitor-session.js';
 import {
   runRealDeviceReset,
@@ -172,6 +174,7 @@ import './commands/log.js';
 import './commands/navigation.js';
 import './commands/notifications.js';
 import './commands/pasteboard.js';
+import './commands/media-stream.js';
 import './commands/network-monitor.js';
 import './commands/system-monitor.js';
 import './commands/performance.js';
@@ -312,6 +315,8 @@ export class XCUITestDriver
   _audioRecorder: AudioRecorder | null;
   xcodeVersion: XcodeVersion | undefined;
   _networkMonitorSession: NetworkMonitorSession | null;
+  _mediaStreams?: Map<string, MediaStream>;
+  _endedMediaStreams?: Set<string>;
   _systemMonitorSession: SystemMonitorSession | null;
   _remoteXPCFacade: RemoteXPCFacade | null;
   _recentScreenRecorder!: ScreenRecorder | null;
@@ -491,6 +496,11 @@ export class XCUITestDriver
     )) {
       await recorder.interrupt(true);
       await recorder.cleanup();
+    }
+    try {
+      await mediaStreamCommands.stopAllMediaStreams.call(this);
+    } catch (err) {
+      this.log.warn(`Cannot stop the media streams: ${(err as Error).message}`);
     }
     await this._networkMonitorSession?.interrupt();
     this._networkMonitorSession = null;
@@ -1513,6 +1523,11 @@ Object.assign(XCUITestDriver.prototype, {
   // pasteboard
   mobileSetPasteboard: pasteboardCommands.mobileSetPasteboard,
   mobileGetPasteboard: pasteboardCommands.mobileGetPasteboard,
+
+  // media-stream
+  mobileStartMediaStream: mediaStreamCommands.mobileStartMediaStream,
+  mobileStopMediaStream: mediaStreamCommands.mobileStopMediaStream,
+  mobileGetMediaStreamCapabilities: mediaStreamCommands.mobileGetMediaStreamCapabilities,
 
   // network-monitor
   mobileStartNetworkMonitor: networkMonitorCommands.mobileStartNetworkMonitor,
