@@ -1,3 +1,9 @@
+## [13.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.3.0...v13.4.0) (2026-11-20)
+
+### Features
+
+* derive BiDi syslog level and gate log events on subscribers ([#3154](https://github.com/appium/appium-xcuitest-driver/issues/3154)) ([efe4edf](https://github.com/appium/appium-xcuitest-driver/commit/efe4edf1025946b78919ff387517d8a3c67554dd))
+
 ## [13.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.2.0...v13.3.0) (2026-11-20)
 
 ### Features
