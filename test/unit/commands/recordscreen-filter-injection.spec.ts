@@ -227,7 +227,13 @@ describe('startRecordingScreen filter option validation', () => {
     sinon.assert.calledOnce(start);
   });
 
-  for (const options of [{videoFilters: ['hflip']}, {videoFilters: {}}, {videoScale: 1280}]) {
+  for (const options of [
+    {videoFilters: ['hflip']},
+    {videoFilters: {}},
+    {videoScale: 1280},
+    {videoFilters: false},
+    {videoScale: 0},
+  ]) {
     it(`rejects non-string ${JSON.stringify(options)}`, async () => {
       await assert.rejects(
         driver.startRecordingScreen({forceRestart: true, ...(options as any)}),
@@ -236,6 +242,11 @@ describe('startRecordingScreen filter option validation', () => {
       sinon.assert.notCalled(start);
     });
   }
+
+  it('treats null filter options as not set', async () => {
+    await driver.startRecordingScreen({forceRestart: true, videoFilters: null, videoScale: null} as any);
+    sinon.assert.calledOnce(start);
+  });
 
   it('only checks videoFilters when videoScale is ignored', async () => {
     await driver.startRecordingScreen({forceRestart: true, videoFilters: 'hflip', videoScale: '1:1,movie=/x'});

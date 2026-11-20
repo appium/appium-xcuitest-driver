@@ -6,6 +6,7 @@ import {waitForCondition} from 'asyncbox';
 import {exec, SubProcess} from 'teen_process';
 
 import type {XCUITestDriver} from '../driver.js';
+import {FfmpegFiltergraphValidator} from '../utils/index.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
 import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types.js';
 
@@ -118,9 +119,6 @@ const SAFE_HARDWARE_VIDEO_FILTERS = new Set([
   'transpose_vt',
   'vpp_qsv',
 ]);
-// Same as WHITESPACES in ffmpeg's av_get_token
-const FILTERGRAPH_WHITESPACE = ' \n\t\r';
-const FILTERGRAPH_LABEL_PATTERN = /^[\w.:-]+$/;
 const ffmpegLogger = logger.getLogger(FFMPEG_BINARY);
 const QUALITY_MAPPING: Record<string, number> = {
   low: 10,
@@ -605,7 +603,8 @@ function assertSafeUserFilters({videoFilters, videoScale, hardwareAcceleration}:
     ['videoFilters', videoFilters],
     ['videoScale', videoScale],
   ] as const) {
-    if (optionValue && typeof optionValue !== 'string') {
+    // null is treated as not set, like a missing option
+    if (optionValue !== undefined && optionValue !== null && typeof optionValue !== 'string') {
       throw new errors.InvalidArgumentError(
         `The ${optionName} value must be a string. ${JSON.stringify(optionValue)} has been passed instead`,
       );
@@ -620,100 +619,11 @@ function assertSafeUserFilters({videoFilters, videoScale, hardwareAcceleration}:
   const allowedFilters = HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration ?? '']
     ? new Set([...SAFE_VIDEO_FILTERS, ...SAFE_HARDWARE_VIDEO_FILTERS])
     : SAFE_VIDEO_FILTERS;
-  const unsafePart = findUnsafeFiltergraphPart(filtergraph, allowedFilters);
+  const unsafePart = new FfmpegFiltergraphValidator(filtergraph).findUnsafePart(allowedFilters);
   if (unsafePart) {
     throw new errors.InvalidArgumentError(
       `The ${optionName} value '${optionValue}' is not allowed: ${unsafePart}. ` +
         `Only these ffmpeg filters are supported: ${[...allowedFilters].join(', ')}`,
     );
-  }
-}
-
-/**
- * Explains why a user-supplied ffmpeg filtergraph is not allowed, or returns null if it only uses
- * `allowedFilters`. Filter names and options are read the way ffmpeg reads them, after removing
- * single quotes, so a quoted value like `scale='min(iw,1280)':-2` can contain `,` or `;`.
- */
-function findUnsafeFiltergraphPart(graph: string, allowedFilters: ReadonlySet<string>): string | null {
-  // With escapes, ffmpeg would unquote and unescape options a second time,
-  // so the options it uses would differ from the ones checked here
-  if (graph.includes('\\')) {
-    return 'backslashes are not supported, use single quotes instead';
-  }
-  let pos = 0;
-  const skipWhitespace = () => {
-    while (pos < graph.length && FILTERGRAPH_WHITESPACE.includes(graph[pos])) {
-      pos++;
-    }
-  };
-  // Mirrors ffmpeg's av_get_token without escapes: reads up to an unquoted terminator,
-  // removing quotes and the whitespace around the token
-  const readToken = (terminators: string): string | null => {
-    skipWhitespace();
-    let token = '';
-    let quotedLength = 0;
-    while (pos < graph.length && !terminators.includes(graph[pos])) {
-      if (graph[pos] === "'") {
-        const closingPos = graph.indexOf("'", pos + 1);
-        if (closingPos < 0) {
-          return null;
-        }
-        token += graph.slice(pos + 1, closingPos);
-        quotedLength = token.length;
-        pos = closingPos + 1;
-      } else {
-        token += graph[pos++];
-      }
-    }
-    let end = token.length;
-    while (end > quotedLength && FILTERGRAPH_WHITESPACE.includes(token[end - 1])) {
-      end--;
-    }
-    return token.slice(0, end);
-  };
-  const skipLabels = (): boolean => {
-    skipWhitespace();
-    while (graph[pos] === '[') {
-      const closingPos = graph.indexOf(']', pos);
-      if (closingPos < 0 || !FILTERGRAPH_LABEL_PATTERN.test(graph.slice(pos + 1, closingPos))) {
-        return false;
-      }
-      pos = closingPos + 1;
-      skipWhitespace();
-    }
-    return true;
-  };
-
-  while (true) {
-    if (!skipLabels()) {
-      return 'labels must be in brackets and only contain letters, digits, _ . : -';
-    }
-    const name = readToken('=,;[]');
-    let options: string | null = '';
-    if (name !== null && graph[pos] === '=') {
-      pos++;
-      options = readToken('[],;');
-    }
-    if (name === null || options === null) {
-      return 'quotes must be closed';
-    }
-    // `scale@main` is an instance of the `scale` filter
-    if (!allowedFilters.has(name.split('@')[0])) {
-      return `the '${name}' filter is not supported`;
-    }
-    // ffmpeg loads the value of an option whose name starts with '/' from that file
-    if (options.split(':').some((option) => option.trimStart().startsWith('/'))) {
-      return `filter options starting with '/' are not supported`;
-    }
-    if (!skipLabels()) {
-      return 'labels must be in brackets and only contain letters, digits, _ . : -';
-    }
-    if (pos >= graph.length) {
-      return null;
-    }
-    if (graph[pos] !== ',' && graph[pos] !== ';') {
-      return `unexpected '${graph[pos]}'`;
-    }
-    pos++;
   }
 }
