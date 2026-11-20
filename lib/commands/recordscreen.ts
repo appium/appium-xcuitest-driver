@@ -399,18 +399,7 @@ export async function startRecordingScreen(
     hardwareAcceleration,
   } = options;
 
-  // Only the user-supplied part is checked: the driver picks the hardware scale filter itself.
-  // videoScale is ignored when videoFilters is set.
-  const [filterOptionName, filterOptionValue, userFiltergraph] = videoFilters
-    ? ['videoFilters', videoFilters, videoFilters]
-    : ['videoScale', videoScale, videoScale && `scale=${videoScale}`];
-  const unsafeFiltergraphPart = userFiltergraph ? findUnsafeFiltergraphPart(userFiltergraph) : null;
-  if (unsafeFiltergraphPart) {
-    throw this.log.errorWithException(
-      `The ${filterOptionName} value '${filterOptionValue}' is not allowed: ${unsafeFiltergraphPart}. ` +
-        `Only these ffmpeg filters are supported: ${[...SAFE_VIDEO_FILTERS].join(', ')}`,
-    );
-  }
+  assertSafeUserFilters.call(this, videoFilters, videoScale);
 
   let result = '';
   if (!forceRestart) {
@@ -572,6 +561,24 @@ function optionsFromFlattenedExecuteArgs<T extends object>(keys: readonly string
     }
   }
   return out as T;
+}
+
+/**
+ * Throws if the user-supplied `videoFilters`, or `videoScale` when it is used, would let ffmpeg
+ * access host files. Only the user-supplied part is checked: the driver picks the hardware scale
+ * filter itself, and `videoScale` is ignored when `videoFilters` is set.
+ */
+function assertSafeUserFilters(this: XCUITestDriver, videoFilters?: string, videoScale?: string): void {
+  const [optionName, optionValue, filtergraph] = videoFilters
+    ? ['videoFilters', videoFilters, videoFilters]
+    : ['videoScale', videoScale, videoScale && `scale=${videoScale}`];
+  const unsafePart = filtergraph ? findUnsafeFiltergraphPart(filtergraph) : null;
+  if (unsafePart) {
+    throw this.log.errorWithException(
+      `The ${optionName} value '${optionValue}' is not allowed: ${unsafePart}. ` +
+        `Only these ffmpeg filters are supported: ${[...SAFE_VIDEO_FILTERS].join(', ')}`,
+    );
+  }
 }
 
 /**

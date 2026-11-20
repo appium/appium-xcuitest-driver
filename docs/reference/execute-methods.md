@@ -2548,6 +2548,13 @@ the video dimensions (rounded up to even numbers). If the display size changes, 
 are scaled to fit with their aspect ratio preserved and black padding. With custom filters,
 scaling, or hardware acceleration, configure fixed output dimensions if needed.
 
+Since some ffmpeg filters can read or write files on the Appium host, `videoFilters` and
+`videoScale` (checked as `scale=<videoScale>`) may only use these filters: `scale`, `transpose`,
+`hflip`, `vflip`, `crop`, `pad`, `rotate`, `fps`, `format`, `setsar`, `setdar` and `drawbox`.
+Quotes, backslashes and filter options starting with `/` are not allowed. For example,
+`videoFilters: 'transpose=1,scale=720:-2'` and `videoScale: 'w=720:h=1280'` are accepted, while
+`videoFilters: 'movie=/etc/hosts'` is rejected.
+
 #### Arguments
 
 Pass the same fields as for HTTP [`startRecordingScreen`](./commands.md#startrecordingscreen) `options`, as **top-level** keys on the execute argument object (they are forwarded into one options object server-side). Example:

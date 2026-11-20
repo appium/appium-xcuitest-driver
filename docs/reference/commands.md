@@ -115,6 +115,9 @@ recording. The previously recorded video file will also be deleted.
 
     This command requires the `ffmpeg` utility to be installed (`brew install ffmpeg`)
 
+`videoFilters` and `videoScale` may only use a limited set of ffmpeg filters, see
+[`mobile: startScreenRecording`](./execute-methods.md#mobile-startscreenrecording).
+
 **`Throws`**
 
 If the screen recording has failed to start.
