@@ -76,6 +76,7 @@ import * as memoryCommands from './commands/memory.js';
 import * as navigationCommands from './commands/navigation.js';
 import * as networkMonitorCommands from './commands/network-monitor.js';
 import * as notificationsCommands from './commands/notifications.js';
+import * as orientationCommands from './commands/orientation.js';
 import * as pasteboardCommands from './commands/pasteboard.js';
 import * as performanceCommands from './commands/performance.js';
 import type {PerfRecorder} from './commands/performance.js';
@@ -173,6 +174,7 @@ import './commands/lock.js';
 import './commands/log.js';
 import './commands/navigation.js';
 import './commands/notifications.js';
+import './commands/orientation.js';
 import './commands/pasteboard.js';
 import './commands/media-stream.js';
 import './commands/network-monitor.js';
@@ -1535,6 +1537,12 @@ Object.assign(XCUITestDriver.prototype, {
   // network-monitor
   mobileStartNetworkMonitor: networkMonitorCommands.mobileStartNetworkMonitor,
   mobileStopNetworkMonitor: networkMonitorCommands.mobileStopNetworkMonitor,
+
+  // orientation
+  getOrientation: orientationCommands.getOrientation,
+  setOrientation: orientationCommands.setOrientation,
+  getRotation: orientationCommands.getRotation,
+  setRotation: orientationCommands.setRotation,
 
   // system-monitor
   mobileStartSystemMonitor: systemMonitorCommands.mobileStartSystemMonitor,
