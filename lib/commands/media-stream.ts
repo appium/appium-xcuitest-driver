@@ -4,7 +4,6 @@ import {errors} from 'appium/driver.js';
 import {
   DEFAULT_BATCH_MS,
   DEFAULT_IDLE_HEARTBEAT_MS,
-  KEYFRAME_REQUEST_MIN_INTERVAL_MS,
   MAX_BATCH_MS,
   MAX_BITRATE,
   MAX_DISPLAY_ID,
@@ -14,6 +13,7 @@ import {
   MEDIA_STREAM_MODULE,
   MEDIA_UNITS_EVENT,
   MIN_IDLE_HEARTBEAT_MS,
+  MIN_KEYFRAME_INTERVAL_MS,
   MIN_SIMULATOR_XCODE_MAJOR,
 } from '../device/media-stream/constants.js';
 import {DeviceMediaSource, isDeviceStreamingSupported} from '../device/media-stream/device-source.js';
@@ -324,12 +324,12 @@ function validateOpts({
     keyFrameIntervalMs !== 0 &&
     !(
       Number.isInteger(keyFrameIntervalMs) &&
-      keyFrameIntervalMs >= KEYFRAME_REQUEST_MIN_INTERVAL_MS &&
+      keyFrameIntervalMs >= MIN_KEYFRAME_INTERVAL_MS &&
       keyFrameIntervalMs <= MAX_KEYFRAME_INTERVAL_MS
     )
   ) {
     throw new errors.InvalidArgumentError(
-      `'keyFrameIntervalMs' must be 0 or an integer between ${KEYFRAME_REQUEST_MIN_INTERVAL_MS} and ${MAX_KEYFRAME_INTERVAL_MS}, got '${String(keyFrameIntervalMs)}'`,
+      `'keyFrameIntervalMs' must be 0 or an integer between ${MIN_KEYFRAME_INTERVAL_MS} and ${MAX_KEYFRAME_INTERVAL_MS}, got '${String(keyFrameIntervalMs)}'`,
     );
   }
 }

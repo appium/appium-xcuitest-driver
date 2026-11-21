@@ -7,6 +7,7 @@ import {
   mobileStartMediaStream,
   mobileStopMediaStream,
 } from '../../../lib/commands/media-stream.js';
+import {executeMethodMap} from '../../../lib/execute-method-map.js';
 
 function fakeDriver(extra: Record<string, unknown> = {}) {
   return {
@@ -19,8 +20,14 @@ function fakeDriver(extra: Record<string, unknown> = {}) {
   } as any;
 }
 
-const start = (driver: any, ...args: any[]) =>
-  (mobileStartMediaStream as (...a: any[]) => Promise<unknown>).call(driver, ...args);
+// Calls the command as `mobile: startMediaStream` does: Appium passes the named params in the order the
+// execute method map lists them
+const {required, optional} = executeMethodMap['mobile: startMediaStream'].params;
+const start = (driver: any, params: Record<string, unknown>) =>
+  (mobileStartMediaStream as (...a: unknown[]) => Promise<unknown>).call(
+    driver,
+    ...[...required, ...optional].map((name) => params[name]),
+  );
 
 describe('mobile: getMediaStreamCapabilities', function () {
   it('offers both kinds, both codecs and audio on a simulator', async function () {
@@ -59,44 +66,35 @@ describe('mobile: getMediaStreamCapabilities', function () {
 
 describe('mobile: startMediaStream', function () {
   it('rejects an unknown kind', async function () {
-    await assert.rejects(start(fakeDriver(), 'audio' as any), /'kind' must be either/);
+    await assert.rejects(start(fakeDriver(), {kind: 'audio'}), /'kind' must be either/);
   });
 
   it('rejects options that do not apply to the kind', async function () {
-    await assert.rejects(start(fakeDriver(), 'video', undefined, undefined, undefined, 50), /'quality'.*'video'/);
-    await assert.rejects(start(fakeDriver(), 'jpeg', 'hevc'), /'codec'.*'jpeg'/);
+    await assert.rejects(start(fakeDriver(), {kind: 'video', quality: 50}), /'quality'.*'video'/);
+    await assert.rejects(start(fakeDriver(), {kind: 'jpeg', codec: 'hevc'}), /'codec'.*'jpeg'/);
   });
 
   it('rejects out-of-range numeric options', async function () {
-    await assert.rejects(start(fakeDriver(), 'video', 5 as any), /'codec' must be either/);
-    await assert.rejects(start(fakeDriver(), 'video', undefined, 0), /'fps' must be a number between 1 and 120/);
-    await assert.rejects(start(fakeDriver(), 'video', undefined, undefined, 'abc'), /'bitrate' must be a number/);
-    await assert.rejects(
-      start(fakeDriver(), 'jpeg', undefined, undefined, undefined, 101),
-      /'quality' must be.*0 and 100/,
-    );
-    await assert.rejects(
-      start(fakeDriver(), 'jpeg', undefined, undefined, undefined, undefined, 0),
-      /'scale' must be.*1 and 100/,
-    );
+    await assert.rejects(start(fakeDriver(), {kind: 'video', codec: 5}), /'codec' must be either/);
+    await assert.rejects(start(fakeDriver(), {kind: 'video', fps: 0}), /'fps' must be a number between 1 and 120/);
+    await assert.rejects(start(fakeDriver(), {kind: 'video', bitrate: 'abc'}), /'bitrate' must be a number/);
+    await assert.rejects(start(fakeDriver(), {kind: 'jpeg', quality: 101}), /'quality' must be.*0 and 100/);
+    await assert.rejects(start(fakeDriver(), {kind: 'jpeg', scale: 0}), /'scale' must be.*1 and 100/);
   });
 
   it('rejects a non-boolean audio flag', async function () {
-    await assert.rejects(
-      start(fakeDriver(), 'video', undefined, undefined, undefined, undefined, undefined, 'false' as any),
-      /'audio' must be a boolean/,
-    );
+    await assert.rejects(start(fakeDriver(), {kind: 'video', audio: 'false'}), /'audio' must be a boolean/);
   });
 
   it('rejects a batch window that is not an integer in range', async function () {
-    const withBatch = (batchMs: unknown) => start(fakeDriver(), 'video', ...Array(7).fill(undefined), batchMs);
+    const withBatch = (batchMs: unknown) => start(fakeDriver(), {kind: 'video', batchMs});
     await assert.rejects(withBatch(-1), /'batchMs' must be an integer between 0 and 1000/);
     await assert.rejects(withBatch(1.5), /'batchMs'/);
     await assert.rejects(withBatch(2 ** 31), /'batchMs'/);
   });
 
   it('rejects an idle heartbeat that would flood the client', async function () {
-    const withHeartbeat = (ms: unknown) => start(fakeDriver(), 'jpeg', ...Array(8).fill(undefined), ms);
+    const withHeartbeat = (idleHeartbeatMs: unknown) => start(fakeDriver(), {kind: 'jpeg', idleHeartbeatMs});
     await assert.rejects(withHeartbeat(1), /'idleHeartbeatMs' must be 0 or/);
     await assert.rejects(withHeartbeat(99), /'idleHeartbeatMs'/);
     await assert.rejects(withHeartbeat(2 ** 31), /'idleHeartbeatMs'/);
@@ -104,7 +102,8 @@ describe('mobile: startMediaStream', function () {
   });
 
   it('rejects a keyframe interval that is not 0 or an integer in range, or is set for jpeg', async function () {
-    const withInterval = (ms: unknown, kind = 'video') => start(fakeDriver(), kind, ...Array(9).fill(undefined), ms);
+    const withInterval = (keyFrameIntervalMs: unknown, kind = 'video') =>
+      start(fakeDriver(), {kind, keyFrameIntervalMs});
     const outOfRange = /'keyFrameIntervalMs' must be 0 or an integer between 1000 and 60000/;
     await assert.rejects(withInterval(999), outOfRange);
     await assert.rejects(withInterval(60_001), outOfRange);
@@ -115,7 +114,7 @@ describe('mobile: startMediaStream', function () {
   });
 
   it('accepts a keyframe interval in range, and 0', async function () {
-    for (const ms of [0, 1000, 4000, 60_000]) {
+    for (const keyFrameIntervalMs of [0, 1000, 4000, 60_000]) {
       const driver = fakeDriver({
         device: {
           startVideoStream: async () => {
@@ -123,20 +122,20 @@ describe('mobile: startMediaStream', function () {
           },
         },
       });
-      await assert.rejects(start(driver, 'video', ...Array(9).fill(undefined), ms), /reached the simulator/);
+      await assert.rejects(start(driver, {kind: 'video', keyFrameIntervalMs}), /reached the simulator/);
     }
   });
 
   it('rejects fps and bitrate above the limits', async function () {
-    await assert.rejects(start(fakeDriver(), 'video', undefined, 121), /'fps' must be.*between 1 and 120/);
+    await assert.rejects(start(fakeDriver(), {kind: 'video', fps: 121}), /'fps' must be.*between 1 and 120/);
     await assert.rejects(
-      start(fakeDriver(), 'video', undefined, undefined, 100_000_001),
+      start(fakeDriver(), {kind: 'video', bitrate: 100_000_001}),
       /'bitrate' must be.*between 1 and 100000000/,
     );
   });
 
   it('fails with the capability reason when unsupported', async function () {
-    await assert.rejects(start(fakeDriver({xcodeVersion: {major: 25}}), 'jpeg'), /requires Xcode 26/);
+    await assert.rejects(start(fakeDriver({xcodeVersion: {major: 25}}), {kind: 'jpeg'}), /requires Xcode 26/);
   });
 
   it('keeps accepting a stop for an ended stream after another one started', async function () {
@@ -152,10 +151,10 @@ describe('mobile: startMediaStream', function () {
       };
     };
     const driver = fakeDriver({device: {startJpegStream: async () => stream()}});
-    const first = (await start(driver, 'jpeg')) as {streamId: string};
+    const first = (await start(driver, {kind: 'jpeg'})) as {streamId: string};
     await mobileStopMediaStream.call(driver, first.streamId);
     assert.equal(driver._mediaStreams.size, 0);
-    const second = (await start(driver, 'jpeg')) as {streamId: string};
+    const second = (await start(driver, {kind: 'jpeg'})) as {streamId: string};
     await mobileStopMediaStream.call(driver, first.streamId);
     assert.equal(driver._mediaStreams.size, 1);
     await mobileStopMediaStream.call(driver, second.streamId);

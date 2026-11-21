@@ -18,6 +18,7 @@ export const MAX_BITRATE = 100_000_000;
 export const MAX_BATCH_MS = 1000;
 export const MIN_IDLE_HEARTBEAT_MS = 100;
 export const MAX_IDLE_HEARTBEAT_MS = 60_000;
+export const MIN_KEYFRAME_INTERVAL_MS = 1000;
 export const MAX_KEYFRAME_INTERVAL_MS = 60_000;
 export const MAX_DISPLAY_ID = 0xffffffff;
 // Bounds the wait on the device/simulator, so a hung source cannot block the session teardown
