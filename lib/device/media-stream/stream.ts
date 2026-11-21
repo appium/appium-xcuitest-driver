@@ -235,8 +235,9 @@ export class MediaStream {
     this.firstUnitSeen();
 
     const subscribed = this.deps.hasSubscribers();
-    if (subscribed && !this.wasSubscribed && !au.isKeyFrame) {
-      // Late joiner: keyframes can be rare on a slowly changing screen, so ask for one
+    if (subscribed && !this.wasSubscribed && !(au.track === 'video' && au.isKeyFrame)) {
+      // Late joiner: keyframes can be rare on a slowly changing screen, so ask for one. An audio unit
+      // counts too: it is always marked as a keyframe, and with audio it is usually the first unit to arrive
       this.requestKeyFrame();
     }
     this.wasSubscribed = subscribed;

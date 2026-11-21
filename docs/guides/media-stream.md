@@ -38,8 +38,7 @@ Notes:
 - The simulator encoder sends a keyframe every `2 * fps` encoded frames, which is about every 2 seconds on a
   constantly changing screen and much less often on a slowly changing one. A client that subscribes while the
   stream is running, or was skipped for being too slow, does not wait for that: the driver asks the encoder for a
-  keyframe as soon as the next frame arrives. A stream with `audio` is an exception for now: there a late subscriber
-  usually still waits for the next regular keyframe.
+  keyframe as soon as the next unit arrives.
 - Appium closes the connection with code `1013` if the client cannot keep up with the stream, and closes it
   when the session is deleted, so no `ended` event follows a session deletion.
 
