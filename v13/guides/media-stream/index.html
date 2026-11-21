@@ -3095,8 +3095,11 @@ latency-sensitive tests, lower the video bitrate or reduce the JPEG <code>scale<
 <li>Subscribe first and only then start the stream, since events are only emitted while a client is subscribed.</li>
 <li>A static screen produces no new frames. The <code>jpeg</code> stream repeats the last frame every <code>idleHeartbeatMs</code>, and a
   <code>video</code> stream sends nothing until the screen changes.</li>
-<li>The simulator encoder sends a keyframe about every 2 seconds on a changing screen, so a client that joins late
-  waits for the next one.</li>
+<li>The simulator encoder sends a keyframe every <code>2 * fps</code> encoded frames, which is about every 2 seconds on a
+  constantly changing screen and much less often on a slowly changing one. A client that subscribes while the
+  stream is running, or was skipped for being too slow, does not wait for that: the driver asks the encoder for a
+  keyframe as soon as the next unit arrives. The driver asks at most once a second, so a request that comes sooner
+  is sent when that second has passed.</li>
 <li>Appium closes the connection with code <code>1013</code> if the client cannot keep up with the stream, and closes it
   when the session is deleted, so no <code>ended</code> event follows a session deletion.</li>
 </ul>
@@ -3146,7 +3149,7 @@ package. The device streams HEVC, which the driver transcodes to H.264 or JPEG, 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 20, 2026 07:04:43 UTC"><span class="timeago" datetime="2026-11-20T07:04:43+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 20, 2026 07:04:43 UTC">2026-11-20</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 21, 2026 10:43:00 UTC"><span class="timeago" datetime="2026-11-21T10:43:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 21, 2026 10:43:00 UTC">2026-11-21</span>
   </span>
 
     
