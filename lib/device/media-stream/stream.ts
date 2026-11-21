@@ -42,17 +42,19 @@ export class MediaStream {
   private readonly batcher: UnitBatcher;
   private videoSynced = false;
   private wasSubscribed = false;
-  private lastKeyFrameRequestAt = 0;
+  // This and the other `last*At` fields hold performance.now() readings, which a change of the system clock
+  // does not move. -Infinity means never
+  private lastKeyFrameRequestAt = -Infinity;
   private keyFrameRetry?: NodeJS.Timeout;
   private jpegSeq = 0;
   private lastJpeg?: MediaUnit;
-  private lastJpegEmitAt = 0;
+  private lastJpegEmitAt = -Infinity;
   private size?: {width: number; height: number};
   private audioFormat?: {sampleRate: number; channels: number};
   private dropped = 0;
   private heartbeat?: NodeJS.Timeout;
   private keyFrameTimer?: NodeJS.Timeout;
-  private lastKeyFrameSentAt = 0;
+  private lastKeyFrameSentAt = -Infinity;
   private pump?: Promise<void>;
   private announced = false;
   private endReason = 'ended';
@@ -116,7 +118,7 @@ export class MediaStream {
       return;
     }
     // Without a subscriber nobody would get the keyframe, so the encoder is left alone
-    const dueInMs = this.deps.hasSubscribers() ? this.lastKeyFrameSentAt + intervalMs - Date.now() : undefined;
+    const dueInMs = this.deps.hasSubscribers() ? this.lastKeyFrameSentAt + intervalMs - performance.now() : undefined;
     if (dueInMs !== undefined && dueInMs <= 0) {
       this.requestKeyFrame();
     }
@@ -267,15 +269,15 @@ export class MediaStream {
       // arrives first, so it must not
       this.requestKeyFrame();
     }
-    this.wasSubscribed = subscribed;
     if (!subscribed) {
-      this.videoSynced = false;
+      this.markUnsubscribed();
       return;
     }
+    this.wasSubscribed = true;
     if (au.track === 'video') {
       if (au.isKeyFrame) {
         this.videoSynced = true;
-        this.lastKeyFrameSentAt = Date.now();
+        this.lastKeyFrameSentAt = performance.now();
         // The subscribers get a keyframe now, so a request still waiting for the rate limit is not needed
         this.cancelKeyFrameRetry();
       } else if (!this.videoSynced) {
@@ -321,7 +323,7 @@ export class MediaStream {
     this.checkJpegSize(frame.data);
     this.firstUnitSeen();
     if (this.deps.hasSubscribers()) {
-      this.lastJpegEmitAt = Date.now();
+      this.lastJpegEmitAt = performance.now();
       this.batcher.push(unit);
     }
   }
@@ -330,12 +332,12 @@ export class MediaStream {
     if (
       this.stopped ||
       !this.lastJpeg ||
-      Date.now() - this.lastJpegEmitAt < this.opts.idleHeartbeatMs ||
+      performance.now() - this.lastJpegEmitAt < this.opts.idleHeartbeatMs ||
       !this.deps.hasSubscribers()
     ) {
       return;
     }
-    this.lastJpegEmitAt = Date.now();
+    this.lastJpegEmitAt = performance.now();
     this.batcher.push({...this.lastJpeg, seq: this.jpegSeq++});
   }
 
@@ -376,25 +378,29 @@ export class MediaStream {
     if (this.stopped || this.kind !== 'video' || !this.source.requestKeyFrame) {
       return;
     }
-    const elapsed = Date.now() - this.lastKeyFrameRequestAt;
-    // A negative value means the clock was set back, which must not hold requests back until it catches up
-    if (elapsed >= 0 && elapsed < KEYFRAME_REQUEST_MIN_INTERVAL_MS) {
+    const wait = this.lastKeyFrameRequestAt + KEYFRAME_REQUEST_MIN_INTERVAL_MS - performance.now();
+    if (wait > 0) {
       this.keyFrameRetry ??= setTimeout(() => {
         this.keyFrameRetry = undefined;
         if (this.deps.hasSubscribers()) {
           this.requestKeyFrame();
         } else {
-          // Nobody is left to get the keyframe. A subscriber that comes back before the next unit
-          // is a late joiner too, so reset what that unit would have reset
-          this.wasSubscribed = false;
-          this.videoSynced = false;
+          // Nobody is left to get the keyframe. A subscriber that comes back before the next unit is a
+          // late joiner too
+          this.markUnsubscribed();
         }
-      }, KEYFRAME_REQUEST_MIN_INTERVAL_MS - elapsed);
+      }, wait);
       return;
     }
     this.cancelKeyFrameRetry();
-    this.lastKeyFrameRequestAt = Date.now();
+    this.lastKeyFrameRequestAt = performance.now();
     void this.sendKeyFrameRequest();
+  }
+
+  // Whoever subscribes next is a late joiner and must start at a keyframe
+  private markUnsubscribed(): void {
+    this.wasSubscribed = false;
+    this.videoSynced = false;
   }
 
   private cancelKeyFrameRetry(): void {

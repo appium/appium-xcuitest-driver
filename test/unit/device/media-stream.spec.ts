@@ -81,6 +81,15 @@ function setup(kind: 'video' | 'jpeg', subscribed = true, extra: Record<string, 
 }
 
 const unitEvents = (events: BiDiEvent[]) => events.filter((e) => e.method === 'appium:mediaStream.units');
+// The stream reads performance.now(), which mock.timers cannot mock, so it follows the mocked Date instead
+const mockClock = () => {
+  mock.timers.enable({apis: ['Date', 'setTimeout'], now: 1_000_000});
+  mock.method(performance, 'now', () => Date.now());
+};
+const restoreClock = () => {
+  mock.timers.reset();
+  mock.restoreAll();
+};
 const sof = (width: number, height: number) =>
   Buffer.from([
     0xff,
@@ -470,12 +479,8 @@ describe('MediaStream with a hung source', function () {
 
 describe('MediaStream late subscriber', function () {
   // The limit of one keyframe request per second reads the clock and delays a request that comes sooner
-  beforeEach(function () {
-    mock.timers.enable({apis: ['Date', 'setTimeout'], now: 1_000_000});
-  });
-  afterEach(function () {
-    mock.timers.reset();
-  });
+  beforeEach(mockClock);
+  afterEach(restoreClock);
 
   const audio = (sequence: number) =>
     su('audio', sequence, {isKeyFrame: true, data: Buffer.from([0xff, 0xf1, 0x4c, 0x80, 0x01, 0x3f, 0xfc])});
@@ -649,14 +654,13 @@ describe('MediaStream late subscriber', function () {
     await s.stream.stop();
   });
 
-  it('does not hold a request back when the clock was set back', async function () {
+  it('asks right away while the clock still reads less than a second', async function () {
+    // performance.now() counts from the process start
+    mock.timers.setTime(0);
     const s = setup('video', true, {audio: true});
     await s.begin();
     await leaveAndReturn(s, 1);
     assert.equal(s.source.keyFrameRequests, 1);
-    mock.timers.setTime(1_000_000 - 30_000);
-    await leaveAndReturn(s, 3);
-    assert.equal(s.source.keyFrameRequests, 2);
     await s.stream.stop();
   });
 
@@ -694,12 +698,8 @@ describe('MediaStream late subscriber', function () {
 });
 
 describe('MediaStream with keyFrameIntervalMs', function () {
-  beforeEach(function () {
-    mock.timers.enable({apis: ['setTimeout', 'Date'], now: 1_000_000});
-  });
-  afterEach(function () {
-    mock.timers.reset();
-  });
+  beforeEach(mockClock);
+  afterEach(restoreClock);
 
   const advance = async (ms: number) => {
     for (let passed = 0; passed < ms; passed += 50) {
@@ -766,6 +766,17 @@ describe('MediaStream with keyFrameIntervalMs', function () {
     await advance(300);
     assert.equal(source.keyFrameRequests, 1);
     assert.equal(keyFramesSent(events), 1);
+    await stream.stop();
+  });
+
+  it('asks right away for the first subscriber while the clock still reads less than the interval', async function () {
+    // performance.now() counts from the process start
+    mock.timers.setTime(0);
+    const {source, state, stream, begin} = setup('video', false, {keyFrameIntervalMs: 60_000});
+    await begin();
+    state.subscribed = true;
+    await advance(300);
+    assert.equal(source.keyFrameRequests, 1);
     await stream.stop();
   });
 
