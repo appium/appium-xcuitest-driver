@@ -147,7 +147,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#real-devices" class="md-skip">
+        <a href="#keyframes-at-a-fixed-interval" class="md-skip">
           Skip to content
         </a>
       
@@ -2248,6 +2248,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#keyframes-at-a-fixed-interval" class="md-nav__link">
+    <span class="md-ellipsis"> Keyframes at a fixed interval </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#real-devices" class="md-nav__link">
     <span class="md-ellipsis"> Real devices </span>
   </a>
@@ -2954,6 +2989,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#keyframes-at-a-fixed-interval" class="md-nav__link">
+    <span class="md-ellipsis"> Keyframes at a fixed interval </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#real-devices" class="md-nav__link">
     <span class="md-ellipsis"> Real devices </span>
   </a>
@@ -3094,7 +3164,8 @@ latency-sensitive tests, lower the video bitrate or reduce the JPEG <code>scale<
 <ul>
 <li>Subscribe first and only then start the stream, since events are only emitted while a client is subscribed.</li>
 <li>A static screen produces no new frames. The <code>jpeg</code> stream repeats the last frame every <code>idleHeartbeatMs</code>, and a
-  <code>video</code> stream sends nothing until the screen changes.</li>
+  <code>video</code> stream sends nothing until the screen changes, unless
+  <a href="#keyframes-at-a-fixed-interval"><code>keyFrameIntervalMs</code></a> is set.</li>
 <li>The simulator encoder sends a keyframe every <code>2 * fps</code> encoded frames, which is about every 2 seconds on a
   constantly changing screen and much less often on a slowly changing one. A client that subscribes while the
   stream is running, or was skipped for being too slow, does not wait for that: the driver asks the encoder for a
@@ -3102,6 +3173,26 @@ latency-sensitive tests, lower the video bitrate or reduce the JPEG <code>scale<
   is sent when that second has passed.</li>
 <li>Appium closes the connection with code <code>1013</code> if the client cannot keep up with the stream, and closes it
   when the session is deleted, so no <code>ended</code> event follows a session deletion.</li>
+</ul>
+<h2 id="keyframes-at-a-fixed-interval">Keyframes at a fixed interval<a class="headerlink" href="#keyframes-at-a-fixed-interval" title="Permanent link">&para;</a></h2>
+<p>By default the encoder decides when to send a keyframe, which suits a client that only displays the stream. A
+client that records it, cuts it into segments (HLS, fragmented MP4) or relays it to viewers who may join at any
+moment needs a keyframe at a known interval, also while nothing on the screen changes. Pass <code>keyFrameIntervalMs</code>
+(1000-60000) to <code>mobile: startMediaStream</code> for that:</p>
+<ul>
+<li>While a client is subscribed, the driver asks the encoder for a keyframe whenever the last keyframe it sent is older
+  than <code>keyFrameIntervalMs</code>. The keyframe follows the request within a frame or two, so two keyframes are slightly
+  more than the value apart (about 4.03 seconds for 4000 on a simulator at 30 fps).</li>
+<li>Keyframes that the encoder sends by itself count too, so nothing is requested while those come often enough.</li>
+<li>On a static screen the requested keyframe is the only unit that is sent, so the stream has at least one frame per
+  interval.</li>
+<li>Nothing is requested while no client is subscribed. A client that subscribes later waits for its first keyframe
+  no longer than about the interval, also on a static screen.</li>
+<li>A keyframe is a complete picture and much larger than the other frames, so a short interval costs bandwidth even
+  when nothing changes.</li>
+<li>Only <code>video</code> streams have keyframes, so the option is rejected for <code>jpeg</code>.</li>
+<li>On a real device the driver already asks for a keyframe every 2 seconds (see below). The option only adds requests
+  to that, so it makes a difference only if it is set below 2000.</li>
 </ul>
 <h2 id="real-devices">Real devices<a class="headerlink" href="#real-devices" title="Permanent link">&para;</a></h2>
 <p>A real device needs a <a href="../remotexpc-tunnels-real-devices/">RemoteXPC tunnel</a> and the optional <code>@appium/media-proxy</code>
@@ -3149,7 +3240,7 @@ package. The device streams HEVC, which the driver transcodes to H.264 or JPEG, 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 21, 2026 10:43:00 UTC"><span class="timeago" datetime="2026-11-21T10:43:00+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 21, 2026 10:43:00 UTC">2026-11-21</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 21, 2026 13:56:40 UTC"><span class="timeago" datetime="2026-11-21T13:56:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 21, 2026 13:56:40 UTC">2026-11-21</span>
   </span>
 
     
