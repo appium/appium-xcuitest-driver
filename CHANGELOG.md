@@ -1,3 +1,9 @@
+## [13.5.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.5.1...v13.5.2) (2026-11-21)
+
+### Bug Fixes
+
+* request keyframes for late media stream subscribers on simulators and with audio ([#3158](https://github.com/appium/appium-xcuitest-driver/issues/3158)) ([5ac12b9](https://github.com/appium/appium-xcuitest-driver/commit/5ac12b96695370bdf695fb0986e12cf6bde51a83))
+
 ## [13.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.5.0...v13.5.1) (2026-11-21)
 
 ### Bug Fixes
