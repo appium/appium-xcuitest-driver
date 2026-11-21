@@ -1,3 +1,9 @@
+## [13.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.6.0...v13.6.1) (2026-11-21)
+
+### Bug Fixes
+
+* two edge cases in the delayed media stream keyframe request ([#3160](https://github.com/appium/appium-xcuitest-driver/issues/3160)) ([6412fe9](https://github.com/appium/appium-xcuitest-driver/commit/6412fe9ace533220ccfe9df96d94c08e21e15e40))
+
 ## [13.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.5.2...v13.6.0) (2026-11-21)
 
 ### Features
