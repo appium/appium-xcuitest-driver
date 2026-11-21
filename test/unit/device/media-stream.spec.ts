@@ -624,6 +624,42 @@ describe('MediaStream late subscriber', function () {
     await s.stream.stop();
   });
 
+  it('treats a subscriber that comes back before the next unit as a late joiner after a waiting request found nobody', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    s.source.push(keyFrame(1));
+    await s.tick();
+    s.emitter.emit('bidiBackpressure', {
+      method: 'appium:mediaStream.units',
+      chain: `${s.stream.streamId}:video`,
+      state: 'dropping',
+      dropped: 1,
+    });
+    s.state.subscribed = false;
+    mock.timers.tick(1000);
+    assert.equal(s.source.keyFrameRequests, 1, 'nobody is subscribed when the second has passed');
+    s.state.subscribed = true;
+    const before = sent(s.events).length;
+    s.source.push(su('video', 2));
+    s.source.push(keyFrame(3));
+    await s.tick();
+    assert.equal(s.source.keyFrameRequests, 2);
+    assert.deepEqual(sent(s.events).slice(before), ['video3'], 'no delta frame before the keyframe');
+    await s.stream.stop();
+  });
+
+  it('does not hold a request back when the clock was set back', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.setTime(1_000_000 - 30_000);
+    await leaveAndReturn(s, 3);
+    assert.equal(s.source.keyFrameRequests, 2);
+    await s.stream.stop();
+  });
+
   it('still asks when core starts dropping units of a stream with audio', async function () {
     const {source, emitter, stream, tick, begin} = setup('video', true, {audio: true});
     await begin();

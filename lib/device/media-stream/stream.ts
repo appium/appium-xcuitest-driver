@@ -351,14 +351,20 @@ export class MediaStream {
     if (this.stopped || this.kind !== 'video' || !this.source.requestKeyFrame) {
       return;
     }
-    const wait = this.lastKeyFrameRequestAt + KEYFRAME_REQUEST_MIN_INTERVAL_MS - Date.now();
-    if (wait > 0) {
+    const elapsed = Date.now() - this.lastKeyFrameRequestAt;
+    // A negative value means the clock was set back, which must not hold requests back until it catches up
+    if (elapsed >= 0 && elapsed < KEYFRAME_REQUEST_MIN_INTERVAL_MS) {
       this.keyFrameRetry ??= setTimeout(() => {
         this.keyFrameRetry = undefined;
         if (this.deps.hasSubscribers()) {
           this.requestKeyFrame();
+        } else {
+          // Nobody is left to get the keyframe. A subscriber that comes back before the next unit
+          // is a late joiner too, so reset what that unit would have reset
+          this.wasSubscribed = false;
+          this.videoSynced = false;
         }
-      }, wait);
+      }, KEYFRAME_REQUEST_MIN_INTERVAL_MS - elapsed);
       return;
     }
     this.cancelKeyFrameRetry();
