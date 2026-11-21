@@ -42,6 +42,7 @@ export class MediaStream {
   private videoSynced = false;
   private wasSubscribed = false;
   private lastKeyFrameRequestAt = 0;
+  private keyFrameRetry?: NodeJS.Timeout;
   private jpegSeq = 0;
   private lastJpeg?: MediaUnit;
   private lastJpegEmitAt = 0;
@@ -166,6 +167,7 @@ export class MediaStream {
     }
     this.stopped = true;
     clearInterval(this.heartbeat);
+    this.cancelKeyFrameRetry();
     // Units already received are still valid, so they go out before `ended`
     this.batcher.flush();
     this.batcher.close();
@@ -235,8 +237,10 @@ export class MediaStream {
     this.firstUnitSeen();
 
     const subscribed = this.deps.hasSubscribers();
-    if (subscribed && !this.wasSubscribed && !au.isKeyFrame) {
-      // Late joiner: keyframes can be rare on a slowly changing screen, so ask for one
+    if (subscribed && !this.wasSubscribed && !(au.track === 'video' && au.isKeyFrame)) {
+      // Late joiner: keyframes can be rare on a slowly changing screen, so ask for one. Only a video
+      // keyframe satisfies the late joiner. An audio unit is always marked as a keyframe and usually
+      // arrives first, so it must not
       this.requestKeyFrame();
     }
     this.wasSubscribed = subscribed;
@@ -247,6 +251,8 @@ export class MediaStream {
     if (au.track === 'video') {
       if (au.isKeyFrame) {
         this.videoSynced = true;
+        // The subscribers get a keyframe now, so a request still waiting for the rate limit is not needed
+        this.cancelKeyFrameRetry();
       } else if (!this.videoSynced) {
         return;
       }
@@ -339,17 +345,30 @@ export class MediaStream {
     this.deps.emit({context: NATIVE_WIN, ...event});
   }
 
+  // At most one request per interval. A request that comes sooner is sent once the interval has passed,
+  // unless a keyframe reaches the subscribers first
   private requestKeyFrame(): void {
-    const now = Date.now();
-    if (
-      this.kind !== 'video' ||
-      !this.source.requestKeyFrame ||
-      now - this.lastKeyFrameRequestAt < KEYFRAME_REQUEST_MIN_INTERVAL_MS
-    ) {
+    if (this.stopped || this.kind !== 'video' || !this.source.requestKeyFrame) {
       return;
     }
-    this.lastKeyFrameRequestAt = now;
+    const wait = this.lastKeyFrameRequestAt + KEYFRAME_REQUEST_MIN_INTERVAL_MS - Date.now();
+    if (wait > 0) {
+      this.keyFrameRetry ??= setTimeout(() => {
+        this.keyFrameRetry = undefined;
+        if (this.deps.hasSubscribers()) {
+          this.requestKeyFrame();
+        }
+      }, wait);
+      return;
+    }
+    this.cancelKeyFrameRetry();
+    this.lastKeyFrameRequestAt = Date.now();
     void this.sendKeyFrameRequest();
+  }
+
+  private cancelKeyFrameRetry(): void {
+    clearTimeout(this.keyFrameRetry);
+    this.keyFrameRetry = undefined;
   }
 
   private async sendKeyFrameRequest(): Promise<void> {

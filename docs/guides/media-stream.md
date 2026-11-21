@@ -35,8 +35,11 @@ Notes:
 - Subscribe first and only then start the stream, since events are only emitted while a client is subscribed.
 - A static screen produces no new frames. The `jpeg` stream repeats the last frame every `idleHeartbeatMs`, and a
   `video` stream sends nothing until the screen changes.
-- The simulator encoder sends a keyframe about every 2 seconds on a changing screen, so a client that joins late
-  waits for the next one.
+- The simulator encoder sends a keyframe every `2 * fps` encoded frames, which is about every 2 seconds on a
+  constantly changing screen and much less often on a slowly changing one. A client that subscribes while the
+  stream is running, or was skipped for being too slow, does not wait for that: the driver asks the encoder for a
+  keyframe as soon as the next unit arrives. The driver asks at most once a second, so a request that comes sooner
+  is sent when that second has passed.
 - Appium closes the connection with code `1013` if the client cannot keep up with the stream, and closes it
   when the session is deleted, so no `ended` event follows a session deletion.
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
-import {describe, it, mock} from 'node:test';
+import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
 import type {BiDiEvent} from '@appium/types';
 
@@ -465,5 +465,194 @@ describe('MediaStream with a hung source', function () {
     } finally {
       mock.timers.reset();
     }
+  });
+});
+
+describe('MediaStream late subscriber', function () {
+  // The limit of one keyframe request per second reads the clock and delays a request that comes sooner
+  beforeEach(function () {
+    mock.timers.enable({apis: ['Date', 'setTimeout'], now: 1_000_000});
+  });
+  afterEach(function () {
+    mock.timers.reset();
+  });
+
+  const audio = (sequence: number) =>
+    su('audio', sequence, {isKeyFrame: true, data: Buffer.from([0xff, 0xf1, 0x4c, 0x80, 0x01, 0x3f, 0xfc])});
+  const keyFrame = (sequence: number) => su('video', sequence, {isKeyFrame: true, data: keyFrameData()});
+  const sent = (events: BiDiEvent[]) =>
+    unitEvents(events).flatMap((e) => e.params!.units.map((u: {track: string; seq: number}) => `${u.track}${u.seq}`));
+  // The subscriber leaves for one audio unit and is back for the next one
+  const leaveAndReturn = async ({source, state, tick}: ReturnType<typeof setup>, sequence: number) => {
+    state.subscribed = false;
+    source.push(audio(sequence));
+    await tick();
+    state.subscribed = true;
+    source.push(audio(sequence + 1));
+    await tick();
+  };
+
+  it('asks once when the first unit after the subscription is audio, however many follow', async function () {
+    const {source, events, state, stream, tick, begin} = setup('video', false, {audio: true});
+    await begin();
+    state.subscribed = true;
+    for (let i = 1; i <= 100; i++) {
+      source.push(audio(i));
+    }
+    source.push(su('video', 1));
+    await tick();
+    assert.equal(source.keyFrameRequests, 1);
+    // The request is made when the subscriber appears, not repeated while the keyframe is awaited
+    mock.timers.tick(5000);
+    source.push(audio(101));
+    source.push(su('video', 2));
+    await tick();
+    assert.equal(source.keyFrameRequests, 1);
+    // Audio is delivered from the start, video only from the keyframe on
+    assert.equal(sent(events).length, 101);
+    assert.ok(sent(events).every((u) => u.startsWith('audio')));
+    source.push(keyFrame(3));
+    source.push(su('video', 4));
+    await tick();
+    assert.deepEqual(sent(events).slice(-2), ['video3', 'video4']);
+    assert.equal(source.keyFrameRequests, 1);
+    await stream.stop();
+  });
+
+  it('asks once when the first unit after the subscription is a video delta', async function () {
+    const {source, events, state, stream, tick, begin} = setup('video', false, {audio: true});
+    await begin();
+    state.subscribed = true;
+    source.push(su('video', 1));
+    source.push(audio(1));
+    source.push(su('video', 2));
+    await tick();
+    assert.equal(source.keyFrameRequests, 1);
+    assert.deepEqual(sent(events), ['audio1']);
+    await stream.stop();
+  });
+
+  it('does not ask when the first unit after the subscription is a video keyframe', async function () {
+    const {source, events, state, stream, tick, begin} = setup('video', false, {audio: true});
+    await begin();
+    state.subscribed = true;
+    source.push(keyFrame(1));
+    source.push(audio(1));
+    source.push(su('video', 2));
+    await tick();
+    assert.equal(source.keyFrameRequests, 0);
+    assert.deepEqual(sent(events), ['video1', 'audio1', 'video2']);
+    await stream.stop();
+  });
+
+  it('does not ask at the start of a stream with audio whose client subscribed first', async function () {
+    const {source, events, stream, tick, begin} = setup('video', true, {audio: true});
+    // Audio that arrives before the first keyframe is dropped, since `started` is not sent yet
+    source.push(audio(0));
+    source.push(audio(1));
+    await begin();
+    source.push(audio(2));
+    source.push(su('video', 1));
+    source.push(audio(3));
+    await tick();
+    assert.equal(source.keyFrameRequests, 0);
+    assert.deepEqual(sent(events), ['video0', 'audio2', 'video1', 'audio3']);
+    await stream.stop();
+  });
+
+  it('asks again for a subscriber that left and came back, once the rate limit allows', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    assert.equal(s.source.keyFrameRequests, 1);
+    s.source.push(keyFrame(1));
+    await s.tick();
+    await leaveAndReturn(s, 3);
+    assert.equal(s.source.keyFrameRequests, 1, 'less than a second after the previous request');
+    mock.timers.tick(999);
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.tick(1);
+    assert.equal(s.source.keyFrameRequests, 2, 'sent as soon as the second has passed');
+    mock.timers.tick(5000);
+    assert.equal(s.source.keyFrameRequests, 2, 'sent once');
+    await s.stream.stop();
+  });
+
+  it('drops a request waiting for the rate limit once a keyframe reaches the subscriber', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    await leaveAndReturn(s, 3);
+    s.source.push(keyFrame(1));
+    await s.tick();
+    mock.timers.tick(1000);
+    assert.equal(s.source.keyFrameRequests, 1);
+    await s.stream.stop();
+  });
+
+  it('drops a request waiting for the rate limit when the subscriber leaves or the stream stops', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    await leaveAndReturn(s, 3);
+    s.state.subscribed = false;
+    mock.timers.tick(1000);
+    assert.equal(s.source.keyFrameRequests, 1, 'nobody is subscribed any more');
+    await leaveAndReturn(s, 5);
+    assert.equal(s.source.keyFrameRequests, 2);
+    await leaveAndReturn(s, 7);
+    await s.stream.stop();
+    mock.timers.tick(1000);
+    assert.equal(s.source.keyFrameRequests, 2, 'the stream has stopped');
+  });
+
+  it('sends a backpressure request that comes within the rate limit once the second has passed', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.tick(500);
+    s.emitter.emit('bidiBackpressure', {
+      method: 'appium:mediaStream.units',
+      chain: `${s.stream.streamId}:video`,
+      state: 'dropping',
+      dropped: 1,
+    });
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.tick(500);
+    assert.equal(s.source.keyFrameRequests, 2);
+    await s.stream.stop();
+  });
+
+  it('still asks when core starts dropping units of a stream with audio', async function () {
+    const {source, emitter, stream, tick, begin} = setup('video', true, {audio: true});
+    await begin();
+    source.push(audio(1));
+    await tick();
+    assert.equal(source.keyFrameRequests, 0);
+    emitter.emit('bidiBackpressure', {
+      method: 'appium:mediaStream.units',
+      chain: `${stream.streamId}:video`,
+      state: 'dropping',
+      dropped: 2,
+    });
+    source.push(audio(2));
+    await tick();
+    assert.equal(source.keyFrameRequests, 1);
+    await stream.stop();
+  });
+
+  it('never asks for a JPEG stream', async function () {
+    const {source, events, state, emitter, stream, tick} = setup('jpeg', false);
+    await stream.start();
+    source.push(su('jpeg', 0, {isKeyFrame: true}));
+    await tick();
+    state.subscribed = true;
+    source.push(su('jpeg', 1, {isKeyFrame: true}));
+    emitter.emit('bidiBackpressure', {method: 'appium:mediaStream.units', state: 'dropping', dropped: 1});
+    await tick();
+    assert.equal(source.keyFrameRequests, 0);
+    assert.equal(unitEvents(events).length, 1);
+    await stream.stop();
   });
 });
