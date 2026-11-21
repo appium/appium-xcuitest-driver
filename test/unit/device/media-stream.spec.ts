@@ -692,3 +692,153 @@ describe('MediaStream late subscriber', function () {
     await stream.stop();
   });
 });
+
+describe('MediaStream with keyFrameIntervalMs', function () {
+  beforeEach(function () {
+    mock.timers.enable({apis: ['setTimeout', 'Date'], now: 1_000_000});
+  });
+  afterEach(function () {
+    mock.timers.reset();
+  });
+
+  const advance = async (ms: number) => {
+    for (let passed = 0; passed < ms; passed += 50) {
+      mock.timers.tick(50);
+      await new Promise((r) => setImmediate(r));
+    }
+  };
+  // An encoder that answers every request with a keyframe, also when the screen is static
+  const answerRequests = (source: ReturnType<typeof fakeSource>) => {
+    let sequence = 100;
+    source.requestKeyFrame = async () => {
+      source.keyFrameRequests++;
+      source.push(su('video', sequence++, {isKeyFrame: true, data: keyFrameData()}));
+      return true;
+    };
+  };
+  const keyFramesSent = (events: BiDiEvent[]) =>
+    unitEvents(events).flatMap((e) => e.params!.units.filter((u: {key: boolean}) => u.key)).length;
+
+  it('asks for a keyframe each time the last one sent is older than the interval, also on a static screen', async function () {
+    const {source, events, stream, begin} = setup('video', true, {keyFrameIntervalMs: 4000});
+    answerRequests(source);
+    await begin();
+    await advance(3950);
+    assert.equal(source.keyFrameRequests, 0);
+    await advance(100);
+    assert.equal(source.keyFrameRequests, 1);
+    await advance(12_000);
+    assert.equal(source.keyFrameRequests, 4);
+    assert.equal(keyFramesSent(events), 5);
+    await stream.stop();
+  });
+
+  it('counts the keyframes that the encoder sends by itself', async function () {
+    const {source, stream, begin} = setup('video', true, {keyFrameIntervalMs: 4000});
+    answerRequests(source);
+    await begin();
+    await advance(3000);
+    source.push(su('video', 1, {isKeyFrame: true, data: keyFrameData()}));
+    await advance(3950);
+    assert.equal(source.keyFrameRequests, 0);
+    await advance(100);
+    assert.equal(source.keyFrameRequests, 1);
+    await stream.stop();
+  });
+
+  it('asks again at most once a second while no keyframe arrives', async function () {
+    const {source, stream, begin} = setup('video', true, {keyFrameIntervalMs: 2000});
+    await begin();
+    await advance(2000);
+    assert.equal(source.keyFrameRequests, 1);
+    await advance(3100);
+    assert.equal(source.keyFrameRequests, 4);
+    await stream.stop();
+  });
+
+  it('does not ask while nobody is subscribed, and asks once a subscriber appears', async function () {
+    const {source, events, state, stream, begin} = setup('video', false, {keyFrameIntervalMs: 2000});
+    answerRequests(source);
+    await begin();
+    await advance(10_000);
+    assert.equal(source.keyFrameRequests, 0);
+    state.subscribed = true;
+    await advance(300);
+    assert.equal(source.keyFrameRequests, 1);
+    assert.equal(keyFramesSent(events), 1);
+    await stream.stop();
+  });
+
+  it('shares the rate limit with the other keyframe requests', async function () {
+    const {source, state, stream, tick, begin} = setup('video', false, {keyFrameIntervalMs: 2000});
+    await begin();
+    await advance(5000);
+    state.subscribed = true;
+    // The late joiner request goes out first, so the one of the interval has to wait
+    source.push(su('video', 1));
+    await tick();
+    assert.equal(source.keyFrameRequests, 1);
+    await advance(900);
+    assert.equal(source.keyFrameRequests, 1);
+    await advance(200);
+    assert.equal(source.keyFrameRequests, 2);
+    await stream.stop();
+  });
+
+  it('never asks if the option is unset or 0', async function () {
+    for (const extra of [{}, {keyFrameIntervalMs: 0}]) {
+      const {source, stream, begin} = setup('video', true, extra);
+      await begin();
+      await advance(60_000);
+      assert.equal(source.keyFrameRequests, 0);
+      await stream.stop();
+    }
+  });
+
+  it('stops asking when the stream is stopped or its source ends', async function () {
+    for (const end of ['stop', 'source end']) {
+      const {source, stream, begin} = setup('video', true, {keyFrameIntervalMs: 1000});
+      await begin();
+      await advance(1000);
+      assert.equal(source.keyFrameRequests, 1);
+      await (end === 'stop' ? stream.stop() : source.stop());
+      await advance(5000);
+      assert.ok(stream.isStopped);
+      assert.equal(source.keyFrameRequests, 1, end);
+    }
+  });
+
+  it('does not ask for a stream that failed to start', async function () {
+    const ended = setup('video', true, {keyFrameIntervalMs: 1000});
+    const endedStart = ended.stream.start();
+    await ended.source.stop();
+    await assert.rejects(endedStart, /ended before producing any output/);
+    const silent = setup('video', true, {keyFrameIntervalMs: 1000});
+    const silentStart = assert.rejects(silent.stream.start(), /produced no output within 5000ms/);
+    await silent.tick();
+    await advance(5000);
+    await silentStart;
+    await advance(5000);
+    assert.equal(ended.source.keyFrameRequests, 0);
+    assert.equal(silent.source.keyFrameRequests, 0);
+    await silent.stream.stop();
+  });
+
+  it('ignores the option for a JPEG stream', async function () {
+    const {source, stream} = setup('jpeg', true, {keyFrameIntervalMs: 1000});
+    await stream.start();
+    source.push(su('jpeg', 0, {isKeyFrame: true}));
+    await advance(5000);
+    assert.equal(source.keyFrameRequests, 0);
+    await stream.stop();
+  });
+
+  it('works with sources that cannot request keyframes', async function () {
+    const {source, events, stream, begin} = setup('video', true, {keyFrameIntervalMs: 1000});
+    delete (source as any).requestKeyFrame;
+    await begin();
+    await advance(5000);
+    assert.equal(keyFramesSent(events), 1);
+    await stream.stop();
+  });
+});

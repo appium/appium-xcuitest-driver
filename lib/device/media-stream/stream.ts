@@ -8,6 +8,7 @@ import {UnitBatcher} from './batcher.js';
 import {
   BACKPRESSURE_EVENT_NAME,
   FIRST_UNIT_TIMEOUT_MS,
+  KEYFRAME_AGE_CHECK_MS,
   KEYFRAME_REQUEST_MIN_INTERVAL_MS,
   MEDIA_ENDED_EVENT,
   MEDIA_FORMAT_CHANGED_EVENT,
@@ -50,6 +51,8 @@ export class MediaStream {
   private audioFormat?: {sampleRate: number; channels: number};
   private dropped = 0;
   private heartbeat?: NodeJS.Timeout;
+  private keyFrameTimer?: NodeJS.Timeout;
+  private lastKeyFrameSentAt = 0;
   private pump?: Promise<void>;
   private announced = false;
   private endReason = 'ended';
@@ -100,8 +103,28 @@ export class MediaStream {
       this.announce();
     } else {
       await this.waitForFirstUnit(this.pump);
+      this.watchKeyFrameAge();
     }
     return this.info();
+  }
+
+  // Opt-in. The encoder may send keyframes rarely, and nothing at all on a static screen, which is not
+  // enough for a client that cuts the stream into segments or lets viewers join at any time
+  private watchKeyFrameAge(): void {
+    const intervalMs = this.opts.keyFrameIntervalMs;
+    if (!intervalMs || this.stopped) {
+      return;
+    }
+    // Without a subscriber nobody would get the keyframe, so the encoder is left alone
+    const dueInMs = this.deps.hasSubscribers() ? this.lastKeyFrameSentAt + intervalMs - Date.now() : undefined;
+    if (dueInMs !== undefined && dueInMs <= 0) {
+      this.requestKeyFrame();
+    }
+    // Looks again when the next keyframe is due, or shortly if one was just requested or nobody is subscribed
+    this.keyFrameTimer = setTimeout(
+      () => this.watchKeyFrameAge(),
+      dueInMs !== undefined && dueInMs > 0 ? dueInMs : KEYFRAME_AGE_CHECK_MS,
+    );
   }
 
   /** Idempotent; resolves once the stream is torn down and its pump has finished. */
@@ -167,6 +190,7 @@ export class MediaStream {
     }
     this.stopped = true;
     clearInterval(this.heartbeat);
+    clearTimeout(this.keyFrameTimer);
     this.cancelKeyFrameRetry();
     // Units already received are still valid, so they go out before `ended`
     this.batcher.flush();
@@ -251,6 +275,7 @@ export class MediaStream {
     if (au.track === 'video') {
       if (au.isKeyFrame) {
         this.videoSynced = true;
+        this.lastKeyFrameSentAt = Date.now();
         // The subscribers get a keyframe now, so a request still waiting for the rate limit is not needed
         this.cancelKeyFrameRetry();
       } else if (!this.videoSynced) {

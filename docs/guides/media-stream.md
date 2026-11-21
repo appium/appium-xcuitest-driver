@@ -34,7 +34,8 @@ Notes:
 
 - Subscribe first and only then start the stream, since events are only emitted while a client is subscribed.
 - A static screen produces no new frames. The `jpeg` stream repeats the last frame every `idleHeartbeatMs`, and a
-  `video` stream sends nothing until the screen changes.
+  `video` stream sends nothing until the screen changes, unless
+  [`keyFrameIntervalMs`](#keyframes-at-a-fixed-interval) is set.
 - The simulator encoder sends a keyframe every `2 * fps` encoded frames, which is about every 2 seconds on a
   constantly changing screen and much less often on a slowly changing one. A client that subscribes while the
   stream is running, or was skipped for being too slow, does not wait for that: the driver asks the encoder for a
@@ -42,6 +43,27 @@ Notes:
   is sent when that second has passed.
 - Appium closes the connection with code `1013` if the client cannot keep up with the stream, and closes it
   when the session is deleted, so no `ended` event follows a session deletion.
+
+## Keyframes at a fixed interval
+
+By default the encoder decides when to send a keyframe, which suits a client that only displays the stream. A
+client that records it, cuts it into segments (HLS, fragmented MP4) or relays it to viewers who may join at any
+moment needs a keyframe at a known interval, also while nothing on the screen changes. Pass `keyFrameIntervalMs`
+(1000-60000) to `mobile: startMediaStream` for that:
+
+- While a client is subscribed, the driver asks the encoder for a keyframe whenever the last keyframe it sent is older
+  than `keyFrameIntervalMs`. The keyframe follows the request within a frame or two, so two keyframes are slightly
+  more than the value apart (about 4.03 seconds for 4000 on a simulator at 30 fps).
+- Keyframes that the encoder sends by itself count too, so nothing is requested while those come often enough.
+- On a static screen the requested keyframe is the only unit that is sent, so the stream has at least one frame per
+  interval.
+- Nothing is requested while no client is subscribed. A client that subscribes later waits for its first keyframe
+  no longer than about the interval, also on a static screen.
+- A keyframe is a complete picture and much larger than the other frames, so a short interval costs bandwidth even
+  when nothing changes.
+- Only `video` streams have keyframes, so the option is rejected for `jpeg`.
+- On a real device the driver already asks for a keyframe every 2 seconds (see below). The option only adds requests
+  to that, so it makes a difference only if it is set below 2000.
 
 ## Real devices
 

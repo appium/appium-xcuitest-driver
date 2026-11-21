@@ -1,3 +1,9 @@
+## [13.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.5.2...v13.6.0) (2026-11-21)
+
+### Features
+
+* add keyFrameIntervalMs to mobile: startMediaStream ([#3159](https://github.com/appium/appium-xcuitest-driver/issues/3159)) ([d5012e3](https://github.com/appium/appium-xcuitest-driver/commit/d5012e387a9705a783b7cb18e6abe3593acf1d84))
+
 ## [13.5.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.5.1...v13.5.2) (2026-11-21)
 
 ### Bug Fixes
