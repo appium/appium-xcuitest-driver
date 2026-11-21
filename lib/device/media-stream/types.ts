@@ -30,6 +30,8 @@ export interface StartMediaStreamOpts {
   batchMs: number;
   /** Re-emit the last JPEG after this much idle time (0 disables) */
   idleHeartbeatMs: number;
+  /** Video only: ask for a keyframe once the last one sent is older than this (0 or unset disables) */
+  keyFrameIntervalMs?: number;
 }
 
 export interface MediaStreamInfo {
