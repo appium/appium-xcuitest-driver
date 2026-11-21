@@ -2548,6 +2548,20 @@ the video dimensions (rounded up to even numbers). If the display size changes, 
 are scaled to fit with their aspect ratio preserved and black padding. With custom filters,
 scaling, or hardware acceleration, configure fixed output dimensions if needed.
 
+Since some ffmpeg filters can read or write files on the Appium host, `videoFilters` and
+`videoScale` (checked as `scale=<videoScale>`) may only use these filters: `boxblur`,
+`colorchannelmixer`, `crop`, `drawbox`, `eq`, `fade`, `format`, `fps`, `gblur`, `hflip`, `hue`,
+`lut`, `lutrgb`, `lutyuv`, `negate`, `null`, `pad`, `rotate`, `scale`, `select`, `setdar`,
+`setpts`, `setsar`, `tpad`, `transpose`, `trim`, `unsharp` and `vflip`. With
+`hardwareAcceleration`, these hardware filters are also allowed: `hwdownload`, `hwmap`,
+`hwupload`, `pad_vaapi`, `scale_cuda`, `scale_qsv`, `scale_vaapi`, `scale_vt`, `transpose_vaapi`,
+`transpose_vt` and `vpp_qsv`.
+
+Use single quotes for values with `,` or `;`, e.g. `scale='min(1280,iw)':-2`. Backslashes and
+filter options starting with `/` are not allowed, so write `min(iw,1280)` in quotes instead of
+`min(iw\,1280)`. For example, `videoFilters: 'transpose=1,scale=720:-2'` and
+`videoScale: 'w=720:h=1280'` are accepted, while `videoFilters: 'movie=/etc/hosts'` is rejected.
+
 #### Arguments
 
 Pass the same fields as for HTTP [`startRecordingScreen`](./commands.md#startrecordingscreen) `options`, as **top-level** keys on the execute argument object (they are forwarded into one options object server-side). Example:

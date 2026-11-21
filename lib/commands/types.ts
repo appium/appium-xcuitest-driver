@@ -119,6 +119,10 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    * The FFMPEG video filters to apply.
    *
    * These filters allow to scale, flip, rotate and do many other useful transformations on the source video stream.  See [FFMPEG documentation](https://ffmpeg.org/ffmpeg-filters.html) for formatting help.
+   * Since some filters can access host files, only filters without file access are allowed, see
+   * `mobile: startScreenRecording` in the execute methods docs for the list. Use single quotes for
+   * values with `,` or `;`, e.g. `scale='min(1280,iw)':-2`. Backslashes and filter options starting
+   * with `/` are not allowed.
    * @see https://ffmpeg.org/ffmpeg-filters.html
    */
   videoFilters?: string;
@@ -126,6 +130,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    * The scaling value to apply.
    *
    * See [the FFMPEG wiki](https://trac.ffmpeg.org/wiki/Scaling) for possible values.
+   * The same restrictions as for `videoFilters` apply.
    *
    * By default, software recording fits frames into the first frame’s dimensions with aspect-preserving scaling and black padding.
    * Explicit filters/scaling and hardware acceleration retain their configured behavior.

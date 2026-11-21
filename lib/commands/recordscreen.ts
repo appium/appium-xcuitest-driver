@@ -1,10 +1,12 @@
 import {WDA_BASE_URL} from 'appium-webdriveragent';
 import type {WDASettings} from 'appium-webdriveragent';
+import {errors} from 'appium/driver.js';
 import {fs, tempDir, logger, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 import {exec, SubProcess} from 'teen_process';
 
 import type {XCUITestDriver} from '../driver.js';
+import {FfmpegFiltergraphValidator} from '../utils/index.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
 import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types.js';
 
@@ -71,6 +73,52 @@ const DEFAULT_MJPEG_SERVER_PORT = 9100;
 const DEFAULT_VCODEC = 'mjpeg';
 const MP4_EXT = '.mp4';
 const FFMPEG_BINARY = 'ffmpeg';
+// Some ffmpeg filters read or write host files (e.g. `movie=`, `metadata=...:file=`) or load
+// libraries, so user-supplied filtergraphs may only use filters that cannot.
+const SAFE_VIDEO_FILTERS = new Set([
+  'boxblur',
+  'colorchannelmixer',
+  'crop',
+  'drawbox',
+  'eq',
+  'fade',
+  'format',
+  'fps',
+  'gblur',
+  'hflip',
+  'hue',
+  'lut',
+  'lutrgb',
+  'lutyuv',
+  'negate',
+  'null',
+  'pad',
+  'rotate',
+  'scale',
+  'select',
+  'setdar',
+  'setpts',
+  'setsar',
+  'tpad',
+  'transpose',
+  'trim',
+  'unsharp',
+  'vflip',
+]);
+// Filters for frames kept on the GPU, only allowed with hardwareAcceleration
+const SAFE_HARDWARE_VIDEO_FILTERS = new Set([
+  'hwdownload',
+  'hwmap',
+  'hwupload',
+  'pad_vaapi',
+  'scale_cuda',
+  'scale_qsv',
+  'scale_vaapi',
+  'scale_vt',
+  'transpose_vaapi',
+  'transpose_vt',
+  'vpp_qsv',
+]);
 const ffmpegLogger = logger.getLogger(FFMPEG_BINARY);
 const QUALITY_MAPPING: Record<string, number> = {
   low: 10,
@@ -381,6 +429,8 @@ export async function startRecordingScreen(
     hardwareAcceleration,
   } = options;
 
+  assertSafeUserFilters(options);
+
   let result = '';
   if (!forceRestart) {
     this.log.info(
@@ -541,4 +591,40 @@ function optionsFromFlattenedExecuteArgs<T extends object>(keys: readonly string
     }
   }
   return out as T;
+}
+
+/**
+ * Throws if the user-supplied `videoFilters`, or `videoScale` when it is used, would let ffmpeg
+ * access host files. Only the user-supplied part is checked: the driver picks the hardware scale
+ * filter itself, and `videoScale` is ignored when `videoFilters` is set.
+ */
+function assertSafeUserFilters({videoFilters, videoScale, hardwareAcceleration}: StartRecordingScreenOptions): void {
+  for (const [optionName, optionValue] of [
+    ['videoFilters', videoFilters],
+    ['videoScale', videoScale],
+  ] as const) {
+    // null is treated as not set, like a missing option
+    if (optionValue !== undefined && optionValue !== null && typeof optionValue !== 'string') {
+      throw new errors.InvalidArgumentError(
+        `The ${optionName} value must be a string. ${JSON.stringify(optionValue)} has been passed instead`,
+      );
+    }
+  }
+  const [optionName, optionValue, filtergraph] = videoFilters
+    ? ['videoFilters', videoFilters, videoFilters]
+    : ['videoScale', videoScale, videoScale && `scale=${videoScale}`];
+  if (!filtergraph) {
+    return;
+  }
+  // hasOwn, so inherited names like `constructor` do not count as hardware acceleration
+  const allowedFilters = Object.hasOwn(HARDWARE_ACCELERATION_PARAMETERS, hardwareAcceleration ?? '')
+    ? new Set([...SAFE_VIDEO_FILTERS, ...SAFE_HARDWARE_VIDEO_FILTERS])
+    : SAFE_VIDEO_FILTERS;
+  const unsafePart = new FfmpegFiltergraphValidator(filtergraph).findUnsafePart(allowedFilters);
+  if (unsafePart) {
+    throw new errors.InvalidArgumentError(
+      `The ${optionName} value '${optionValue}' is not allowed: ${unsafePart}. ` +
+        `Only these ffmpeg filters are supported: ${[...allowedFilters].join(', ')}`,
+    );
+  }
 }
