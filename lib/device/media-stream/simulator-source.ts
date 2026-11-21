@@ -45,6 +45,16 @@ export class SimulatorMediaSource implements MediaSource {
     }
   }
 
+  /** The encoder makes its next frame a keyframe, and encodes one even if the screen has not changed */
+  async requestKeyFrame(): Promise<boolean> {
+    const {stream} = this;
+    if (!stream || !('video' in stream) || this.stopping) {
+      return false;
+    }
+    stream.video.requestKeyFrame();
+    return true;
+  }
+
   async stop(): Promise<void> {
     // A stop that arrives while start() is pending must not miss the stream it creates
     await this.starting?.catch(() => {});
