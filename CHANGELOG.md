@@ -1,3 +1,9 @@
+## [13.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.5.0...v13.5.1) (2026-11-21)
+
+### Bug Fixes
+
+* allow only safe ffmpeg filters in screen recording videoFilters/videoScale ([#3155](https://github.com/appium/appium-xcuitest-driver/issues/3155)) ([200db40](https://github.com/appium/appium-xcuitest-driver/commit/200db407db1ba669bca90c784c9f9b0921370a3d))
+
 ## [13.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.4.0...v13.5.0) (2026-11-20)
 
 ### Features
