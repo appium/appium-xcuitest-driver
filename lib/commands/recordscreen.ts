@@ -616,7 +616,8 @@ function assertSafeUserFilters({videoFilters, videoScale, hardwareAcceleration}:
   if (!filtergraph) {
     return;
   }
-  const allowedFilters = HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration ?? '']
+  // hasOwn, so inherited names like `constructor` do not count as hardware acceleration
+  const allowedFilters = Object.hasOwn(HARDWARE_ACCELERATION_PARAMETERS, hardwareAcceleration ?? '')
     ? new Set([...SAFE_VIDEO_FILTERS, ...SAFE_HARDWARE_VIDEO_FILTERS])
     : SAFE_VIDEO_FILTERS;
   const unsafePart = new FfmpegFiltergraphValidator(filtergraph).findUnsafePart(allowedFilters);

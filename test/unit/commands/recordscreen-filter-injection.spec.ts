@@ -227,6 +227,20 @@ describe('startRecordingScreen filter option validation', () => {
     sinon.assert.calledOnce(start);
   });
 
+  for (const hardwareAcceleration of ['constructor', '__proto__', 'toString']) {
+    it(`rejects hardware filters with inherited hardwareAcceleration name ${hardwareAcceleration}`, async () => {
+      await assert.rejects(
+        driver.startRecordingScreen({
+          forceRestart: true,
+          videoFilters: 'scale_vt=w=720:h=1280',
+          hardwareAcceleration: hardwareAcceleration as any,
+        }),
+        (e: Error) => e instanceof errors.InvalidArgumentError && /'scale_vt' filter/.test(e.message),
+      );
+      sinon.assert.notCalled(start);
+    });
+  }
+
   for (const options of [
     {videoFilters: ['hflip']},
     {videoFilters: {}},
