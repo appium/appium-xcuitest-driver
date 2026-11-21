@@ -103,6 +103,30 @@ describe('mobile: startMediaStream', function () {
     await assert.rejects(withHeartbeat(-1), /'idleHeartbeatMs'/);
   });
 
+  it('rejects a keyframe interval that is not 0 or an integer in range, or is set for jpeg', async function () {
+    const withInterval = (ms: unknown, kind = 'video') => start(fakeDriver(), kind, ...Array(9).fill(undefined), ms);
+    const outOfRange = /'keyFrameIntervalMs' must be 0 or an integer between 1000 and 60000/;
+    await assert.rejects(withInterval(999), outOfRange);
+    await assert.rejects(withInterval(60_001), outOfRange);
+    await assert.rejects(withInterval(1500.5), outOfRange);
+    await assert.rejects(withInterval(-4000), outOfRange);
+    await assert.rejects(withInterval('4000'), /'keyFrameIntervalMs' must be.*got '4000'/);
+    await assert.rejects(withInterval(4000, 'jpeg'), /'keyFrameIntervalMs' not supported for kind 'jpeg'/);
+  });
+
+  it('accepts a keyframe interval in range, and 0', async function () {
+    for (const ms of [0, 1000, 4000, 60_000]) {
+      const driver = fakeDriver({
+        device: {
+          startVideoStream: async () => {
+            throw new Error('reached the simulator');
+          },
+        },
+      });
+      await assert.rejects(start(driver, 'video', ...Array(9).fill(undefined), ms), /reached the simulator/);
+    }
+  });
+
   it('rejects fps and bitrate above the limits', async function () {
     await assert.rejects(start(fakeDriver(), 'video', undefined, 121), /'fps' must be.*between 1 and 120/);
     await assert.rejects(

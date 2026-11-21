@@ -1165,6 +1165,7 @@ audio | boolean | no | Whether to add an AAC audio track. `video` only, false by
 displayId | string | no | The id of the display to stream (a numeric id on real devices). The primary display by default | 1
 batchMs | number | no | How long to collect `video` and `audio` units into one event. 40 by default, 0 disables batching, 1000 at most | 40
 idleHeartbeatMs | number | no | Repeat the last `jpeg` frame after this idle time in milliseconds. 1000 by default, 0 disables, otherwise 100-60000 | 1000
+keyFrameIntervalMs | number | no | Ask the encoder for a keyframe whenever the last one sent to the client is older than this many milliseconds, also while the screen does not change. `video` only. Disabled by default and with 0, otherwise 1000-60000. See the [guide](../guides/media-stream.md#keyframes-at-a-fixed-interval) | 4000
 
 #### Returned Result
 

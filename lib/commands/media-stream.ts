@@ -4,11 +4,13 @@ import {errors} from 'appium/driver.js';
 import {
   DEFAULT_BATCH_MS,
   DEFAULT_IDLE_HEARTBEAT_MS,
+  KEYFRAME_REQUEST_MIN_INTERVAL_MS,
   MAX_BATCH_MS,
   MAX_BITRATE,
   MAX_DISPLAY_ID,
   MAX_FPS,
   MAX_IDLE_HEARTBEAT_MS,
+  MAX_KEYFRAME_INTERVAL_MS,
   MEDIA_STREAM_MODULE,
   MEDIA_UNITS_EVENT,
   MIN_IDLE_HEARTBEAT_MS,
@@ -58,6 +60,8 @@ declare module '../driver.js' {
  * @param displayId The display to stream, the primary one by default.
  * @param batchMs Units batching window for video/audio. 40 by default.
  * @param idleHeartbeatMs Re-send the last JPEG after this idle time. 1000 by default, 0 disables.
+ * @param keyFrameIntervalMs Video only: ask the encoder for a keyframe once the last one sent is older than
+ * this, also on a static screen. Disabled by default and with 0.
  */
 export async function mobileStartMediaStream(
   this: XCUITestDriver,
@@ -71,6 +75,7 @@ export async function mobileStartMediaStream(
   displayId?: string,
   batchMs: number = DEFAULT_BATCH_MS,
   idleHeartbeatMs: number = DEFAULT_IDLE_HEARTBEAT_MS,
+  keyFrameIntervalMs?: number,
 ): Promise<MediaStreamInfo> {
   const opts: StartMediaStreamOpts = {
     kind,
@@ -83,6 +88,7 @@ export async function mobileStartMediaStream(
     displayId,
     batchMs,
     idleHeartbeatMs,
+    keyFrameIntervalMs,
   };
   validateOpts(opts);
   if (
@@ -269,11 +275,12 @@ function validateOpts({
   audio,
   batchMs,
   idleHeartbeatMs,
+  keyFrameIntervalMs,
 }: StartMediaStreamOpts): void {
   if (kind !== 'video' && kind !== 'jpeg') {
     throw new errors.InvalidArgumentError(`'kind' must be either 'video' or 'jpeg', got '${String(kind)}'`);
   }
-  const wrongKind = kind === 'video' ? {quality, scale} : {codec, bitrate, audio};
+  const wrongKind = kind === 'video' ? {quality, scale} : {codec, bitrate, audio, keyFrameIntervalMs};
   const offending = Object.entries(wrongKind).filter(([, v]) => v !== undefined);
   if (offending.length) {
     throw new errors.InvalidArgumentError(
@@ -310,6 +317,19 @@ function validateOpts({
   ) {
     throw new errors.InvalidArgumentError(
       `'idleHeartbeatMs' must be 0 or an integer between ${MIN_IDLE_HEARTBEAT_MS} and ${MAX_IDLE_HEARTBEAT_MS}, got '${String(idleHeartbeatMs)}'`,
+    );
+  }
+  if (
+    keyFrameIntervalMs !== undefined &&
+    keyFrameIntervalMs !== 0 &&
+    !(
+      Number.isInteger(keyFrameIntervalMs) &&
+      keyFrameIntervalMs >= KEYFRAME_REQUEST_MIN_INTERVAL_MS &&
+      keyFrameIntervalMs <= MAX_KEYFRAME_INTERVAL_MS
+    )
+  ) {
+    throw new errors.InvalidArgumentError(
+      `'keyFrameIntervalMs' must be 0 or an integer between ${KEYFRAME_REQUEST_MIN_INTERVAL_MS} and ${MAX_KEYFRAME_INTERVAL_MS}, got '${String(keyFrameIntervalMs)}'`,
     );
   }
 }

@@ -524,7 +524,18 @@ export const executeMethodMap = {
     command: 'mobileStartMediaStream',
     params: {
       required: ['kind'],
-      optional: ['codec', 'fps', 'bitrate', 'quality', 'scale', 'audio', 'displayId', 'batchMs', 'idleHeartbeatMs'],
+      optional: [
+        'codec',
+        'fps',
+        'bitrate',
+        'quality',
+        'scale',
+        'audio',
+        'displayId',
+        'batchMs',
+        'idleHeartbeatMs',
+        'keyFrameIntervalMs',
+      ],
     },
   },
   'mobile: stopMediaStream': {
