@@ -469,9 +469,9 @@ describe('MediaStream with a hung source', function () {
 });
 
 describe('MediaStream late subscriber', function () {
-  // The limit of one keyframe request per second reads the clock
+  // The limit of one keyframe request per second reads the clock and delays a request that comes sooner
   beforeEach(function () {
-    mock.timers.enable({apis: ['Date'], now: 1_000_000});
+    mock.timers.enable({apis: ['Date', 'setTimeout'], now: 1_000_000});
   });
   afterEach(function () {
     mock.timers.reset();
@@ -482,6 +482,15 @@ describe('MediaStream late subscriber', function () {
   const keyFrame = (sequence: number) => su('video', sequence, {isKeyFrame: true, data: keyFrameData()});
   const sent = (events: BiDiEvent[]) =>
     unitEvents(events).flatMap((e) => e.params!.units.map((u: {track: string; seq: number}) => `${u.track}${u.seq}`));
+  // The subscriber leaves for one audio unit and is back for the next one
+  const leaveAndReturn = async ({source, state, tick}: ReturnType<typeof setup>, sequence: number) => {
+    state.subscribed = false;
+    source.push(audio(sequence));
+    await tick();
+    state.subscribed = true;
+    source.push(audio(sequence + 1));
+    await tick();
+  };
 
   it('asks once when the first unit after the subscription is audio, however many follow', async function () {
     const {source, events, state, stream, tick, begin} = setup('video', false, {audio: true});
@@ -551,27 +560,68 @@ describe('MediaStream late subscriber', function () {
     await stream.stop();
   });
 
-  it('asks again for a subscriber that left and came back, within the rate limit', async function () {
-    const {source, state, stream, tick, begin} = setup('video', true, {audio: true});
-    await begin();
-    const leaveAndReturn = async (sequence: number) => {
-      state.subscribed = false;
-      source.push(audio(sequence));
-      await tick();
-      state.subscribed = true;
-      source.push(audio(sequence + 1));
-      await tick();
-    };
-    await leaveAndReturn(1);
-    assert.equal(source.keyFrameRequests, 1);
-    source.push(keyFrame(1));
-    await tick();
-    await leaveAndReturn(3);
-    assert.equal(source.keyFrameRequests, 1, 'less than a second after the previous request');
+  it('asks again for a subscriber that left and came back, once the rate limit allows', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    assert.equal(s.source.keyFrameRequests, 1);
+    s.source.push(keyFrame(1));
+    await s.tick();
+    await leaveAndReturn(s, 3);
+    assert.equal(s.source.keyFrameRequests, 1, 'less than a second after the previous request');
+    mock.timers.tick(999);
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.tick(1);
+    assert.equal(s.source.keyFrameRequests, 2, 'sent as soon as the second has passed');
+    mock.timers.tick(5000);
+    assert.equal(s.source.keyFrameRequests, 2, 'sent once');
+    await s.stream.stop();
+  });
+
+  it('drops a request waiting for the rate limit once a keyframe reaches the subscriber', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    await leaveAndReturn(s, 3);
+    s.source.push(keyFrame(1));
+    await s.tick();
     mock.timers.tick(1000);
-    await leaveAndReturn(5);
-    assert.equal(source.keyFrameRequests, 2);
-    await stream.stop();
+    assert.equal(s.source.keyFrameRequests, 1);
+    await s.stream.stop();
+  });
+
+  it('drops a request waiting for the rate limit when the subscriber leaves or the stream stops', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    await leaveAndReturn(s, 3);
+    s.state.subscribed = false;
+    mock.timers.tick(1000);
+    assert.equal(s.source.keyFrameRequests, 1, 'nobody is subscribed any more');
+    await leaveAndReturn(s, 5);
+    assert.equal(s.source.keyFrameRequests, 2);
+    await leaveAndReturn(s, 7);
+    await s.stream.stop();
+    mock.timers.tick(1000);
+    assert.equal(s.source.keyFrameRequests, 2, 'the stream has stopped');
+  });
+
+  it('sends a backpressure request that comes within the rate limit once the second has passed', async function () {
+    const s = setup('video', true, {audio: true});
+    await s.begin();
+    await leaveAndReturn(s, 1);
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.tick(500);
+    s.emitter.emit('bidiBackpressure', {
+      method: 'appium:mediaStream.units',
+      chain: `${s.stream.streamId}:video`,
+      state: 'dropping',
+      dropped: 1,
+    });
+    assert.equal(s.source.keyFrameRequests, 1);
+    mock.timers.tick(500);
+    assert.equal(s.source.keyFrameRequests, 2);
+    await s.stream.stop();
   });
 
   it('still asks when core starts dropping units of a stream with audio', async function () {
