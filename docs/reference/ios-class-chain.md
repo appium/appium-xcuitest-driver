@@ -24,7 +24,7 @@ predicates and a position, relative to the elements matched by the previous step
 
     ```java
     // java
-    driver.findElements(AppiumBy.iOSClassChain(
+    driver.findElement(AppiumBy.iOSClassChain(
         "**/XCUIElementTypeCell[`name BEGINSWITH 'A'`]/XCUIElementTypeButton[2]"));
     ```
 
@@ -32,7 +32,7 @@ predicates and a position, relative to the elements matched by the previous step
 
     ```java
     // java
-    driver.findElements(AppiumBy.xpath(
+    driver.findElement(AppiumBy.xpath(
         "(//XCUIElementTypeCell[starts-with(@name, 'A')]/XCUIElementTypeButton)[2]"));
     ```
 
@@ -57,21 +57,17 @@ is made from, which is the application if the search is made on the driver.
 
 ### Positions
 
-A position in square brackets selects a single element among the matches of the step.
-Positions start with `1`. A negative position counts from the end: `-1` is the last match.
+A position in square brackets selects a single element among the matches of the entire preceding
+chain, not per matched element of the previous step, like for XPath. Positions start with `1`.
+A negative position counts from the end: `-1` is the last match. Avoid positions in the
+intermediate steps if possible, because they make the lookup slower.
 
 |Class chain|Selects|XPath alternative|
 |---|---|---|
 |`**/XCUIElementTypeCell[3]`|the third cell|`(//XCUIElementTypeCell)[3]`|
 |`**/XCUIElementTypeCell[-1]`|the last cell|`(//XCUIElementTypeCell)[last()]`|
+|`**/XCUIElementTypeCell/XCUIElementTypeButton[2]`|the second button among the children of all cells|`(//XCUIElementTypeCell/XCUIElementTypeButton)[2]`|
 |`XCUIElementTypeWindow[2]/*[-2]`|the second last child of the second window|`/*/XCUIElementTypeWindow[2]/*[last() - 1]`|
-
-!!! warning
-
-    A position selects among the matches of the _whole_ step, not per matched element of the previous
-    step. XPath positions are evaluated for each parent separately, so wrap the path
-    into parentheses to get the same behavior: `(//XCUIElementTypeCell/XCUIElementTypeButton)[2]`.
-    Also, avoid positions in the intermediate steps if possible, because they make the lookup slower.
 
 ### Predicates
 
@@ -85,53 +81,23 @@ the [element attributes](./element-attributes.md):
   an element is selected if at least one of its descendants satisfies the predicate. It is the direct
   alternative of the native [containingPredicate:](https://developer.apple.com/documentation/xctest/xcuielementquery/1500956-containingpredicate?language=objc) selector
 
-A backtick or dollar sign inside a predicate must be escaped by doubling it.
+Only the marker enclosing the predicate has to be escaped inside of it by doubling: a backtick
+in ``[`...`]`` or a dollar sign in `[$...$]`, for example `[$name == 'a$$b'$]`.
 Predicates are always put before the position, never after it. Several predicates are applied
 one after another, in the given order.
 
 |Class chain|Selects|XPath alternative|
 |---|---|---|
 |``**/XCUIElementTypeButton[`name == 'OK'`]``|buttons named `OK`|`//XCUIElementTypeButton[@name='OK']`|
-|``**/XCUIElementTypeCell[`visible == 1`][`name CONTAINS 'done'`]``|visible cells with `done` in the name|`//XCUIElementTypeCell[@visible='true' and contains(@name, 'done')]`|
+|``**/XCUIElementTypeCell[`visible == 1 AND name CONTAINS 'done'`]``|visible cells with `done` in the name|`//XCUIElementTypeCell[@visible='true' and contains(@name, 'done')]`|
 |``**/XCUIElementTypeCell[$type == 'XCUIElementTypeImage' AND name == 'bla'$]``|cells, which contain an image named `bla`|`//XCUIElementTypeCell[.//XCUIElementTypeImage[@name='bla']]`|
 |``**/XCUIElementTypeCell[`name BEGINSWITH 'A'`][-1]``|the last cell, whose name starts with `A`|`(//XCUIElementTypeCell[starts-with(@name, 'A')])[last()]`|
-
-## Examples
-
-The examples below are relative to the application. Each of them is shown together with
-the equivalent XPath locator.
-
-### Direct Children
-
-|Class chain|Selects|XPath alternative|
-|---|---|---|
-|`XCUIElementTypeWindow`|all windows|`/*/XCUIElementTypeWindow`|
-|`XCUIElementTypeWindow[2]`|the second window|`/*/XCUIElementTypeWindow[2]`|
-|`XCUIElementTypeWindow/XCUIElementTypeButton[3]`|the third button among the children of all windows|`(/*/XCUIElementTypeWindow/XCUIElementTypeButton)[3]`|
-|`XCUIElementTypeWindow[2]/*`|all children of the second window|`/*/XCUIElementTypeWindow[2]/*`|
-|`XCUIElementTypeWindow[2]/*[3]`|the third child of the second window|`/*/XCUIElementTypeWindow[2]/*[3]`|
-|`XCUIElementTypeWindow[2]/*[-2]`|the second last child of the second window|`/*/XCUIElementTypeWindow[2]/*[last() - 1]`|
-|``XCUIElementTypeWindow[`name CONTAINS[cd] 'blabla'`]``|windows, whose name contains `blabla` ignoring case and diacritics|`/*/XCUIElementTypeWindow[contains(lower-case(@name), 'blabla')]` (diacritics are not ignored)|
-|``XCUIElementTypeWindow[`label BEGINSWITH 'blabla'`][-1]``|the last window, whose label starts with `blabla`|`(/*/XCUIElementTypeWindow[starts-with(@label, 'blabla')])[last()]`|
-|``XCUIElementTypeWindow/*[`value == 'bla1' OR label == 'bla2'`]``|children of windows, whose value is `bla1` or label is `bla2`|`/*/XCUIElementTypeWindow/*[@value='bla1' or @label='bla2']`|
-|``XCUIElementTypeWindow[`name == "you're the winner"`]/*[`visible == 1`]``|visible children of the window named `you're the winner`|`/*/XCUIElementTypeWindow[@name="you're the winner"]/*[@visible='true']`|
-|``XCUIElementTypeWindow/XCUIElementTypeTable/XCUIElementTypeCell[`visible == 1`][$type == 'XCUIElementTypeImage' AND name == 'bla'$]/XCUIElementTypeTextField``|text fields, which are direct children of visible table cells having at least one descendant image named `bla`|`/*/XCUIElementTypeWindow/XCUIElementTypeTable/XCUIElementTypeCell[@visible='true' and .//XCUIElementTypeImage[@name='bla']]/XCUIElementTypeTextField`|
-
-### Descendants
-
-|Class chain|Selects|XPath alternative|
-|---|---|---|
-|``**/XCUIElementTypeCell[`name BEGINSWITH 'B'`]``|all cells in the tree, whose name starts with `B`|`//XCUIElementTypeCell[starts-with(@name, 'B')]`|
-|``**/XCUIElementTypeCell[`name BEGINSWITH 'A'`][-1]/XCUIElementTypeButton[10]``|the tenth button child of the very last cell in the tree, whose name starts with `A`|`(//XCUIElementTypeCell[starts-with(@name, 'A')])[last()]/XCUIElementTypeButton[10]`|
-|``**/XCUIElementTypeCell[`name BEGINSWITH 'C'`][1]/XCUIElementTypeButton[10]``|the tenth button child of the first cell in the tree, whose name starts with `C`|`(//XCUIElementTypeCell[starts-with(@name, 'C')])[1]/XCUIElementTypeButton[10]`|
-|``**/XCUIElementTypeCell[`name BEGINSWITH 'C'`]/XCUIElementTypeButton[10]``|the tenth button among the children of _all_ cells in the tree, whose name starts with `C`|`(//XCUIElementTypeCell[starts-with(@name, 'C')]/XCUIElementTypeButton)[10]`|
-|``**/XCUIElementTypeCell[`name BEGINSWITH 'D'`]/**/XCUIElementTypeButton``|all buttons nested at any depth into cells, whose name starts with `D`|`//XCUIElementTypeCell[starts-with(@name, 'D')]//XCUIElementTypeButton`|
 
 ## Axis Steps
 
 !!! info "Availability"
 
-    Axis steps are available since XCUITest driver 13.6.0 (WebDriverAgent 17.1.0).
+    Axis steps are available since XCUITest driver 13.7.0 (WebDriverAgent 17.1.0).
     Older versions fail such locators with an error.
 
 Axis steps select elements relative to the elements matched by the previous step in a direction
@@ -144,7 +110,7 @@ much slower XPath strategy.
 |`^XCUIElementTypeCell`|all ancestors of the given type|`ancestor::XCUIElementTypeCell`|
 |`>XCUIElementTypeButton`|all following siblings of the given type|`following-sibling::XCUIElementTypeButton`|
 |`<XCUIElementTypeButton`|all preceding siblings of the given type|`preceding-sibling::XCUIElementTypeButton`|
-|`~XCUIElementTypeButton`|all siblings of the given type, except the matched element itself|`preceding-sibling::XCUIElementTypeButton \| following-sibling::XCUIElementTypeButton`|
+|`~XCUIElementTypeButton`|all siblings of the given type, except the matched element itself|`preceding-sibling::XCUIElementTypeButton | following-sibling::XCUIElementTypeButton`|
 
 Axis steps accept `*`, predicates and positions, the same way as regular steps. `..` is the
 exception: it has neither a type nor a position, but may have predicates.
@@ -231,7 +197,7 @@ The alert containing the "OK" button, using a predicate on the parent:
 
     ```java
     // java
-    driver.findElements(AppiumBy.iOSClassChain(
+    driver.findElement(AppiumBy.iOSClassChain(
         "**/XCUIElementTypeButton[`name == 'OK'`]/..[`type == 'XCUIElementTypeAlert'`]"));
     ```
 
@@ -239,7 +205,7 @@ The alert containing the "OK" button, using a predicate on the parent:
 
     ```java
     // java
-    driver.findElements(AppiumBy.xpath(
+    driver.findElement(AppiumBy.xpath(
         "//XCUIElementTypeButton[@name='OK']/parent::XCUIElementTypeAlert"));
     ```
 
@@ -250,10 +216,10 @@ and `<`, in document order for `>` and `~`, and from the other end if negative.
 
 |Class chain|Selects|XPath alternative|
 |---|---|---|
-|`…/^XCUIElementTypeOther[1]`|the closest ancestor of the type|`ancestor::XCUIElementTypeOther[1]`|
-|`…/^*[-1]`|the outermost ancestor, which is the application|`ancestor::*[last()]`|
-|`…/<XCUIElementTypeButton[1]`|the closest preceding button|`preceding-sibling::XCUIElementTypeButton[1]`|
-|`…/>XCUIElementTypeButton[-1]`|the last following button|`following-sibling::XCUIElementTypeButton[last()]`|
+|`^XCUIElementTypeOther[1]`|the closest ancestor of the type|`ancestor::XCUIElementTypeOther[1]`|
+|`^*[-1]`|the outermost ancestor, which is the application|`ancestor::*[last()]`|
+|`<XCUIElementTypeButton[1]`|the closest preceding button|`preceding-sibling::XCUIElementTypeButton[1]`|
+|`>XCUIElementTypeButton[-1]`|the last following button|`following-sibling::XCUIElementTypeButton[last()]`|
 
 ### Rules
 
@@ -262,12 +228,44 @@ and `<`, in document order for `>` and `~`, and from the other end if negative.
 - An axis step cannot directly follow `**/`, but `**/` may follow an axis step:
   `XCUIElementTypeButton/../**/XCUIElementTypeImage`.
 - As for the other steps, a position selects among the matches of the whole step. If the previous step
-  matches several elements, then the following and all siblings of all of them are merged in the document order
-  before the position is applied, while XPath applies the position for each element separately.
+  matches several elements, then the matches of `>` and `~` for all of them are merged in the document order
+  before the position is applied, while the matches of `^` and `<` stay in the order of the axis, with
+  duplicates removed. XPath applies the position for each element separately.
 - The matches of a chain containing axis steps are always returned in the document order, same as for XPath.
 - Axes are resolved on the accessibility tree snapshot, so such a lookup costs about the same as the
   part of the chain before the first axis step. In measurements on a simulator it was
   1.6-2.5x faster than the equivalent XPath.
+
+## More Examples
+
+The examples below are relative to the application. Each of them is shown together with
+the equivalent XPath locator.
+
+### Direct Children
+
+|Class chain|Selects|XPath alternative|
+|---|---|---|
+|`XCUIElementTypeWindow`|all windows|`/*/XCUIElementTypeWindow`|
+|`XCUIElementTypeWindow[2]`|the second window|`/*/XCUIElementTypeWindow[2]`|
+|`XCUIElementTypeWindow/XCUIElementTypeButton[3]`|the third button among the children of all windows|`(/*/XCUIElementTypeWindow/XCUIElementTypeButton)[3]`|
+|`XCUIElementTypeWindow[2]/*`|all children of the second window|`/*/XCUIElementTypeWindow[2]/*`|
+|`XCUIElementTypeWindow[2]/*[3]`|the third child of the second window|`/*/XCUIElementTypeWindow[2]/*[3]`|
+|`XCUIElementTypeWindow[2]/*[-2]`|the second last child of the second window|`/*/XCUIElementTypeWindow[2]/*[last() - 1]`|
+|``XCUIElementTypeWindow[`name CONTAINS[cd] 'blabla'`]``|windows, whose name contains `blabla` ignoring case and diacritics|`/*/XCUIElementTypeWindow[contains(lower-case(@name), 'blabla')]` (diacritics are not ignored)|
+|``XCUIElementTypeWindow[`label BEGINSWITH 'blabla'`][-1]``|the last window, whose label starts with `blabla`|`(/*/XCUIElementTypeWindow[starts-with(@label, 'blabla')])[last()]`|
+|``XCUIElementTypeWindow/*[`value == 'bla1' OR label == 'bla2'`]``|children of windows, whose value is `bla1` or label is `bla2`|`/*/XCUIElementTypeWindow/*[@value='bla1' or @label='bla2']`|
+|``XCUIElementTypeWindow[`name == "you're the winner"`]/*[`visible == 1`]``|visible children of the window named `you're the winner`|`/*/XCUIElementTypeWindow[@name="you're the winner"]/*[@visible='true']`|
+|``XCUIElementTypeWindow/XCUIElementTypeTable/XCUIElementTypeCell[`visible == 1`][$type == 'XCUIElementTypeImage' AND name == 'bla'$]/XCUIElementTypeTextField``|text fields, which are direct children of visible table cells having at least one descendant image named `bla`|`/*/XCUIElementTypeWindow/XCUIElementTypeTable/XCUIElementTypeCell[@visible='true' and .//XCUIElementTypeImage[@name='bla']]/XCUIElementTypeTextField`|
+
+### Descendants
+
+|Class chain|Selects|XPath alternative|
+|---|---|---|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'B'`]``|all cells in the tree, whose name starts with `B`|`//XCUIElementTypeCell[starts-with(@name, 'B')]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'A'`][-1]/XCUIElementTypeButton[10]``|the tenth button child of the very last cell in the tree, whose name starts with `A`|`(//XCUIElementTypeCell[starts-with(@name, 'A')])[last()]/XCUIElementTypeButton[10]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'C'`][1]/XCUIElementTypeButton[10]``|the tenth button child of the first cell in the tree, whose name starts with `C`|`(//XCUIElementTypeCell[starts-with(@name, 'C')])[1]/XCUIElementTypeButton[10]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'C'`]/XCUIElementTypeButton[10]``|the tenth button among the children of _all_ cells in the tree, whose name starts with `C`|`(//XCUIElementTypeCell[starts-with(@name, 'C')]/XCUIElementTypeButton)[10]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'D'`]/**/XCUIElementTypeButton``|all buttons nested at any depth into cells, whose name starts with `D`|`//XCUIElementTypeCell[starts-with(@name, 'D')]//XCUIElementTypeButton`|
 
 ## More Information
 

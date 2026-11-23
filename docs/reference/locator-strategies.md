@@ -78,6 +78,8 @@ can be used in these expressions.
 
 This strategy is mapped to the native XCTest predicate locator, but with respect to the actual
 element tree hierarchy. Such locators are basically a supertype of [predicate string](#predicate-string).
+Since XCUITest driver 13.7.0 (WebDriverAgent 17.1.0), class chains also support axis steps
+for the parent, ancestors and siblings of the matched elements, which previously required XPath.
 Read the [Class Chain Locator Strategy](./ios-class-chain.md) article
 for more details on how to build such locators.
 
@@ -86,15 +88,6 @@ for more details on how to build such locators.
     Use this strategy for elements that _cannot_ be identified only using their own attributes,
     but _can_ be identified upon additionally using their parent element(s), sibling element(s)
     and/or their descendant element attribute(s).
-
-### Axis Steps
-
-Since XCUITest driver 13.6.0 (WebDriverAgent 17.1.0) class chains also support axis steps, which
-select the parent (`..`), ancestors (`^`) and siblings (`>`, `<`, `~`) of the elements matched by
-the previous step, for example ``**/XCUIElementTypeButton[`name == "OK"`]/<XCUIElementTypeButton[1]``
-selects the button right before the "OK" button. They cover the cases that previously required XPath axes, but
-are faster. See the [Class Chain Locator Strategy](./ios-class-chain.md) article for the full syntax,
-and the equivalent XPath locators.
 
 ## XPath
 
@@ -115,5 +108,4 @@ functions](./xpath-extensions.md) (`matches`, `ends-with`, `lower-case`, `upper-
     Use this strategy for elements that can _only_ be identified when using conditions
     that cannot be expressed by the other strategies, for example the complex ones that
     combine several elements of the hierarchy. It is _strongly_ recommended to use more
-    performant strategies if possible, such as [class chain](./ios-class-chain.md) with
-    [axis steps](./ios-class-chain.md#axis-steps) for the parent, ancestor and sibling relationships.
+    performant strategies if possible.
