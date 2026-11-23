@@ -78,7 +78,7 @@ can be used in these expressions.
 
 This strategy is mapped to the native XCTest predicate locator, but with respect to the actual
 element tree hierarchy. Such locators are basically a supertype of [predicate string](#predicate-string).
-Read [Class Chain Queries Construction Rules](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules)
+Read the [Class Chain Locator Strategy](./ios-class-chain.md) article
 for more details on how to build such locators.
 
 !!! info "When to Use"
@@ -89,32 +89,12 @@ for more details on how to build such locators.
 
 ### Axis Steps
 
-WebDriverAgent 17.1.0+ adds axis steps, which select elements relative to the ones matched
-by the previous step. They cover the cases that previously required XPath axes, without the
-performance cost of XPath.
-
-|Step|Selects|XPath equivalent|
-|---|---|---|
-|`..`|the parent|`..` or `parent::*`|
-|`^XCUIElementTypeCell`|all ancestors of the given type|`ancestor::XCUIElementTypeCell`|
-|`>XCUIElementTypeButton`|all following siblings of the given type|`following-sibling::XCUIElementTypeButton`|
-|`<XCUIElementTypeButton`|all preceding siblings of the given type|`preceding-sibling::XCUIElementTypeButton`|
-|`~XCUIElementTypeButton`|all siblings of the given type, except the matched element itself|`preceding-sibling::XCUIElementTypeButton \| following-sibling::XCUIElementTypeButton`|
-
-For example, ``**/XCUIElementTypeButton[`name == "OK"`]/<XCUIElementTypeButton[1]`` selects the
-button right before the "OK" button, and ``**/XCUIElementTypeStaticText[`name == "Total"`]/^XCUIElementTypeCell[1]``
-selects the closest cell containing the "Total" label.
-
-- Axis steps accept `*`, predicates and positions, same as regular steps. Positions count along
-  the axis: starting from the nearest element for `^` and `<`, in document order for `>` and `~`,
-  and from the other end if negative. `..` has neither a class name nor a position,
-  but may have predicates.
-- An axis step may follow any step, and may also start the chain, in which case it is relative to the
-  element the search is made from. It cannot directly follow `**/`, but `**/` may follow it,
-  for example `XCUIElementTypeButton/../**/XCUIElementTypeImage`.
-- The matches of a chain containing axis steps are always returned in document order.
-- Such lookups cost about the same as the part of the chain before the first axis step. Compared
-  to the equivalent XPath they were measured to be 1.6-2.5x faster on a loaded simulator.
+Since XCUITest driver 13.6.0 (WebDriverAgent 17.1.0) class chains also support axis steps, which
+select the parent (`..`), ancestors (`^`) and siblings (`>`, `<`, `~`) of the elements matched by
+the previous step, for example ``**/XCUIElementTypeButton[`name == "OK"`]/<XCUIElementTypeButton[1]``
+selects the button right before the "OK" button. They cover the cases that previously required XPath axes, but
+are faster. See the [Class Chain Locator Strategy](./ios-class-chain.md) article for the full syntax,
+and the equivalent XPath locators.
 
 ## XPath
 
@@ -135,5 +115,5 @@ functions](./xpath-extensions.md) (`matches`, `ends-with`, `lower-case`, `upper-
     Use this strategy for elements that can _only_ be identified when using conditions
     that cannot be expressed by the other strategies, for example the complex ones that
     combine several elements of the hierarchy. It is _strongly_ recommended to use more
-    performant strategies if possible, such as [class chain](#class-chain) with
-    [axis steps](#axis-steps) for the parent, ancestor and sibling relationships.
+    performant strategies if possible, such as [class chain](./ios-class-chain.md) with
+    [axis steps](./ios-class-chain.md#axis-steps) for the parent, ancestor and sibling relationships.

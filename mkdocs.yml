@@ -57,6 +57,7 @@ nav:
           - reference/locator-strategies.md
           - reference/xpath-extensions.md
           - reference/ios-predicate.md
+          - reference/ios-class-chain.md
           - reference/element-attributes.md
   - Guides:
       - Environment Configuration:
