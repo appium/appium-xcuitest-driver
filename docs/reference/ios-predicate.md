@@ -194,4 +194,3 @@ names and types that are available for usage in predicate locators.
 * [Apple Developer documentation on Predicates](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html)
 * [NSPredicate Cheat Sheet](https://academy.realm.io/posts/nspredicate-cheatsheet/)
 * [Class Chain Locator Strategy](./ios-class-chain.md)
-* [Class Chain Queries Construction Rules](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules)

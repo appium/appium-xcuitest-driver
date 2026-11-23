@@ -13,7 +13,7 @@ The XCUITest driver exposes various settings through Appium's [Settings API](htt
 Custom selector for an alert button. This can be used to handle accept buttons with arbitrary text
 when using the [Accept Alert](https://www.w3.org/TR/webdriver2/#accept-alert) API.
 
-The selector should be a valid [class chain](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules)
+The selector should be a valid [class chain](./ios-class-chain.md)
 expression, where the search root is the alert element itself, for example, ```**/XCUIElementTypeButton[`label CONTAINS[c] 'accept'`]```.
 If the provided selector is wrong or does not match any element, the default button location
 algorithm is used.
@@ -77,7 +77,7 @@ Setting this value to `0` disables animation checks completely.
 Custom selector for an alert button. This can be used to automatically locate an element inside an
 alert hierarchy, and tap it as soon as a new alert is detected.
 
-The selector should be a valid [class chain](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules)
+The selector should be a valid [class chain](./ios-class-chain.md)
 expression, where the search root is the alert element itself, for example, ```**/XCUIElementTypeButton[`label CONTAINS[c] 'click'`]```.
 If two or more elements match the provided selector, then the very first matched element is tapped
 on. If the provided selector does not match any element, no action is performed. An error is thrown
@@ -148,7 +148,7 @@ for examples and alternatives.
 Custom selector for an alert button. This can be used to handle dismiss buttons with arbitrary text
 when using the [Dismiss Alert](https://www.w3.org/TR/webdriver2/#dismiss-alert) API.
 
-The selector should be a valid [class chain](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules)
+The selector should be a valid [class chain](./ios-class-chain.md)
 expression, where the search root is the alert element itself, for example, ```**/XCUIElementTypeButton[`label CONTAINS[c] 'dismiss'`]```.
 If the provided selector is wrong or does not match any element, the default button location
 algorithm is used.

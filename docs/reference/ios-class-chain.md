@@ -5,7 +5,10 @@ title: Class Chain Locator Strategy
 The XCUITest driver supports searching elements using the _class chain_
 [locator search strategy](./locator-strategies.md#class-chain) (`-ios class chain`). It is
 powered by Apple XCTest, and is very similar to a simplified XPath, but is much faster, because
-the lookup does not need the page source of the whole application. A class chain is a `/`-separated
+the lookup does not need the page source of the whole application. It is a layer over the native
+[XCUIElementQuery](https://developer.apple.com/documentation/xctest/xcuielementquery) lookup calls
+with some additional features, like positions in the intermediate steps and negative positions
+counted from the end. A class chain is a `/`-separated
 list of _steps_. Each step selects elements of a certain type, optionally narrowed down by
 predicates and a position, relative to the elements matched by the previous step.
 
@@ -76,12 +79,15 @@ Predicates restrict the elements of a step. They are put into square brackets be
 and every predicate is a [predicate expression](./ios-predicate.md) using
 the [element attributes](./element-attributes.md):
 
-- ``[`predicate`]`` - the predicate is applied to the matched elements themselves
+- ``[`predicate`]`` - the predicate is applied to the matched elements themselves. It is the direct
+  alternative of the native [matchingPredicate:](https://developer.apple.com/documentation/xctest/xcuielementquery/1500471-matchingpredicate?language=objc) selector
 - `[$predicate$]` - the predicate is applied to all _descendants_ of the matched elements;
-  an element is selected if at least one of its descendants satisfies the predicate
+  an element is selected if at least one of its descendants satisfies the predicate. It is the direct
+  alternative of the native [containingPredicate:](https://developer.apple.com/documentation/xctest/xcuielementquery/1500956-containingpredicate?language=objc) selector
 
 A backtick or dollar sign inside a predicate must be escaped by doubling it.
-Several predicates are applied one after another, in the given order.
+Predicates are always put before the position, never after it. Several predicates are applied
+one after another, in the given order.
 
 |Class chain|Selects|XPath alternative|
 |---|---|---|
@@ -89,6 +95,37 @@ Several predicates are applied one after another, in the given order.
 |``**/XCUIElementTypeCell[`visible == 1`][`name CONTAINS 'done'`]``|visible cells with `done` in the name|`//XCUIElementTypeCell[@visible='true' and contains(@name, 'done')]`|
 |``**/XCUIElementTypeCell[$type == 'XCUIElementTypeImage' AND name == 'bla'$]``|cells, which contain an image named `bla`|`//XCUIElementTypeCell[.//XCUIElementTypeImage[@name='bla']]`|
 |``**/XCUIElementTypeCell[`name BEGINSWITH 'A'`][-1]``|the last cell, whose name starts with `A`|`(//XCUIElementTypeCell[starts-with(@name, 'A')])[last()]`|
+
+## Examples
+
+The examples below are relative to the application. Each of them is shown together with
+the equivalent XPath locator.
+
+### Direct Children
+
+|Class chain|Selects|XPath alternative|
+|---|---|---|
+|`XCUIElementTypeWindow`|all windows|`/*/XCUIElementTypeWindow`|
+|`XCUIElementTypeWindow[2]`|the second window|`/*/XCUIElementTypeWindow[2]`|
+|`XCUIElementTypeWindow/XCUIElementTypeButton[3]`|the third button among the children of all windows|`(/*/XCUIElementTypeWindow/XCUIElementTypeButton)[3]`|
+|`XCUIElementTypeWindow[2]/*`|all children of the second window|`/*/XCUIElementTypeWindow[2]/*`|
+|`XCUIElementTypeWindow[2]/*[3]`|the third child of the second window|`/*/XCUIElementTypeWindow[2]/*[3]`|
+|`XCUIElementTypeWindow[2]/*[-2]`|the second last child of the second window|`/*/XCUIElementTypeWindow[2]/*[last() - 1]`|
+|``XCUIElementTypeWindow[`name CONTAINS[cd] 'blabla'`]``|windows, whose name contains `blabla` ignoring case and diacritics|`/*/XCUIElementTypeWindow[contains(lower-case(@name), 'blabla')]` (diacritics are not ignored)|
+|``XCUIElementTypeWindow[`label BEGINSWITH 'blabla'`][-1]``|the last window, whose label starts with `blabla`|`(/*/XCUIElementTypeWindow[starts-with(@label, 'blabla')])[last()]`|
+|``XCUIElementTypeWindow/*[`value == 'bla1' OR label == 'bla2'`]``|children of windows, whose value is `bla1` or label is `bla2`|`/*/XCUIElementTypeWindow/*[@value='bla1' or @label='bla2']`|
+|``XCUIElementTypeWindow[`name == "you're the winner"`]/*[`visible == 1`]``|visible children of the window named `you're the winner`|`/*/XCUIElementTypeWindow[@name="you're the winner"]/*[@visible='true']`|
+|``XCUIElementTypeWindow/XCUIElementTypeTable/XCUIElementTypeCell[`visible == 1`][$type == 'XCUIElementTypeImage' AND name == 'bla'$]/XCUIElementTypeTextField``|text fields, which are direct children of visible table cells having at least one descendant image named `bla`|`/*/XCUIElementTypeWindow/XCUIElementTypeTable/XCUIElementTypeCell[@visible='true' and .//XCUIElementTypeImage[@name='bla']]/XCUIElementTypeTextField`|
+
+### Descendants
+
+|Class chain|Selects|XPath alternative|
+|---|---|---|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'B'`]``|all cells in the tree, whose name starts with `B`|`//XCUIElementTypeCell[starts-with(@name, 'B')]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'A'`][-1]/XCUIElementTypeButton[10]``|the tenth button child of the very last cell in the tree, whose name starts with `A`|`(//XCUIElementTypeCell[starts-with(@name, 'A')])[last()]/XCUIElementTypeButton[10]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'C'`][1]/XCUIElementTypeButton[10]``|the tenth button child of the first cell in the tree, whose name starts with `C`|`(//XCUIElementTypeCell[starts-with(@name, 'C')])[1]/XCUIElementTypeButton[10]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'C'`]/XCUIElementTypeButton[10]``|the tenth button among the children of _all_ cells in the tree, whose name starts with `C`|`(//XCUIElementTypeCell[starts-with(@name, 'C')]/XCUIElementTypeButton)[10]`|
+|``**/XCUIElementTypeCell[`name BEGINSWITH 'D'`]/**/XCUIElementTypeButton``|all buttons nested at any depth into cells, whose name starts with `D`|`//XCUIElementTypeCell[starts-with(@name, 'D')]//XCUIElementTypeButton`|
 
 ## Axis Steps
 
@@ -237,4 +274,3 @@ and `<`, in document order for `>` and `~`, and from the other end if negative.
 - [Locator Strategies](./locator-strategies.md) — overview of all strategies and their performance
 - [Predicate Locator Strategy](./ios-predicate.md) — how to write the predicates used in class chains
 - [Element Attributes](./element-attributes.md) — element types and attributes available in predicates
-- [Class Chain Queries Construction Rules](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules) — the original rules
