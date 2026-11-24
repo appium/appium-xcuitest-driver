@@ -32,7 +32,7 @@ select only those for which some condition evaluates to true.
 The predicate string example would select all visible elements on the page, while the class chain
 example would find all elements of type `XCUIElementTypeWindow` whose label contains `yolo`. Class
 chain queries allow to create much more complicated search expressions and may contain multiple
-predicates. Check the [More Information](#more-information) section below for how to build such queries.
+predicates. Check the [Class Chain Locator Strategy](./ios-class-chain.md) article for how to build such queries.
 
 ### Basic Comparisons
 
@@ -193,4 +193,4 @@ names and types that are available for usage in predicate locators.
 
 * [Apple Developer documentation on Predicates](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html)
 * [NSPredicate Cheat Sheet](https://academy.realm.io/posts/nspredicate-cheatsheet/)
-* [Class Chain Queries Construction Rules](https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules)
+* [Class Chain Locator Strategy](./ios-class-chain.md)

@@ -156,7 +156,7 @@ Invalid flag combinations cause the XPath expression to fail evaluation.
 - When used for element lookup, failures surface as an invalid XPath error from WebDriverAgent
   (`FBInvalidXPathException`).
 
-Prefer [predicate string](./ios-predicate.md) or [class chain](./locator-strategies.md#class-chain)
+Prefer [predicate string](./ios-predicate.md) or [class chain](./ios-class-chain.md)
 locators when they can express the same condition; XPath remains the slowest strategy, even with
 these helpers.
 
