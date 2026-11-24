@@ -1,3 +1,9 @@
+## [13.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.6.1...v13.7.0) (2026-11-24)
+
+### Features
+
+* bump appium-webdriveragent to 17.1.0 and document class chain axes ([#3162](https://github.com/appium/appium-xcuitest-driver/issues/3162)) ([78eec36](https://github.com/appium/appium-xcuitest-driver/commit/78eec369f45a5dedfad8845154fdc8968f93aa6c))
+
 ## [13.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.6.0...v13.6.1) (2026-11-21)
 
 ### Bug Fixes
