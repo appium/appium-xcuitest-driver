@@ -77,7 +77,11 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
  * iOS 17 or newer, this uses `mobile:setSimulatedLocation` (XCTest session simulated location).
  * Older real devices are not supported.
  *
+ * The optional `altitude` is only applied on simulators. Real devices ignore it, and the
+ * altitude they report stays zero.
+ *
  * @param location - Must include `latitude` and `longitude` (each coerced with `Number()`).
+ * May include `altitude` in meters above sea level.
  * @throws {errors.NotImplementedError} When the target is a real device below iOS/tvOS 17.
  */
 export async function setGeoLocation(
@@ -95,12 +99,24 @@ export async function setGeoLocation(
     }
   }
   const [latitudeNumber, longitudeNumber] = [Number(location.latitude), Number(location.longitude)];
+  const hasAltitude = util.hasValue(location.altitude);
+  if (hasAltitude && !Number.isFinite(Number(location.altitude))) {
+    throw new errors.InvalidArgumentError(`altitude must be a number, got '${location.altitude}' instead`);
+  }
 
   if (this.isSimulator()) {
+    if (hasAltitude) {
+      const altitudeNumber = Number(location.altitude);
+      await (this.device as Simulator).setGeolocation(`${latitudeNumber}`, `${longitudeNumber}`, `${altitudeNumber}`);
+      return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: altitudeNumber};
+    }
     await (this.device as Simulator).setGeolocation(`${latitudeNumber}`, `${longitudeNumber}`);
     return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: 0};
   }
 
+  if (hasAltitude) {
+    this.log.info(`The altitude value is only supported on simulators, thus it is going to be ignored`);
+  }
   if (supportsApiLevel17(this.opts.platformVersion, this.opts.platformName)) {
     this.log.info(`Proxying to mobile:setSimulatedLocation method for iOS 17+`);
     await this.mobileSetSimulatedLocation(latitudeNumber, longitudeNumber);

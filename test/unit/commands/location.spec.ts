@@ -131,6 +131,33 @@ describe('location commands', function () {
         assert.strictEqual(deviceSetLocationSpy.firstCall.args[0], '1');
         assert.strictEqual(deviceSetLocationSpy.firstCall.args[1], '-2');
       });
+      it('should not pass the altitude if it is not provided', async function () {
+        const result = await driver.setGeoLocation({latitude: 1, longitude: -2});
+        assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1', '-2']);
+        assert.deepStrictEqual(result, {latitude: 1, longitude: -2, altitude: 0});
+      });
+      it('should set the altitude', async function () {
+        const result = await driver.setGeoLocation({latitude: 1.5, longitude: -2.5, altitude: 2106.5});
+        assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1.5', '-2.5', '2106.5']);
+        assert.deepStrictEqual(result, {latitude: 1.5, longitude: -2.5, altitude: 2106.5});
+      });
+      it('should set zero, negative and string altitudes', async function () {
+        assert.deepStrictEqual(await driver.setGeoLocation({latitude: 1, longitude: 2, altitude: 0}), {
+          latitude: 1,
+          longitude: 2,
+          altitude: 0,
+        });
+        assert.deepStrictEqual(deviceSetLocationSpy.lastCall.args, ['1', '2', '0']);
+        await driver.setGeoLocation({latitude: 1, longitude: 2, altitude: '-415.25'} as any);
+        assert.deepStrictEqual(deviceSetLocationSpy.lastCall.args, ['1', '2', '-415.25']);
+      });
+      it('should fail when the altitude is not a number', async function () {
+        await assert.rejects(
+          driver.setGeoLocation({latitude: 1, longitude: 2, altitude: 'high'} as any),
+          /altitude must be a number/,
+        );
+        assert.strictEqual(deviceSetLocationSpy.called, false);
+      });
     });
   });
 });
