@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -1411,6 +1411,8 @@
       
         
       
+        
+      
     
     
     
@@ -1818,6 +1820,34 @@
     
   
     Predicate Locator Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ios-class-chain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Class Chain Locator Strategy
   
 
     
@@ -3611,13 +3641,15 @@ attributes - that is, without utilizing their parent, descendant, or sibling ele
 </table>
 <p>This strategy is mapped to the native XCTest predicate locator, but with respect to the actual
 element tree hierarchy. Such locators are basically a supertype of <a href="#predicate-string">predicate string</a>.
-Read <a href="https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules">Class Chain Queries Construction Rules</a>
+Since WebDriverAgent 17.1.0 (required by XCUITest driver 13.7.0 and later), class chains
+also support axis steps for the parent, ancestors and siblings of the matched elements, which previously required XPath.
+Read the <a href="../ios-class-chain/">Class Chain Locator Strategy</a> article
 for more details on how to build such locators.</p>
 <div class="admonition info">
 <p class="admonition-title">When to Use</p>
 <p>Use this strategy for elements that <em>cannot</em> be identified only using their own attributes,
-but <em>can</em> be identified upon additionally using their parent element(s) and/or their
-descendant element attribute(s).</p>
+but <em>can</em> be identified upon additionally using their parent element(s), sibling element(s)
+and/or their descendant element attribute(s).</p>
 </div>
 <h2 id="xpath">XPath<a class="headerlink" href="#xpath" title="Permanent link">&para;</a></h2>
 <table>
@@ -3644,8 +3676,10 @@ functions</a> (<code>matches</code>, <code>ends-with</code>, <code>lower-case</c
 <code>tokenize</code>, <code>string-join</code>) for richer string matching in locators.</p>
 <div class="admonition info">
 <p class="admonition-title">When to Use</p>
-<p>Use this strategy for elements that can <em>only</em> be identified when using their siblings and/or
-specific descendants. It is <em>strongly</em> recommended to use more performant strategies if possible.</p>
+<p>Use this strategy for elements that can <em>only</em> be identified when using conditions
+that cannot be expressed by the other strategies, for example the complex ones that
+combine several elements of the hierarchy. It is <em>strongly</em> recommended to use more
+performant strategies if possible.</p>
 </div>
 
 
@@ -3667,7 +3701,7 @@ specific descendants. It is <em>strongly</em> recommended to use more performant
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 26, 2026 16:56:06 UTC"><span class="timeago" datetime="2026-05-26T16:56:06+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 26, 2026 16:56:06 UTC">2026-05-26</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 24, 2026 06:38:34 UTC"><span class="timeago" datetime="2026-11-24T06:38:34+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 24, 2026 06:38:34 UTC">2026-11-24</span>
   </span>
 
     
@@ -3815,7 +3849,7 @@ specific descendants. It is <em>strongly</em> recommended to use more performant
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       
