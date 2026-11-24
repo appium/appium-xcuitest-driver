@@ -97,8 +97,8 @@ one after another, in the given order.
 
 !!! info "Availability"
 
-    Axis steps are available since XCUITest driver 13.7.0 (WebDriverAgent 17.1.0).
-    Older versions fail such locators with an error.
+    Axis steps require WebDriverAgent 17.1.0 or later. XCUITest driver 13.7.0 raises its minimum
+    WebDriverAgent dependency to 17.1.0. Older WebDriverAgent versions fail such locators with an error.
 
 Axis steps select elements relative to the elements matched by the previous step in a direction
 other than "down". They replace the XPath axes, which are the most common reason to use the
@@ -150,7 +150,7 @@ The first cell after the cell containing the "Total" label:
     ```java
     // java
     driver.findElement(AppiumBy.xpath(
-        "//XCUIElementTypeStaticText[@name='Total']/ancestor::XCUIElementTypeCell[1]"
+        "(//XCUIElementTypeStaticText[@name='Total']/ancestor::XCUIElementTypeCell[1])[1]"
         + "/following-sibling::XCUIElementTypeCell[1]"));
     ```
 

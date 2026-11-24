@@ -78,8 +78,8 @@ can be used in these expressions.
 
 This strategy is mapped to the native XCTest predicate locator, but with respect to the actual
 element tree hierarchy. Such locators are basically a supertype of [predicate string](#predicate-string).
-Since XCUITest driver 13.7.0 (WebDriverAgent 17.1.0), class chains also support axis steps
-for the parent, ancestors and siblings of the matched elements, which previously required XPath.
+Since WebDriverAgent 17.1.0 (required by XCUITest driver 13.7.0 and later), class chains
+also support axis steps for the parent, ancestors and siblings of the matched elements, which previously required XPath.
 Read the [Class Chain Locator Strategy](./ios-class-chain.md) article
 for more details on how to build such locators.
 
