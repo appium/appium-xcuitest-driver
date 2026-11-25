@@ -1,3 +1,9 @@
+## [13.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.7.0...v13.8.0) (2026-11-25)
+
+### Features
+
+* support altitude in setGeoLocation on simulators ([#3163](https://github.com/appium/appium-xcuitest-driver/issues/3163)) ([cd86a60](https://github.com/appium/appium-xcuitest-driver/commit/cd86a60cebc11093c54dea7d9b01da8625683cdf))
+
 ## [13.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.6.1...v13.7.0) (2026-11-24)
 
 ### Features
