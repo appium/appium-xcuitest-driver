@@ -136,6 +136,11 @@ describe('location commands', function () {
         assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1', '-2']);
         assert.deepStrictEqual(result, {latitude: 1, longitude: -2, altitude: 0});
       });
+      it('should not pass a blank altitude', async function () {
+        const result = await driver.setGeoLocation({latitude: 1, longitude: -2, altitude: ' '} as any);
+        assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1', '-2']);
+        assert.deepStrictEqual(result, {latitude: 1, longitude: -2, altitude: 0});
+      });
       it('should set the altitude', async function () {
         const result = await driver.setGeoLocation({latitude: 1.5, longitude: -2.5, altitude: 2106.5});
         assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1.5', '-2.5', '2106.5']);

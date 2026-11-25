@@ -99,7 +99,8 @@ export async function setGeoLocation(
     }
   }
   const [latitudeNumber, longitudeNumber] = [Number(location.latitude), Number(location.longitude)];
-  const hasAltitude = util.hasValue(location.altitude);
+  // A blank string counts as no altitude, as `Number()` would turn it into 0
+  const hasAltitude = util.hasValue(location.altitude) && String(location.altitude).trim() !== '';
   if (hasAltitude && !Number.isFinite(Number(location.altitude))) {
     throw new errors.InvalidArgumentError(`altitude must be a number, got '${location.altitude}' instead`);
   }
