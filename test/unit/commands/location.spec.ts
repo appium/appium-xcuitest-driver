@@ -96,6 +96,42 @@ describe('location commands', function () {
         assert.deepStrictEqual(result, {latitude: 1.234, longitude: 2.789, altitude: 0});
       });
 
+      it('should ignore the altitude for over platform version 17', async function () {
+        driver.opts.platformVersion = '17.0.0';
+        proxySpy.resolves({value: null, sessionId: 'session-id'});
+        const warnSpy = sinon.spy(driver.log, 'warn');
+        try {
+          for (const altitude of [2106.5, 'N/A']) {
+            const result = await driver.setGeoLocation({latitude: 1.234, longitude: 2.789, altitude} as any);
+            assert.deepStrictEqual(proxySpy.lastCall.args, [
+              '/wda/simulatedLocation',
+              'POST',
+              {latitude: 1.234, longitude: 2.789},
+            ]);
+            assert.deepStrictEqual(result, {latitude: 1.234, longitude: 2.789, altitude: 0});
+          }
+          assert.strictEqual(warnSpy.callCount, 2);
+          assert.match(warnSpy.firstCall.args[0], /altitude value is only supported on simulators/);
+        } finally {
+          warnSpy.restore();
+        }
+      });
+
+      it('should not validate or log the altitude for lower than platform version 17', async function () {
+        driver.opts.platformVersion = '16.4.5';
+        const warnSpy = sinon.spy(driver.log, 'warn');
+        try {
+          await assert.rejects(
+            driver.setGeoLocation({latitude: 1.234, longitude: 2.789, altitude: 'N/A'} as any),
+            /iOS\/tvOS 17 or newer/,
+          );
+          assert.strictEqual(warnSpy.called, false);
+          assert.strictEqual(proxySpy.called, false);
+        } finally {
+          warnSpy.restore();
+        }
+      });
+
       it('should use mobileSetSimulatedLocation to set a location for over platform version 17 with exception', async function () {
         const locationRequest = {latitude: 1.234, longitude: 2.789};
         driver.opts.platformVersion = '17.0.0';
@@ -130,6 +166,38 @@ describe('location commands', function () {
         await driver.setGeoLocation({latitude: 1, longitude: -2});
         assert.strictEqual(deviceSetLocationSpy.firstCall.args[0], '1');
         assert.strictEqual(deviceSetLocationSpy.firstCall.args[1], '-2');
+      });
+      it('should not pass the altitude if it is not provided', async function () {
+        const result = await driver.setGeoLocation({latitude: 1, longitude: -2});
+        assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1', '-2', undefined]);
+        assert.deepStrictEqual(result, {latitude: 1, longitude: -2, altitude: 0});
+      });
+      it('should not pass a blank altitude', async function () {
+        const result = await driver.setGeoLocation({latitude: 1, longitude: -2, altitude: ' '} as any);
+        assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1', '-2', undefined]);
+        assert.deepStrictEqual(result, {latitude: 1, longitude: -2, altitude: 0});
+      });
+      it('should set the altitude', async function () {
+        const result = await driver.setGeoLocation({latitude: 1.5, longitude: -2.5, altitude: 2106.5});
+        assert.deepStrictEqual(deviceSetLocationSpy.firstCall.args, ['1.5', '-2.5', 2106.5]);
+        assert.deepStrictEqual(result, {latitude: 1.5, longitude: -2.5, altitude: 2106.5});
+      });
+      it('should set zero, negative and string altitudes', async function () {
+        assert.deepStrictEqual(await driver.setGeoLocation({latitude: 1, longitude: 2, altitude: 0}), {
+          latitude: 1,
+          longitude: 2,
+          altitude: 0,
+        });
+        assert.deepStrictEqual(deviceSetLocationSpy.lastCall.args, ['1', '2', 0]);
+        await driver.setGeoLocation({latitude: 1, longitude: 2, altitude: '-415.25'} as any);
+        assert.deepStrictEqual(deviceSetLocationSpy.lastCall.args, ['1', '2', -415.25]);
+      });
+      it('should fail when the altitude is not a number', async function () {
+        await assert.rejects(
+          driver.setGeoLocation({latitude: 1, longitude: 2, altitude: 'high'} as any),
+          /altitude must be a number/,
+        );
+        assert.strictEqual(deviceSetLocationSpy.called, false);
       });
     });
   });

@@ -90,11 +90,14 @@ Set location of the device under test.
 For iOS 17+ real devices, this method will call the
 [`mobile: setSimulatedLocation`](./execute-methods.md#mobile-setsimulatedlocation) extension.
 
+The optional `altitude` value (meters above sea level) is only applied on simulators.
+Real devices ignore it.
+
 #### Arguments
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `location` | `Location` | An object with `latitude` and `longitude` values |
+| `location` | `Location` | An object with `latitude` and `longitude` values, and an optional `altitude` value |
 
 #### Returned Result
 
