@@ -101,24 +101,20 @@ export async function setGeoLocation(
   const [latitudeNumber, longitudeNumber] = [Number(location.latitude), Number(location.longitude)];
   // A blank string counts as no altitude, as `Number()` would turn it into 0
   const hasAltitude = util.hasValue(location.altitude) && String(location.altitude).trim() !== '';
-  if (hasAltitude && !Number.isFinite(Number(location.altitude))) {
-    throw new errors.InvalidArgumentError(`altitude must be a number, got '${location.altitude}' instead`);
-  }
 
   if (this.isSimulator()) {
-    if (hasAltitude) {
-      const altitudeNumber = Number(location.altitude);
-      await (this.device as Simulator).setGeolocation(`${latitudeNumber}`, `${longitudeNumber}`, `${altitudeNumber}`);
-      return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: altitudeNumber};
+    if (hasAltitude && !Number.isFinite(Number(location.altitude))) {
+      throw new errors.InvalidArgumentError(`altitude must be a number, got '${location.altitude}' instead`);
     }
-    await (this.device as Simulator).setGeolocation(`${latitudeNumber}`, `${longitudeNumber}`);
-    return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: 0};
+    const altitudeNumber = hasAltitude ? Number(location.altitude) : undefined;
+    await (this.device as Simulator).setGeolocation(`${latitudeNumber}`, `${longitudeNumber}`, altitudeNumber);
+    return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: altitudeNumber ?? 0};
   }
 
-  if (hasAltitude) {
-    this.log.info(`The altitude value is only supported on simulators, thus it is going to be ignored`);
-  }
   if (supportsApiLevel17(this.opts.platformVersion, this.opts.platformName)) {
+    if (hasAltitude) {
+      this.log.warn(`The altitude value is only supported on simulators, thus it is going to be ignored`);
+    }
     this.log.info(`Proxying to mobile:setSimulatedLocation method for iOS 17+`);
     await this.mobileSetSimulatedLocation(latitudeNumber, longitudeNumber);
   } else {
