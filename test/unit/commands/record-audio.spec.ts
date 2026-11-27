@@ -111,6 +111,31 @@ describe('audio recording shutdown', function () {
     assert.strictEqual(driver._audioRecorder, null);
   });
 
+  it('keeps the recorder and its file when stopAudioRecording cannot end ffmpeg, and retries on the next stop', async function () {
+    mainProcess.stop.onCall(0).rejects(new Error('Process did not end'));
+    mainProcess.stop.onCall(1).rejects(new Error('Process did not end'));
+    mainProcess.stop.onCall(2).rejects(new Error('Process did not end'));
+    mainProcess.stop.onCall(3).callsFake(async () => {
+      mainProcess.isRunning = false;
+    });
+    sandbox.stub(fs, 'exists').resolves(true);
+    const removeStub = sandbox.stub(fs, 'rimraf').resolves();
+    driver._audioRecorder = recorder;
+
+    await assert.rejects(driver.stopAudioRecording(), /failed to stop gracefully/);
+    assert.deepStrictEqual(mainProcess.stop.args, [['SIGINT'], ['SIGTERM'], ['SIGKILL']]);
+    assert.strictEqual(removeStub.called, false);
+    assert.strictEqual((recorder as any).mainProcess, mainProcess);
+    assert.strictEqual(recorder.isRecording(), true);
+    assert.strictEqual(driver._audioRecorder, recorder);
+
+    await assert.rejects(driver.stopAudioRecording(), /failed to stop gracefully/);
+    assert.deepStrictEqual(mainProcess.stop.args, [['SIGINT'], ['SIGTERM'], ['SIGKILL'], ['SIGINT']]);
+    assert.strictEqual(removeStub.calledOnceWithExactly('/test/audio.mp4'), true);
+    assert.strictEqual(recorder.isRecording(), false);
+    assert.strictEqual(driver._audioRecorder, null);
+  });
+
   it('keeps the handle when even killing fails', async function () {
     mainProcess.stop.onFirstCall().rejects(new Error('Process did not end'));
     mainProcess.stop.onSecondCall().rejects(new Error('Process did not end'));

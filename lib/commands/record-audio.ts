@@ -283,9 +283,13 @@ export async function stopAudioRecording(this: XCUITestDriver): Promise<string> 
       );
     }
   } catch (e) {
-    await this._audioRecorder.interrupt(true);
-    await this._audioRecorder.cleanup();
-    this._audioRecorder = null;
+    const audioRecorder = this._audioRecorder;
+    await audioRecorder.interrupt(true);
+    // ffmpeg may have survived SIGKILL too: keep the recorder and its file so a later stop or teardown can retry
+    if (!audioRecorder.isRecording()) {
+      await audioRecorder.cleanup();
+      this._audioRecorder = null;
+    }
     throw e;
   }
   return await encodeBase64OrUpload(resultPath);
