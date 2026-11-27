@@ -3,13 +3,6 @@ import type {MethodMap} from '@appium/types';
 import type {XCUITestDriver} from './driver.js';
 
 export const newMethodMap = {
-  '/session/:sessionId/timeouts/implicit_wait': {
-    POST: {
-      command: 'implicitWait',
-      payloadParams: {required: ['ms']},
-      deprecated: true,
-    },
-  },
   '/session/:sessionId/window/:windowhandle/size': {
     GET: {
       command: 'getWindowSize',
@@ -56,7 +49,10 @@ export const newMethodMap = {
   '/session/:sessionId/appium/device/hide_keyboard': {
     POST: {
       command: 'hideKeyboard',
-      payloadParams: {optional: ['strategy', 'key', 'keyCode', 'keyName']},
+      payloadParams: {
+        optional: ['strategy', 'key', 'keyCode', 'keyName'],
+        makeArgs: ({strategy, key, keyCode, keyName}) => [strategy, key, keyCode, keyName],
+      },
     },
   },
   '/session/:sessionId/appium/device/lock': {
