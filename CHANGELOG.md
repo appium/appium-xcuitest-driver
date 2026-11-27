@@ -1,3 +1,9 @@
+## [13.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.0...v13.8.1) (2026-11-27)
+
+### Miscellaneous Chores
+
+* bump @appium/types to v3 ([#3166](https://github.com/appium/appium-xcuitest-driver/issues/3166)) ([96dc32b](https://github.com/appium/appium-xcuitest-driver/commit/96dc32bce84c8c78818320f71b8aa1242b397558))
+
 ## [13.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v13.7.0...v13.8.0) (2026-11-25)
 
 ### Features
