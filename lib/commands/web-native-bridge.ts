@@ -285,24 +285,25 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
   // Calibrate first, as calibration can change the viewport; re-measure if it moves again.
-  let calibration!: CalibrationData;
-  let center!: Position;
   for (let attempt = 1; attempt <= NATIVE_TAP_MAX_MEASURE_ATTEMPTS; attempt++) {
-    const entry = await getOrCreateWebviewCalibration.call(this);
-    calibration = entry.data;
-    center = await measureElementCenter.call(this, atomsElement);
+    const {signature, data} = await getOrCreateWebviewCalibration.call(this);
+    const center = await measureElementCenter.call(this, atomsElement);
     const currentSignature = await withoutImplicitWait(this, () => computeViewportSignature.call(this));
-    if (currentSignature === entry.signature) {
-      break;
+    if (currentSignature === signature) {
+      const {x, y} = await applyCalibration.call(this, data, center.x, center.y);
+      await this.mobileTap(x, y);
+      return;
     }
-    if (attempt < NATIVE_TAP_MAX_MEASURE_ATTEMPTS) {
-      this.log.debug('The viewport has changed while measuring the element. Measuring it again');
-    } else {
-      this.log.warn('The viewport keeps changing while measuring the element. The tap might miss it');
-    }
+    this.log.debug(
+      `The viewport changed while measuring the element (attempt ${attempt}/${NATIVE_TAP_MAX_MEASURE_ATTEMPTS}): ` +
+        `'${signature}' -> '${currentSignature}'`,
+    );
   }
-  const {x, y} = await applyCalibration.call(this, calibration, center.x, center.y);
-  await this.mobileTap(x, y);
+  throw new Error(
+    `Cannot tap the web element: the page viewport kept changing while measuring it ` +
+      `(${NATIVE_TAP_MAX_MEASURE_ATTEMPTS} attempts). Wait for the page to settle ` +
+      `(e.g. keyboard or toolbar animations) or hide the keyboard, then retry.`,
+  );
 }
 
 /**

@@ -357,5 +357,23 @@ describe('web commands', function () {
       assert.strictEqual(executeAtom.callCount, 4);
       sinon.assert.calledOnceWithExactly(mobileTap, 100, 210 + 20);
     });
+
+    it('should not tap if the viewport keeps changing while measuring the element', async function () {
+      const {d, executeAtom, mobileTap} = createDriver([STATE_A]);
+      let reads = 0;
+      // every read reports a new viewport; odd reads are cache lookups, which stand in for a recalibration
+      (d._remote as any).execute = sinon.stub().callsFake(async () => {
+        const state = {...STATE_A, visualViewportHeight: 400 + ++reads};
+        if (reads % 2 === 1) {
+          d._webviewCalibrationCache = entryFor(state, DATA_A);
+        }
+        return state;
+      });
+
+      await assert.rejects(nativeWebTap.call(d, 'el'), /viewport kept changing.*Wait for the page to settle/);
+
+      assert.strictEqual(executeAtom.callCount, 6);
+      sinon.assert.notCalled(mobileTap);
+    });
   });
 });
