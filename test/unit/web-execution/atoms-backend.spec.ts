@@ -521,8 +521,9 @@ describe('AtomsBackend', function () {
     assert.strictEqual(proxiedAction.y, 205);
   });
 
-  it('performActions throws MoveTargetOutOfBoundsError for a web-element origin currently out of view', async function () {
+  it('performActions throws MoveTargetOutOfBoundsError for a web-element origin currently out of view without calibrating', async function () {
     sandbox.stub(driver, 'proxyCommand').resolves();
+    const tapStub = sandbox.stub(driver, 'mobileTap').resolves();
     // the in-view center point script returns null when the element's clipped rectangle is empty
     executeAtomStub.withArgs('execute_script').resolves(null);
     driver.webElementsCache.set(':wdc:123', ':wdc:123');
@@ -535,6 +536,12 @@ describe('AtomsBackend', function () {
     ] as any;
 
     await assert.rejects(backend.performActions(actions), errors.MoveTargetOutOfBoundsError);
+    assert.strictEqual(
+      tapStub.callCount,
+      0,
+      'should not prime calibration or touch the screen when element is out of view',
+    );
+    assert.strictEqual(remoteStub.execute.callCount, 0);
   });
 
   it('performActions resolves each web-element origin independently - a lookup that scrolled could invalidate an earlier one', async function () {
@@ -570,6 +577,123 @@ describe('AtomsBackend', function () {
     const [moveToSource, moveToTarget] = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions;
     assert.deepStrictEqual({x: moveToSource.x, y: moveToSource.y}, {x: 10, y: 10});
     assert.deepStrictEqual({x: moveToTarget.x, y: moveToTarget.y}, {x: 300, y: 300});
+  });
+
+  it('performActions settles web element coordinates when calibration dismisses keyboard', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    driver.webElementsCache.set(':wdc:target', ':wdc:target');
+    let keyboardOpen = true;
+
+    sandbox.stub(driver, 'waitForAtom').callsFake((p: any) => p);
+    sandbox.stub(driver, 'findNativeElementOrElements').resolves({'element-6066-11e4-a52e-4f735466cecf': 'webview'});
+    sandbox.stub(driver, 'mobileTap').callsFake(async () => {
+      keyboardOpen = false;
+    });
+
+    remoteStub.execute.callsFake(async (script: string) => {
+      if (script.includes('createElement')) {
+        return;
+      }
+      if (script.includes('return window.__appiumCalibrationTaps')) {
+        return [
+          {x: 193, y: 293},
+          {x: 207, y: 307},
+        ];
+      }
+      if (script.includes('delete window.__appiumCalibrationOverlay')) {
+        return;
+      }
+      return {
+        innerWidth: 400,
+        innerHeight: keyboardOpen ? 300 : 600,
+        isScrolledToTop: true,
+        visualViewportWidth: 400,
+        visualViewportHeight: keyboardOpen ? 300 : 600,
+        visualViewportOffsetLeft: 0,
+        visualViewportOffsetTop: 0,
+        visualViewportScale: 1,
+      };
+    });
+
+    proxyStub.withArgs('/element/webview/rect', 'GET').resolves({x: 0, y: 0, width: 400, height: 600});
+
+    executeAtomStub.withArgs('execute_script').callsFake(async () => ({
+      // Element is measured against settled post-dismissal viewport (y=350 instead of y=150)
+      x: 50,
+      y: keyboardOpen ? 150 : 350,
+    }));
+
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:target'}, x: 5, y: 5}],
+      },
+    ] as any;
+
+    await backend.performActions(actions);
+
+    const proxiedAction = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions[0];
+    assert.strictEqual(proxiedAction.x, 55);
+    assert.strictEqual(proxiedAction.y, 355);
+  });
+
+  it('performActions discards initialCoords and re-measures when cache was warmed but calibration had to run due to open keyboard', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    driver.webElementsCache.set(':wdc:target', ':wdc:target');
+    let keyboardOpen = true;
+
+    // Seed cache with closed-keyboard signature
+    seedIdentityCalibration();
+
+    sandbox.stub(driver, 'mobileTap').callsFake(async () => {
+      keyboardOpen = false;
+    });
+
+    remoteStub.execute.callsFake(async (script: string) => {
+      if (script.includes('createElement') || script.includes('delete window.__appiumCalibrationOverlay')) {
+        return;
+      }
+      if (script.includes('return window.__appiumCalibrationTaps')) {
+        return [
+          {x: 193, y: 293},
+          {x: 207, y: 307},
+        ];
+      }
+      return {
+        innerWidth: 400,
+        innerHeight: keyboardOpen ? 300 : 600,
+        isScrolledToTop: true,
+        visualViewportWidth: 400,
+        visualViewportHeight: keyboardOpen ? 300 : 600,
+        visualViewportOffsetLeft: 0,
+        visualViewportOffsetTop: 0,
+        visualViewportScale: 1,
+      };
+    });
+
+    proxyStub.withArgs('/element/webview/rect', 'GET').resolves({x: 0, y: 0, width: 400, height: 600});
+
+    executeAtomStub.withArgs('execute_script').callsFake(async () => ({
+      // Element is at y=150 while keyboard is open, y=350 after keyboard closes
+      x: 50,
+      y: keyboardOpen ? 150 : 350,
+    }));
+
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:target'}, x: 5, y: 5}],
+      },
+    ] as any;
+
+    await backend.performActions(actions);
+
+    const proxiedAction = (proxyStub.withArgs('/actions').firstCall.args[2] as any).actions[0].actions[0];
+    assert.strictEqual(proxiedAction.x, 55);
+    // Verifies it tapped the settled position (350 + 5 = 355), NOT the stale pre-calibration position (150 + 5 = 155)
+    assert.strictEqual(proxiedAction.y, 355);
   });
 
   it('performActions leaves a native element origin untouched - it is shaped just like a web element, but is not one', async function () {
