@@ -1,3 +1,9 @@
+## [13.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.1...v13.8.2) (2026-11-28)
+
+### Bug Fixes
+
+* keep the ffmpeg handle when an audio recording fails to stop ([#3165](https://github.com/appium/appium-xcuitest-driver/issues/3165)) ([1c1bc84](https://github.com/appium/appium-xcuitest-driver/commit/1c1bc849bb7241b6934b3d15d3df159f8d462e64))
+
 ## [13.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.0...v13.8.1) (2026-11-27)
 
 ### Miscellaneous Chores
