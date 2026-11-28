@@ -28,6 +28,7 @@ export class AudioRecorder {
   private readonly audioPath: string;
   private readonly opts: AudioRecorderOptions;
   private mainProcess: SubProcess | null;
+  private stopFailed = false;
 
   constructor(
     input: string | number,
@@ -121,24 +122,43 @@ export class AudioRecorder {
   }
 
   async interrupt(force = false): Promise<boolean> {
-    if (this.isRecording()) {
-      const interruptPromise = this.mainProcess?.stop(force ? 'SIGTERM' : 'SIGINT');
-      this.mainProcess = null;
+    let result = true;
+
+    const mainProcess = this.mainProcess;
+    if (mainProcess?.isRunning) {
       try {
-        await interruptPromise;
+        await mainProcess.stop(force ? 'SIGTERM' : 'SIGINT');
       } catch (e: any) {
+        // Keep the handle so cleanup can retry if ffmpeg is still running.
+        // Its MP4 trailer may not be written.
+        this.stopFailed = true;
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
         );
-        return false;
+        result = false;
+        if (force && mainProcess.isRunning) {
+          try {
+            await mainProcess.stop('SIGKILL');
+            result = true;
+          } catch (killError: any) {
+            this.log.warn(`Cannot kill ${FFMPEG_BINARY}. Original error: ${killError.message}`);
+          }
+        }
+      } finally {
+        if (!mainProcess.isRunning && this.mainProcess === mainProcess) {
+          this.mainProcess = null;
+        }
       }
     }
 
-    return true;
+    return result;
   }
 
   async finish(): Promise<string> {
-    await this.interrupt();
+    const stopped = await this.interrupt();
+    if (!stopped || this.stopFailed) {
+      throw new Error(`Cannot finalize the audio recording because ${FFMPEG_BINARY} failed to stop gracefully`);
+    }
     return this.audioPath;
   }
 
@@ -192,7 +212,9 @@ export async function startAudioRecording(
     this.log.info(`There is an active audio recording process`);
     if (forceRestart) {
       this.log.info(`Stopping it because 'forceRestart' option is set to true`);
-      await this._audioRecorder.interrupt(true);
+      if (!(await this._audioRecorder.interrupt(true))) {
+        throw this.log.errorWithException('Unable to stop audio recording process');
+      }
     } else {
       this.log.info(
         `Doing nothing. ` + `Set 'forceRestart' option to true if you'd like to start a new audio recording session`,
@@ -261,9 +283,13 @@ export async function stopAudioRecording(this: XCUITestDriver): Promise<string> 
       );
     }
   } catch (e) {
-    await this._audioRecorder.interrupt(true);
-    await this._audioRecorder.cleanup();
-    this._audioRecorder = null;
+    const audioRecorder = this._audioRecorder;
+    await audioRecorder.interrupt(true);
+    // ffmpeg may have survived SIGKILL too: keep the recorder and its file so a later stop or teardown can retry
+    if (!audioRecorder.isRecording()) {
+      await audioRecorder.cleanup();
+      this._audioRecorder = null;
+    }
     throw e;
   }
   return await encodeBase64OrUpload(resultPath);
