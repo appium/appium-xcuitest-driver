@@ -1,3 +1,9 @@
+## [13.8.4](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.3...v13.8.4) (2026-11-28)
+
+### Bug Fixes
+
+* keep the screen recorder while ffmpeg survives a failed stop ([#3168](https://github.com/appium/appium-xcuitest-driver/issues/3168)) ([970764b](https://github.com/appium/appium-xcuitest-driver/commit/970764b35c25a9e1f7d63cbb9475038e6c66c689))
+
 ## [13.8.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.2...v13.8.3) (2026-11-28)
 
 ### Bug Fixes
