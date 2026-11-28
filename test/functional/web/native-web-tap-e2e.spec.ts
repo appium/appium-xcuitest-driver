@@ -149,6 +149,24 @@ describe('native web tap -', function () {
         await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
         assert.ok((await driver.getTitle()).includes('I am a page title'));
       });
+
+      it('should keep the focus and the keyboard open while calibrating', async function () {
+        await loadPage(driver, guineaPigPage(baseUrl));
+
+        const comments = await driver.$('[name="comments"]');
+        await driver.elementSendKeys(comments.elementId as any, 'a');
+        await retryInterval(5, 500, async function () {
+          assert.ok(await driver.execute('mobile: isKeyboardShown'));
+        });
+
+        await driver.execute('mobile: calibrateWebToRealCoordinatesTranslation');
+
+        assert.strictEqual(
+          await driver.execute('return document.activeElement && document.activeElement.name'),
+          'comments',
+        );
+        assert.ok(await driver.execute('mobile: isKeyboardShown'));
+      });
     });
 
     describe('nativeWebTapStrict -', function () {

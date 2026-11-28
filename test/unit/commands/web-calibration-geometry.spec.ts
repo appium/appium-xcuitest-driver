@@ -4,6 +4,7 @@ import {runInNewContext} from 'node:vm';
 
 import sinon from 'sinon';
 
+import {viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('web calibration native geometry', () => {
@@ -135,6 +136,32 @@ describe('web calibration iframe selection', () => {
 });
 
 describe('native web tap atom requests', () => {
+  const WEBVIEW_RECT = {x: 0, y: 0, width: 400, height: 600};
+  const VIEWPORT = {
+    innerWidth: 400,
+    innerHeight: 600,
+    isScrolledToTop: true,
+    visualViewportWidth: 400,
+    visualViewportHeight: 600,
+    visualViewportOffsetLeft: 0,
+    visualViewportOffsetTop: 0,
+    visualViewportScale: 1,
+  };
+
+  // Seeds an identity calibration matching the (constant) viewport, so the tap
+  // coordinates equal the measured web coordinates and nothing recalibrates.
+  function seedIdentityCalibration(driver: XCUITestDriver, sandbox: sinon.SinonSandbox) {
+    driver.curContext = 'WEBVIEW_tap';
+    driver._remote = {execute: async () => VIEWPORT} as any;
+    sandbox.stub(driver, 'waitForAtom').callsFake(async (p: any) => await p);
+    driver._webviewCalibrationCache = {
+      signature:
+        `WEBVIEW_tap::${viewportSignature({...VIEWPORT, orientation: 'PORTRAIT'})}::` +
+        JSON.stringify([null, WEBVIEW_RECT.x, WEBVIEW_RECT.y, WEBVIEW_RECT.width, WEBVIEW_RECT.height]),
+      data: {offsetX: 0, offsetY: 0, pixelRatioX: 1, pixelRatioY: 1},
+    };
+  }
+
   it('waits for the size response before requesting coordinates', async () => {
     const driver = new XCUITestDriver({} as any);
     await driver.updateSettings({nativeWebTapStrict: true});
@@ -144,12 +171,16 @@ describe('native web tap atom requests', () => {
       resolveSize = resolve;
     });
     try {
+      seedIdentityCalibration(driver, sandbox);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({ELEMENT: 'webview'} as any);
+      sandbox.stub(driver, 'proxyCommand').resolves(WEBVIEW_RECT);
       sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
       const execute = sandbox.stub(driver, 'executeAtom');
       execute.withArgs('get_size').returns(size);
       execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
-      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      const tap = sandbox.stub(driver, 'mobileTap').resolves();
       const result = driver.nativeWebTap('target');
+      await new Promise((resolve) => setImmediate(resolve));
       try {
         assert.equal(execute.callCount, 1, 'the transport must not receive overlapping atom requests');
         assert.equal(tap.callCount, 0);
@@ -169,9 +200,12 @@ describe('native web tap atom requests', () => {
     await driver.updateSettings({nativeWebTapStrict: true});
     const sandbox = sinon.createSandbox();
     try {
+      seedIdentityCalibration(driver, sandbox);
+      sandbox.stub(driver, 'findNativeElementOrElements').resolves({ELEMENT: 'webview'} as any);
+      sandbox.stub(driver, 'proxyCommand').resolves(WEBVIEW_RECT);
       sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
       const execute = sandbox.stub(driver, 'executeAtom').rejects(new Error('transport failed'));
-      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      const tap = sandbox.stub(driver, 'mobileTap').resolves();
       await assert.rejects(driver.nativeWebTap('target'), /transport failed/);
       assert.equal(execute.callCount, 1);
       assert.equal(tap.callCount, 0);
@@ -186,17 +220,24 @@ describe('native web tap atom requests', () => {
     driver.implicitWaitMs = 700;
     const sandbox = sinon.createSandbox();
     try {
+      seedIdentityCalibration(driver, sandbox);
       sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
       const execute = sandbox.stub(driver, 'executeAtom');
       execute.withArgs('execute_script').resolves({hadAttribute: false, original: null});
       execute.withArgs('get_size').resolves({width: 100, height: 80});
       execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
-      const proxy = sandbox.stub(driver, 'proxyCommand').resolves([]);
-      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      // the marked element is not exposed natively; the webview lookup used for calibration is
+      const proxy = sandbox
+        .stub(driver, 'proxyCommand')
+        .callsFake(async (path: string, _method: string, body?: any) =>
+          path.endsWith('/rect') ? WEBVIEW_RECT : body?.using === 'class name' ? {ELEMENT: 'webview'} : [],
+        );
+      const tap = sandbox.stub(driver, 'mobileTap').resolves();
 
       await driver.nativeWebTap('target');
 
-      assert.equal(proxy.callCount, 1, `expected a single native lookup, got ${proxy.callCount}`);
+      const markedLookups = proxy.getCalls().filter((c) => (c.args[2] as any)?.using === 'accessibility id');
+      assert.equal(markedLookups.length, 1, `expected a single native lookup, got ${markedLookups.length}`);
       assert.ok(tap.calledOnceWithExactly(70, 70));
       assert.equal(driver.implicitWaitMs, 700);
     } finally {
@@ -250,7 +291,10 @@ describe('web calibration zoom', () => {
           sandbox.stub(driver, 'proxyCommand').callsFake(async (path: string) => (path.endsWith('/rect') ? rect : {}));
           sandbox.stub(driver, 'execute').resolves(frame);
           sandbox.stub(driver, 'mobileTap').callsFake(async (x: number, y: number) => {
-            onClick({clientX: (x - rect.x) / zoom - overlayRect.left, clientY: (y - rect.y) / zoom - overlayRect.top});
+            onClick({
+              clientX: (x - rect.x) / zoom - overlayRect.left,
+              clientY: (y - rect.y) / zoom - overlayRect.top,
+            });
           });
           driver._remote = {
             executeAtom: async () => true,
