@@ -1,3 +1,9 @@
+## [13.8.3](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.2...v13.8.3) (2026-11-28)
+
+### Bug Fixes
+
+* bump appium-ios-remotexpc to 6.1.13 ([#3167](https://github.com/appium/appium-xcuitest-driver/issues/3167)) ([e8af74d](https://github.com/appium/appium-xcuitest-driver/commit/e8af74dfa758bdf1d9a0ed87362ff7e94de1a087))
+
 ## [13.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v13.8.1...v13.8.2) (2026-11-28)
 
 ### Bug Fixes
