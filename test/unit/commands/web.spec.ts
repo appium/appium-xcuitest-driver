@@ -6,7 +6,7 @@ import {errors} from 'appium/driver.js';
 import {ConditionUnmetError} from 'asyncbox';
 import sinon from 'sinon';
 
-import {fitAffineTransform, viewportSignature} from '../../../lib/commands/web-native-bridge.js';
+import {fitAffineTransform, nativeWebTap, viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('web commands', function () {
@@ -116,12 +116,16 @@ describe('web commands', function () {
     });
 
     it('limits a W3C null script timeout (no limit) to webviewAtomWaitTimeout', async function () {
-      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null, {webviewAtomWaitTimeout: 5000});
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null, {
+        webviewAtomWaitTimeout: 5000,
+      });
       assert.strictEqual(remoteArgs[3].timeoutMs, 5000);
     });
 
     it('limits the script timeout to 1 h with a longer webviewAtomWaitTimeout', async function () {
-      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null, {webviewAtomWaitTimeout: 7200000});
+      const {remoteArgs} = await run('execute_script', {isUserScript: true}, null, {
+        webviewAtomWaitTimeout: 7200000,
+      });
       assert.strictEqual(remoteArgs[3].timeoutMs, 3600000);
     });
 
@@ -271,6 +275,87 @@ describe('web commands', function () {
 
     it('should change when the visual viewport scale changes', function () {
       assert.notStrictEqual(viewportSignature(BASE_STATE), viewportSignature({...BASE_STATE, visualViewportScale: 2}));
+    });
+
+    it('should ignore sub-pixel jitter of the visual viewport offset', function () {
+      assert.strictEqual(
+        viewportSignature(BASE_STATE),
+        viewportSignature({...BASE_STATE, visualViewportOffsetTop: -0.34375, visualViewportOffsetLeft: 0.2}),
+      );
+    });
+  });
+
+  describe('nativeWebTap (coordinates path)', function () {
+    const WEBVIEW_RECT = {x: 0, y: 0, width: 400, height: 800};
+    const STATE_A = {
+      innerWidth: 400,
+      innerHeight: 700,
+      isScrolledToTop: false,
+      visualViewportWidth: 400,
+      visualViewportHeight: 400,
+      visualViewportOffsetLeft: 0,
+      visualViewportOffsetTop: 0,
+      visualViewportScale: 1,
+    };
+    const STATE_B = {...STATE_A, visualViewportHeight: 700};
+    const DATA_A = {offsetX: 0, offsetY: 10, pixelRatioX: 1, pixelRatioY: 1};
+    const DATA_B = {offsetX: 0, offsetY: 20, pixelRatioX: 1, pixelRatioY: 1};
+
+    const entryFor = (state: typeof STATE_A, data: typeof DATA_A) => ({
+      signature:
+        `::${viewportSignature({...state, orientation: 'PORTRAIT'})}::` +
+        JSON.stringify([null, WEBVIEW_RECT.x, WEBVIEW_RECT.y, WEBVIEW_RECT.width, WEBVIEW_RECT.height]),
+      data,
+    });
+
+    function createDriver(viewportReads: (typeof STATE_A)[]) {
+      const d = new XCUITestDriver({} as any);
+      const reads = [...viewportReads];
+      d.curContext = null as any;
+      d.settings = {getSettings: () => ({nativeWebTapStrict: true})} as any;
+      sinon.stub(d, 'getAtomsElement').returns({ELEMENT: 'el'} as any);
+      sinon.stub(d, 'waitForAtom').callsFake(async (p: any) => await p);
+      d._remote = {
+        // the last read repeats forever
+        execute: sinon.stub().callsFake(async () => (reads.length > 1 ? reads.shift() : reads[0])),
+      } as any;
+      sinon.stub(d, 'findNativeElementOrElements').resolves({ELEMENT: 'webview'} as any);
+      sinon.stub(d, 'proxyCommand').resolves(WEBVIEW_RECT);
+      const executeAtom = sinon
+        .stub(d, 'executeAtom')
+        .callsFake(async (name: string) => (name === 'get_size' ? {width: 100, height: 20} : {x: 50, y: 200}));
+      const mobileTap = sinon.stub(d, 'mobileTap').resolves();
+      return {d, executeAtom, mobileTap};
+    }
+
+    it('should tap with the cached calibration if the viewport stays the same', async function () {
+      const {d, executeAtom, mobileTap} = createDriver([STATE_A]);
+      d._webviewCalibrationCache = entryFor(STATE_A, DATA_A);
+
+      await nativeWebTap.call(d, 'el');
+
+      assert.strictEqual(executeAtom.callCount, 2);
+      sinon.assert.calledOnceWithExactly(mobileTap, 100, 210 + 10);
+    });
+
+    it('should measure the element again if the viewport changes while measuring it', async function () {
+      // 1st read: cache lookup, 2nd: stability check (viewport changed), 3rd: lookup after the change
+      const {d, executeAtom, mobileTap} = createDriver([STATE_A, STATE_B]);
+      d._webviewCalibrationCache = entryFor(STATE_A, DATA_A);
+      // stands in for the recalibration that the changed signature triggers
+      const origExecute = (d._remote as any).execute;
+      let reads = 0;
+      (d._remote as any).execute = sinon.stub().callsFake(async (...args: any[]) => {
+        if (++reads === 3) {
+          d._webviewCalibrationCache = entryFor(STATE_B, DATA_B);
+        }
+        return await origExecute(...args);
+      });
+
+      await nativeWebTap.call(d, 'el');
+
+      assert.strictEqual(executeAtom.callCount, 4);
+      sinon.assert.calledOnceWithExactly(mobileTap, 100, 210 + 20);
     });
   });
 });

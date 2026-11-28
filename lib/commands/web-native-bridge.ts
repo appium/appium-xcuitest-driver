@@ -24,6 +24,8 @@ declare module '../driver.js' {
 const CALIBRATION_TAP_DELTA_PX = 7;
 const CALIBRATION_RETRIES = 6;
 const CALIBRATION_RETRY_INTERVAL_MS = 500;
+// How many times nativeWebTap re-measures an element if the viewport shifts under it.
+const NATIVE_TAP_MAX_MEASURE_ATTEMPTS = 3;
 
 // A native tap resolves once WDA has dispatched the touch, which can race
 // the webview's own JS click handler recording it; poll briefly rather than
@@ -72,6 +74,10 @@ const INJECT_CALIBRATION_OVERLAY_SCRIPT = `(function () {
   // Not body: a shadow root on body hides its light DOM children.
   document.documentElement.appendChild(overlay);
   var taps = window.${CALIBRATION_TAPS_MARKER};
+  // Keep focus where it is, so calibration doesn't blur an active input and dismiss the keyboard.
+  overlay.contentDocument.addEventListener('mousedown', function (e) {
+    e.preventDefault();
+  }, true);
   overlay.contentDocument.addEventListener('click', function (e) {
     // Match the parent-page client coordinates used by element geometry atoms.
     // A fixed iframe can move relative to that viewport when Safari zooms/pans.
@@ -242,9 +248,10 @@ export function fitAffineTransform(samples: readonly CalibrationSample[]): Calib
  * Pure and driver-independent so it can be unit tested directly.
  */
 export function viewportSignature(state: ViewportState): string {
+  // Offsets are rounded: Safari reports sub-pixel jitter (e.g. -0.34 vs 0) that doesn't affect taps.
   const vv =
     `${state.visualViewportWidth}x${state.visualViewportHeight}` +
-    `@${state.visualViewportOffsetLeft},${state.visualViewportOffsetTop}x${state.visualViewportScale}`;
+    `@${Math.round(state.visualViewportOffsetLeft)},${Math.round(state.visualViewportOffsetTop)}x${state.visualViewportScale}`;
   return `${state.orientation}:${state.innerWidth}x${state.innerHeight}:${state.isScrolledToTop ? 'top' : 'scrolled'}:${vv}`;
 }
 
@@ -277,14 +284,33 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  // Keep these atom requests sequential. Concurrent requests can leave one
-  // response unresolved through the real-device Safari Web Inspector transport,
-  // timing out before calibration or a native tap can run (also inside iframes).
-  const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
-  const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
-  const {width, height} = size;
-  const {x, y} = coordinates;
-  await this.clickWebCoords(x + width / 2, y + height / 2);
+  // Calibrate before measuring: calibration taps may still change the viewport (e.g. dismiss the
+  // keyboard), which would make an element rect measured earlier stale. If the viewport moves
+  // while measuring, measure again against the new state.
+  for (let attempt = 1; ; attempt++) {
+    const {signature, data} = await getOrCreateWebviewCalibration.call(this);
+    // Keep these atom requests sequential. Concurrent requests can leave one
+    // response unresolved through the real-device Safari Web Inspector transport,
+    // timing out before calibration or a native tap can run (also inside iframes).
+    const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
+    const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
+    const isStable = (await withoutImplicitWait(this, () => computeViewportSignature.call(this))) === signature;
+    if (!isStable && attempt < NATIVE_TAP_MAX_MEASURE_ATTEMPTS) {
+      this.log.debug('The viewport has changed while measuring the element. Measuring it again');
+      continue;
+    }
+    if (!isStable) {
+      this.log.warn('The viewport keeps changing while measuring the element. The tap might miss it');
+    }
+    const {x, y} = await applyCalibration.call(
+      this,
+      data,
+      coordinates.x + size.width / 2,
+      coordinates.y + size.height / 2,
+    );
+    await this.mobileTap(x, y);
+    return;
+  }
 }
 
 /**
@@ -306,30 +332,8 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
 export async function translateWebCoords(this: XCUITestDriver, x: number, y: number): Promise<Position> {
   this.log.debug(`Translating web coordinates (${JSON.stringify({x, y})}) to native coordinates`);
 
-  const [{offsetX, offsetY, pixelRatioX, pixelRatioY}, frameOffset] = await Promise.all([
-    getOrCreateWebviewCalibration.call(this),
-    getFrameChainOffset.call(this),
-  ]);
-  if (frameOffset.crossOrigin) {
-    throw new Error(
-      'Cannot translate coordinates for the current frame: it (or one of its ancestor frames) has a ' +
-        "different origin than the top-level page. Safari's remote debugger cannot determine a cross-origin " +
-        "frame's position, which is required to compute where to tap. Switch back to the top-level frame " +
-        'or a same-origin ancestor before tapping elements here.',
-    );
-  }
-  const frameX = x + frameOffset.offsetX;
-  const frameY = y + frameOffset.offsetY;
-
-  // Calibration already measures the CSS-to-native scale, including viewport zoom.
-  // Inner/outer window dimensions cannot determine whether that fitted scale applies.
-  const newCoords = {
-    x: offsetX + frameX * pixelRatioX,
-    y: offsetY + frameY * pixelRatioY,
-  };
-
-  this.log.debug(`Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`);
-  return newCoords;
+  const {data} = await getOrCreateWebviewCalibration.call(this);
+  return await applyCalibration.call(this, data, x, y);
 }
 
 /**
@@ -350,7 +354,7 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
 export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUITestDriver): Promise<CalibrationData> {
   requireWebContext(this, 'This API can only be called from a web context');
 
-  const result = await getOrCreateWebviewCalibration.call(this, true);
+  const {data: result} = await getOrCreateWebviewCalibration.call(this, true);
   return {
     ...result,
     offsetX: Math.round(result.offsetX),
@@ -501,6 +505,42 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
 }
 
 /**
+ * Applies a fitted calibration to web coordinates, first shifting them by the
+ * current sub-frame's offset (see {@linkcode getFrameChainOffset}), if any.
+ *
+ * @throws {Error} If the current frame (or one of its ancestors) has a different
+ *   origin than the top-level page
+ */
+async function applyCalibration(
+  this: XCUITestDriver,
+  {offsetX, offsetY, pixelRatioX, pixelRatioY}: CalibrationData,
+  x: number,
+  y: number,
+): Promise<Position> {
+  const frameOffset = await getFrameChainOffset.call(this);
+  if (frameOffset.crossOrigin) {
+    throw new Error(
+      'Cannot translate coordinates for the current frame: it (or one of its ancestor frames) has a ' +
+        "different origin than the top-level page. Safari's remote debugger cannot determine a cross-origin " +
+        "frame's position, which is required to compute where to tap. Switch back to the top-level frame " +
+        'or a same-origin ancestor before tapping elements here.',
+    );
+  }
+  const frameX = x + frameOffset.offsetX;
+  const frameY = y + frameOffset.offsetY;
+
+  // Calibration already measures the CSS-to-native scale, including viewport zoom.
+  // Inner/outer window dimensions cannot determine whether that fitted scale applies.
+  const newCoords = {
+    x: offsetX + frameX * pixelRatioX,
+    y: offsetY + frameY * pixelRatioY,
+  };
+
+  this.log.debug(`Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`);
+  return newCoords;
+}
+
+/**
  * Returns a cached web-to-native calibration transform if the webview's
  * orientation/size/scroll state hasn't changed since it was fitted,
  * otherwise transparently (re)calibrates. This is what makes calibration
@@ -508,18 +548,18 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
  *
  * @param force - Recalibrate unconditionally, ignoring any cached entry
  */
-async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
+async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationCacheEntry> {
   return await withoutImplicitWait(this, async () => {
     if (!force) {
       const signature = await computeViewportSignature.call(this);
       if (this._webviewCalibrationCache?.signature === signature) {
         this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
-        return this._webviewCalibrationCache.data;
+        return this._webviewCalibrationCache;
       }
     }
     this.log.debug('Fitting a new web-to-native coordinates calibration');
     this._webviewCalibrationCache = await performCalibration.call(this);
-    return this._webviewCalibrationCache.data;
+    return this._webviewCalibrationCache;
   });
 }
 
