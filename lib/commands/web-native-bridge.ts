@@ -284,33 +284,25 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  // Calibrate before measuring: calibration taps may still change the viewport (e.g. dismiss the
-  // keyboard), which would make an element rect measured earlier stale. If the viewport moves
-  // while measuring, measure again against the new state.
-  for (let attempt = 1; ; attempt++) {
-    const {signature, data} = await getOrCreateWebviewCalibration.call(this);
-    // Keep these atom requests sequential. Concurrent requests can leave one
-    // response unresolved through the real-device Safari Web Inspector transport,
-    // timing out before calibration or a native tap can run (also inside iframes).
-    const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
-    const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
-    const isStable = (await withoutImplicitWait(this, () => computeViewportSignature.call(this))) === signature;
-    if (!isStable && attempt < NATIVE_TAP_MAX_MEASURE_ATTEMPTS) {
-      this.log.debug('The viewport has changed while measuring the element. Measuring it again');
-      continue;
+  // Calibrate first, as calibration can change the viewport; re-measure if it moves again.
+  let calibration!: CalibrationData;
+  let center!: Position;
+  for (let attempt = 1; attempt <= NATIVE_TAP_MAX_MEASURE_ATTEMPTS; attempt++) {
+    const entry = await getOrCreateWebviewCalibration.call(this);
+    calibration = entry.data;
+    center = await measureElementCenter.call(this, atomsElement);
+    const currentSignature = await withoutImplicitWait(this, () => computeViewportSignature.call(this));
+    if (currentSignature === entry.signature) {
+      break;
     }
-    if (!isStable) {
+    if (attempt < NATIVE_TAP_MAX_MEASURE_ATTEMPTS) {
+      this.log.debug('The viewport has changed while measuring the element. Measuring it again');
+    } else {
       this.log.warn('The viewport keeps changing while measuring the element. The tap might miss it');
     }
-    const {x, y} = await applyCalibration.call(
-      this,
-      data,
-      coordinates.x + size.width / 2,
-      coordinates.y + size.height / 2,
-    );
-    await this.mobileTap(x, y);
-    return;
   }
+  const {x, y} = await applyCalibration.call(this, calibration, center.x, center.y);
+  await this.mobileTap(x, y);
 }
 
 /**
@@ -502,6 +494,17 @@ async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffs
     return {crossOrigin: false, offsetX: 0, offsetY: 0};
   }
   return await this.execute<FrameChainOffset>(READ_FRAME_CHAIN_OFFSET_SCRIPT);
+}
+
+/**
+ * Returns the center of a web element in web (client) coordinates.
+ * The atom requests are sequential: concurrent ones can leave a response
+ * unresolved on the real-device Web Inspector transport (also inside iframes).
+ */
+async function measureElementCenter(this: XCUITestDriver, atomsElement: AtomsElement): Promise<Position> {
+  const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
+  const {x, y} = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
+  return {x: x + size.width / 2, y: y + size.height / 2};
 }
 
 /**
