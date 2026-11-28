@@ -31,6 +31,7 @@ class FakeProcess extends EventEmitter {
 }
 mock.module('teen_process', {namedExports: {...teenProcess, SubProcess: FakeProcess}});
 const {ScreenRecorder} = await import('../../../lib/commands/recordscreen.js');
+const {XCUITestDriver} = await import('../../../lib/driver.js');
 
 describe('recording shutdown failures', () => {
   let recorder: InstanceType<typeof ScreenRecorder>;
@@ -79,5 +80,54 @@ describe('recording shutdown failures', () => {
     assert.equal(process.isRunning, true);
     assert.equal(await recorder.interrupt(true), true);
     assert.deepEqual(process.signals, ['SIGTERM', 'SIGKILL', 'SIGTERM']);
+  });
+});
+
+describe('stopRecordingScreen', () => {
+  let recorder: InstanceType<typeof ScreenRecorder>;
+  let driver: InstanceType<typeof XCUITestDriver>;
+  beforeEach(async () => {
+    sinon.stub(fs, 'which').resolves('/test/ffmpeg');
+    recorder = new ScreenRecorder('test', {info() {}, warn() {}}, '/tmp/stop-test.mp4', {
+      remoteUrl: 'http://127.0.0.1',
+      remotePort: 9100,
+      videoScale: '200:300',
+    });
+    await recorder.start(30000);
+    driver = new XCUITestDriver({} as any);
+    driver._recentScreenRecorder = recorder;
+  });
+  afterEach(async () => {
+    process.failures = 0;
+    await recorder.interrupt(true);
+    sinon.restore();
+  });
+  it('kills ffmpeg and cleans up when it cannot be stopped gracefully', async () => {
+    sinon.stub(fs, 'exists').resolves(true);
+    const removeStub = sinon.stub(fs, 'rimraf').resolves();
+    process.failures = 2;
+
+    await assert.rejects(driver.stopRecordingScreen(), /failed to stop gracefully/);
+    assert.deepEqual(process.signals, ['SIGINT', 'SIGTERM', 'SIGKILL']);
+    assert.equal(process.isRunning, false);
+    assert.equal(removeStub.calledOnceWithExactly('/tmp/stop-test.mp4'), true);
+    assert.equal(driver._recentScreenRecorder, null);
+  });
+  it('keeps the recorder and its file when ffmpeg survives SIGKILL, and retries on the next stop', async () => {
+    sinon.stub(fs, 'exists').resolves(true);
+    const removeStub = sinon.stub(fs, 'rimraf').resolves();
+    process.failures = 3;
+
+    await assert.rejects(driver.stopRecordingScreen(), /failed to stop gracefully/);
+    assert.deepEqual(process.signals, ['SIGINT', 'SIGTERM', 'SIGKILL']);
+    assert.equal(removeStub.called, false);
+    assert.equal(driver._recentScreenRecorder, recorder);
+    assert.equal(recorder.isRecording(), true);
+
+    await assert.rejects(driver.stopRecordingScreen(), /failed to stop gracefully/);
+    assert.deepEqual(process.signals, ['SIGINT', 'SIGTERM', 'SIGKILL', 'SIGINT']);
+    assert.equal(recorder.isRecording(), false);
+    assert.equal(removeStub.calledOnceWithExactly('/tmp/stop-test.mp4'), true);
+    assert.equal(driver._recentScreenRecorder, null);
   });
 });

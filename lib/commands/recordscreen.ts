@@ -346,6 +346,10 @@ export class ScreenRecorder {
     }, timeoutMs);
   }
 
+  isRecording(): boolean {
+    return !!this.mainProcess?.isRunning;
+  }
+
   async interrupt(force = false): Promise<boolean> {
     let result = true;
 
@@ -551,9 +555,13 @@ export async function stopRecordingScreen(
     }
     return await encodeBase64OrUpload(videoPath, options.remotePath, options);
   } finally {
-    await this._recentScreenRecorder.interrupt(true);
-    await this._recentScreenRecorder.cleanup();
-    this._recentScreenRecorder = null;
+    const screenRecorder = this._recentScreenRecorder;
+    await screenRecorder.interrupt(true);
+    // ffmpeg may have survived SIGKILL too: keep the recorder and its file so a later stop or teardown can retry
+    if (!screenRecorder.isRecording()) {
+      await screenRecorder.cleanup();
+      this._recentScreenRecorder = null;
+    }
   }
 }
 
